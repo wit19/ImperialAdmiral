@@ -62,14 +62,12 @@ namespace TacticalAI
         // The activation then runs TWO attack blocks; the second one is the
         // printed second attack, not a conditional move-check.
         public bool Assault;
-        // Thomas 02.11 (Offizier-Baeume): command abilities ride the printed
-        // ignored lane of the card data (comma-separated tokens):
-        //   "Order"            -> normal officer tree (DG004/DG005)
-        //   "Executive Order"  -> elite officer tree (DG006 prints the
-        //                          upgraded ability - verified 02.11 against
-        //                          enemies.json; the app data carries no
-        //                          elite name convention, the ability token
-        //                          itself is the discriminator).
+        // Thomas 02.11 (Offizier-Baeume): printed command ability, surfaced as
+        // catalog keywords in ToRecord (ability lane + DG-id belt; the
+        // ignored-lane route is dead at runtime - SetCardTranslations()
+        // blanks it):
+        //   "OfficerOrder"     -> apTreeOfficer<Pattern>       (DG004/DG005)
+        //   "OfficerExecOrder" -> apTreeOfficerElite<Pattern>  (DG006)
         public bool Officer;
         public bool OfficerElite;
         // Personas (M3): "Persona - Rang - aktive Boni" line for this
@@ -656,11 +654,16 @@ namespace TacticalAI
             plan = new ActivationPlanData { CardId = cd.id, Tripod = catCard.IsTripod,
                                             Assault = catCard.HasAssault };
             plan.PersonaLine = PersonaLine(cd.id);
-            // Offizier detection (Thomas 02.11): exact printed ignored-lane
-            // tokens - "Executive Order" is the elite's upgraded ability and
-            // selects the elite tree, plain "Order" the normal one.
-            plan.OfficerElite = PrintedIgnoredHas(cd.ignored, "Executive Order");
-            plan.Officer = plan.OfficerElite || PrintedIgnoredHas(cd.ignored, "Order");
+            // Offizier detection (Thomas 02.11, Player-17 fix): keyword view
+            // of the CATALOG card - injected from the printed ability lane +
+            // DG-id belt in ToRecord. The first draft read cd.ignored, which
+            // the app's SetCardTranslations() overwrites with the language
+            // card's ignored="" at load - dead at runtime, never fired.
+            plan.OfficerElite = catCard.Keywords.Contains("OfficerExecOrder");
+            plan.Officer = plan.OfficerElite || catCard.Keywords.Contains("OfficerOrder");
+            if (plan.Officer)
+                Debug.Log("TacticalAIBridge::officer " + cd.id +
+                          " order=1 elite=" + (plan.OfficerElite ? 1 : 0));
             // Aufgabe 4: the fixed move/attack pair synthesis is GONE - the
             // universal AP pool (RenderBlocks) replaces the block sequence;
             // Assault/Tripod still ride as flags on the plan itself.
@@ -909,16 +912,6 @@ namespace TacticalAI
         {
             foreach (var v in vals) if (!string.IsNullOrEmpty(v)) return v;
             return null;
-        }
-
-        /// Exact comma-separated token test on the printed ignored lane
-        /// ("Order, Cower" -> Order=true; "Executive Order, Cower" -> false).
-        static bool PrintedIgnoredHas(string ignored, string token)
-        {
-            if (string.IsNullOrEmpty(ignored)) return false;
-            foreach (var part in ignored.Split(','))
-                if (part.Trim() == token) return true;
-            return false;
         }
 
         // ------------------------------------------------------- language files
@@ -1887,7 +1880,7 @@ namespace TacticalAI
             // print Stativ - the same printed-fact class as the DG071
             // hunter rule. Never read from hidden bonus data.
             var kws = new List<string>(cd.keywords ?? new string[0]);
-            bool tripod = false, assault = false;
+            bool tripod = false, assault = false, order = false, execOrder = false;
             var ab = cd.abilities;
             if (ab != null)
                 foreach (var a in ab)
@@ -1899,9 +1892,32 @@ namespace TacticalAI
                     // partial overlays fall back to the EN name).
                     if (a.name == "Assault" || a.name == "Sturm" ||
                         a.name == "Штурм" || a.name == "Assaut") assault = true;
+                    // Thomas 02.11 (Player-17): the printed command abilities.
+                    // DETECTION LIVES ON THE ABILITY LANE, NOT cd.ignored -
+                    // SetCardTranslations() overwrites cd.ignored with the
+                    // LANGUAGE card's value and EVERY shipped language card
+                    // asset carries ignored="" there (verified 02.11: 0 of 69
+                    // En overlay cards carry the lane), so the raw
+                    // CardData/enemies.json "ignored" lane never survives
+                    // into a live session card. The ability lane DOES survive
+                    // (De+En assets print it; the 9 partial overlays fall
+                    // back to the EN name, same as Tripod/Assault):
+                    //   En  "{A} Order" / "{A} Executive Order"
+                    //   De  "{A} Befehl" / "{A} Vollstreckungsbefehl"
+                    if (a.name == "{A} Order" || a.name == "{A} Befehl") order = true;
+                    if (a.name == "{A} Executive Order" ||
+                        a.name == "{A} Vollstreckungsbefehl") execOrder = true;
                 }
             if (cd.id == "DG007" || cd.id == "DG008") tripod = true;
             if (tripod && !kws.Contains("Tripod")) kws.Add("Tripod");
+            // DG-id belt (same printed-fact class as the Tripod/Assault
+            // belts): verified 02.11 across ALL shipped language assets -
+            // exactly DG004/DG005 print the plain command ability and DG006
+            // prints the executive one (officer trio of the Imperial core).
+            if (cd.id == "DG004" || cd.id == "DG005") order = true;
+            if (cd.id == "DG006") execOrder = true;
+            if (order && !kws.Contains("OfficerOrder")) kws.Add("OfficerOrder");
+            if (execOrder && !kws.Contains("OfficerExecOrder")) kws.Add("OfficerExecOrder");
             // DG-id belt (same printed-fact class as the Tripod belt): across
             // ALL shipped language assets (base pools + 11 overlays) exactly
             // these four cards print Assault: DG007/DG008 (E-Web, Elite),

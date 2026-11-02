@@ -47,7 +47,25 @@ namespace TacticalAiHarness
                     Check("settings[" + name + "].info", Json.AsBool(exp["info"]), TacticalAISettings.InfoText);
                     Check("settings[" + name + "].mode", Json.AsStr(exp["mode"]), TacticalAISettings.Mode);
                     Check("settings[" + name + "].mode_override", Json.AsBool(exp["mode_override"]), TacticalAISettings.HasModeOverride);
+                    // Personas (Thomas 02.11 request): the global default must
+                    // survive the Load route byte-exact (absent -> "", stored
+                    // value -> verbatim; the settings layer never validates,
+                    // PersonaState does - so "any string round-trips" is the
+                    // correct pin here, not asset membership).
+                    if (exp.ContainsKey("persona"))
+                        Check("settings[" + name + "].persona",
+                              Json.AsStr(exp["persona"]), TacticalAISettings.PersonaDefault);
                     Check("settings[" + name + "].to_json", Json.AsStr(exp["to_json"]), TacticalAISettings.ToJson());
+                    // Write path: assigning the setter must serialise persona
+                    // into ToJson (the only thing the save hook will store).
+                    // AFTER the to_json pin - the sub-block resets.
+                    if (exp.ContainsKey("persona_set"))
+                    {
+                        TacticalAISettings.PersonaDefault = Json.AsStr(exp["persona_set"]);
+                        Check("settings[" + name + "].persona_to_json",
+                              Json.AsStr(exp["persona_to_json"]), TacticalAISettings.ToJson());
+                        TacticalAISettings.ResetDefaults();
+                    }
                 }
                 // stale state must not survive a reset (same hook still set)
                 TacticalAISettings.ResetDefaults();

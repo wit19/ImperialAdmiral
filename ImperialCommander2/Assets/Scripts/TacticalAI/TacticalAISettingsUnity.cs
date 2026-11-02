@@ -29,7 +29,8 @@ namespace TacticalAI
             Debug.Log($"TacticalAISettingsUnity::mode={TacticalAISettings.Mode}{(TacticalAISettings.HasModeOverride ? " (OVERRIDE)" : "")} enabled={TacticalAISettings.Enabled} " +
                       $"skill={TacticalAISettings.SkillLevel} " +
                       $"explain={TacticalAISettings.ExplainLevel}" +
-                     $" info={TacticalAISettings.InfoText}");
+                     $" info={TacticalAISettings.InfoText}" +
+                     $" persona='{TacticalAISettings.PersonaDefault}'");
         }
 
         /// <summary>save-hook contract (see TacticalAISettings.SetSaveHook):

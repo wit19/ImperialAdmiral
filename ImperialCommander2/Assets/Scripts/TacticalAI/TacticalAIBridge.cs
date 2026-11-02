@@ -1455,6 +1455,11 @@ namespace TacticalAI
                 var Lh = UIx;
                 if (Lh != null && !string.IsNullOrEmpty(Lh.ordExplainHead))
                     line = Lh.ordExplainHead;
+                // Thomas 02.11 (declutter): the persona line moved out of
+                // every activation's action area into this section - who you
+                // play against, rank, active bonuses (self-labelled line).
+                if (plan != null && !string.IsNullOrEmpty(plan.PersonaLine))
+                    line = (line == null ? "" : line + "\n") + plan.PersonaLine;
                 var slot = _slots.FirstOrDefault(s => s.GroupId == groupId);
                 if (slot != null && UIx != null)
                     // (append, not assign - the header row stays on top)

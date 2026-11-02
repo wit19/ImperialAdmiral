@@ -408,7 +408,7 @@ public class EnemyActivationPopup : MonoBehaviour
 			var set = new HashSet<string>();
 			var tl = owner != null ? owner.uiTacticalAI : null;
 			if ( tl != null )
-				foreach ( var fmt in new[] { tl.actionSoloFormat, tl.specialAsPrinted, tl.interactLine,
+				foreach ( var fmt in new[] { tl.specialAsPrinted, tl.interactLine,
 				                             tl.doctrineHeader, tl.ordRiskLabel, tl.ordMarked } )
 				{
 					if ( string.IsNullOrEmpty( fmt ) ) continue;

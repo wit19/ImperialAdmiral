@@ -652,9 +652,9 @@ namespace TacticalAI
             plan = new ActivationPlanData { CardId = cd.id, Tripod = catCard.IsTripod,
                                             Assault = catCard.HasAssault };
             plan.PersonaLine = PersonaLine(cd.id);
-            var blocks = plan.Assault ? new[] { "attack", "attack" }
-                       : plan.Tripod ? new[] { "attack", "move" }
-                       : new[] { "move", "attack" };
+            // Aufgabe 4: the fixed move/attack pair synthesis is GONE - the
+            // universal AP pool (RenderBlocks) replaces the block sequence;
+            // Assault/Tripod still ride as flags on the plan itself.
             if (TrySelectTarget(cd, out var targetName, out var why))
             {
                 plan.HasTarget = true;
@@ -686,7 +686,7 @@ namespace TacticalAI
             // not an instruction a human Imperial player can execute. Render
             // every block as a concrete, localized order naming the focus
             // target (which names are PUBLIC once dealt - fairness unaffected).
-            plan.Blocks = RenderBlocks(blocks, plan, cd.speed);
+            plan.Blocks = RenderBlocks(plan, cd);
 
             // M11e: a printed {A} special action of the villain card as the
             // THIRD block next to move/attack - but only when the VillainOptions
@@ -810,189 +810,69 @@ namespace TacticalAI
             return _threatLedger != null ? (int?)_threatLedger.Balance : null;
         }
 
-        static string[] RenderBlocks(string[] tokens, ActivationPlanData plan, int speed)
+        // --------------------------------------------------------------------
+        // Aufgabe 4 (Thomas 02.11): the universal action block. The fixed
+        // "Aktion 1 / Aktion 2" pair is RETIRED: ONE action-point pool runs a
+        // per-doctrine decision tree once per point, framed by the accent
+        // head, the italic reading rule and the red loop-trap end marker
+        // (" Noch Punkte uebrig? -> Baum von oben." - Thomas' corrected
+        // semantics: the marker loops the tree, it does NOT skip to the next
+        // figure; dice/effects belong to the actions themselves and are
+        // deliberately NOT mentioned in the frame).
+        // Frame A (Thomas' formatting choice 02.11): TMP tags and the {0}
+        // speed slot live in the ui.json values - the language owns the
+        // text, the code only assembles (ui.json law). Every tree line
+        // becomes its own popup row (fixed-height TMP rows cannot carry
+        // embedded newlines).
+        // Attack-point counter y is DETECTED from the printed card
+        // (plan.Assault <- Core catalog keyword read, Core/DeploymentCard
+        // .HasAssault parses the printed Assault keyword from the card data
+        // - E-Web Engineer x2 + AT-DP today, any future printed card
+        // included automatically). Nothing on this surface is hardcoded.
+        static string[] RenderBlocks(ActivationPlanData plan, global::DeploymentCard cd)
         {
-            var toks = tokens ?? Array.Empty<string>();
             var L = UIx;                    // Languages/<Lang>/ui.json: uiTacticalAI
-            if (L == null) return toks;     // broken language asset -> legacy path
             var outp = new List<string>();
-            var t = plan.HasTarget ? plan.TargetName : null;
-            // Doctrine header (dev 11): every order NAMES its doctrine. All
-            // texts come from the language files (PR convention after Thomas'
-            // review 27.10: zero hardcoded player strings in the bridge).
-            var pat = plan.Pattern ?? "aggressive";
-            bool priorAttack = false;   // one-attack-per-activation rule tracker
-            // Thomas 02.11 (request 2): the doctrine header left the action
-            // area - ExplainFor prints it in the EXPLAIN section (the action
-            // TREES below still branch on the pattern; only the label moved).
-            // Thomas 28.10: the numbers are a Wenn-Dann TREE, not a to-do
-            // list. Since M11 every shipped activation carries its printed
-            // action pair (solo labels only survive as a rendering fallback,
-            // e.g. a future one-action printed special case) - labelling a
-            // lone block "Aktion 1" would make players wait for a missing
-            // "Aktion 2". So: exactly ONE action block -> unnumbered solo
-            // label; >=2 -> keep "Aktion {n}". Both strings live in ui.json
-            // (localization convention); missing keys fall back to the old
-            // numbered rendering - never an empty line.
-            int actions = CountActionBlocks(toks);
-            bool solo = actions <= 1 || string.IsNullOrEmpty(L.actionSoloFormat);
-            // M13c (Thomas 30.10): the doctrineTreeLead lead-in ("Diese Karte
-            // zeigt die Aktionen..." + standalone "Grundregel:" paragraph) is
-            // REMOVED; the basic attack rule lives in the merged info block.
-            for (int n = 0; n < toks.Length; n++)
-            {
-                var tok = toks[n];
-                // Thomas' doctrine template: every action is a numbered
-                // Wenn-Dann decision tree; the IMPERIAL PLAYER evaluates the
-                // conditions at the public board (only they see positions).
-                System.Func<string, string> act = solo
-                    ? (System.Func<string, string>)(txt => TF(L.actionSoloFormat, txt))
-                    : (System.Func<string, string>)(txt => TF(L.actionFormat, n + 1, txt));
-                switch (tok)
-                {
-                    case "move":
-                        // Thomas 29.10: the RR gives TWO free actions in any
-                        // order (one attack cap for non-heroes), so no block
-                        // may READ like a hardcoded role. Trees come from the
-                        // language files as '\n'-separated decision lines;
-                        // EmitBlock puts every line on its own popup row
-                        // (ParseInstructions keeps a fixed row height, so an
-                        // embedded '\n' inside one TMP row would overflow).
-                        if (pat == "guard")
-                            // M13t (Thomas 30.10.): Stativ/Tripod units get
-                            // their own movement tree - the printed rule
-                            // makes movement and attack mutually exclusive,
-                            // so the default "close in inside the guard
-                            // zone" wording would talk the human into
-                            // forfeiting the shot. Missing key (old language
-                            // asset) -> legacy guard tree, never an empty row.
-                            EmitBlock(outp, act, plan.Tripod && !string.IsNullOrEmpty(L.moveGuardTripod)
-                                ? TF(L.moveGuardTripod, speed) : TF(L.moveGuard, speed));
-                        else if (pat == "blocker") EmitBlock(outp, act, TF(L.moveBlocker, speed));
-                        else if (pat == "support") EmitBlock(outp, act, TF(L.moveSupport, speed));
-                        else if (pat == "ambusher") EmitBlock(outp, act, TF(L.moveAmbusher, speed));
-                        else
-                            // aggressive + hunter (Thomas' own template): the
-                            // attack OPTION rides in this block too - which
-                            // action becomes the attack is decided at the
-                            // board; block 2 checks the one-attack cap.
-                            EmitBlock(outp, act, t != null ? TF(L.moveFocus, speed)
-                                                          : TF(L.moveFocusNoTarget, speed));
-                        break;
-                    case "attack":
-                        if (priorAttack)
-                        {
-                            // Noldorion playtest 2.11: the card PRINTS Assault
-                            // -> this block IS the second attack (printed
-                            // rule, not a conditional). Missing language key
-                            // falls back to the conditional rendering below.
-                            if (plan.Assault && !string.IsNullOrEmpty(L.assaultSecondAttack))
-                            {
-                                EmitBlock(outp, act, TF(L.assaultSecondAttack));
-                                break;
-                            }
-                            // Thomas round 10: the SECOND attack block does not
-                            // assert anything - it CHECKS: already attacked?
-                            // second shot forbidden unless the unit's own card
-                            // prints multi-attack explicitly (printed card text
-                            // the human reads; not a machine keyword) -> then
-                            // this block repeats Aktion 1. Never attacked?
-                            // block plays like an Aktion-1 attack. The move
-                            // body is the doctrine's disengage/hold logic.
-                            string body;
-                            if (pat == "guard") body = plan.Tripod && !string.IsNullOrEmpty(L.attack2MoveGuardTripod)
-                                ? TF(L.attack2MoveGuardTripod, speed)
-                                : TF(L.attack2MoveGuard, speed);
-                            else if (pat == "ambusher") body = TF(L.attack2MoveAmbush, speed);
-                            else if (pat == "blocker") body = TF(L.attack2MoveBlocker, speed, t);
-                            else body = t != null ? TF(L.attack2Move, speed)
-                                                   : TF(L.attack2MoveNoTarget, speed);
-                            EmitBlock(outp, act, TF(L.attackSecondIntro, body) + "\n"
-                                                  + TF(L.attackSecondTail));
-                            break;
-                        }
-                        priorAttack = true;
-                        if (pat == "guard")
-                            // M13t: tripod attack tree - the Wachzone wording
-                            // is replaced by plain "in reach" (a Stativ post
-                            // may hold a hunt-mission corridor too, where no
-                            // mission zone exists), and the no-target branch
-                            // never suggests the movement that would cost the
-                            // next activation's rules their meaning.
-                            EmitBlock(outp, act, plan.Tripod && !string.IsNullOrEmpty(L.attackGuardTripod)
-                                ? (t != null ? TF(L.attackGuardTripod, speed)
-                                             : TF(L.attackGuardTripodNoTarget, speed))
-                                : t != null ? TF(L.attackGuard, speed)
-                                            : TF(L.attackGuardNoTarget, speed));
-                        else if (pat == "ambusher")
-                            EmitBlock(outp, act, t != null ? TF(L.attackAmbush, speed)
-                                                           : TF(L.attackAmbushNoTarget, speed));
-                        else if (pat == "support")
-                            EmitBlock(outp, act, t != null ? TF(L.attackSupport, speed)
-                                                           : TF(L.attackSupportNoTarget, speed));
-                        else
-                            // aggressive/hunter/blocker: Thomas' Wenn-Dann-Schema
-                            // (focus if engaged, close in via the action, shoot
-                            // the line-blocker) + the cap check tail. No target
-                            // NAMES in the texts anymore (Thomas 29.10): the
-                            // round start already announces the focus target.
-                            EmitBlock(outp, act, t != null ? TF(L.attackFocus, speed)
-                                                           : TF(L.attackNoTarget, speed));
-                        break;
-                    case "special":
-                        EmitBlock(outp, act, TF(L.specialAsPrinted));
-                        break;
-                    case "rest":
-                        // RR REST section defines recovery via ENDURANCE,
-                        // which is printed on hero sheets only - an Imperial
-                        // figure rests nothing. Honest line: action lapses.
-                        EmitBlock(outp, act, TF(L.restLine));
-                        break;
-                    case "interact":
-                        EmitBlock(outp, act, TF(L.interactLine));
-                        break;
-                    case "shuffle":
-                        // M13c (Thomas 30.10): the "(afterwards: shuffle this
-                        // group's deck)" note is DELETED - this app does not
-                        // hand-shuffle group decks, the line was not true.
-                        // The token stays consumed silently (never verbatim).
-                        break;
-                    default:
-                        outp.Add(tok);   // unknown token: verbatim, never silently dropped
-                        break;
-                }
-            }
+            if (L == null) return outp.ToArray();   // broken language asset -> legacy fallback
+            var head = plan.Assault && !string.IsNullOrEmpty(L.apHeadAssault)
+                ? TF(L.apHeadAssault, 2, 2)
+                : TF(L.apHead, 2, plan.Assault ? 2 : 1);
+            if (!string.IsNullOrEmpty(head)) outp.Add(head);
+            if (!string.IsNullOrEmpty(L.apRule)) outp.Add(L.apRule);
+            var tree = TreeFor(L, plan);
+            var speed = (cd != null ? cd.speed : 0)
+                .ToString(System.Globalization.CultureInfo.InvariantCulture);
+            foreach (var line in (tree ?? "").Replace("\r", "").Split('\n'))
+                if (!string.IsNullOrEmpty(line.Trim()))
+                    outp.Add(line.Replace("{0}", speed));
+            if (!string.IsNullOrEmpty(L.apEnd)) outp.Add(L.apEnd);
             return outp.ToArray();
         }
 
-        /// <summary>Action-block count for the solo/numbered label decision.
-        /// M11: moved here from the retired Core OrderDeck (identical token
-        /// set; 'shuffle' and unknown tokens never count as actions).</summary>
-        internal static int CountActionBlocks(string[] blocks)
+        // Doctrine -> universal tree key. Missing key (stale language asset)
+        // falls back to the aggressive tree - never an empty popup. Tripod
+        // units always take their printed emplacement tree (M13t: movement
+        // and shot exclude each other), independent of the pattern - the
+        // E-Web saw pattern-dependent trees before, the printed rule wins.
+        static string TreeFor(UITacticalAI L, ActivationPlanData plan)
         {
-            if (blocks == null) return 0;
-            int n = 0;
-            foreach (var b in blocks)
-                if (b == "move" || b == "attack" || b == "special" ||
-                    b == "rest" || b == "interact") n++;
-            return n;
+            if (!plan.HasTarget)
+                return FirstNonEmpty(L.apTreeNoTarget, L.apTreeAggressive);
+            if (plan.Tripod) return FirstNonEmpty(L.apTreeTripod, L.apTreeAggressive);
+            switch (plan.Pattern ?? "aggressive")
+            {
+                case "guard":    return FirstNonEmpty(L.apTreeGuard,    L.apTreeAggressive);
+                case "blocker":  return FirstNonEmpty(L.apTreeBlocker,  L.apTreeAggressive);
+                case "support":  return FirstNonEmpty(L.apTreeSupport,  L.apTreeAggressive);
+                case "ambusher": return FirstNonEmpty(L.apTreeAmbush,   L.apTreeAggressive);
+                default:         return L.apTreeAggressive;
+            }
         }
 
-        /// Thomas 29.10 (playtest): decision trees are MULTI-LINE by design
-        /// ("Wenn-Dann: Frage? Dann Befehl." one line per branch). The popup
-        /// renderer gives every instruction string one fixed-height TMP row,
-        /// so a '\n' inside a single string would visually overflow. EmitBlock
-        /// puts the first line under the "Aktion n" label and every further
-        /// branch line on its own row.
-        static void EmitBlock(List<string> outp, System.Func<string, string> act, string text)
+        static string FirstNonEmpty(params string[] vals)
         {
-            bool first = true;
-            foreach (var line in (text ?? "").Split('\n'))
-            {
-                if (string.IsNullOrEmpty(line)) continue;
-                outp.Add(first ? act(line) : line);
-                first = false;
-            }
+            foreach (var v in vals) if (!string.IsNullOrEmpty(v)) return v;
+            return null;
         }
 
         // ------------------------------------------------------- language files

@@ -23,26 +23,19 @@ public class UILanguage
 // orders, focus explanations). All keys live in Languages/<Lang>/ui.json.
 public class UITacticalAI
 {
-	public string actionFormat, doctrineHeader, docAggressive, docGuard, docBlocker, docHunter, docSupport, docAmbusher;
-	// M13a (playtest 28.10): popup labelling of the Wenn-Dann tree. A plan
-	// with exactly ONE action block gets the unnumbered solo line
-	// (actionSoloFormat, {0} = block text); plans with >=2 keep "Aktion {n}".
-	// M13c (Thomas 30.10): the "Diese Karte zeigt..." lead and the standalone
-	// "Grundregel:" lead (doctrineTreeLead) are REMOVED - the basic attack
-	// rule now rides inside the merged info block (ordInfoRule).
-	public string actionSoloFormat;
-	public string moveFocus, moveFocusNoTarget, moveGuard, moveBlocker, moveSupport, moveAmbusher;
-	public string attackFocus, attackNoTarget, attackGuard, attackGuardNoTarget, attackAmbush, attackAmbushNoTarget, attackSupport, attackSupportNoTarget;
-	public string attack2Move, attack2MoveNoTarget, attack2MoveGuard, attack2MoveAmbush, attack2MoveBlocker;
-	// M13t (Thomas 30.10.): Stativ/Tripod emplacement action trees - printed
-	// rule: movement and attack are mutually exclusive per activation, so the
-	// guard tree must never suggest a shuffle while a post/target exists.
-	// Missing keys fall back to the plain guard trees (never empty rows).
-	public string moveGuardTripod, attackGuardTripod, attackGuardTripodNoTarget, attack2MoveGuardTripod;
-	public string attackSecondIntro, attackSecondTail;
-	// Noldorion playtest 2.11 (PR #194): assertive second-attack block for
-	// cards that PRINT Assault (multiple attack actions per activation).
-	public string assaultSecondAttack;
+	public string doctrineHeader, docAggressive, docGuard, docBlocker, docHunter, docSupport, docAmbusher;
+	// Aufgabe 4 (Thomas 02.11): the fixed "Aktion 1/2" pair and ALL per-block
+	// move/attack trees (actionFormat, actionSoloFormat, moveFocus*, moveGuard,
+	// moveBlocker, moveSupport, moveAmbusher, attackFocus/NoTarget, attack
+	// Guard*, attackAmbush*, attackSupport*, attack2Move*, attackSecondIntro/
+	// Tail, assaultSecondAttack, tripod trees) are RETIRED with the universal
+	// action block - fields and ui.json keys removed in the same commit
+	// (M13g rule). New frame: apHead/apHeadAssault = detected AP counter
+	// ({0}/{1}), apRule = reading rule, apTree* = per-doctrine multi-line
+	// decision trees ({0} = printed speed), apEnd = loop-trap marker. TMP
+	// tags are language-owned (ui.json law); solo/numbered labelling and the
+	// doctrineTreeLead/"Grundregel" removals of M13a/M13c stay in force.
+	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd;
 	public string overlordFallback;
 	// M13c (Thomas 30.10): shuffleNote DELETED ("(afterwards: shuffle this
 	// group's deck)" does not exist in this app's flow - honest removal).

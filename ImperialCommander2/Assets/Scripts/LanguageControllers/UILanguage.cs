@@ -36,9 +36,14 @@ public class UITacticalAI
 	// tags are language-owned (ui.json law); solo/numbered labelling and the
 	// doctrineTreeLead/"Grundregel" removals of M13a/M13c stay in force.
 	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd;
-	// Thomas 02.11: command trees for cards that PRINT the "Order" ability
-	// (Imperial Officer; elite variant via printed "(Elite)" name suffix).
-	public string apTreeOfficer, apTreeOfficerElite;
+	// Thomas 02.11: command trees for cards that PRINT a command ability on
+	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
+	// rolled "guard" still commands, so every pattern keeps its own action
+	// wording AND the Order branch). Plain "Order" -> apTreeOfficer<Pattern>,
+	// elite "Executive Order" -> apTreeOfficerElite<Pattern>; a missing elite
+	// row falls back to the plain officer row, then to the pattern tree.
+	public string apTreeOfficerAggressive, apTreeOfficerGuard, apTreeOfficerBlocker, apTreeOfficerSupport, apTreeOfficerAmbush;
+	public string apTreeOfficerEliteAggressive, apTreeOfficerEliteGuard, apTreeOfficerEliteBlocker, apTreeOfficerEliteSupport, apTreeOfficerEliteAmbush;
 	public string overlordFallback;
 	// M13c (Thomas 30.10): shuffleNote DELETED ("(afterwards: shuffle this
 	// group's deck)" does not exist in this app's flow - honest removal).

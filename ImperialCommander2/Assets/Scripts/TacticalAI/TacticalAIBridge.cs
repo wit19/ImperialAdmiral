@@ -869,17 +869,32 @@ namespace TacticalAI
         // units always take their printed emplacement tree (M13t: movement
         // and shot exclude each other), independent of the pattern - the
         // E-Web saw pattern-dependent trees before, the printed rule wins.
-        // Officers (Thomas 02.11): the printed Order ability is a
-        // doctrine-independent command job -> the officer tree takes over in
-        // EVERY pattern (missing key -> normal pattern trees).
+        // Officers (Thomas 02.11, corrected): command ability + PER-DOCTRINE
+        // officer tree - the doctrine's own action wording (Wachzone,
+        // Blockierfeld, cover, ambush) stays, the Order branches ride on top.
+        // Elite ("Executive Order") prefers its elite row, falls back to the
+        // plain officer row, then to the pattern tree.
         static string TreeFor(UITacticalAI L, ActivationPlanData plan)
         {
             if (!plan.HasTarget)
                 return FirstNonEmpty(L.apTreeNoTarget, L.apTreeAggressive);
-            if (plan.OfficerElite)
-                return FirstNonEmpty(L.apTreeOfficerElite, L.apTreeOfficer, PatternTree(L, plan));
             if (plan.Officer)
-                return FirstNonEmpty(L.apTreeOfficer, PatternTree(L, plan));
+            {
+                string off = null, offElite = null;
+                switch (plan.Pattern ?? "aggressive")
+                {
+                    case "guard":    off = L.apTreeOfficerGuard;    offElite = L.apTreeOfficerEliteGuard;    break;
+                    case "blocker":  off = L.apTreeOfficerBlocker;  offElite = L.apTreeOfficerEliteBlocker;  break;
+                    case "support":  off = L.apTreeOfficerSupport;  offElite = L.apTreeOfficerEliteSupport;  break;
+                    case "ambusher": off = L.apTreeOfficerAmbush;   offElite = L.apTreeOfficerEliteAmbush;   break;
+                    // hunter shares the aggressive officer row (mirrors the
+                    // plain pattern trees, where hunter = aggressive).
+                    default:         off = L.apTreeOfficerAggressive; offElite = L.apTreeOfficerEliteAggressive; break;
+                }
+                if (plan.OfficerElite)
+                    return FirstNonEmpty(offElite, off, PatternTree(L, plan));
+                return FirstNonEmpty(off, PatternTree(L, plan));
+            }
             return PatternTree(L, plan);
         }
 

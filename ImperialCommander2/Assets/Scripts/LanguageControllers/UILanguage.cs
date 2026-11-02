@@ -98,6 +98,17 @@ public class UITacticalAI
 	public string personaCaptTrooper, personaCaptTrooperMotto, personaCaptIsb, personaCaptIsbMotto;
 	public string personaCaptHutt, personaCaptHuttMotto;
 	public string personaCaptSignature, personaIsbSignature, personaHuttSignature;
+	// v2.1 fleet (M6c, CONCEPT_personas_v2.md Sec.2, Planpunkt 3): the three
+	// NEW personas (P2 Feldherr, P5 Droiden-Direktor, P6 Grossmoff) get
+	// name/motto keys; the three Bestands personas REUSE their Alt-fleet keys
+	// (personaCaptTrooper/Isb/Hutt + Mottos - keine Dubletten, Key-Matrix im
+	// M6c-Abschlusskommentar). personaRankCounter is the 'Rang n/max' display
+	// (Beschluss 5, Sec.3): the use site lands with M6d, the legacy
+	// single-number personaRank chip stays UNTOUCHED (live {0} callers).
+	public string personaCaptFeldherr, personaCaptFeldherrMotto;
+	public string personaCaptDroidenDirektor, personaCaptDroidenDirektorMotto;
+	public string personaCaptGrossmoff, personaCaptGrossmoffMotto;
+	public string personaRankCounter;
 	// Noldorion review 2.11 (PR #194): popup note for non-villain groups
 	// whose printed abilities stay in the human lane (the mode never
 	// pre-decides "may" abilities it cannot see the board for). (The card

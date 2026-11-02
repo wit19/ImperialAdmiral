@@ -304,7 +304,7 @@
     "attackAmbushNoTarget": "Not attacked yet? Then: the ambush shot at the first hero you can shoot from here (range + clear line of sight).\nAfterwards: do not unmask further.\nAlready attacked? Then: stay unseen - relocate to a space no hero can see (up to {0}); your next shot comes from new cover.",
     "attackSupport": "Not attacked yet? Then: attack the focus target (range + clear line of sight) - from cover, prefer soft targets.\nNo line of sight or too far? Then: back off instead of pushing in.\nLine of sight blocked by ANOTHER hero figure? Then: attack that blocking figure.\nAlready attacked? Then: stay in cover and spend leftover movement falling back.",
     "attackSupportNoTarget": "Not attacked yet? Then: the softest target you can shoot from cover (range + clear line of sight).\nNo target? Then: back off.\nAlready attacked? Then: stay in cover.",
-    "attack2Move": "Focus target still within your attack range? Then: hold cover and pre-aim for the next activation. Otherwise: move up to {0} spaces toward the focus target.",
+    "attack2Move": "Focus target still within your attack range? Then: move into cover with your remaining movement. Otherwise: move up to {0} spaces toward the focus target.",
     "attack2MoveNoTarget": "Hold cover against the nearest hero - or move up to {0} spaces toward him.",
     "attack2MoveGuard": "Move up to {0} spaces against the nearest hero inside your guard zone - or hold your position.",
     "attack2MoveAmbush": "Relocate to a space no hero can see (up to {0}) - your next shot comes from new cover.",

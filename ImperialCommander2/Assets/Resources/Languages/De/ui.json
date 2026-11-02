@@ -304,7 +304,7 @@
     "attackAmbushNoTarget": "Noch nicht angegriffen? Dann: Schuss aus dem Versteck auf den ersten Helden, den du von hier schießen kannst (Reichweite + freie Sichtlinie).\nDanach: nicht weiter enttarnen.\nSchon angegriffen? Dann: bleib unentdeckt – wechsle auf ein Feld, das kein Held sehen kann (max. {0} Felder); der nächste Schuss kommt aus neuer Deckung.",
     "attackSupport": "Noch nicht angegriffen? Dann: Fokusziel angreifen (Reichweite + freie Sichtlinie) – aus der Deckung, lieber weiche Ziele.\nKeine Sichtlinie oder zu weit? Dann: weiche zurück statt vorzudrängen.\nSichtlinie durch eine ANDERE Heldenfigur blockiert? Dann: diese blockierende Heldenfigur angreifen.\nSchon angegriffen? Dann: in Deckung bleiben und übrige Bewegungspunkte für den Rückzug ausgeben.",
     "attackSupportNoTarget": "Noch nicht angegriffen? Dann: das weichste Ziel, das du aus Deckung schießen kannst (Reichweite + freie Sichtlinie).\nKein Ziel? Dann: zurückweichen.\nSchon angegriffen? Dann: in Deckung bleiben.",
-    "attack2Move": "Fokusziel noch in Angriffsreichweite? Dann: Deckung halten und für die nächste Aktivierung vorzielen. Sonst: bis zu {0} Felder auf das Fokusziel zubewegen.",
+    "attack2Move": "Fokusziel noch in Angriffsreichweite? Dann: Bewege dich mit den restlichen Bewegungspunkten in Deckung. Sonst: bis zu {0} Felder auf das Fokusziel zubewegen.",
     "attack2MoveNoTarget": "Deckung gegen den nächsten Helden halten – oder bis zu {0} Felder auf ihn zubewegen.",
     "attack2MoveGuard": "Bewege dich bis zu {0} Felder innerhalb der Wachzone auf den nächsten Helden zu – oder halte deine Stellung.",
     "attack2MoveAmbush": "Wechsle auf ein Feld, das kein Held sehen kann (max. {0} Felder) – der nächste Schuss kommt aus neuer Deckung.",

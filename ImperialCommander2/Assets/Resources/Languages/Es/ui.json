@@ -356,6 +356,8 @@
     "ordPhaseDefend": "Defensive posture",
     "ordPhaseHunt": "Hunt",
     "ordPatternRoll": "Rolled doctrine: {0} (draw {1}/100)",
+    "ordExplainHead": "EXPLANATION",
+    "ordExplainFocusWhy": "Focus target {0}: {1}",
     "expNone": "NINGUNA",
     "expPostHoc": "DESPUÉS",
     "expFull": "COMPLETA",

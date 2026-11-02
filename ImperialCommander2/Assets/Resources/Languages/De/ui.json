@@ -356,6 +356,8 @@
     "ordPhaseDefend": "Verteidigungshaltung",
     "ordPhaseHunt": "Jagd",
     "ordPatternRoll": "Muster-Wurf: {0} (Wurf {1}/100)",
+    "ordExplainHead": "ERKLÄRUNG",
+    "ordExplainFocusWhy": "Fokus-Ziel {0}: {1}",
     "expNone": "KEINE",
     "expPostHoc": "NACHHER",
     "expFull": "AUSFÜHRLICH",

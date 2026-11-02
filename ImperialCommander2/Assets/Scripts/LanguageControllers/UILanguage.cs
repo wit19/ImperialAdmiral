@@ -117,6 +117,9 @@ public class UITacticalAI
 	// the defend->hunt flip and the EXPLAIN line naming both phases.
 	public string ordPhaseShiftQM, ordPhaseExplain, ordPhaseDefend, ordPhaseHunt;
 	public string ordPatternRoll;
+	// Thomas 02.11 (popup declutter): EXPLAIN section header + the focus
+	// target reasoning line that moved out of the action area.
+	public string ordExplainHead, ordExplainFocusWhy;
 	public string expNone, expPostHoc, expFull;
 }
 

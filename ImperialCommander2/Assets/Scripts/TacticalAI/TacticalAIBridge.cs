@@ -45,6 +45,10 @@ namespace TacticalAI
         public string[] Blocks;         // action tokens pre-render (public text)
         public string TargetName;       // deterministic focus target
         public string TargetWhy;
+        // Thomas 02.11 (popup declutter, request 1): the focus-target WHY
+        // lives here now - the popup line stays short ("Fokus-Ziel: Name")
+        // and the reason renders inside the gated EXPLAIN section only.
+        public string FocusReason;
         public string ExplainLine;      // printed why-string (ExplainLevel)
         public bool HasTarget;
         public string Pattern;          // doctrine pattern (dev 11); null = aggressive
@@ -655,9 +659,12 @@ namespace TacticalAI
             {
                 plan.HasTarget = true;
                 plan.TargetName = targetName;
-                plan.TargetWhy = why;
+                // Thomas 02.11 (request 1): the action screen shows ONLY the
+                // target name; TrySelectTarget hands back the bare reason,
+                // which ExplainFor renders in the EXPLAIN section.
+                plan.TargetWhy = TF(UIx.focusPrefix) + targetName;
+                plan.FocusReason = why;
             }
-            plan.ExplainLine = ExplainFor(cd.id);
             // Thomas 29.10: the focus line is NOT part of the explanation
             // anymore - the popup prints it ABOVE the action blocks (focus
             // first, then actions, then the gated explanation); the
@@ -672,6 +679,9 @@ namespace TacticalAI
             // catalog record - see the block synthesis above.)
             plan.Pattern = _patternByCard != null && _patternByCard.TryGetValue(cd.id, out var pat)
                            && !string.IsNullOrEmpty(pat) ? pat : "aggressive";
+            // Thomas 02.11: explain is built AFTER the pattern exists (its
+            // doctrine row reads plan.Pattern) and before the blocks render.
+            plan.ExplainLine = ExplainFor(cd.id, plan);
             // Playtest 27.10 (Thomas): raw deck tokens ('move', 'attack') are
             // not an instruction a human Imperial player can execute. Render
             // every block as a concrete, localized order naming the focus
@@ -812,7 +822,9 @@ namespace TacticalAI
             // review 27.10: zero hardcoded player strings in the bridge).
             var pat = plan.Pattern ?? "aggressive";
             bool priorAttack = false;   // one-attack-per-activation rule tracker
-            outp.Add(TF(L.doctrineHeader, DoctrineName(pat, L)));
+            // Thomas 02.11 (request 2): the doctrine header left the action
+            // area - ExplainFor prints it in the EXPLAIN section (the action
+            // TREES below still branch on the pattern; only the label moved).
             // Thomas 28.10: the numbers are a Wenn-Dann TREE, not a to-do
             // list. Since M11 every shipped activation carries its printed
             // action pair (solo labels only survive as a rendering fallback,
@@ -1176,8 +1188,10 @@ namespace TacticalAI
             if (Wounded(pick)) parts.Add(TF(L.focusWounded));
             parts.Add(TF(L.focusFirepower));
             // M13c (Thomas 30.10): the "kein Zufall / no chance" tail removed.
+            // Thomas 02.11 (request 1): bare reason only - the caller builds
+            // the short "Fokus-Ziel: {name}" line and the EXPLAIN section.
             heroName = pick.name;
-            why = TF(L.focusPrefix) + heroName + " \u2014 " + string.Join("; ", parts);
+            why = string.Join("; ", parts);
             return true;
         }
 
@@ -1405,7 +1419,10 @@ namespace TacticalAI
                 parts.Add(TF(L.ordStrainFuzzy, dec.StrainPriorRunden.Value, dec.StrainPriorDecke.Value));
             // M13c (Thomas 30.10): the "alle Gruppen richten sich auf
             // dasselbe Fokusziel; kein Zufall" tail removed by Thomas.
-            return TF(L.focusPrefix) + heroName + " — " + string.Join("; ", parts);
+            // Thomas 02.11 (request 1): the name/prefix wrapper is GONE here -
+            // the caller prints the short target line, this returns the bare
+            // reason for the EXPLAIN section.
+            return string.Join("; ", parts);
         }
 
         static string RiskLabel(UITacticalAI L, string position)
@@ -1424,15 +1441,25 @@ namespace TacticalAI
 
         // ------------------------------------------------------------- explain
 
-        static string ExplainFor(string groupId)
+        static string ExplainFor(string groupId, ActivationPlanData plan)
         {
             if (TacticalAISettings.ExplainLevel == "none") return null;
             if (TacticalAISettings.ExplainLevel == "full")
             {
                 string line = null;
+                // Thomas 02.11 (request 3): the section header makes the
+                // explain block readable as a block; content lines keep
+                // their own labels (one section per popup row). If NOTHING
+                // below fires, the bare header is dropped (never a lone
+                // "ERKLÄRUNG" row).
+                var Lh = UIx;
+                if (Lh != null && !string.IsNullOrEmpty(Lh.ordExplainHead))
+                    line = Lh.ordExplainHead;
                 var slot = _slots.FirstOrDefault(s => s.GroupId == groupId);
                 if (slot != null && UIx != null)
-                    line = TF(UIx.whyPrefix) + slot.Why + " " + TF(UIx.whyRank, slot.Rank + 1);
+                    // (append, not assign - the header row stays on top)
+                    line = (line == null ? "" : line + "\n")
+                           + TF(UIx.whyPrefix) + slot.Why + " " + TF(UIx.whyRank, slot.Rank + 1);
                 // M6: the threat-weighted risk POSITION for this group
                 // (concept 3.5.1). Localized label only - the sim-pinned
                 // German Why/Fallback texts stay in the Debug log, never in
@@ -1461,6 +1488,12 @@ namespace TacticalAI
                 // and the effective distribution it was drawn from (row
                 // weights + posture modifier + printed-law filter). All
                 // three are public data (asset + mission structure).
+                // Thomas 02.11 (request 2): the doctrine NAME moved out of
+                // the action area into this section (above its own roll).
+                if (UIx != null && plan != null && !string.IsNullOrEmpty(UIx.doctrineHeader))
+                    line = (line == null ? "" : line + "\n")
+                           + TF(UIx.doctrineHeader,
+                                DoctrineName(plan.Pattern ?? "aggressive", UIx));
                 if (UIx != null && !string.IsNullOrEmpty(UIx.ordPatternRoll)
                     && _patternRoll.TryGetValue(groupId, out var rolled))
                 {
@@ -1474,6 +1507,14 @@ namespace TacticalAI
                                   ": " + rolled + " posture=" + _doctrineEffective);
                     }
                 }
+                // Thomas 02.11 (request 1): the focus-target reasoning moved
+                // out of the action area into this section (the line above
+                // the blocks now only names the target).
+                if (UIx != null && plan != null && plan.HasTarget
+                    && !string.IsNullOrEmpty(plan.FocusReason)
+                    && !string.IsNullOrEmpty(UIx.ordExplainFocusWhy))
+                    line = (line == null ? "" : line + "\n")
+                           + TF(UIx.ordExplainFocusWhy, plan.TargetName, plan.FocusReason);
                 // Noldorion direction reply 2.11 ("it just needs to be very
                 // transparent how exactly that power score is calculated"):
                 // EXPLAIN=VOLL discloses the REAL round-focus computation -
@@ -1507,6 +1548,8 @@ namespace TacticalAI
                 // (no hardcoded game text on the player surface, ui.json law).
                 // Personas (M4): the class-card announce block is GONE -
                 // personas own this display slot now (plan.PersonaLine).
+                // request 3: never ship a lone header row.
+                if (line != null && Lh != null && line == Lh.ordExplainHead) return null;
                 return line;
             }
             // post_hoc: printed at round end via OnNewRound quick message

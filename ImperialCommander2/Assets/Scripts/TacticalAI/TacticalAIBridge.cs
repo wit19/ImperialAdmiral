@@ -196,6 +196,10 @@ namespace TacticalAI
             _guardBandCount = 0;
             _guardIds = null;
             _personaView = new Tac.PersonaView();
+            // M6b: fresh mission identity -> fresh elite_swap ledger
+            // (SwapDeployCandidate also re-keys lazily; this is the
+            // explicit teardown so a campaign switch cannot carry swaps).
+            PersonaState.ResetSwapLedger();
             _personaQMAnnounced = false;
             _riskByGroup = null;
             _threatLedger = null;

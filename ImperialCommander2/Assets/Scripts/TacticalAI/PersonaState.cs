@@ -175,6 +175,159 @@ namespace TacticalAI
             catch { return printedCost; }
         }
 
+        // ------------------------------------------------ M6b elite_swap ---
+        // The Unity seam of the elite_swap channel (Core.PersonaSwaps holds
+        // the law; CONCEPT_personas_v2 v2.1 Sec.1.1). Call sites: the three
+        // HAND-DRAWN deployment rails in SagaDeploymentPopup (landing d1/d2,
+        // Onslaught draw loop, manual optional confirm). Mission-authored
+        // EnemyDeployment events and mission start groups deliberately do
+        // NOT swap: their cards are mission id-authoring and board INPUTS
+        // for the persona's board law, not persona candidates (conservative
+        // reading, documented in the commit).
+        //
+        // Ledger identity: the SAME recipe as the subsidy (campaign GUID +
+        // missionID + threat - a rescaled restart counts as new). Static
+        // like the subsidy ledger: a mid-mission reload starts it empty and
+        // the BOARD law keeps its guard (a live elite card stands in
+        // deployedEnemies regardless of ledger history), so a persona can
+        // never put a SECOND simultaneous elite of one name on the board.
+        static SwapLedger _swapLedger;
+        static string _swapKey;
+
+        /// <summary>Mission identity for per-mission persona bookings:
+        /// campaign GUID + missionID + live threat (subsidy recipe, M2).</summary>
+        static string MissionIdentity()
+        {
+            var camp = Live();
+            var s = DataStore.sagaSessionData;
+            if (s == null || s.setupOptions == null || s.setupOptions.projectItem == null)
+                return null;
+            return (camp != null ? camp.GUID.ToString() : "solo")
+                   + "|" + s.setupOptions.projectItem.missionID + "|" + LiveThreat();
+        }
+
+        /// <summary>elite_swap candidate transformation at the moment a hand
+        /// card is taken for deployment. Returns the ELITE card when the
+        /// persona may swap this candidate (budget, name cap, board law,
+        /// elite card in hand - all in Core.PersonaSwaps.TrySwap), else the
+        /// UNCHANGED input. A swap consumes the elite card: the caller
+        /// deploys it INSTEAD of the regular while the threat ledger keeps
+        /// booking the REGULAR's printed cost (Delta-0, Sec.1.1-1). Fails
+        /// HARMLESSLY on every unmet condition and on any error: the
+        /// regular deploys as-is - no crash, no fallback, no substitution.
+        /// Books the mission ledger HERE (at selection time), so a later
+        /// draw in the same window can never see the consumed elite card;
+        /// the legacy elite rails (Hard-Roll RNG, upstream upgrades) run
+        /// over the result UNCHANGED (Sec.1.2-2 - read yes, change never).</summary>
+        public static global::DeploymentCard SwapDeployCandidate(global::DeploymentCard card)
+        {
+            try
+            {
+                if (card == null || card.isElite) return card;
+                if (!TacticalAISettings.Enabled) return card;   // same gate as CostFor
+                var v = ResolveLive();
+                if (v.IsEmpty || PersonaSwaps.Budget(v) <= 0) return card;
+                var key = MissionIdentity();
+                if (key == null) return card;
+                if (key != _swapKey) { _swapKey = key; _swapLedger = new SwapLedger(); }
+
+                // Internal (English) names, NEVER the localized cd.name:
+                // SetCardTranslations overwrites live card names with the
+                // active language (the M13f traits trap), so the asset's
+                // name filters may only ever run on the internal lane.
+                var name = InternalName(card.id) ?? card.name;
+
+                // Board, read-only and DEFENSIVE: every deployed elite
+                // counts, mission start groups and Hard-Mode upgrade
+                // products included (Sec.1.1-4). Nothing here changes them.
+                var board = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var pool = DataStore.deployedEnemies;
+                if (pool != null)
+                    foreach (var d in pool)
+                        if (d != null && d.isElite && !string.IsNullOrEmpty(d.name))
+                            board.Add(PersonaSwaps.BaseOf(InternalName(d.id) ?? d.name));
+
+                // The public deploy hand (the same list the landing draws from).
+                var handIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var hand = DataStore.deploymentHand;
+                if (hand != null)
+                    foreach (var h in hand)
+                        if (h != null && !string.IsNullOrEmpty(h.id)) handIds.Add(h.id);
+
+                var probe = new SwapCard(card.id, name, card.faction ?? "",
+                                         card.cost, card.size, false);
+                string eliteId;
+                if (!PersonaSwaps.TrySwap(v, _swapLedger, probe, board, handIds, out eliteId))
+                    return card;
+                var elite = DataStore.deploymentCards == null ? null :
+                    DataStore.deploymentCards.FirstOrDefault(x => x != null && x.isElite
+                        && string.Equals(x.id, eliteId, StringComparison.OrdinalIgnoreCase));
+                if (elite == null) return card;   // no elite card behind the id: harmless
+                _swapLedger.Book(PersonaSwaps.BaseOf(name));
+                Debug.Log("PersonaSwap::" + v.Id + " " + card.id + "->" + elite.id);
+                return elite;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("PersonaState::swap failed: " + e.Message);
+                return card;
+            }
+        }
+
+        // id -> INTERNAL (English) card name, from the shipped EN card
+        // asset (the same locale-stable lane the officer/Tripod detections
+        // ride). Loaded once, lazily; unreadable asset -> null map and the
+        // callers fall back to the localized name (matching may miss = a
+        // harmless no-swap, never a wrong swap: the swap target itself is
+        // always the row's elite_card id).
+        static Dictionary<string, string> _internalNames;
+        static bool _internalNamesTried;
+
+        static string InternalName(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId)) return null;
+            if (_internalNames == null && !_internalNamesTried)
+            {
+                _internalNamesTried = true;
+                try
+                {
+                    var ta = UnityEngine.Resources.Load<UnityEngine.TextAsset>(
+                        "Languages/En/DeploymentGroups/enemies");
+                    if (ta != null)
+                    {
+                        var txt = System.Text.RegularExpressions.Regex.Replace(
+                            ta.text, @",(\s*[}\]])", "$1");   // legacy trailing commas
+                        var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                        foreach (var raw in Json.AsList(Json.Parse(txt)))
+                        {
+                            var d = raw as Dictionary<string, object>;
+                            if (d == null) continue;
+                            object o;
+                            var id = d.TryGetValue("id", out o) && o != null ? Json.AsStr(o) : null;
+                            var nm = d.TryGetValue("name", out o) && o != null ? Json.AsStr(o) : null;
+                            if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(nm)) map[id] = nm;
+                        }
+                        if (map.Count > 0) _internalNames = map;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("PersonaState::internal name table failed: " + e.Message);
+                }
+            }
+            if (_internalNames == null) return null;
+            string got; return _internalNames.TryGetValue(cardId, out got) ? got : null;
+        }
+
+        /// <summary>Reset the per-mission swap ledger (session teardown /
+        /// new campaign). The ledger also re-keys lazily in
+        /// SwapDeployCandidate when the mission identity changes.</summary>
+        public static void ResetSwapLedger()
+        {
+            _swapLedger = null;
+            _swapKey = null;
+        }
+
         /// <summary>Personas (M2): grant + announce the mission subsidy at
         /// the deployment popup OPEN - the earliest moment the deploy hand
         /// and the live threat exist, so the credit is really spendable in

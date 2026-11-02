@@ -187,8 +187,23 @@ public static class PersonasGate
                                     else
                                         Ok(false, pid + " elite target " + eliteId + " present in EN card asset");
                                     // regular side exists in the Core roster
-                                    Ok(rosterByName.ContainsKey(baseName),
-                                        pid + " regular base name present in roster: " + baseName);
+                                    List<Dictionary<string, object>> regs;
+                                    if (rosterByName.TryGetValue(baseName, out regs))
+                                    {
+                                        Ok(true, pid + " regular base name present in roster: " + baseName);
+                                        // SIZE pairing law (Delta-0 law): the
+                                        // figure count of a group IS the card
+                                        // size, so a swap may never move it -
+                                        // against EVERY regular roster card
+                                        // of the name (incl. RRG double cards
+                                        // like the second Probe Droid).
+                                        int eliteSize = Json.AsInt(card["size"]);
+                                        foreach (var reg in regs)
+                                            Ok(Json.AsInt(reg["size"]) == eliteSize,
+                                                pid + " size parity " + baseName + ": " + Json.AsStr(reg["id"])
+                                                + " size " + Json.AsInt(reg["size"]) + " == " + eliteId + " size " + eliteSize);
+                                    }
+                                    else Ok(false, pid + " regular base name present in roster: " + baseName);
                                 }
                                 else Ok(false, pid + " elite target " + eliteId + " exists in CardData roster");
                             }

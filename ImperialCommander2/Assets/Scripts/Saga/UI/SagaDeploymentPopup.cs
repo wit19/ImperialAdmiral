@@ -332,12 +332,22 @@ namespace Saga
 			DeploymentCard d1 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
 			if ( d1 != null )
 			{
-				d1.ResetWoundTracker();
+				// M6b persona elite_swap (CONCEPT_personas_v2 v2.1 Sec.1.1):
+				// the persona deploys its printed elite INSTEAD of this
+				// regular. The ledger books at selection time (the second
+				// landing can never draw the consumed elite card) and the
+				// elite leaves the hand with the regular. Every cost line
+				// below keeps reading d1: the threat stays booked at the
+				// REGULAR's printed cost (Delta-0). Unmet budget/name-cap/
+				// board/hand law or any error -> plain regular, no crash.
+				var d1Deploy = TacticalAI.PersonaState.SwapDeployCandidate( d1 );
+				d1Deploy.ResetWoundTracker();
 				topLanding.SetActive( true );
-				landing1.Init( d1, 3 );//make sure it shows full size
-				groupsToDeploy.Add( d1 );
-				//remove it from dep hand
+				landing1.Init( d1Deploy, 3 );//make sure it shows full size
+				groupsToDeploy.Add( d1Deploy );
+				//remove it from dep hand (regular + consumed elite)
 				DataStore.deploymentHand.Remove( d1 );
+				DataStore.deploymentHand.Remove( d1Deploy );
 				//if this is an optional deployment event action, check for cost
 				if ( deploymentOverride != null )
 				{
@@ -356,12 +366,16 @@ namespace Saga
 			DeploymentCard d2 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
 			if ( d2 != null )
 			{
-				d2.ResetWoundTracker();
+				// M6b persona elite_swap (see d1 above): elite instead of
+				// regular, booked at the regular's printed cost.
+				var d2Deploy = TacticalAI.PersonaState.SwapDeployCandidate( d2 );
+				d2Deploy.ResetWoundTracker();
 				bottomLanding.SetActive( true );
-				landing2.Init( d2, 3 );//make sure it shows full size
-				groupsToDeploy.Add( d2 );
-				//remove it from dep hand
+				landing2.Init( d2Deploy, 3 );//make sure it shows full size
+				groupsToDeploy.Add( d2Deploy );
+				//remove it from dep hand (regular + consumed elite)
 				DataStore.deploymentHand.Remove( d2 );
+				DataStore.deploymentHand.Remove( d2Deploy );
 				//if this is an optional deployment event action, check for cost
 				if ( deploymentOverride != null )
 				{
@@ -449,14 +463,19 @@ namespace Saga
 				dep = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat, true );
 				if ( dep != null )
 				{
-					dep.currentSize = dep.size;
+					// M6b persona elite_swap (see landing above): elite
+					// instead of regular. The tier/cost lines below keep
+					// reading dep - the REGULAR's printed values (Delta-0).
+					var depDeploy = TacticalAI.PersonaState.SwapDeployCandidate( dep );
+					depDeploy.currentSize = depDeploy.size;
 					bottomOnslaught.SetActive( true );
 					var go = Instantiate( depPrefab, depGrid.transform );
-					go.GetComponent<ReinforcePrefab>().Init( dep );
+					go.GetComponent<ReinforcePrefab>().Init( depDeploy );
 					go.transform.localScale = new Vector3( .8f, .8f, .8f );
-					groupsToDeploy.Add( dep );
-					//remove it from dep hand
+					groupsToDeploy.Add( depDeploy );
+					//remove it from dep hand (regular + consumed elite)
 					DataStore.deploymentHand.Remove( dep );
+					DataStore.deploymentHand.Remove( depDeploy );
 					if ( dep.tier == 1 )
 						DataStore.sagaSessionData.ModifyThreat( -dep.cost );
 					else if ( dep.tier == 2 )
@@ -754,8 +773,12 @@ namespace Saga
 
 			//pay the printed cost (EnemyDeployment cost law)
 			DataStore.sagaSessionData.ModifyThreat( -spend );
-			manualGroup.ResetWoundTracker();
+			// M6b persona elite_swap: elite instead of the picked regular,
+			// spend above already booked at manualGroup.cost (Delta-0).
+			var mDeploy = TacticalAI.PersonaState.SwapDeployCandidate( manualGroup );
+			mDeploy.ResetWoundTracker();
 			DataStore.deploymentHand.Remove( manualGroup );
+			DataStore.deploymentHand.Remove( mDeploy );
 
 			//specific-DP override, passed inline (like the event-sourced
 			//RandomDeployment path) - no permanent override registered
@@ -764,7 +787,7 @@ namespace Saga
 			deploymentOverride.specificDeploymentPoint = manualPickedDp.GUID;
 			deploymentOverride.pointList.Clear();
 			deploymentOverride.pointList.Add( new DPData { GUID = manualPickedDp.GUID } );
-			groupsToDeploy.Add( manualGroup );
+			groupsToDeploy.Add( mDeploy );   // M6b: the swapped card deploys
 			OnClose();
 		}
 

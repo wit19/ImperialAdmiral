@@ -45,14 +45,15 @@ namespace TacticalAI.Core
     /// own _meta block is the normative schema text).</summary>
     public sealed class PersonaEffect
     {
-        public string Kind = "";              // cost_reduction | free_deployment | pattern_weight | guard_split | signaturText
-        public int Amount = 1;                // cost_reduction amount / free_deployment count
+        public string Kind = "";              // cost_reduction | free_deployment | pattern_weight | guard_split | signaturText | elite_swap
+        public int Amount = 1;                // cost_reduction amount / free_deployment count / elite_swap swaps
         public double Multiplier = 1.0;       // pattern_weight multiplier (<=1 = no-op)
         public List<string> Patterns = new List<string>();
         public string NameMatch = null;       // regex source or null
         public string FactionMatch = null;    // exact faction or null
         public int GuardPercent = -1;         // guard_split share (0..100)
         public string Key = null;             // signaturText ui.json key
+        public string EliteCard = null;       // elite_swap: the elite card id this row swaps INTO (explicit asset contract)
         public string Source = "";            // printed-card derivation (dev docs)
 
         /// <summary>Does a guard_split effect row apply to this card? Used
@@ -300,6 +301,7 @@ namespace TacticalAI.Core
                                     Multiplier = D(ed, "multiplier", 1.0),
                                     GuardPercent = I(ed, "guardPercent", -1),
                                     Key = S(ed, "key", null),
+                                    EliteCard = S(ed, "elite_card", null),
                                     NameMatch = S(ed, "internalNameMatch", null),
                                     FactionMatch = S(ed, "factionMatch", null),
                                     Source = S(ed, "source", ""),

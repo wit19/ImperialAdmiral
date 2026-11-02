@@ -62,6 +62,16 @@ namespace TacticalAI
         // The activation then runs TWO attack blocks; the second one is the
         // printed second attack, not a conditional move-check.
         public bool Assault;
+        // Thomas 02.11 (Offizier-Baeume): command abilities ride the printed
+        // ignored lane of the card data (comma-separated tokens):
+        //   "Order"            -> normal officer tree (DG004/DG005)
+        //   "Executive Order"  -> elite officer tree (DG006 prints the
+        //                          upgraded ability - verified 02.11 against
+        //                          enemies.json; the app data carries no
+        //                          elite name convention, the ability token
+        //                          itself is the discriminator).
+        public bool Officer;
+        public bool OfficerElite;
         // Personas (M3): "Persona - Rang - aktive Boni" line for this
         // group's activation popup (PersonaState.DescribeLine); null when no
         // persona plays. Pure display - changes no plan number.
@@ -652,6 +662,11 @@ namespace TacticalAI
             plan = new ActivationPlanData { CardId = cd.id, Tripod = catCard.IsTripod,
                                             Assault = catCard.HasAssault };
             plan.PersonaLine = PersonaLine(cd.id);
+            // Offizier detection (Thomas 02.11): exact printed ignored-lane
+            // tokens - "Executive Order" is the elite's upgraded ability and
+            // selects the elite tree, plain "Order" the normal one.
+            plan.OfficerElite = PrintedIgnoredHas(cd.ignored, "Executive Order");
+            plan.Officer = plan.OfficerElite || PrintedIgnoredHas(cd.ignored, "Order");
             // Aufgabe 4: the fixed move/attack pair synthesis is GONE - the
             // universal AP pool (RenderBlocks) replaces the block sequence;
             // Assault/Tripod still ride as flags on the plan itself.
@@ -854,10 +869,22 @@ namespace TacticalAI
         // units always take their printed emplacement tree (M13t: movement
         // and shot exclude each other), independent of the pattern - the
         // E-Web saw pattern-dependent trees before, the printed rule wins.
+        // Officers (Thomas 02.11): the printed Order ability is a
+        // doctrine-independent command job -> the officer tree takes over in
+        // EVERY pattern (missing key -> normal pattern trees).
         static string TreeFor(UITacticalAI L, ActivationPlanData plan)
         {
             if (!plan.HasTarget)
                 return FirstNonEmpty(L.apTreeNoTarget, L.apTreeAggressive);
+            if (plan.OfficerElite)
+                return FirstNonEmpty(L.apTreeOfficerElite, L.apTreeOfficer, PatternTree(L, plan));
+            if (plan.Officer)
+                return FirstNonEmpty(L.apTreeOfficer, PatternTree(L, plan));
+            return PatternTree(L, plan);
+        }
+
+        static string PatternTree(UITacticalAI L, ActivationPlanData plan)
+        {
             if (plan.Tripod) return FirstNonEmpty(L.apTreeTripod, L.apTreeAggressive);
             switch (plan.Pattern ?? "aggressive")
             {
@@ -873,6 +900,16 @@ namespace TacticalAI
         {
             foreach (var v in vals) if (!string.IsNullOrEmpty(v)) return v;
             return null;
+        }
+
+        /// Exact comma-separated token test on the printed ignored lane
+        /// ("Order, Cower" -> Order=true; "Executive Order, Cower" -> false).
+        static bool PrintedIgnoredHas(string ignored, string token)
+        {
+            if (string.IsNullOrEmpty(ignored)) return false;
+            foreach (var part in ignored.Split(','))
+                if (part.Trim() == token) return true;
+            return false;
         }
 
         // ------------------------------------------------------- language files

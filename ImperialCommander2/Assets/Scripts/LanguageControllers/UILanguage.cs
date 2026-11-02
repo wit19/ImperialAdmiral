@@ -87,17 +87,31 @@ public class UITacticalAI
 	// Personas (M1/M3, Thomas 02.11.): the persona REPLACED the class-deck
 	// and agenda-card system - its ui.json keys (impBuyLog/agendaBuy*/imp*)
 	// are removed with it, 11-language parity re-checked. Vocabulary:
-	// picker words, rank/bonus chips (activation-card line), QM
-	// announcements, the three persona name/motto/signature rows (keys are
-	// the asset's nameKey/mottoKey/signaturText), settings row heading.
+	// picker words, rank chips (activation-card line), QM announcements,
+	// the persona name/motto/signature rows (keys are the asset's
+	// nameKey/mottoKey/signaturText), settings row heading.
+	// M6l (Delta-0, M6g QA-FUND C2): the gift-era chip/QM keys
+	// personaBonusCost, personaBonusSubsidy and personaSubsidyQM are REMOVED
+	// together with their ui.json lines and the PersonaState consumer
+	// branches in the same commit (Sprachgesetz 5b) - the kinds behind them
+	// occur 0x in the shipped v2.1 asset.
 	public string personaFollowDefault, personaNone, personaRank;
-	public string personaBonusCost, personaBonusSubsidy, personaBonusDoctrine, personaBonusGuard;
-	public string personaRankUpQM, personaRankDownQM, personaSubsidyQM;
+	public string personaBonusDoctrine, personaBonusGuard;
+	public string personaRankUpQM, personaRankDownQM;
 	public string personaButton, personaPopupHeader, setPersona;
 	public string personaPlainNote, personaRankColumn, personaCycleNote;
 	public string personaCaptTrooper, personaCaptTrooperMotto, personaCaptIsb, personaCaptIsbMotto;
 	public string personaCaptHutt, personaCaptHuttMotto;
+	// M6l (RR-B rewrite + v2.1 fleet): the three pre-Delta-0 signatures are
+	// REWRITTEN onto v2.1 reality (elite_swap as 'seine Elite', no gift or
+	// discount wording); the three NEW personas get their signature keys so
+	// the asset's signaturText effects finally have a channel (they were
+	// dead data: Localized() found no field). personaDelta0Hint is the
+	// once-per-popup sentence explaining the Delta-0 law (his elite
+	// replaces the regular figure, cost and figure count stay equal).
 	public string personaCaptSignature, personaIsbSignature, personaHuttSignature;
+	public string personaFeldherrSignature, personaDroidenDirektorSignature, personaGrossmoffSignature;
+	public string personaDelta0Hint;
 	// v2.1 fleet (M6c, CONCEPT_personas_v2.md Sec.2, Planpunkt 3): the three
 	// NEW personas (P2 Feldherr, P5 Droiden-Direktor, P6 Grossmoff) get
 	// name/motto keys; the three Bestands personas REUSE their Alt-fleet keys

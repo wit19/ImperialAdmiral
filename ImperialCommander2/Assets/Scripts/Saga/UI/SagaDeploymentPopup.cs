@@ -79,11 +79,10 @@ namespace Saga
 			acceptInput = true;
 			gameObject.SetActive( true );
 
-			// Personas (M2): the persona's mission subsidy is granted and
-			// announced HERE - at popup open the hand and the live threat
-			// exist, so the credit is spendable in the opening deployment
-			// (once per mission identity, see PersonaState).
-			TacticalAI.PersonaState.EnsureMissionSubsidy();
+			// M6l (Delta-0 law): the persona mission-subsidy grant that used
+			// to fire HERE is REMOVED with its gift kind - v2.1 personas
+			// grant nothing (Beschluss 11), the call had no effect on the
+			// shipped asset and its consumer is gone (see PersonaState).
 			fader.color = new Color( 0, 0, 0, 0 );
 			//M13c: in the manual placement window the DM must be able to CLICK
 			//the map behind the popup - the fader stays visual-only there.

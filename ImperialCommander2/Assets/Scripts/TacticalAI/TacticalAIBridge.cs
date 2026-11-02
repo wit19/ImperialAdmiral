@@ -1611,10 +1611,11 @@ namespace TacticalAI
 
         // ---------------------------------------------------------- personas
         /// <summary>Personas (M2/M3): refresh the live persona view at the
-        /// mission threat; announce rank changes and the mission subsidy
+        /// mission threat; announce rank changes
         /// ONCE per mission (the rank is a pure (persona, threat) function -
-        /// see Core.Personas rank law; the subsidy is the asset's
-        /// free_deployment channel booked by PersonaState).</summary>
+        /// see Core.Personas rank law). M6l: the former mission-subsidy
+        /// backstop left with the retired gift kinds - v2.1 personas grant
+        /// nothing (Delta-0 law, Beschluss 11).</summary>
         static void EnsurePersona()
         {
             var camp = LiveCampaign();
@@ -1624,11 +1625,6 @@ namespace TacticalAI
             string qm = null;
             try
             {
-                // The subsidy GRANT + QM lives at the deployment popup open
-                // (PersonaState.EnsureMissionSubsidy - spendable in the
-                // opening deployment); this per-round call is the idempotent
-                // backstop only, it never announces twice.
-                PersonaState.MissionSubsidy(camp, SessionKey());
                 var tracked = camp.personaRank ?? new Saga.PersonaRankMark();
                 int old = string.Equals(tracked.personaId, _personaView.Id, System.StringComparison.Ordinal)
                           ? tracked.rank : 0;

@@ -730,6 +730,15 @@ namespace Saga
 				var sig = PersonaKeyText( PersonaSigKey( def ) );
 				if ( !string.IsNullOrEmpty( sig ) )
 					sb.Append( "<color=#C9D6D3>" ).Append( sig ).Append( "</color>\n\n" );
+				// M6l (RR-B): the Delta-0 sentence - shown once per popup
+				// right under the signature, so no text can promise more
+				// than the swap law delivers: his elite REPLACES the
+				// regular figure, cost and figure count stay equal
+				// (Beschluss 11). One sentence, no numbers.
+				sb.Append( "<color=#8FA8A0><i>" ).Append( PersonaChrome(
+					tl != null ? tl.personaDelta0Hint : null,
+					"Seine Elite ersetzt die Regular-Figur: Kosten und Figurenzahl bleiben gleich." ) )
+				  .Append( "</i></color>\n\n" );
 			}
 
 			sb.Append( "<color=white><b>" ).Append( PersonaChrome(

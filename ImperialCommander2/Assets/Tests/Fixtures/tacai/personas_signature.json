@@ -1,0 +1,26 @@
+{
+  "_comment": "M6l hand-pinned signature-text contract (QA-FUND RR-B + C2, CONCEPT_personas_v2 v2.1). Hand-pinned route like action_tree.json / personas_swap.json - NO --record: every expectation below was authored from the v2.1 rank ladders in tools/draft_personas_v2.json (the Thomas-signed signaturText anchors: P1 'Raenge ohne Ende' elite_swap Sturmtruppe, P2 Elite-Kommandeur, P3 Sondroid/Hinterhalt-Essenz, P4 swap-frei = Jagd ohne 'seine Elite'-Claim, P5 'Stahl gehorcht', P6 'Angst'/Garnison) plus the card law: 'seine Elite' phrasing, NO gift/discount/'kostenlos' wording, and the Delta-0 sentence datenfrei. The section reads the SHIPPED ui.json of all 11 languages (no fixtures in play): presence, De canon fragments, the 10 EN copies, absence of the retired gift keys, gift-word ban and the shipped asset's signaturText key inventory. C1 law: no text may claim DG006 movement-OR-attack - the pin 'no_bewegung_oder' enforces that the word 'oder' never pairs with Bewegung/Angriff in any signature value.",
+  "langs": ["Br", "De", "En", "Es", "Fr", "Hu", "It", "Nl", "No", "Pl", "Ru"],
+  "keys": {
+    "personaCaptSignature":            { "de_contains": ["seine Elite", "Sturmtruppe", "Veteran"] },
+    "personaFeldherrSignature":        { "de_contains": ["seine Elite", "Offizier", "Elite-Kommandeur"] },
+    "personaIsbSignature":             { "de_contains": ["seine Elite", "Sondroid", "Hinterhalt"] },
+    "personaHuttSignature":            { "de_contains": ["Kopfgeldj\u00e4ger", "Dynastie", "Jagd"] },
+    "personaDroidenDirektorSignature": { "de_contains": ["seine Elite", "Sondroid", "Stahl gehorcht"] },
+    "personaGrossmoffSignature":       { "de_contains": ["Garnisonen", "seine Elite", "Furcht"] },
+    "personaDelta0Hint":               { "de_contains": ["Regular-Figur", "gleich"] }
+  },
+  "no_elite_claim_keys": ["personaHuttSignature"],
+  "delta0_keys": ["personaDelta0Hint"],
+  "retired_keys": ["personaBonusCost", "personaBonusSubsidy", "personaSubsidyQM"],
+  "gift_words": ["billig", "verbillig", "rabatt", "kostenlos", "gratis", "umsonst", "discount", "cheaper", "subsidy", "free deployment", "cost reduction"],
+  "c1_forbidden_pairs": ["bewegung oder", "angriff oder", "move or", "attack or"],
+  "asset_signature_keys": {
+    "trooper_captain": "personaCaptSignature",
+    "feldherr": "personaFeldherrSignature",
+    "isb_commander": "personaIsbSignature",
+    "hutt_lord": "personaHuttSignature",
+    "droiden_direktor": "personaDroidenDirektorSignature",
+    "grossmoff": "personaGrossmoffSignature"
+  }
+}

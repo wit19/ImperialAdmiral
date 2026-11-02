@@ -101,9 +101,9 @@ namespace TacticalAI.Core
 
     /// <summary>Mission-scoped swap state (budget consumed + names used).
     /// The Unity side holds ONE instance per mission identity (campaign
-    /// GUID + missionID + threat - same recipe as the free-deployment
-    /// subsidy) and rebuilds it when the identity changes; Plan() runs a
-    /// fresh ledger per mission.</summary>
+    /// GUID + missionID + threat - the same mission identity every persona
+    /// booking uses) and rebuilds it when the identity changes; Plan() runs
+    /// a fresh ledger per mission.</summary>
     public sealed class SwapLedger
     {
         int _swaps;

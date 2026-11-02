@@ -23,9 +23,8 @@ namespace TacticalAI
         public const string None = "";                 // follow global default
         public const string ExplicitNone = "none";     // explicit "no persona"
 
-        // live-mission subsidy identity (see MissionSubsidy)
-        static string _subsidyKey;
-        static long _grantedSubsidy;
+        // M6l: the legacy subsidy identity statics (_subsidyKey /
+        // _grantedSubsidy) went with the subsidy machinery above.
 
         /// <summary>The persona asset (null when it failed to load - every
         /// method below fails open to 'no persona').</summary>
@@ -328,82 +327,12 @@ namespace TacticalAI
             _swapKey = null;
         }
 
-        /// <summary>Personas (M2): grant + announce the mission subsidy at
-        /// the deployment popup OPEN - the earliest moment the deploy hand
-        /// and the live threat exist, so the credit is really spendable in
-        /// the opening deployment (the bridge calls MissionSubsidy again per
-        /// round as the idempotent backstop). Mission key = missionID +
-        /// threat (a rescaled restart is a NEW mission identity, like every
-        /// other booking).</summary>
-        public static void EnsureMissionSubsidy()
-        {
-            try
-            {
-                var camp = Live();
-                string missionKey = null;
-                var s = DataStore.sagaSessionData;
-                if (s != null && s.setupOptions != null && s.setupOptions.projectItem != null)
-                    missionKey = s.setupOptions.projectItem.missionID + "|" + LiveThreat();
-                long credit = MissionSubsidy(camp, missionKey);
-                if (credit <= 0) return;
-                var v = ResolveFor(EffectiveId(camp), LiveThreat());
-                var txt = SubsidyText(v, credit);
-                if (string.IsNullOrEmpty(txt)) return;
-                var q = UnityEngine.Object.FindObjectOfType<QuickMessage>();
-                if (q != null) q.Show(txt);
-            }
-            catch (Exception e) { Debug.LogWarning("PersonaState::subsidy failed " + e.Message); }
-        }
-
-        /// <summary>Mission-start subsidy: cheapest matching printed cost of
-        /// the CURRENT deploy hand x count (the asset's free_deployment
-        /// channel - see Core.Personas header for why it is a credit).
-        /// Booked exactly once per mission identity (campaign GUID +
-        /// mission key + threat), so a mid-mission reload cannot
-        /// double-grant; the QM states every grant openly.</summary>
-        public static long MissionSubsidy(Saga.SagaCampaign camp, string missionKey)
-        {
-            try
-            {
-                var v = ResolveFor(EffectiveId(camp), LiveThreat());
-                if (v.IsEmpty) { _subsidyKey = null; _grantedSubsidy = 0; return 0; }
-                long credit = v.FreeCreditCost(HandRows());
-                var key = (camp != null ? camp.GUID.ToString() : "solo")
-                          + "|" + (missionKey ?? "") + "|" + LiveThreat();
-                if (credit > 0 && _subsidyKey != key)
-                {
-                    _subsidyKey = key;
-                    _grantedSubsidy = credit;
-                    DataStore.sagaSessionData.ModifyThreat((int)Math.Min(credit, 100));
-                    Debug.Log("PersonaState::subsidy +" + _grantedSubsidy
-                              + " persona=" + v.Id + " rank=" + v.Rank);
-                }
-                return _grantedSubsidy;
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning("PersonaState::subsidy failed: " + e.Message);
-                return 0;
-            }
-        }
-
-        /// <summary>(internalName, faction, cost-as-text) rows of the live
-        /// deploy hand - public data (the deploy popup lists exactly
-        /// these).</summary>
-        static List<string[]> HandRows()
-        {
-            var rows = new List<string[]>();
-            Action<IEnumerable<global::DeploymentCard>> add = pool =>
-            {
-                if (pool == null) return;
-                foreach (var c in pool)
-                    if (c != null && !string.IsNullOrEmpty(c.name))
-                        rows.Add(new[] { c.name, c.faction ?? "", c.cost.ToString() });
-            };
-            add(DataStore.deploymentCards);
-            add(DataStore.villainCards);
-            return rows;
-        }
+        // M6l (Delta-0 law, Beschluss 10/11): the pre-v2.1 mission-subsidy
+        // machinery (EnsureMissionSubsidy / MissionSubsidy / HandRows) is
+        // REMOVED with the gift kinds it read - free_deployment occurs 0x in
+        // the shipped v2.1 asset, so the grant could never fire (M6g QA-FUND
+        // C2: consumers keyed to kinds that do not exist = mechanically
+        // dead). Branches die WITH the kind, not just the ui fields.
 
         // ------------------------------------------------------------ texts
         static UITacticalAI L()
@@ -491,15 +420,13 @@ namespace TacticalAI
             var head = name + " - " + (!string.IsNullOrEmpty(counter)
                 ? counter : TF(lang.personaRank, v.Rank));
             var parts = new List<string>();
-            if (!string.IsNullOrEmpty(internalName))
-            {
-                // floor-aware: exactly what the deploy popup will book off
-                // a card of THIS group (raw row sums would lie at cost 1).
-                var d = v.CostCutFor(internalName, faction, 100);
-                if (d > 0) parts.Add(TF(lang.personaBonusCost, d));
-            }
-            if (v.Active.Any(e => e.Kind == "free_deployment"))
-                parts.Add(lang.personaBonusSubsidy);
+            // M6l (Delta-0, Beschluss 11): the cost-cut and free-deployment
+            // chips are GONE with their gift kinds - the retired channels
+            // occur 0x in the shipped asset, so the branches were
+            // mechanically dead (M6g QA-FUND C2). The live v2.1 channels
+            // (pattern_weight, guard_split) stay below; the elite swap is
+            // announced by the signature line + the personaDelta0Hint
+            // sentence in the persona popup, never by a cost chip.
             if (v.Active.Any(e => e.Kind == "pattern_weight"))
                 parts.Add(lang.personaBonusDoctrine);
             var g = v.GuardPercentFor(internalName ?? "", faction);
@@ -521,16 +448,6 @@ namespace TacticalAI
             return up
                 ? TF(lang.personaRankUpQM, name, oldRank, v.Rank)   // 346: template
                 : TF(lang.personaRankDownQM, name, oldRank, v.Rank); // has {0}{1}{2}
-        }
-
-        /// <summary>Subsidy announcement text (QM at mission start).</summary>
-        public static string SubsidyText(PersonaView v, long credit)
-        {
-            var lang = L();
-            if (lang == null || v == null || credit <= 0) return null;
-            var name = DisplayName(v.Id);
-            if (string.IsNullOrEmpty(name)) return null;
-            return TF(lang.personaSubsidyQM, name, v.Rank, credit);
         }
     }
 }

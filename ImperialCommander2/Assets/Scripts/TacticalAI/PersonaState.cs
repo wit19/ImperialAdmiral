@@ -176,7 +176,7 @@ namespace TacticalAI
 
         // ------------------------------------------------ M6b elite_swap ---
         // The Unity seam of the elite_swap channel (Core.PersonaSwaps holds
-        // the law; CONCEPT_personas_v2 v2.1 Sec.1.1). Call sites: the three
+        // the law; CONCEPT_personas_v2 v2.1 Sec.1.1). Call sites: the four
         // HAND-DRAWN deployment rails in SagaDeploymentPopup (landing d1/d2,
         // Onslaught draw loop, manual optional confirm). Mission-authored
         // EnemyDeployment events and mission start groups deliberately do

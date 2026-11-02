@@ -132,7 +132,7 @@ PATTERNS = {"aggressive", "guard", "blocker", "hunter", "support", "ambusher"}
 # Section 4 taboo word list (word-boundary, case-insensitive, EN+DE forms).
 TABOO = [
     "dice", "surge", "pierce", "accuracy", "reroll",
-    "wound", "wounds", "fatigue", "strain", "statusphase",
+    "wound", "wounds", "fatigue", "strain", "statusphase", "condition",
     "hidden", "insight", "gambit", "vigilance", "speed", "mobile",
     "hand", "hands", "buy", "xp", "credit", "credits",
     "kredit", "kredite", "kauf", "kaufen",

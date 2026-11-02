@@ -1,10 +1,17 @@
 // M6h live gate (zero fixtures, SHIPPED ui.json): Thomas/Tillmann 02.11 officer
 // popup findings must not silently regress. Pins, for every language file:
-//   1. exactly ONE order branch per officer tree (regular: "Befehl/Order
-//      m\u00f6glich?/possible?" - movement order; elite: "Vollstreckungs-
-//      befehl/Executive Order" - attack order),
-//   2. bug2: the regular order branch NEVER orders an attack, the elite order
-//      branch NEVER orders movement (no move+attack in one command),
+//   1. exactly ONE order branch per REGULAR officer tree ("Befehl/Order
+//      m\u00f6glich?/possible?" - movement order),
+//   1b. M6n / C1-SIGNATUR Thomas 02.11 (physical DG006 card): the elite tree
+//      asks ONE Vollstreckungsbefehl/Executive Order receiver question per
+//      activation offering Bewegung/movement OR Angriff/attack, plus exactly
+//      one answer branch each; the line must carry the exclusive "oder" and
+//      the explicit "nur eines von beiden, nie beides"-note; an "und"/"and"
+//      in that line is the forbidden reading (mutation self-test: a
+//      "Bewegung und Angriff" probe must turn this gate RED),
+//   2. bug2: the regular order branch NEVER orders an attack; in the elite
+//      tree the movement answer NEVER orders an attack and the attack
+//      answer NEVER orders movement (no move+attack in one command),
 //   3. bug1: no ability re-explanation ("deiner Karte"/"on your card"),
 //   4. bug3: the Wachzone definition rides EXACTLY the two guard trees,
 //   5. bug5: no "Spieler"/"player" subject in any officer popup text,
@@ -36,8 +43,12 @@ public static class OfficerTextGate
     const string Befehl = "Befehl";
     const string ExecDe = "Vollstreckungsbefehl";
     const string BefehlMoeglich = "Befehl m\u00f6glich?";       // "Befehl moeglich?"
-    const string ExecMoeglich = "Vollstreckungsbefehl m\u00f6glich?";
-    const string KeinBefehl = "Kein Befehl?";
+    const string ExecChoiceDe = "Vollstreckungsbefehl \u2192";  // C1 receiver question
+    const string ExecChoiceEn = "Executive Order \u2192";
+    const string MvBranchDe = "Bewegung \u2192";
+    const string MvBranchEn = "Movement \u2192";
+    const string AtkBranchDe = "Angriff \u2192";
+    const string AtkBranchEn = "Attack \u2192";
     const string ZweiFelder = "bis zu 2 Felder";
     const string ZiehtSich = "zieht sich";
     const string GreiftWelches = "greift welches";
@@ -114,44 +125,88 @@ public static class OfficerTextGate
         if (string.IsNullOrEmpty(v)) return;
 
         var lines = v.Split('\n');
-        // one order branch, named per printed keyword of this language
-        int orderBranches = 0;
-        string order = null;
-        foreach (var ln in lines)
-        {
-            bool hit = de
-                ? (ln.Contains(regular ? BefehlMoeglich : ExecMoeglich))
-                : (ln.Contains(regular ? "Order possible?" : "Executive Order possible?"));
-            if (hit) { orderBranches++; order = ln; }
-        }
-        Ok(orderBranches == 1, name + " exactly one order branch (" + orderBranches + ")");
-        if (orderBranches != 1) return;
-
-        // bug2: regular = move only, elite = attack only, never both
+        bool treeOk = true;
         if (regular)
         {
-            Ok(de ? order.Contains(ZweiFelder) && order.Contains(ZiehtSich)
-                  : order.Contains("up to 2 spaces") && order.Contains("repositions"),
-               name + " order branch = move up to the printed 2");
-            Ok(!order.Contains(GreiftWelches) &&
-               order.ToLowerInvariant().IndexOf("attacks which") < 0 &&
-               order.ToLowerInvariant().IndexOf("it attacks") < 0,
-               name + " order branch orders NO attack (bug2)");
-            Ok(order.Contains(de ? "verbrauch" : "spends"),
-               name + " order branch states the attack-point cost");
+            // one order branch (movement order), named per printed keyword
+            int orderBranches = 0;
+            string order = null;
+            foreach (var ln in lines)
+                if (ln.Contains(de ? BefehlMoeglich : "Order possible?"))
+                { orderBranches++; order = ln; }
+            Ok(orderBranches == 1, name + " exactly one order branch (" + orderBranches + ")");
+            if (orderBranches != 1) treeOk = false;
+            else
+            {
+                // bug2: regular = move only, never an attack in the order
+                Ok(de ? order.Contains(ZweiFelder) && order.Contains(ZiehtSich)
+                      : order.Contains("up to 2 spaces") && order.Contains("repositions"),
+                   name + " order branch = move up to the printed 2");
+                Ok(!order.Contains(GreiftWelches) &&
+                   order.ToLowerInvariant().IndexOf("attacks which") < 0 &&
+                   order.ToLowerInvariant().IndexOf("it attacks") < 0,
+                   name + " order branch orders NO attack (bug2)");
+                Ok(order.Contains(de ? "verbrauch" : "spends"),
+                   name + " order branch states the attack-point cost");
+            }
         }
         else
         {
-            Ok(de ? order.Contains(GreiftWelches)
-                  : order.ToLowerInvariant().Contains("attacks which"),
-               name + " exec-order branch orders an attack");
-            Ok(!order.Contains(ZiehtSich) &&
-               order.ToLowerInvariant().IndexOf("reposition") < 0,
-               name + " exec-order branch orders NO movement (bug2)");
-            // the retired move-order route must not come back at all
-            Ok(!v.Contains(de ? ZweiFelder : "up to 2 spaces"),
-               name + " elite tree carries no plain move order (bug2)");
+            // M6n / C1-SIGNATUR (Thomas 02.11., physische DG006): eine
+            // Empfaenger-Frage pro Aktivierung - Bewegung ODER Angriff,
+            // eines pro Befehl, NIE beides; je genau ein Antwortzweig.
+            int choices = 0, moves = 0, attacks = 0;
+            string choice = null, mv = null, atk = null;
+            foreach (var ln in lines)
+            {
+                if (ln.Contains(de ? ExecChoiceDe : ExecChoiceEn)) { choices++; choice = ln; }
+                if (ln.Contains(de ? MvBranchDe : MvBranchEn)) { moves++; mv = ln; }
+                if (ln.Contains(de ? AtkBranchDe : AtkBranchEn)) { attacks++; atk = ln; }
+            }
+            Ok(choices == 1 && moves == 1 && attacks == 1,
+               name + " one choice + one Bewegung + one Angriff branch (" +
+               choices + "/" + moves + "/" + attacks + ")");
+            if (choices != 1 || moves != 1 || attacks != 1) treeOk = false;
+            else
+            {
+                // C1 exclusive offering: BOTH channels named, joined by the
+                // exclusive "oder"/"or" - a conjunctive "und"/"and" in this
+                // line IS the forbidden both-in-one-command reading
+                // (mutation self-test 02.11.: "Bewegung und Angriff" = RED).
+                var low = choice.ToLowerInvariant();
+                Ok(choice.StartsWith("<color") &&
+                   low.Contains(de ? "bewegung" : "movement") &&
+                   low.Contains(de ? "angriff" : "attack") &&
+                   choice.Contains(de ? " oder " : " or ") &&
+                   low.IndexOf(de ? " und " : " and ") < 0,
+                   name + " choice line: Bewegung ODER Angriff, exclusive oder (C1)");
+                Ok(choice.Contains(de ? "nur eines von beiden" : "only one of the two") &&
+                   choice.Contains(de ? "nie beides" : "never both") &&
+                   choice.Contains(de ? "Angriffspunkt" : "attack point") &&
+                   low.Contains(de ? "verbrauch" : "spends"),
+                   name + " choice line: one per command, never both, AP cost (C1)");
+                // Bewegung answer - printed move form, no attack inside
+                Ok(mv.Contains(de ? ZweiFelder : "up to 2 spaces") &&
+                   mv.Contains(de ? ZiehtSich : "repositions") &&
+                   mv.Contains(de ? "verbrauch" : "spends"),
+                   name + " movement answer: move up to the printed 2 + AP cost");
+                Ok(!mv.Contains(GreiftWelches) &&
+                   mv.ToLowerInvariant().IndexOf("attacks which") < 0 &&
+                   mv.ToLowerInvariant().IndexOf("it attacks") < 0,
+                   name + " movement answer orders NO attack (C1 exclusive)");
+                // Angriff answer - the M6h attack order, no movement inside
+                Ok(atk.Contains(de ? GreiftWelches : "attacks which"),
+                   name + " attack answer orders an attack");
+                Ok(!atk.Contains(ZiehtSich) && !atk.Contains(ZweiFelder) &&
+                   atk.ToLowerInvariant().IndexOf("reposition") < 0 &&
+                   atk.ToLowerInvariant().IndexOf("up to 2 spaces") < 0,
+                   name + " attack answer orders NO movement (C1 exclusive)");
+                // the no-command fallback names the printed executive order
+                Ok(v.Contains(de ? "Kein Vollstreckungsbefehl?" : "No Executive Order?"),
+                   name + " fallback branch names the printed executive order");
+            }
         }
+        if (!treeOk) return;
 
         // shared bug laws over every line
         Ok(v.IndexOf("Spieler") < 0 && v.ToLowerInvariant().IndexOf("player") < 0,
@@ -189,7 +244,7 @@ public static class OfficerTextGate
         // language-keyword law: De prints Befehl/Vollstreckungsbefehl, never bare Order
         if (de)
         {
-            Ok(v.Contains(regular ? BefehlMoeglich : ExecMoeglich),
+            Ok(v.Contains(regular ? BefehlMoeglich : ExecChoiceDe),
                name + " De branch names the printed German keyword");
             var stripped = v.Replace(ExecDe, "");
             Ok(stripped.IndexOf("Order") < 0,
@@ -197,7 +252,7 @@ public static class OfficerTextGate
         }
         else if (!regular)
         {
-            Ok(v.Contains("Executive Order possible?"),
+            Ok(v.Contains(ExecChoiceEn),
                name + " EN elite names the printed Executive Order");
         }
     }

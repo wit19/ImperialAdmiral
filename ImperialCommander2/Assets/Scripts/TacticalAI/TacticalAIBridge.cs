@@ -873,8 +873,10 @@ namespace TacticalAI
         // Officers (Thomas 02.11, corrected): command ability + PER-DOCTRINE
         // officer tree - the doctrine's own action wording (Wachzone,
         // Blockierfeld, cover, ambush) stays, the Order branches ride on top.
-        // Elite ("Executive Order") prefers its elite row, falls back to the
-        // plain officer row, then to the pattern tree.
+        // Elite ("Executive Order", C1 sign-off 02.11.) asks one receiver
+        // question per activation - Bewegung (up to 2 spaces) OR Angriff,
+        // one of the two per command, never both - and prefers its elite
+        // row, falling back to the plain officer row, then the pattern tree.
         static string TreeFor(UITacticalAI L, ActivationPlanData plan)
         {
             if (!plan.HasTarget)

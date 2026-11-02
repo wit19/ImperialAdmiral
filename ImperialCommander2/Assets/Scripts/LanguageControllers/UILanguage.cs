@@ -121,7 +121,8 @@ public class UITacticalAI
 	// Thomas 02.11 (popup declutter): EXPLAIN section header + the focus
 	// target reasoning line that moved out of the action area.
 	public string ordExplainHead, ordExplainFocusWhy;
-	public string expNone, expPostHoc, expFull;
+	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
+	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }
 
 public class UISettings

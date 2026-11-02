@@ -24,7 +24,11 @@ namespace TacticalAI
     {
         public static readonly string[] ModeValues = { "legacy", "reference", "overlord" };
         public static readonly string[] SkillValues = { "S1", "S2", "S3", "S4", "S5" };
-        public static readonly string[] ExplainLevelValues = { "none", "post_hoc", "full" };
+        // Thomas 02.11: plain AN/AUS toggle. "none" = AUS, "full" = AN (the
+        // old VOLL per-activation explain block). The "post_hoc" ("NACHHER")
+        // round-summary mode is removed; old saves carrying it are coerced
+        // to the default (AUS) by Validate on load - no throw, no crash.
+        public static readonly string[] ExplainLevelValues = { "none", "full" };
 
         // ---- defaults: OFF, legacy, printed rules only -------------------
         public const bool DefaultEnabled = false;
@@ -97,8 +101,8 @@ namespace TacticalAI
             set { _skillLevel = Validate(value, SkillValues, DefaultSkillLevel); Save(); }
         }
 
-        /// <summary>"none" | "post_hoc" (round summary after the round) |
-        /// "full" (per-activation why-strings). Printed info only.</summary>
+        /// <summary>"none" (AUS) | "full" (AN - per-activation why-strings,
+        /// the old VOLL). Printed info only. Post_hoc removed 02.11.</summary>
         public static string ExplainLevel
         {
             get { return _explainLevel; }

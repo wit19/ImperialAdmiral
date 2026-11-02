@@ -422,18 +422,11 @@ namespace TacticalAI
             try
             {
             EnsureSessionFresh();
-            // post_hoc explain: summary of the round we just played - capture the
-            // PREVIOUS plan before EnsureRound rebuilds it for the new round,
-            // otherwise this leaks the upcoming activation order (concept 3.7:
-            // post_hoc is after-the-fact only).
-            var lastRoundLine = _publicLine;
+            // Thomas 02.11: the post_hoc ("NACHHER") explain mode is GONE -
+            // the explain switch is a plain AN/AUS toggle now (AN == the old
+            // VOLL per-activation block). The round-end quick message that
+            // carried the post_hoc summary is removed with the mode.
             EnsureRound(roundNo);
-            if (TacticalAISettings.ExplainLevel == "post_hoc" && roundNo > 1
-                && !string.IsNullOrEmpty(lastRoundLine))
-            {
-                var qm = GlowEngine.FindUnityObject<QuickMessage>();
-                if (qm != null) qm.Show(lastRoundLine);
-            }
             }
             catch (Exception e)
             {
@@ -1489,7 +1482,8 @@ namespace TacticalAI
                 if (line != null && Lh != null && line == Lh.ordExplainHead) return null;
                 return line;
             }
-            // post_hoc: printed at round end via OnNewRound quick message
+            // Defensive default (unreachable since 02.11: ExplainLevelValues
+            // is exactly { "none", "full" }).
             return null;
         }
 

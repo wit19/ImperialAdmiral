@@ -135,7 +135,9 @@ namespace TacticalAI.Tests
             // M13g: the deployment-mode switch is gone (deployments are
             // always open, Thomas 28.10); ResetDefaults must also
             // neutralise stale save state cleanly.
-            Assert.AreEqual("post_hoc", TacticalAISettings.ExplainLevel);
+            // Thomas 02.11: explain is AN/AUS now ({none, full}); the removed
+            // "post_hoc" value coerces to the default (none) on old saves.
+            Assert.AreEqual("none", TacticalAISettings.ExplainLevel);
             Assert.IsFalse(TacticalAISettings.IsTactical("reference"),
                 "no tactical behaviour while the global switch is off");
             Assert.AreEqual("legacy", TacticalAISettings.EffectiveMode("overlord"),

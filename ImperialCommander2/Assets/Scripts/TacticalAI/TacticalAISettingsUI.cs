@@ -298,11 +298,11 @@ namespace TacticalAI
                 case "mode": value = TacticalAISettings.Mode.ToUpperInvariant(); break;
                 case "skill": value = SkillDisplay(TacticalAISettings.SkillLevel, tl); break;
                 case "explain":
+                    // Thomas 02.11: AN/AUS toggle (AN == the old VOLL block;
+                    // NACHHER removed) - same wording as master/info rows.
                     value = TacticalAISettings.ExplainLevel == "none"
-                        ? Pick(tl != null ? tl.expNone : null, "NONE")
-                        : TacticalAISettings.ExplainLevel == "full"
-                            ? Pick(tl != null ? tl.expFull : null, "FULL")
-                            : Pick(tl != null ? tl.expPostHoc : null, "POST-HOC");
+                        ? Pick(tl != null ? tl.setOff : null, "OFF")
+                        : Pick(tl != null ? tl.setOn : null, "ON");
                     break;
                 case "persona":
                     value = PersonaState.DescribeDefault();

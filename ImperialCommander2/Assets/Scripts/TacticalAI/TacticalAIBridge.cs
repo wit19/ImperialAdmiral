@@ -157,7 +157,9 @@ namespace TacticalAI
         static string _doctrineBase;
         static string _doctrineEffective;
         static bool _phaseShiftAnnounced;
-        static bool _splitAnnounced;
+        // _splitAnnounced REMOVED (Thomas 02.11, Unity CS0414): the Personas
+        // commit fa8597f added it with its session reset but no consumer ever
+        // existed - dead state, deleted rather than silenced.
         static int _guardBandCount;
         static HashSet<string> _guardIds;   // back-half defend troopers (this round)
         // Personas (M2, Thomas 02.11.): the live round's resolved persona
@@ -193,7 +195,6 @@ namespace TacticalAI
             _doctrineEffective = null;
             _patternRoll.Clear();
             _phaseShiftAnnounced = false;
-            _splitAnnounced = false;
             _guardBandCount = 0;
             _guardIds = null;
             _personaView = new Tac.PersonaView();

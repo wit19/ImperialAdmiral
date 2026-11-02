@@ -28,6 +28,7 @@ class P {
         ImperialCardEffectsGate.Run();
         AgendaGate.Run();
         OptionalDeployGate.Run();
+        PersonasGate.Run();
         UiCompletenessGate.Run();
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }

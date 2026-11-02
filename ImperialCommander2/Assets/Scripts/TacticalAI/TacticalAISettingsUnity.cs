@@ -112,6 +112,11 @@ namespace TacticalAI
             var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
             var name = PersonaState.DisplayName(v.Id);
             if (string.IsNullOrEmpty(name)) return null;
+            // M6d Beschluss 5: 'Rang n/max' with the persona's own defined
+            // maximum as denominator; single-number personaRank = fallback.
+            var counter = PersonaState.RankCounterText(v);
+            if (!string.IsNullOrEmpty(counter))
+                return name + " \u2014 " + counter;
             var rank = Fallback(tl != null ? tl.personaRank : null, "rank {0}");
             return name + " \u2014 " + rank.Replace("{0}",
                 v.Rank.ToString(System.Globalization.CultureInfo.InvariantCulture));

@@ -99,6 +99,61 @@ namespace TacticalAiHarness
                       got ?? "", view.SignatureKey() ?? "");
             }
 
+            // ------------------------------------------------- M6d counters
+            // Beschluss 5: 'Rang n/max' with max = the highest rank DEFINED
+            // for the persona (not a hardcoded 4). Twin-authored ladder over
+            // the SHIPPED roster (counter_cases) — empty expect = no text
+            // (rank 0 displays nothing).
+            foreach (var raw in Json.AsList(v["counter_cases"]))
+            {
+                var c = Json.AsDict(raw);
+                var view = table.Resolve(Json.AsStr(c["persona"]), Json.AsInt(c["threat"]));
+                var got = view.RankCounter("{0}/{1}") ?? "";
+                Check("counter[" + Json.AsStr(c["persona"]) + "@" + Json.AsInt(c["threat"]) + "]",
+                      (Json.AsStr(c["expect"]) ?? ""), got);
+                Check("counter_max[" + Json.AsStr(c["persona"]) + "@" + Json.AsInt(c["threat"]) + "]",
+                      Json.AsLong(c["expect_max"]), (long)view.MaxRank);
+            }
+
+            // ------------------------------------------ M6d counter key text
+            // HAND-PINNTE Raeume (counter_key_cases, kein Twin-Zweig): eine
+            // konstruierte 3-Rang-Persona geht durch den ECHTEN Loader und
+            // muss 'Rang 3/3' rendern — ein fehlender Rang 4 darf weder
+            // Fehler noch '3/4' erzeugen (Pflicht-Test Karte t_b6b3e45b).
+            // expect_render ist gegen das live geladene De-Template
+            // (personaRankCounter) plus die EN-Kopie gerechnet.
+            var ckc = Json.AsDict(v["counter_key_cases"]);
+            Personas.PrimeDoc(new Dictionary<string, object>
+            {
+                { "personas", ckc["counter_personas"] }
+            });
+            var ckt = Personas.Load();
+            if (ckt.Personas.Count != 2)
+                throw new InvalidOperationException("counter_key_cases persona table broken");
+            var tplDe = Json.AsStr(Json.AsDict(
+                Json.AsDict(LoadLangJson("De", "ui.json"))["uiTacticalAI"])["personaRankCounter"]);
+            var tplEn = Json.AsStr(Json.AsDict(
+                Json.AsDict(LoadLangJson("En", "ui.json"))["uiTacticalAI"])["personaRankCounter"]);
+            if (tplDe != "Rang {0}/{1}" || tplEn != "rank {0}/{1}")
+                throw new InvalidOperationException("M6c counter key drifted: De="
+                    + tplDe + " En=" + tplEn);
+            foreach (var raw in Json.AsList(ckc["cases"]))
+            {
+                var c = Json.AsDict(raw);
+                var view = ckt.Resolve(Json.AsStr(c["persona"]), Json.AsInt(c["threat"]));
+                var numeric = view.RankCounter("{0}/{1}") ?? "";
+                Check("counter_key[" + Json.AsStr(c["persona"]) + "@" + Json.AsInt(c["threat"]) + "]",
+                      (Json.AsStr(c["expect"]) ?? ""), numeric);
+                Check("counter_render_de[" + Json.AsStr(c["persona"]) + "@" + Json.AsInt(c["threat"]) + "]",
+                      (Json.AsStr(c["expect_render"]) ?? ""), view.RankCounter(tplDe) ?? "");
+                Check("counter_render_en[" + Json.AsStr(c["persona"]) + "@" + Json.AsInt(c["threat"]) + "]",
+                      (Json.AsStr(c["expect_render"]) ?? "").Replace("Rang ", "rank "),
+                      view.RankCounter(tplEn) ?? "");
+            }
+            // the shipped asset rides again for any later section (parity
+            // with SecPersonasSwap's restore discipline)
+            Personas.PrimeDoc(Json.AsDict(LoadLangJson("En", "tactical_personas.json")));
+
             // ------------------------------------------------- pattern flips
             foreach (var raw in Json.AsList(v["pattern_flip_cases"]))
             {

@@ -457,6 +457,24 @@ namespace TacticalAI
             return DisplayName(stored);
         }
 
+        /// <summary>M6d (Beschluss 5, CONCEPT_personas_v2 Sec.3): the
+        /// 'Rang n/max' text every rank display shares (ERKLÄRUNG line,
+        /// settings badge, campaign popup chip). Denominator = the view's
+        /// MaxRank = highest rank DEFINED for the persona — a persona with
+        /// three authored ranks shows '3/3', a missing rank 4 never
+        /// produces '3/4' and never an error. Template = the M6c
+        /// personaRankCounter key; placeholder Replace (not Format) on
+        /// purpose: a language may repeat {0}/{1} without throwing. Null /
+        /// rank 0 / hand-built view without a defined max / missing key ->
+        /// null, the CALLER keeps its single-number personaRank fallback
+        /// (never an empty chip).</summary>
+        public static string RankCounterText(PersonaView v)
+        {
+            if (v == null || v.Rank <= 0 || v.MaxRank < v.Rank) return null;
+            var lang = L();
+            return v.RankCounter(lang != null ? lang.personaRankCounter : null);
+        }
+
         /// <summary>The instruction-card/IMPERIUM line for one group:
         /// persona, rank, and the bonuses that bite for THIS card. ui.json
         /// vocabulary only; null when there is nothing to say.</summary>
@@ -466,7 +484,12 @@ namespace TacticalAI
             if (lang == null || v == null || v.Rank <= 0) return null;
             var name = DisplayName(v.Id);
             if (string.IsNullOrEmpty(name)) return null;
-            var head = name + " - " + TF(lang.personaRank, v.Rank);
+            // M6d Beschluss 5: 'Rang n/max'; the single-number personaRank
+            // stays the fail-safe fallback (missing key / hand-built view)
+            // so the head can never ship a dangling " - ".
+            var counter = RankCounterText(v);
+            var head = name + " - " + (!string.IsNullOrEmpty(counter)
+                ? counter : TF(lang.personaRank, v.Rank));
             var parts = new List<string>();
             if (!string.IsNullOrEmpty(internalName))
             {

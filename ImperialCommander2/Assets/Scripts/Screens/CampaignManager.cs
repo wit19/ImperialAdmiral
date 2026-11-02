@@ -742,7 +742,7 @@ namespace Saga
 				var v = TacticalAI.PersonaState.ResolveFor( id, cs.threatLevel );
 				var name = PersonaMissionName( cs );
 				string rankTxt = v.Rank > 0
-					? RankChip( tl, v.Rank )
+					? RankChip( tl, v )
 					: ( tl != null ? tl.personaNone : "none" );
 				sb.Append( "<color=#C9D6D3>" ).Append( name ).Append( "</color>  " )
 				  .Append( "<color=#8FE3C8>" ).Append( cs.threatLevel ).Append( "</color>  " )
@@ -784,10 +784,15 @@ namespace Saga
 			return cs.missionID;
 		}
 
-		static string RankChip( UITacticalAI tl, int rank )
+		static string RankChip( UITacticalAI tl, TacticalAI.Core.PersonaView v )
 		{
+			// M6d Beschluss 5: 'Rang n/max' with the persona's own defined
+			// maximum as denominator (shared PersonaState text); the
+			// single-number personaRank stays the fallback.
+			var counter = TacticalAI.PersonaState.RankCounterText( v );
+			if ( !string.IsNullOrEmpty( counter ) ) return counter;
 			var fmt = tl != null && !string.IsNullOrEmpty( tl.personaRank ) ? tl.personaRank : "rank {0}";
-			return fmt.Replace( "{0}", rank.ToString( System.Globalization.CultureInfo.InvariantCulture ) );
+			return fmt.Replace( "{0}", v.Rank.ToString( System.Globalization.CultureInfo.InvariantCulture ) );
 		}
 
 		/// <summary>ui.json field lookup by key (motto/signaturText keys are

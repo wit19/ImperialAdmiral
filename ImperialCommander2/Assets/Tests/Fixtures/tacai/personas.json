@@ -482,6 +482,488 @@
    "expect_active_count": 0
   }
  ],
+ "counter_cases": [
+  {
+   "persona": "trooper_captain",
+   "threat": 0,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 1,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 3,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 5,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 7,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 12,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 0,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "feldherr",
+   "threat": 1,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 3,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 5,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 7,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "feldherr",
+   "threat": 12,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 0,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 1,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 3,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 5,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 7,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 12,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 0,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 1,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 3,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 5,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 7,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 12,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 0,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 1,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 3,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 5,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 7,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 12,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 0,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 1,
+   "expect_max": 4,
+   "expect": null
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 3,
+   "expect_max": 4,
+   "expect": "1/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 5,
+   "expect_max": 4,
+   "expect": "2/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 7,
+   "expect_max": 4,
+   "expect": "3/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 12,
+   "expect_max": 4,
+   "expect": "4/4"
+  },
+  {
+   "persona": "",
+   "threat": 0,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 0,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 1,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 1,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 2,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 2,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 3,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 3,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 4,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 4,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 5,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 5,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 6,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 6,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 7,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 7,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 8,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 8,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "",
+   "threat": 12,
+   "expect_max": 0,
+   "expect": null
+  },
+  {
+   "persona": "does_not_exist",
+   "threat": 12,
+   "expect_max": 0,
+   "expect": null
+  }
+ ],
  "cost_cases": [
   {
    "persona": "trooper_captain",
@@ -43387,6 +43869,92 @@
     "persona": "grossmoff",
     "threat": 12,
     "expect": 0
+   }
+  ]
+ },
+ "counter_key_cases": {
+  "_comment": "HAND-PINNT (M6d, Beschluss 5 + Pflicht-Test der Karte t_b6b3e45b; hand-pinned route wie action_tree.json, kein --record, kein Twin-Zweig: der Twin schreibt nur die counter_cases fuer die SHIPPED-Roster-Personas). counter_personas sind konstruierte Tabellen, die ueber den ECHTEN Loader (Personas.PrimeDoc+Load) gehen: mk_three hat NUR Raeume 1-3 (fehlender Rang 4 darf weder Fehler noch 'Rang 3/4' erzeugen -> expect '3/3'), mk_gap authorniert Rang 4 ohne Rang 3 (Nenner = groester DEFINIERTER Rang, nicht Zaehlung). expect_render ist aus dem GELIEFERTEN De-Template personaRankCounter abgeleitet (zur Merge-Zeit ausgelesen; die Harness-Sektion prueft zusaetzlich gegen das live geladene En+De ui.json).",
+  "counter_personas": [
+   {
+    "id": "mk_three",
+    "nameKey": "",
+    "mottoKey": "",
+    "ranks": [
+     {
+      "rank": 1,
+      "minThreat": 2,
+      "effects": []
+     },
+     {
+      "rank": 2,
+      "minThreat": 5,
+      "effects": []
+     },
+     {
+      "rank": 3,
+      "minThreat": 8,
+      "effects": []
+     }
+    ]
+   },
+   {
+    "id": "mk_gap",
+    "nameKey": "",
+    "mottoKey": "",
+    "ranks": [
+     {
+      "rank": 1,
+      "minThreat": 2,
+      "effects": []
+     },
+     {
+      "rank": 2,
+      "minThreat": 5,
+      "effects": []
+     },
+     {
+      "rank": 4,
+      "minThreat": 9,
+      "effects": []
+     }
+    ]
+   }
+  ],
+  "cases": [
+   {
+    "persona": "mk_three",
+    "threat": 9,
+    "expect": "3/3",
+    "expect_render": "Rang 3/3",
+    "_why": "Pflicht-Test: 3-Rang-Persona -> 'Rang 3/3', nie '3/4'"
+   },
+   {
+    "persona": "mk_three",
+    "threat": 5,
+    "expect": "2/3",
+    "expect_render": "Rang 2/3",
+    "_why": "Nenner bleibt das Persona-Max, unterhalb der Spitze"
+   },
+   {
+    "persona": "mk_three",
+    "threat": 2,
+    "expect": "1/3",
+    "expect_render": "Rang 1/3",
+    "_why": "erste Stufe zeigt trotzdem das volle Ziel"
+   },
+   {
+    "persona": "mk_three",
+    "threat": 1,
+    "expect": "",
+    "expect_render": "",
+    "_why": "nichts entsperrt = keine Anzeige"
+   },
+   {
+    "persona": "mk_gap",
+    "threat": 5,
+    "expect": "2/4",
+    "expect_render": "Rang 2/4",
+    "_why": "Nenner = groester DEFINIERTER Rang (4), nicht die Zahl"
    }
   ]
  }

@@ -106,7 +106,26 @@ namespace TacticalAI.Core
     {
         public string Id = "";
         public int Rank;                                   // 0 = none
+        public int MaxRank;                                // highest rank DEFINED for the persona (Beschluss 5 denominator; NOT hardcoded 4)
         public List<PersonaEffect> Active = new List<PersonaEffect>();
+
+        /// <summary>M6d (Beschluss 5, CONCEPT_personas_v2 Sec.3): the
+        /// 'Rang n/max' counter text — the view's numbers only; the
+        /// template is language-owned data (ui.json personaRankCounter,
+        /// M6c). {0}=Rank, {1}=MaxRank. Null = nothing to show (rank 0 =
+        /// no persona, or no rank authored); empty template = the CALLER
+        /// keeps its fallback (language plumbing lives Unity-side, Core
+        /// stays UnityEngine- and DataStore-free). A persona that authors
+        /// fewer than four ranks can never be displayed over its own
+        /// maximum: a missing rank 4 shows as n/max, never n/4.</summary>
+        public string RankCounter(string template)
+        {
+            if (Rank <= 0 || MaxRank <= 0) return null;
+            if (string.IsNullOrEmpty(template)) return null;
+            return template
+                .Replace("{0}", Rank.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                .Replace("{1}", MaxRank.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        }
 
         public bool IsEmpty { get { return Rank <= 0 || Active.Count == 0; } }
 
@@ -228,6 +247,10 @@ namespace TacticalAI.Core
             var def = Find(personaId);
             if (def == null) return view;
             view.Id = def.Id;
+            // M6d Beschluss 5: denominator = highest rank DEFINED for this
+            // persona (authored MAX, not the count and not a hardcoded 4).
+            foreach (var r in def.Ranks)
+                if (r.Rank > view.MaxRank) view.MaxRank = r.Rank;
             var activeRanks = new List<PersonaRank>();
             foreach (var r in def.Ranks)
                 if (r.MinThreat <= threat) activeRanks.Add(r);

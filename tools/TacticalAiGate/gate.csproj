@@ -17,6 +17,7 @@
     <Compile Include="OptionalDeployGate.cs" />
     <Compile Include="PersonasGate.cs" />
     <Compile Include="TabooLintGate.cs" />
+    <Compile Include="OfficerTextGate.cs" />
     <Compile Include="UiCompletenessGate.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\ImperialDeckState.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\AgendaState.cs" />

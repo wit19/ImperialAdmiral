@@ -225,6 +225,13 @@ standing score. It is one freshly computed number per round, per hero:
   activation in which the mission objective moved (public event credit).
 - Wounded heroes are evaluated with their wounded dice faces (usually a
   *lower* exchange, sometimes a higher one — printed dice decide).
+- **When two heroes land on the same number**, the better-invested hero
+  leads: the tie-break compares what the campaign actually *spent* on each
+  — every bought item weighted by its printed **tier × price**, then the
+  XP sum of bought abilities — before any squad-order fallback. Same dice,
+  dearer gun means bigger threat: the model cannot see extra surge
+  abilities on items (that data isn't in the dice tables), and printed
+  tier × price is exactly the public signal that catches this.
 
 Since this build, the game log (`Player-N.log`) accounts every ranked hero on
 its own line: final threat, the raw exchange value before the +1, his dice

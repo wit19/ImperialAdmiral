@@ -1379,7 +1379,9 @@ namespace TacticalAI
                     : "(curation row)";
                 string items = c != null && c.Profile != null && c.Profile.LoadoutItems != null
                                && c.Profile.LoadoutItems.Count > 0
-                    ? string.Join(",", c.Profile.LoadoutItems) : "none";
+                    ? string.Join(",", c.Profile.LoadoutItems.ConvertAll(ItemInvestStr)) : "none";
+                string eq = c != null && c.Profile != null
+                    ? " eqIndex=" + c.Profile.EquipmentIndex + " xpIndex=" + c.Profile.AbilityIndex : "";
                 bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue
                               && p.ThreatEconomic.HasValue;
                 string ev = p.Threat.HasValue
@@ -1393,8 +1395,32 @@ namespace TacticalAI
                           " marked=" + (p.Marked ? 1 : 0) + "(" + (c != null ? c.Marks : 0) + " tokens)" +
                           " wounded=" + (p.Wounded ? 1 : 0) +
                           " strain=" + (p.StrainDruck.HasValue ? p.StrainDruck.Value.ToString() : "0") +
-                          " threatEcon=" + (p.ThreatEconomic.HasValue ? p.ThreatEconomic.Value.ToString() : "-"));
+                          " threatEcon=" + (p.ThreatEconomic.HasValue ? p.ThreatEconomic.Value.ToString() : "-") +
+                          eq);
             }
+        }
+
+        // The item id with its printed investment (tier + price) from the
+        // app's own campaign store - the same tier x cost the EquipmentIndex
+        // tie-break weighs (Thomas 03.11: identical dice, dearer gear must
+        // be VISIBLE as the bigger threat). Unknown id -> bare token.
+        static string ItemInvestStr(string iid)
+        {
+            try
+            {
+                var root = TacticalAIAssets.CampaignItemsRoot as System.Collections.Generic.List<object>;
+                if (root != null)
+                    foreach (var raw in root)
+                    {
+                        var it = Tac.Json.AsDict(raw);
+                        if (it == null) continue;
+                        if (Tac.Json.AsStr(Tac.Json.Get(it, "id", "")) != iid) continue;
+                        return iid + "(t" + Tac.Json.AsInt(Tac.Json.Get(it, "tier", 1L)) +
+                               ",c" + Tac.Json.AsInt(Tac.Json.Get(it, "cost", 0L)) + ")";
+                    }
+            }
+            catch { /* log channel only */ }
+            return iid;
         }
 
         /// <summary>Threat-economy mirror (concept 3.9, the calibrated

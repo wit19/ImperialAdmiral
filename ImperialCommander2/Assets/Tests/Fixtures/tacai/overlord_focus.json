@@ -1410,6 +1410,64 @@
      "wounded": false
     }
    ]
+  },
+  {
+   "name": "p19_equal_dice_dearer_gear_leads",
+   "comment": "Player-19 (Thomas 03.11): MHD-19 and Verena Talos print the SAME base dice (BY) - threat EV ties. The items differ ONLY in investment: Verena carries item108 (Green-Yellow, tier1, price 550), MHD-19 item109 (same Green-Yellow dice, tier1, price 200). Extra item abilities are invisible to the dice model, so tier x cost (EquipmentIndex, M10a key-4) is the tie-breaker: the dearer gun is objectively the bigger investment -> Verena leads.",
+   "posture": "eliminate",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Verena Talos",
+     "row": 1,
+     "profile": "Verena Talos",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item108"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "MHD-19",
+     "row": 0,
+     "profile": "MHD-19",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item109"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Verena Talos",
+     "marked": false,
+     "threat": "3/2",
+     "threat_econ": "3/2",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "MHD-19",
+     "marked": false,
+     "threat": "3/2",
+     "threat_econ": "3/2",
+     "wounded": false
+    }
+   ]
   }
  ]
 }

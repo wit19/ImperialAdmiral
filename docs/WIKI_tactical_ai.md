@@ -209,6 +209,28 @@ printed):
   exclusivity: movement *or* attack per activation. They lead with the attack and
   remind you that moving forfeits the shot.
 
+### The threat numbers next to the heroes — what exactly is computed
+
+The focus banner's `threat=` value is **not** the printed card cost and not a
+standing score. It is one freshly computed number per round, per hero:
+
+- **The expected damage exchange** of the hero's *best single attack* — his
+  printed card dice **plus every attack die his bought campaign equipment
+  prints**, evaluated die by die against defense. The Empire may never
+  under-estimate an equipped hero, so the model always uses his best weapon,
+  and equipment only raises the number when its attack dice beat what the
+  hero's card already prints. Two heroes can absolutely reach the same
+  number with different gear — same expected damage means same threat.
+- **Plus exactly +1** for the *objective actor*: the hero who finished the
+  activation in which the mission objective moved (public event credit).
+- Wounded heroes are evaluated with their wounded dice faces (usually a
+  *lower* exchange, sometimes a higher one — printed dice decide).
+
+Since this build, the game log (`Player-N.log`) accounts every ranked hero on
+its own line: final threat, the raw exchange value before the +1, his dice
+pool, his equipment items and the flags (mark/wound/strain) that moved the
+number — so you can re-check each sum yourself instead of trusting it.
+
 ---
 
 <a name="instructions"></a>

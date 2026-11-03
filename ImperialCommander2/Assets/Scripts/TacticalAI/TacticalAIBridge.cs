@@ -194,6 +194,8 @@ namespace TacticalAI
             _roundFocus = null;
             _roundFocusRound = -1;
             _roundFocusRunnerUp = null;
+            _roundFocusRanked = null;
+            _focusCandsDbg = null;
             _roundFocusPosture = null;
             _doctrineBase = null;
             _doctrineEffective = null;
@@ -551,6 +553,9 @@ namespace TacticalAI
                               " objActor=" + (string.IsNullOrEmpty(feedView.ObjectiveActor) ? "-" : feedView.ObjectiveActor) +
                               " feedSeq=" + feedView.Seq +
                               " risk=" + (_riskByGroup != null ? _riskByGroup.Count : 0) + " groups");
+                // M6s-B9: the per-hero accounting behind that threat= line
+                // (Thomas 03.11: show WHAT was computed, not how it works).
+                LogThreatAccounting(roundNo);
             }
 
             var rng = new Tac.DeterministicRandom(SessionSeed() ^ (ulong)roundNo * 0x9E3779B97F4A7C15UL);
@@ -1342,6 +1347,54 @@ namespace TacticalAI
             _roundFocusRound = view.Round;
             _roundFocusRunnerUp = ranked.Count > 1 ? ranked[1] : null;
             _roundFocusPosture = posture ?? "eliminate";
+            _roundFocusRanked = ranked;
+            _focusCandsDbg = cands;
+        }
+
+        // M6s-B9 (Thomas 03.11): "threat=8 is nice to SEE - but WHICH sum is
+        // it?" The ORD focus line ranks every living hero; the plain log
+        // channel now accounts each of them: final threat, the raw damage
+        // EV before the +1 objective credit, HIS dice pool, HIS bought items
+        // and the flags that moved the number. Same public facts the math
+        // used, per hero - so a human can re-check or spot a wrong input.
+        // Threat law in one line: threat is NOT the printed card cost - it
+        // is the expected damage exchange of the hero's FULL dice pool
+        // (printed card dice + every bought campaign item die, see
+        // HeroThreatModelV2.EliminateEv), plus exactly +1 for the objective
+        // actor (public event credit). Two heroes with different gear may
+        // still land on the same EV: gear adds dice, dice are compared
+        // exchange-by-exchange, and equal EV means equal expected damage -
+        // here it is a computed coincidence, not a rounding default.
+        static List<Tac.FocusPick> _roundFocusRanked;
+        static List<Tac.FocusCandidate> _focusCandsDbg;
+
+        internal static void LogThreatAccounting(int roundNo)
+        {
+            if (_roundFocusRanked == null || _focusCandsDbg == null) return;
+            foreach (var p in _roundFocusRanked)
+            {
+                var c = _focusCandsDbg.FirstOrDefault(x => x.HeroId == p.HeroId);
+                string pool = c != null && c.Card != null && c.Card.BasisWuerfel != null
+                    ? string.Join("+", c.Card.BasisWuerfel)
+                    : "(curation row)";
+                string items = c != null && c.Profile != null && c.Profile.LoadoutItems != null
+                               && c.Profile.LoadoutItems.Count > 0
+                    ? string.Join(",", c.Profile.LoadoutItems) : "none";
+                bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue
+                              && p.ThreatEconomic.HasValue;
+                string ev = p.Threat.HasValue
+                    ? (objAdd ? (p.Threat.Value - Tac.Rational.One) : p.Threat.Value).ToString()
+                    : "-";
+                Debug.Log("TacticalAIBridge::ORD threat r" + roundNo + " \"" + p.HeroId +
+                          "\": threat=" + (p.Threat.HasValue ? p.Threat.Value.ToString() : "-") +
+                          " = ev " + ev + (objAdd ? " +1 objective-actor" : "") +
+                          " | attack pool=" + pool + " | items=" + items +
+                          " | basis=" + p.Basis +
+                          " marked=" + (p.Marked ? 1 : 0) + "(" + (c != null ? c.Marks : 0) + " tokens)" +
+                          " wounded=" + (p.Wounded ? 1 : 0) +
+                          " strain=" + (p.StrainDruck.HasValue ? p.StrainDruck.Value.ToString() : "0") +
+                          " threatEcon=" + (p.ThreatEconomic.HasValue ? p.ThreatEconomic.Value.ToString() : "-"));
+            }
         }
 
         /// <summary>Threat-economy mirror (concept 3.9, the calibrated

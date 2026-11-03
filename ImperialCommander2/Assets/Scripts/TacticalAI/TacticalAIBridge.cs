@@ -1769,7 +1769,11 @@ namespace TacticalAI
         ///           (terminals the Imperials work for/protect, or an ally
         ///           priority target the mission cares about);
         ///  "hunt"   - nothing to defend: the Imperials must run the rebels
-        ///           down. Thomas' law: in a hunt NOBODY gets Wachschutz.
+        ///           down. (The old "in a hunt NOBODY gets Wachschutz" law was
+        ///           retired by Thomas on 03.11.: doctrine comes from the live
+        ///           dice law — hunt rolls the unmodified weight rows, defend
+        ///           is the single modifier row. tactical_pattern_weights.json
+        ///           is the only rules source, this comment never was.)
         /// Null mission (classic mode etc.) -> hunt (plain annihilation).
         static string MissionPosture()
         {

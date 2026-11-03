@@ -28,6 +28,7 @@ class P {
         Eq(TacticalAISettings.NextMissionToken("bogus"), "off", "unknown -> OFF");
         WorldFeedGate.Run();
         OverlordGate.Run();
+        WoundFocusGate.Run();
         ImperialDeckGate.Run();
         ImperialPurchaseGate.Run();
         ImperialCardEffectsGate.Run();

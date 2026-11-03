@@ -10,6 +10,7 @@
     <Compile Include="prog.cs" /><Compile Include="stub.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\TacticalAI\Core\*.cs" />
     <Compile Include="WorldFeedGate.cs" /><Compile Include="OverlordGate.cs" />
+    <Compile Include="WoundFocusGate.cs" />
     <Compile Include="ImperialDeckGate.cs" />
     <Compile Include="ImperialPurchaseGate.cs" />
     <Compile Include="ImperialCardEffectsGate.cs" />

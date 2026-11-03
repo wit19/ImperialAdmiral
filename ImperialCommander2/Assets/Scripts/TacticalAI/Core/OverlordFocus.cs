@@ -24,8 +24,14 @@
 //   key (lexicographic, all exact arithmetic, no floats, no RNG):
 //     1. aim mark   - the human's own public designation (FocusChange). All
 //                     groups converge on it: focus fire, table-visible.
-//     2. counter    - "woundAll": the sim ChipKey verbatim (healthy-first,
-//                     healer last) - counter law outranks economics.
+//     2. counter    - "woundAll": two counter-law slots (wounded-focus fix,
+//                     Thomas 03.11): FIRST healthy-beats-wounded (the sim's
+//                     leading TargetValue slot - every hit must move the
+//                     healthy->wounded counter, a wounded hero is already
+//                     counted), then the sim ChipKey verbatim (healer last)
+//                     - counter law outranks economics. The wound economy
+//                     x2 is OFF entirely under woundAll (finishing a hero
+//                     the counter already counts earns nothing).
 //     3. economy    - posture-keyed threat x wound-economy multiplier. On
 //                     the M11b hero-card basis: expected damage of the real
 //                     printed dice pool (weapon + known loadout items)
@@ -35,6 +41,13 @@
 //                     projects his printed threat until he is out, but costs
 //                     only about half the engagement to finish - the
 //                     danger-per-shot DENSITY doubles. Rational x2, exact.
+//                     KILLABLE GATE (wounded-focus fix): on the per-figure
+//                     ranking the x2 is earned only by figures whose printed
+//                     damage EV reaches the hero's printed wounded-side bar
+//                     (the sim ERLEDBAR law) - the x2 is the economy of
+//                     FINISHING, and a figure that cannot finish earns
+//                     nothing. The round-level projection (no figure EV)
+//                     keeps the classic blanket x2 the vectors pin.
 //                     M11d STRAIN PRESSURE (light, capped): a hero whose
 //                     table strain markers reached his printed reaction
 //                     buffer cannot pay his costly reactions for a moment ->
@@ -201,16 +214,27 @@ namespace TacticalAI.Core
         /// Rank ALL living candidates (permutation only - fairness test pins
         /// that the id-multiset is input-equal for every skill level).
         /// posture/counter come from the public feed derivation; counter
-        /// "woundAll" applies the sim ChipKey (profile.py port, vector truth).
+        /// "woundAll" applies the sim ChipKey (profile.py port, vector truth)
+        /// AND the healthy-first slot (wounded-focus fix, Thomas 03.11).
         /// M11b: defenderDefense = the defense dice of the IMPERIAL FIGURE
         /// choosing its target (its printed deployment-card defense - public
         /// card data, identical against every candidate in one call; null ->
         /// no figure engaged yet, e.g. the round-level explain projection).
+        /// attackerDamageEv (wounded-focus fix): the engaging figure's printed
+        /// damage EV (VictoryHelpers.PrintedDamageEvExactColors over its attack
+        /// dice). Where present it GATES the wound economy x2 by the sim's
+        /// ERLEDBAR law (printed wounded-side bar <= EV) - only a figure that
+        /// can actually finish the wounded hero sees him doubled; the rest of
+        /// the army ranks by plain printed threat, so the army spreads across
+        /// the healthy threats instead of magnetising onto one wounded bait.
+        /// null = round-level projection (no engaging figure) - the classic
+        /// blanket x2 the golden vectors pin, bit-identical to pre-fix canon.
         public static List<FocusPick> Rank(IEnumerable<FocusCandidate> candidates,
                                                string posture, string counter,
                                                IList<string> defenderDefense = null,
                                                int cardSurcharge = 0,
-                                               EngagementEffects engage = null)
+                                               EngagementEffects engage = null,
+                                               Rational? attackerDamageEv = null)
         {
             var list = candidates == null ? new List<FocusCandidate>()
                                            : candidates.ToList();
@@ -220,7 +244,8 @@ namespace TacticalAI.Core
             {
                 C = c,
                 Threat = ThreatOf(c, posture, defenderDefense, table, engage),
-                Econ = EconOf(c, posture, defenderDefense, table, engage),
+                Econ = EconOf(c, posture, counter, defenderDefense, table,
+                              engage, attackerDamageEv),
                 Chip = woundAll && c.Profile != null ? c.Profile.ChipKey() : null,
             }).ToList();
 
@@ -290,7 +315,7 @@ namespace TacticalAI.Core
                         r.Econ = r.Econ.Value + cardSurcharge;
                     }
 
-            var ranked = StableSort(rows, Compare);
+            var ranked = StableSort(rows, (x, y) => Compare(x, y, woundAll));
 
             return ranked.Select(x => new FocusPick
             {
@@ -327,17 +352,43 @@ namespace TacticalAI.Core
             return ThreatBase(c.Profile, posture);
         }
 
-        static Rational? EconOf(FocusCandidate c, string posture,
+        static Rational? EconOf(FocusCandidate c, string posture, string counter,
                                 IList<string> defenderDefense, HeroCardTable table,
-                                EngagementEffects engage = null)
+                                EngagementEffects engage = null,
+                                Rational? attackerDamageEv = null)
         {
             var t = ThreatOf(c, posture, defenderDefense, table, engage);
             if (!t.HasValue) return null;
+            // WOUNDED-FOCUS FIX (Thomas playtest reasoning 03.11), part 1 —
+            // counter law: a woundAll END (healthy == 0, VictoryCounter.
+            // Progress counts wounded-or-worse) is ALREADY satisfied by every
+            // wounded hero. Finishing him earns ZERO counter progress, so the
+            // wound economy would magnetise the whole army onto the one
+            // target where no hit matters - the perfect rebel decoy. Under a
+            // woundAll counter there is NO wound economy at all: fresh damage
+            // belongs on the healthy (the healthy-first slot at key 2 does
+            // the ordering; this kills the x2 that fought against it).
+            if (c.Wounded && counter == "woundAll") return t;
             // same wound-economy law as ThreatEconomic: doubling applies in
             // the REMOVING races only; on card rows under protect/stall the
             // wounded penalty is already REAL (card-back tempo, M11b).
             bool race = posture != "protect" && posture != "stall";
-            return c.Wounded && race ? t.Value * WoundEconomy : t;
+            if (!(c.Wounded && race)) return t;
+            // Part 2 — KILLABLE GATE: the x2 is the ECONOMY OF FINISHING
+            // ("about half the engagement left"), so a figure earns it only
+            // where it can plausibly finish the wounded hero: his printed
+            // WOUNDED-side bar must fit inside this figure's printed damage
+            // EV — the sim's ERLEDBAR law (VictoryHelpers.Killable, M9-F6),
+            // not a blanket "someone somewhere could". Weak-damage figures
+            // rank the wounded hero at plain printed threat, so the army
+            // spreads over the healthy threats instead of converging on the
+            // bait it cannot finish. No EV passed (round projection) or no
+            // printed bar (off-roster sim rows) = the classic blanket x2.
+            if (attackerDamageEv.HasValue && c.Card != null
+                && c.Card.VerwundetesGesundheit > 0
+                && attackerDamageEv.Value < new Rational(c.Card.VerwundetesGesundheit))
+                return t;
+            return t * WoundEconomy;
         }
 
         sealed class Row
@@ -352,7 +403,8 @@ namespace TacticalAI.Core
         }
 
         /// Lexicographic compare of two rows, DESC (a before b => -1).
-        static int Compare(Row a, Row b)
+        /// woundAll = the counter-law flag (wounded-focus fix): healthy-first.
+        static int Compare(Row a, Row b, bool woundAll)
         {
             // 1. aim mark (public designation): marked first, then the most
             //    recently marked (the CURRENT designation, not an old one).
@@ -369,6 +421,16 @@ namespace TacticalAI.Core
             //    human's aim mark, key 1, still overrides him).
             if (a.C.ObjectiveActor != b.C.ObjectiveActor)
                 return a.C.ObjectiveActor ? -1 : 1;
+            // 2a. WOUNDED-FOCUS FIX (Thomas 03.11): under a woundAll counter
+            //     the sim's LEADING counter slot applies - "healthy BEATS
+            //     wounded, every hit counts and counter progress is
+            //     irreversible" (VictoryCounter.TargetValue woundAll law).
+            //     Before the chip: the chip orders ROLES for FRESH damage and
+            //     must never pull the army back onto a wounded hero. Without
+            //     the woundAll counter this slot does not exist - the null-
+            //     counter canon (finisher doctrine, key 4) stays bit-identical.
+            if (woundAll && a.C.Wounded != b.C.Wounded)
+                return a.C.Wounded ? 1 : -1;
             if (a.Chip != null || b.Chip != null)
             {
                 int ck = CompareChip(a.Chip, b.Chip);

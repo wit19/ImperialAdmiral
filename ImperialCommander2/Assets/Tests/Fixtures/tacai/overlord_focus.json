@@ -138,19 +138,19 @@
      "basis": "chip"
     },
     {
-     "hero": "Han Solo",
-     "marked": false,
-     "wounded": true,
-     "threat": "7/2",
-     "threat_econ": "7",
-     "basis": "chip"
-    },
-    {
      "hero": "Gaarkhan",
      "marked": false,
      "wounded": false,
      "threat": "5/6",
      "threat_econ": "5/6",
+     "basis": "chip"
+    },
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": true,
+     "threat": "7/2",
+     "threat_econ": "7/2",
      "basis": "chip"
     },
     {

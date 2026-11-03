@@ -563,7 +563,7 @@ namespace TacticalAI
             // costs, doctrine share, guard band, texts). null = the exact
             // bit-identical canon plan the fixtures pin.
             var plan = Tac.OrderPlanner.PlanRound(roundNo, facts, _catalog, posture, skill, rng,
-                                                  roundNo, null, null, null, null);
+                                                  roundNo, null, null, MissionCounter(), null);
             Tac.OrderPlanner.AssertPermutation(plan, facts.Select(f => f.GroupId));
             _slots = plan.Slots;
             var names = facts.ToDictionary(f => f.GroupId, f => f.Name);
@@ -1100,12 +1100,17 @@ namespace TacticalAI
                 {
                     // Personas (M4): the card hook channels are gone - the
                     // rank law runs canon (null/0), personas never touch it.
+                    // WOUNDED-FOCUS FIX (Thomas 03.11): the mission's own end
+                    // condition drives the counter law (woundAll -> healthy-
+                    // first, no wound economy) and this figure's printed
+                    // attack EV gates the wound x2 by the ERLEDBAR law - only
+                    // finishers see the wounded hero doubled.
                     var ranked = Tac.OverlordFocus.Rank(cands,
                         string.IsNullOrEmpty(ordView.Posture) ? "eliminate" : ordView.Posture,
-                        null,                      // the app has no victory counter
+                        MissionCounter(),
                         // M11b: threat v2 runs against THIS figure's printed
                         // defense pool (public deployment-card data).
-                        DefenseOf(cd), 0, null);
+                        DefenseOf(cd), 0, null, AttackEvOf(cd));
                     var dec = ranked[0];
                     _roundFocus = dec;
                     _roundFocusHero = dec.HeroId;
@@ -1232,6 +1237,49 @@ namespace TacticalAI
             return outp;
         }
 
+        /// <summary>WOUNDED-FOCUS FIX (Thomas 03.11): the mission's VICTORY
+        /// COUNTER derived from its own public text (briefing/objective - the
+        /// same class of fact DerivePosture reads from the feed). Cached per
+        /// mission id; no decisive sentence -> null = the honest legacy
+        /// default the whole pre-fix canon ran on (finisher doctrine), never
+        /// an invented counter.</summary>
+        static string _missionCounter, _missionCounterKey;
+        static string MissionCounter()
+        {
+            global::Saga.MissionProperties mp = null;
+            try { mp = DataStore.mission != null ? DataStore.mission.missionProperties : null; }
+            catch { mp = null; }
+            var key = mp != null ? (mp.missionID ?? mp.missionName ?? "") : "";
+            if (key != _missionCounterKey)
+            {
+                _missionCounterKey = key;
+                _missionCounter = mp == null ? null : Tac.WorldEventVector.DeriveCounter(
+                    (mp.missionDescription ?? "") + ". " +
+                    (mp.additionalMissionInfo ?? "") + ". " +
+                    (mp.missionInfo ?? "") + ". " +
+                    (mp.startingObjective ?? ""));
+                // playtest verification hook (same class as the posture log):
+                // the derived end-condition law, once per mission. null = no
+                // decisive sentence -> legacy finisher canon stays active.
+                UnityEngine.Debug.Log("TacticalAIBridge::counter=" + (_missionCounter ?? "null")
+                                      + " mission=\"" + key + "\"");
+            }
+            return _missionCounter;
+        }
+
+        /// <summary>Printed damage EV of one imperial figure's attack dice -
+        /// the exact mirror of the sim's PrintedDamageEvExact for the RAW
+        /// colours (the layer has no Core Figure). Feeds the ERLEDBAR gate of
+        /// the wound economy (wounded-focus fix). Null card/attacks = unknown
+        /// attacker = null = the vectors' blanket law.</summary>
+        static Tac.Rational? AttackEvOf(global::DeploymentCard cd)
+        {
+            if (cd == null || cd.attacks == null) return null;
+            var colors = new System.Collections.Generic.List<string>();
+            foreach (var d in cd.attacks) colors.Add(d.ToString());
+            return Tac.VictoryHelpers.PrintedDamageEvExactColors(colors);
+        }
+
         /// <summary>Campaign loadout lookup (app-managed public data, concept
         /// 3.3.1a). Solo missions / missing campaign -> null -> curated-only
         /// profile, which is exactly the documented fallback.</summary>
@@ -1269,8 +1317,12 @@ namespace TacticalAI
             var cands = BuildFocusCandidates(view, living);
             if (cands.Count == 0) return;
             // Personas (M4): canon channels (personas never touch focus math).
-            var ranked = Tac.OverlordFocus.Rank(cands, posture ?? "eliminate", null,
-                                                null, 0, null);
+            // The counter law is live here too (wounded-focus fix): the
+            // round-level projection ranks WITHOUT a figure EV (attackerDamageEv
+            // stays null) - the documented blanket x2 on race postures, but a
+            // woundAll counter flips this projection to healthy-first as well.
+            var ranked = Tac.OverlordFocus.Rank(cands, posture ?? "eliminate",
+                                                MissionCounter(), null, 0, null);
             _roundFocus = ranked.Count > 0 ? ranked[0] : null;
             _roundFocusHero = _roundFocus != null ? _roundFocus.HeroId : null;
             _roundFocusRound = view.Round;
@@ -1331,7 +1383,11 @@ namespace TacticalAI
                     GroupId = f.GroupId,
                     Pattern = f.Pattern ?? "aggressive",
                     Posture = posture ?? "eliminate",
-                    Counter = null,          // the app carries no victory counter
+                    // WOUNDED-FOCUS FIX (Thomas 03.11): the derived mission
+                    // counter is live - RiskPosture's woundAll press law
+                    // ("Zaehler verlangt frischen Schaden") finally has its
+                    // input. null = legacy default, pre-fix behaviour.
+                    Counter = MissionCounter(),
                     Vitality = gv != null ? gv.VitalityFrac : Tac.Rational.One,
                     RingNear = false,        // belief layer needs the tile graph (open)
                     OnAnchor = false,        // anchors need mission geometry (open)

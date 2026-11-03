@@ -66,6 +66,21 @@ namespace TacticalAI.Core
             return tot;
         }
 
+        /// <summary>Same printed-damage law for RAW attack colours (app side:
+        /// the engaging figure's printed attack dice as die names, no Core
+        /// Figure exists there). Unknown/absent colours skip exactly like the
+        /// Figure-based path - the vectors' law is untouched.</summary>
+        public static Rational PrintedDamageEvExactColors(IList<string> colors)
+        {
+            Rational tot = Rational.Zero;
+            foreach (var color in colors ?? Array.Empty<string>())
+            {
+                try { tot += Dice.DieExpectations(color)["dmg"]; }
+                catch (KeyNotFoundException) { continue; }
+            }
+            return tot;
+        }
+
         /// Attack EV with printed dice + printed surge-flat keyword damage.
         /// Python tries world.stats_of FIRST (MissionWorld seam); the plain
         /// runner.World used by the vectors KeyErrors there, so the printed

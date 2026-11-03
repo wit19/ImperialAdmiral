@@ -317,6 +317,71 @@ namespace TacticalAI.Core
             return "eliminate";
         }
 
+        // ---------------------------------------------------------- counter
+        // Mission-END derivation (wounded-focus-magnet fix, Thomas 03.11).
+        // The victory counter decides WHICH target law is right: a woundAll
+        // end (healthy == 0) makes every hit on an already-wounded hero
+        // worth ZERO progress -> healthy-first; an incapacitateAll end makes
+        // the finisher doctrine genuinely optimal. Same word-boundary law as
+        // DerivePosture; EN + DE vocabulary (the app ships translated
+        // missions). Decisive sentence = mission-end words (rebel defeat OR
+        // imperial win) + hero word + quantifier + a status word; FIRST
+        // decisive sentence wins (deterministic). No match -> null: the
+        // caller keeps the honest legacy default (incapacitateAll), i.e.
+        // today's behaviour - derivation NEVER invents a counter.
+        static readonly string[] EndWords =
+            { "defeat", "defeated", "lose", "loses", "losing", "lost",
+              "fail", "fails", "failed", "win", "wins", "winning",
+              "niederlage", "verlieren", "verliert", "verloren",
+              "scheitern", "scheitert", "gescheitert",
+              "gewinnen", "gewinnt", "sieg", "siegt" };
+        static readonly string[] HeroWords =
+            { "hero", "heroes", "held", "helden", "rebel", "rebels", "rebellen" };
+        static readonly string[] QuantifierWords =
+            { "all", "alle", "aller", "every", "jeder", "jede", "jedes",
+              "any", "kein", "keine", "keinen", "no", "last", "letzte",
+              "letzter", "letztes", "ein", "eine", "einen" };
+        static readonly string[] WoundWords =
+            { "wound", "wounded", "verwundet", "verwundung", "verwundete" };
+        static readonly string[] IncapWords =
+            { "incapacit", "kampfunf", "ausgeschaltet", "killed", "kill",
+              "getotet", "get\u00f6tet", "erschosse" };
+
+        static readonly char[] WordSplit = new[]
+        { ' ', '\t', '\n', '\r', '-', ',', ';', ':', '.', '!', '?', '"', '\'' };
+
+        /// <summary>Derived from the mission's own text (public briefing /
+        /// objective - the same class of fact DerivePosture reads), never
+        /// trusted from anywhere else. "woundAll" | "incapacitateAll" | null.
+        /// "wounded OR incapacitated" ends classify as woundAll: exactly like
+        /// VictoryCounter.Progress, a wounded-or-worse hero already satisfies
+        /// them, so further hits on him are zero counter progress.</summary>
+        public static string DeriveCounter(string missionText)
+        {
+            if (string.IsNullOrEmpty(missionText)) return null;
+            foreach (var raw in missionText.Split(
+                         new[] { '.', '!', '?', ';', '\n', '\r' },
+                         StringSplitOptions.RemoveEmptyEntries))
+            {
+                var words = raw.ToLowerInvariant().Split(WordSplit,
+                    StringSplitOptions.RemoveEmptyEntries);
+                if (!SentenceHas(words, EndWords)) continue;
+                if (!SentenceHas(words, HeroWords)) continue;
+                if (!SentenceHas(words, QuantifierWords)) continue;
+                if (SentenceHas(words, WoundWords)) return "woundAll";
+                if (SentenceHas(words, IncapWords)) return "incapacitateAll";
+            }
+            return null;
+        }
+
+        static bool SentenceHas(string[] words, string[] vocab)
+        {
+            foreach (var v in vocab)
+                foreach (var w in words)
+                    if (w.StartsWith(v, StringComparison.Ordinal)) return true;
+            return false;
+        }
+
         static FeedWorldView.GroupView Group(FeedWorldView v, string id)
         {
             id = id ?? "?";

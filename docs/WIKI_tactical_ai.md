@@ -105,7 +105,7 @@ Options window → **UI** tab, bottom section — exactly **five rows**:
 | **TACTICAL AI** | OFF / ON (**default: ON**) | Master switch. OFF = the app behaves exactly as classic Imperial Commander, including the random activation draw — bit for bit. |
 | **DIFFICULTY** | Recruit → Stormtrooper → Veteran → Commandant → Thrawn (**default: Thrawn**) | How well the Imperials *choose* between their legal actions. It never changes stats, ranges, action counts or dice — only decisions. |
 | **EXPLAIN** | NONE (**default**) / FULL | The AI's reasoning texts: FULL prints the "why" lines (target ranking, risk posture, focus change) on the activation pop-ups; NONE keeps the pop-ups purely operational. |
-| **INFO TEXT** | ON (default) / OFF | The short rules reminder under the action texts on every pop-up (one attack per activation; opening a door costs an action). |
+| **INFO TEXT** | ON (default) / OFF | The short rules reminder under the action texts on every pop-up (one attack per activation; opening a door costs an action; guard pop-ups additionally define the guard zone). |
 | **PERSONA** | none + six commanders | Picks your Imperial commander doctrine for all campaigns (can also be set per campaign at setup; see [personas](#command-personas)). |
 
 Defaults live in `Core/TacticalAISettings.cs` (`DefaultEnabled`, `DefaultSkillLevel`,

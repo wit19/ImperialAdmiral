@@ -142,8 +142,8 @@ comes up". Tactical mode replaces both halves with planning
   before their targets can slip away, blockers before the attacks they enable,
   would-be finishers last).
 - Which group activates when is **reproducible and inspectable**: the same seed
-gives the same plan, and the pop-ups run exactly that plan — "the deck hated me"
-is no longer a thing.
+  gives the same plan, and the pop-ups run exactly that plan — "the deck hated me"
+  is no longer a thing.
 - Reinforcement and attack-point economics follow the printed threat budget of the
   mission; the skill level decides how wisely the budget is spent, never how big it
   is (see [Difficulty](#difficulty)).
@@ -292,7 +292,7 @@ table** `Resources/Languages/En/tactical_pattern_weights.json` (rows matched by
 card id / name, seeded deterministically from mission + card + round; the defend
 posture is the one modifier row, and the emplacement print rule is the single
 pre-roll exception) — shifting round to round like a real battlefield, yet
-identical every time for the same seed. Briefing text
+identical every time for the same seed. Stance text
 `Core/Doctrine.StanceText`; popup label `doc*` keys — the label appears in the
 **doctrine line** directly under the focus line on every activation pop-up; German
 labels as shipped):
@@ -300,9 +300,9 @@ labels as shipped):
 | Doctrine | Popup label (DE, shipped) | Behaviour at the board | Planner fit (eliminate / stall / protect / deny) |
 |---|---|---|---|
 | **Vorstoß** (aggressive) | "Vorstoß (zum Kampf vorrücken)" | Press toward the fight; the workhorse of hunt missions | 1.5 / 0.8 / 0.7 / 1.1 |
-| **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective | 0.6 / 1.4 / 1.5 / 1.0 |
-| **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers; large bases do this | 0.8 / 1.5 / 1.3 / 0.9 |
-| **Jäger** (hunter) | "Jäger (Schwerpunktzone abkämmen)" | Sweep the zone of main effort; fast melee (speed ≥ 5) in hunt missions; intercept heroes working the objective | 1.4 / 0.9 / 0.8 / **1.5** |
+| **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective (heavily tilted by the defend modifier) | 0.6 / 1.4 / 1.5 / 1.0 |
+| **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers (the dice rows favour large bases) | 0.8 / 1.5 / 1.3 / 0.9 |
+| **Jäger** (hunter) | "Jäger (Schwerpunktzone abkämmen)" | Sweep the zone of main effort; the dice rows favour fast melee hunters; intercept heroes working the objective | 1.4 / 0.9 / 0.8 / **1.5** |
 | **Support** | "Support (Distanz halten, aus der Deckung)" | Keep distance, fire from cover | 0.9 / 1.0 / 1.3 / 1.0 |
 | **Hinterhalt** (ambusher) | "Hinterhalt (ungesehen bis zum ersten Schuss)" | Deny the point until a target enters range | 1.1 / 1.1 / 0.9 / 1.3 |
 

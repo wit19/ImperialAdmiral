@@ -374,7 +374,7 @@ public class TitleController : MonoBehaviour
 
 	public void OnWikiDocs()
 	{
-		Application.OpenURL( "https://github.com/wit19/ImperialCommander2/blob/feature/tactical-ai/docs/WIKI_tactical_ai.md" );
+		Application.OpenURL( "https://github.com/wit19/ImperialCommander2/blob/main/docs/WIKI_tactical_ai.md" );
 	}
 
 	public void OnVersionPopup()

@@ -517,6 +517,7 @@ concept document [`CONCEPT_fair_imperial_ai.md`](CONCEPT_fair_imperial_ai.md)
 
 ---
 
-*Page status: written against the shipped `feature/tactical-ai` tree; every claim
+*Page status: written against the shipped `main` tree of this fork (product branch
+since November 2026); every claim
 carries a file pointer so reviewers can verify it. If something here and something on
 a printed card disagree — the card wins; report it to us.*

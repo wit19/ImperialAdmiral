@@ -1,219 +1,509 @@
-# Tactical AI — the Fair Imperial AI (wiki draft text)
+# Tactical AI — The Fair Imperial AI
 
-_Draft for the Imperial Commander 2 wiki (https://github.com/GlowPuff/ImperialCommander2/wiki).
-Suggested placement: a new wiki page "Tactical AI", linked from Home → Game Modes.
-All UI labels, level behaviours and pop-up texts below were verified against the shipped
-code and the English language files — nothing in this text is invented._
+**Tactical AI** turns the Imperial side of Imperial Commander from a random
+automation into a *deterministic, rule-following opponent* — the kind of AI you know
+from modern board games like Gloomhaven: fixed, printed priorities decide who
+activates, whom the Imperials target and how they move. No "who activates next"
+spinner, no drawn instruction cards, no hidden dice behind a screen — and every rule
+is visible, so you can learn it, predict it, and argue with your opponent.
+
+This page documents the mode as it is actually implemented. Every section names the
+code or data file behind the claim, so anything here can be checked. The deep
+mechanics reference (planner internals, tables, formulas) lives in
+[`MECHANICS_tactical_ai.md`](MECHANICS_tactical_ai.md) next to this file.
+
+> **Where this came from:** the app's classic behaviour (the "legacy" mode) replaces
+> the Imperial player with automation: a random activation draw, simple per-group
+> behaviour, and some power that was rolled behind the scenes. Tactical AI keeps the
+> *automation* of that bookkeeping but replaces its *decisions and cheats* with
+> printed, fair rules — see "Every difference from the legacy mode" below.
 
 ---
 
-## Tactical AI
+## Table of contents
 
-**Tactical AI** is an optional mode that turns the Imperial side from a random activation
-spinner into a thinking opponent. Instead of rolling for "who activates next" and drawing a
-random instruction, the app plans each Imperial round like a careful human player would —
-and it shows its work. The mode also switches the game onto the **printed reference
-rules**: no MedPacs, no hidden bonuses, printed figure restrictions enforced — see
-"Played by the printed reference rules".
+1. [The goal: fair, clever, never random](#the-goal)
+2. [The four design promises](#the-four-design-promises)
+3. [Where to find it — settings and mission badges](#where-to-find-it)
+4. [Activation — how the round runs](#activation)
+5. [The activation pop-up — how to read and execute an order](#the-activation-pop-up)
+6. [Instructions: the if–then trees](#instructions)
+7. [Officers and their commands](#officers)
+8. [The glossary — new words on the table](#the-glossary)
+9. [The doctrines — every role and what it does](#the-doctrines)
+10. [Difficulty — five levels, no hidden power](#difficulty)
+11. [Command Personas — six Imperial commanders](#command-personas)
+12. [Every difference from the legacy mode](#every-difference)
+13. [What does NOT change](#what-does-not-change)
+14. [Campaign extras](#campaign-extras)
+15. [Tips, limits and honest admissions](#tips-and-limits)
+16. [Links to the original IC2 documentation](#links)
 
-Three design promises come with it:
+---
 
-- **Fair.** The AI only knows what a human Imperial player can see at the table: the board,
-  the printed cards, the announced objectives and the wounded/defeated status you mark on
-  the hero cards. It never reads hidden event data, never touches the dice, and the legacy
-  hidden bonus-effect rolls **never fire** in Tactical mode — the printed stat card is the
+<a name="the-goal"></a>
+## The goal: fair, clever, never random
+
+Three words were the whole brief behind this mode:
+
+- **Fair.** The Imperial side may only know what a human Imperial player at your
+  table can know: the board, the printed cards, the announced mission objectives,
+  and the wound/defeat status you mark on the hero cards. It never peeks at hidden
+  event data, hero hands, villain decks or dice results. The legacy hidden
+  bonus-effect rolls **never fire** in Tactical mode — the printed stat card is the
   only source of enemy power.
-- **Deterministic.** Same seed, same decisions. No hidden difficulty buffs, no rubber-banding.
-- **Explainable.** Every order card can tell you *why* it did what it did.
+- **Clever.** The Imperials should feel like a competent squad with a plan: announce
+  a focus, hold objectives, block lanes, finish wounded heroes, budget their
+  activations — decisions a good human would make, made *well* at the top difficulty.
+- **Never random.** Same campaign seed, same mission, same difficulty ⇒ the same
+  activation order, the same orders, the same purchases, every time. Chance enters
+  only where the printed game has chance: your dice. The AI has no dice of its own —
+  and no rubber-banding, ever.
 
-With the master switch off, the app is untouched legacy — bit for bit. New installs start
-with the switch **on** at difficulty **Thrawn** (since M6p): a freshly started game plays
-tactically out of the box. Once you touch a setting, your stored values always win over
-these defaults.
+The design method comes from the printed game's own logic: Gloomhaven-style
+priorities. Instead of "the computer outthinks you", you get *rules you can learn*.
+A human Imperial player racing your options with these rules is beatable — and
+beating them feels earned, because nothing was hidden.
 
-### Where to find it
+---
 
-Options window → **UI** tab, bottom section. There are exactly **four rows**:
+<a name="the-four-design-promises"></a>
+## The four design promises
+
+Enforced in code, not just on paper (each pointer verified against the shipped tree):
+
+1. **Fair information.** The planner's world model is the public world feed. The
+   feed's event vocabulary contains no key for hidden information — an event
+   carrying an unknown payload key is **rejected fail-loud**
+   (`Core/WorldEventFeed.cs`, `Append`). Hero cards, hands and dice have no
+   representation in the AI's vocabulary at all.
+2. **Zero new bookkeeping.** The mode never asks you to report positions into the
+   app. Everything it reads is either already in the mission data or already entered
+   while you play (deaths and activations come from the mission log; wound status
+   comes from the hero-card marks you already make in the printed game).
+3. **Human as actuator.** The app *plans and orders*; **the board is the rules
+   engine**. Every order is an if–then tree whose conditions you evaluate on the
+   real board (range, line of sight, occupation). The app never decides "the hero
+   stands on tile X" and never rolls your dice.
+4. **Determinism.** The decision core is pure C# with its own deterministic RNG
+   stream derived from the mission seed; the legacy dice/shuffle stream is never
+   touched (`Core/PyRandom.cs` — a CPython-exact port, pinned by a parity harness).
+   Reproduced by ~44,000 regression vectors that run on every change.
+
+---
+
+<a name="where-to-find-it"></a>
+## Where to find it — settings and mission badges
+
+Options window → **UI** tab, bottom section — exactly **four rows**:
 
 | Row | Values | What it does |
 |---|---|---|
-| **TACTICAL AI** | ON (default) / OFF | Master switch. New installs start ON (M6p); OFF = the app behaves exactly like before, including the random activation order. |
-| **DIFFICULTY** | Recruit → Stormtrooper → Veteran → Commandant → Thrawn (default: Thrawn) | How well the Imperials *choose* between their legal actions. It never changes stats, ranges, action counts or dice — only decisions. See "Difficulty" below. |
-| **EXPLAIN** | OFF (default) / ON | The AI's reasoning texts, printed directly on the activation pop-ups. |
-| **INFO TEXT** | ON (default) / OFF | Adds the short rules reminder under the action texts on every activation pop-up (attack cap, door-opening rule). Turn it off once you know the drill. |
+| **TACTICAL AI** | OFF / ON (**default: ON**) | Master switch. OFF = the app behaves exactly as classic Imperial Commander, including the random activation draw — bit for bit. |
+| **DIFFICULTY** | Recruit → Stormtrooper → Veteran → Commandant → Thrawn (**default: Thrawn**) | How well the Imperials *choose* between their legal actions. It never changes stats, ranges, action counts or dice — only decisions. |
+| **EXPLAIN** | NONE (**default**) / FULL | The AI's reasoning texts: FULL prints the "why" lines (target ranking, risk posture, focus change) on the activation pop-ups; NONE keeps the pop-ups purely operational. |
+| **INFO TEXT** | ON (default) / OFF | The short rules reminder under the action texts on every pop-up (one attack per activation; opening a door costs an action). |
 
-On top of that, every mission in a campaign list — and the mission setup panel — carries a
-teal **level badge**. Clicking it cycles:
+Defaults live in `Core/TacticalAISettings.cs` (`DefaultEnabled`, `DefaultSkillLevel`,
+`DefaultExplainLevel`, `DefaultInfoText`). A default only applies **when nothing is
+saved yet** — your stored settings (PlayerPrefs) always win, so an existing setup
+never flips underneath you. Turn Tactical AI off and the app is classic again: the
+legacy code paths are kept verbatim, not patched around.
+
+On top of the global rows, every mission in a campaign list and the mission setup
+panel carries a teal **level badge**. Clicking it cycles:
 
 **AUTO → OFF → Recruit → Stormtrooper → Veteran → Commandant → Thrawn → AUTO**
 
-- `AUTO` (default): the mission follows your global DIFFICULTY setting. Turning the master
-  switch on is all you need — no per-mission work required.
-- A named level on the badge pins **this mission** to that difficulty, whatever the global
-  setting says (handy for tuning one specific mission).
-- `OFF` forces this single mission back to the legacy random behaviour — e.g. to play a
-  comparison round against the old AI.
+- `AUTO` (default): the mission follows the global DIFFICULTY row.
+- A named level pins **this mission** to that difficulty regardless of the global row.
+- `OFF` forces this single mission back to the classic random behaviour — handy for
+  an A/B comparison round.
 
-### Difficulty — what each level actually changes
+*(Per-mission selection: `MissionSettingsHook` / campaign `aiMode` field; badge
+labels and rows are shipped in all 11 app languages.)*
 
-Difficulty in Tactical AI is **play strength, never hidden power**. Every level plays with
-the exact same legal options, the same printed stats and the same threat budget the mission
-gives the Imperials. What changes is *how well the Imperials pick* among those options.
-In board terms: same army, different general.
+---
 
-**Recruit (S1)** — the old "automaton" behaviour. Recruits focus on whoever happens to be
-closest or first in their own bookkeeping; they ignore the wounded/defeated status on the
-hero cards, so they rarely finish off a weakened hero, and they concentrate their fire only
-by accident. They spend their whole threat budget immediately (activating everything they
-can, as fast as possible), move to the first legal position they find, and react to what
-the rebels did two rounds ago. Honest and forgiving — good for your first runs or for
-younger players.
+<a name="activation"></a>
+## Activation — how the round runs
 
-**Stormtrooper (S2)** — still ignores the wounded/defeated status (no deliberate focus
-fire), but now usually picks one of the two *sensible* targets, sometimes fumbles (about
-one fumble in three activations). Movement improves to greedy steps toward contact, and the
-threat budget is mostly held back for later activations instead of spent in one burst. The
-Imperial masses get reliably into the fight, but they still won't set up crossfires or use
-cover deliberately.
+Legacy IC2 asks: "roll the activation spinner, and draw an instruction for whoever
+comes up". Tactical mode replaces both halves with planning
+(`Core/OrderPlan.cs`, driven through `TacticalAIBridge.cs`):
 
-**Veteran (S3)** — the turning point: Veterans **read the wounded/defeated status you mark
-on the hero cards**. That unlocks deliberate focus fire: wounded heroes get finished first,
-the highest-firepower hero draws the shots, and the round's focus target is announced
-openly at round start. Veterans react to rebel events with a one-round delay and take
-reasonable approach paths (shortest route, but without dodging known fire lanes). At this
-level the Imperials start to feel like a competent squad — expect real pressure if you
-split your party.
+- At mission/round start the planner computes the **activation order** for the round
+  — a deterministic sequence that fits the mission posture (e.g. heavy groups
+  before their targets can slip away, blockers before the attacks they enable,
+  would-be finishers last). A plain-language round line tells you what the Empire
+  is going for this round.
+- Which group activates when is **announced and reproducible**: the same seed gives
+  the same order, so "the deck hated me" is no longer a thing.
+- Reinforcement and attack-point economics follow the printed threat budget of the
+  mission; the skill level decides how wisely the budget is spent, never how big it
+  is (see [Difficulty](#difficulty)).
 
-**Commandant (S4)** — the tactics turn professional. The Imperials now plan **two rounds
-ahead** on the movement envelope — they value positions that deny a hero's likely route
-rather than chasing where a hero stands today (they don't read your mind; they race your
-options), and fumbles are rare. Movement uses the full planner — zone control, covering
-doors and lanes, respecting the threat budget. From Commandant up the AI also proposes the
-**printed special abilities** of villain cards (the third action block on the pop-up) when
-the printed conditions fit — e.g. Darth Vader's printed Force Choke or General Sorin's
-Bombardment order.
+When a custom (fan-made) group activates that is not part of the shipped card set,
+it falls back to the legacy draw — the rest of the mission still runs tactically.
 
-**Thrawn (S5)** — everything above, plus the complete risk judgement: the Imperials weigh
-each option against a full threat calculation (including the Imperium's own threat economy
-— spent threat on the table and what replacing a wounded group is worth) and essentially
-always take the best legal move the model sees. Expect zone control before you reach the
-objective, sight lanes kept clear for fire, wounded heroes hunted to the death, and no
-wasted actions. This is the "play it like the books say — perfectly" end of the ladder.
+---
 
-> Implementation note: internally S1–S3 run the app's "reference" decision brain and S4–S5
-> the "overlord" brain. That is not a setting — the DIFFICULTY ladder (and the mission
-> badges) are the only knob you need.
+<a name="the-activation-pop-up"></a>
+## The activation pop-up — how to read and execute an order
 
-### Played by the printed reference rules
+Each activation shows one pop-up, assembled from printed facts
+(`TacticalAIBridge.cs`; texts from `Languages/<lang>/ui.json`, keys
+`uiTacticalAI.*`). Top to bottom:
 
-Tactical AI does not only change *how* the Imperials are controlled — it also switches
-which ruleset they play by. A tactical mission is played by the printed reference rules,
-without the app's legacy conveniences:
+1. **Focus line** — which hero the Imperials are concentrating on *this round* and
+   why ("he is wounded — finish him first", "highest firepower"). Deliberately
+   public: a human Imperial player has this information too.
+2. **Doctrine line** — the role this figure plays in this mission, named in plain
+   words directly under the focus line, e.g. `Wachschutz (Zone halten, Wege
+   versperren, nie herauslocken)`. Shown always, independent of the EXPLAIN level.
+3. **The action blocks — an if–then decision tree** (see
+   [Instructions](#instructions)). Two action slots per activation, at most one an
+   attack, exactly as printed. The tree is *printed rules + priorities*, rendered as
+   conditions you evaluate at the board.
+4. **Optional third block — printed villain abilities** (Commandant and up). When a
+   villain card prints a special action (Force Choke, Bombardment…), it appears as
+   its own block with the printed condition text. The block proposes; it never
+   overrides the printed rules, and you confirm the condition at the board.
+5. **Explanation line** (EXPLAIN = FULL): the reasoning behind this activation —
+   target ranking, risk posture, focus change — right on the pop-up.
 
-- **No MedPacs.** Wounded units stay wounded until the mission ends. The MedPac HUD slot
-  is switched off for the mission, and crates and mission rewards stop handing MedPacs
-  out. (Between-mission hero recovery is unchanged.)
-- **Only the printed stat card.** The legacy hidden bonus-effect rolls never fire — no
-  invisible power creep, nothing to roll behind a screen. What the card prints is what
-  the figure plays with.
-- **Figure restrictions apply again.** Massive figures stay out of interiors and no two
-  Massive figures share a space; blocking and immobile figures hold their printed jobs in
-  lanes and zones. Every move the AI plans is checked against these printed legality
-  rules before it can be proposed — the pop-ups can only ask for legal moves.
-- **Open growth instead of baked-in bonuses.** The Imperials receive no silent stat
-  boosts between missions. The Empire grows the way you do: by buying cards — the
-  Imperial class deck and the agenda market (see "Campaign extras").
-- **Printed action economics.** At most one attack per activation (unless the figure card
-  prints more) and doors cost an interaction action — both are printed on every pop-up
-  and summarized by the INFO TEXT toggle.
-- **Planned deployment, not rolled deployment.** Where reinforcements enter is chosen
-  deterministically from the tactical plan — same seed, same landing zones, and you can
-  read the likely entry points before they arrive.
+**How to execute it well** (the mode assumes you play *for the Empire* exactly as
+printed):
 
-### The activation pop-ups — how to read them, and how to play them well
+- **Work the tree top-down.** The first condition that is true on your real board
+  **is** the order; everything below it only applies if the lines above are false.
+- **One attack per activation** unless the figure card prints more — and give it to
+  the announced focus target, not to whoever is closest.
+- **Movement serves the fire plan.** Advance figures close until the focus target
+  is in range; Guard figures mostly *don't* move — holding the objective zone or a
+  chokepoint beats one more step.
+- **Doors cost an interaction action**: whoever opens cannot also attack that
+  activation — decide who, or route around.
+- **Emplacement (Stativ/Tripod) figures** (e.g. E-Web, DG007) follow their printed
+  exclusivity: movement *or* attack per activation. They lead with the attack and
+  remind you that moving forfeits the shot.
 
-With Tactical AI on, the old random "instruction card" is replaced by a deterministic
-**activation order** (planned each round, announced with a plain-language round line) and
-**activation pop-ups that come straight from the figure** — no order decks, no drawn cards.
-Each pop-up reads top to bottom:
+---
 
-1. **Focus line** (when a target is chosen): which hero the Imperials are concentrating on
-   and *why* — e.g. "he is wounded — finish him first" or "highest firepower among the
-   remaining heroes". This information is deliberately public; a human Imperial player has
-   it too.
-2. **Doctrine line**: the role this figure plays in *this mission*, named in plain words —
-   e.g. `Doctrine: Guard (hold the zone, never be lured out)`. Shown permanently directly
-   below the focus line — independent of the EXPLAIN setting (since M6p). Doctrines are
-   situation-driven: on defend-type missions, immobile and melee figures guard the
-   objective, big bases block the lanes; on hunt-type missions nobody guards — everyone
-   sweeps. Each figure's printed traits decide its role, never hidden data.
-3. **The actions — an if–then decision tree.** The reference rules give every Imperial
-   figure two action slots per activation, at most one of which is an attack. Each action
-   block is printed as conditions, not as a hardcoded order:
+<a name="instructions"></a>
+## Instructions: the if–then trees
 
-   > *Action 1 — Focus target within attack range and clear line of sight? Then: attack the
-   > focus target. No hero reachable? Then: close in on the focus target until the figure
-   > is within attack range.*
+The order text of every activation comes from a **pattern tree** keyed by the
+figure's doctrine (`TacticalAIBridge.PatternTree` → `ui.json` keys
+`apTreeGuard`, `apTreeBlocker`, `apTreeSupport`, `apTreeAmbush`,
+`apTreeAggressive`, `apTreeTripod`, `apTreeNoTarget`). Three rules govern them:
 
-   **You (the human Overlord) evaluate the conditions on the real board.** The tree shows
-   the AI's strongest play with its public information; you check the actual positions,
-   ranges and sight lines and execute accordingly. How to play it *best for the Empire*:
-   - **Work the tree top-down.** The first condition that is true on your board IS the
-     order. The lines below it only apply when the ones above are false.
-   - **One attack per activation** (the info text reminds you): unless the figure's own
-     card prints multiple attacks, the attack slot goes to exactly one hero — give it to
-     the announced focus target, not to whoever happens to be closest.
-   - **Movement serves the fire plan.** For "Advance" figures that means closing until the
-     focus target is inside range; for "Guard" and "Blocker" figures it means *not* moving —
-     holding the objective zone or the chokepoint is worth more than one more step.
-   - **Doors cost an action** (interact). Opening one means skipping attack or movement
-     that activation — decide who opens, or route around.
-   - **Emplacement figures (Stativ/Tripod, e.g. E-Web Troopers)** follow their printed
-     rule: movement and attack are mutually exclusive in one activation. Their pop-up
-     leads with the attack and reminds you: moving forfeits the shot. Best for the Empire:
-     let them hold a lane and pour fire into anything that crosses it — never chase.
-4. **Optional third block — printed villain abilities** (from Commandant up). When a
-   villain card prints a special action, it appears as its own block carrying the printed
-   condition text ("within 4 spaces and line of sight…"). You decide at the board whether
-   the condition is met; the block proposes, it never overrides the rules.
-5. **Explanation line** (with EXPLAIN on): the why behind this activation — target
-   ranking, risk posture, the pattern-roll draw value — right on the pop-up. The doctrine
-   itself is *not* repeated here; it stands on its permanent line directly under the
-   focus target.
+- **Conditions, not commands.** Every line is "on your board, if X then Y". The app
+  never claims X is true — you check X on the board.
+- **Printed limits only.** Move distance, range and legality come from the card and
+  the mission's threat budget. Trees never ask for more than the figure prints.
+- **Guard-zone discipline.** Guard trees keep figures inside or entering the guard
+  zone ("Wachzone") and remind you of its meaning on first use; they offer blocking
+  another hero's path to the objective as an alternative to chasing.
+
+Under the hood the same priorities drive the planner itself (which candidate targets
+a group may consider — `Core/Patterns.cs`), so popup and plan agree; the popup is
+the plan translated back into board language.
+
+---
+
+<a name="officers"></a>
+## Officers and their commands
+
+Officers are the Empire's remote control — their orders go to *another* figure
+(`apTreeOfficer<Pattern>` / `apTreeOfficerElite<Pattern>` trees):
+
+- **Officer (DG004/DG005)** — "Order": gives another Imperial figure in range **2
+  movement points**. No attack order.
+- **Executive Officer (DG006, elite)** — "Executive Order": gives a figure in range
+  **either 2 movement OR one attack** — one order per command, never both
+  simultaneously; the order consumes the officer's own attack point.
+- Which figure, and which target / which direction, is chosen at the board through
+  the pop-up questions. The officer's own fragility (and its cover trick of
+  re-rolling a defense die next to a friendly figure) is printed on its card and is
+  *your* consideration — the orders never lecture you about it.
+
+A machine-enforced text gate (`tools/TacticalAiGate/OfficerTextGate.cs`, ~1,900
+checks with mutation self-tests) makes it *impossible* to ship an order text that
+contradicts these printed rules — an order asking for movement and attack in one
+command turns the build gate red.
+
+---
+
+<a name="the-glossary"></a>
+## The glossary — new words on the table
+
+**Guard zone ("Wachzone").** The area of the mission in which the rebels must
+fulfil their objectives or take their actions — revealing mission cards, interacting
+with terminals, opening doors, touching objects; whatever this mission asks of them.
+*That* is what the Empire guards: the Imperials know the rebels have to come there.
+Guard-role figures hold it; blockers cover its approaches. (Do not confuse with the
+figure keyword *Guard*, which pins an individual figure to a printed radius around
+itself — related idea, different mechanism; both are on the cards.)
+
+**Focus (target).** The hero the Imperials concentrate on this round, announced
+openly with its reason. Target choice follows public criteria (objective gravity,
+wound state, firepower) and the Gloomhaven-style tie-break cascade when several
+heroes are equally good.
+
+**Threat budget.** The mission's printed resource for Imperial activations and
+reinforcements. Difficulty decides how *wisely* it is spent (burst vs. held
+reserves), never how much there is.
+
+**Mission posture.** Every mission is classified from structured mission data only:
+**defend** (the mission puts something to guard on the board — terminals, protected
+targets) or **hunt** (the Imperials must find and destroy the rebels; classic
+open-field missions). Posture decides the doctrine roster of the mission
+(see [doctrines](#the-doctrines)) and what the planner optimises.
+
+**World feed.** The app's event log distilled into public information: activations,
+deaths, removals, objective progress, the round clock. This is the only lens the AI
+has; unknown event payload is rejected, not guessed (`Core/WorldEventFeed.cs`).
+
+**Delta-0 (personas).** A persona's elite **replaces** its regular figure and is
+booked at the regular's printed cost. Same figure count, same threat budget — the
+persona changes *quality and behaviour*, never *quantity* (see
+[personas](#command-personas)).
+
+**Legacy mode.** Everything the app did before Tactical AI: random activation draw,
+drawn instruction behaviour, hidden bonus rolls. Still fully present — switch or
+badge back to it any time.
+
+---
+
+<a name="the-doctrines"></a>
+## The doctrines — every role and what it does
+
+Every non-officer Imperial figure is assigned a battlefield **doctrine** at
+deployment, derived **only from printed traits** (speed, range, size, keywords,
+mobility) and the mission's posture (`TacticalAIBridge.ClassifyPattern`; briefing
+text `Core/Doctrine.StanceText`; popup label `doc*` keys — the label appears in the
+**doctrine line** directly under the focus line on every activation pop-up; German
+labels as shipped):
+
+| Doctrine | Popup label (DE, shipped) | Behaviour at the board | Planner fit (eliminate / stall / protect / deny) |
+|---|---|---|---|
+| **Vorstoß** (aggressive) | "Vorstoß (zum Kampf vorrücken)" | Press toward the fight; the workhorse of hunt missions | 1.5 / 0.8 / 0.7 / 1.1 |
+| **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective | 0.6 / 1.4 / 1.5 / 1.0 |
+| **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers; large bases do this | 0.8 / 1.5 / 1.3 / 0.9 |
+| **Jäger** (hunter) | "Jäger (Schwerpunktzone abkämmen)" | Sweep the zone of main effort; fast melee (speed ≥ 5) in hunt missions; intercept heroes working the objective | 1.4 / 0.9 / 0.8 / **1.5** |
+| **Support** | "Support (Distanz halten)" | Keep distance, fire from cover | 0.9 / 1.0 / 1.3 / 1.0 |
+| **Hinterhalt** (ambusher) | "Hinterhalt (ungesehen bis zum ersten Schuss)" | Deny the point until a target enters range | 1.1 / 1.1 / 0.9 / 1.3 |
+
+Assignment in short (full rules in `MECHANICS_tactical_ai.md` §3.4):
+
+- **Defend posture:** immobile melee figures guard the objective, large bases block
+  the lanes to it, mobile shooters form a counter-fire line.
+- **Hunt posture:** *zero guards* (nobody parks while rebels roam), large bases
+  block escape lanes, fast melee hunt, everyone else advances. One manual exception
+  rides the printed card: IG-88 is always a hunter ("Relentless").
+- **Personas reshape the mix** (pattern weights ×1.15–1.35, guard reserves) — see
+  [personas](#command-personas).
+
+Two honest notes from the shipped code:
+
+- The **ambusher** is implemented (tree + planner weights) but currently unassigned:
+  no shipped figure prints an Ambush keyword, so `ClassifyPattern` never hands it
+  out. It is ready for custom cards that do.
+- **Hunter vs. aggressive:** on the *pop-up* they deliberately share one tree (same
+  board behaviour); they differ *in the planner* — different posture-fit weights
+  (hunter tops the **deny** posture) and the hunter's target override: it prefers
+  heroes actively working the objective over whoever is nearest
+  (`Core/Patterns.TargetOverride`). Same instructions, different strategic instinct.
+
+---
+
+<a name="difficulty"></a>
+## Difficulty — five levels, no hidden power
+
+Difficulty in Tactical AI is **play strength, never hidden power**. Every level
+plays with the exact same legal options, the same printed stats and the same threat
+budget the mission gives the Imperials. What changes is *how well the Imperials
+pick* among those options. In board terms: same army, different general.
+
+*(Implementation: one decision brain, five decision-quality layers —
+`Core/AgendaCards.cs`/skill layer + `Core/OrderPlan.cs`; internally S1–S3 run the
+"reference" profile and S4–S5 the "overlord" profile. The DIFFICULTY row and the
+badges are the only knob; the profile split is not a setting. Default: **Thrawn**.)*
+
+**Recruit (S1)** — the old "automaton". Focuses on whoever is closest or first in
+its own bookkeeping; ignores the wound marks on your hero cards (so it rarely
+finishes a weakened hero) and concentrates fire only by accident. Spends the whole
+threat budget immediately, moves to the first legal position, reacts to what the
+rebels did two rounds ago. Honest and forgiving — first runs and younger players.
+
+**Stormtrooper (S2)** — still ignores wound marks, but usually picks one of the
+two *sensible* targets, with a fumble about one activation in three. Movement
+becomes greedy approach; the budget is mostly held for later activations. Reliable
+pressure, no crossfires.
+
+**Veteran (S3)** — the turning point: **reads the wound/defeat marks on your hero
+cards**. Deliberate focus fire unlocks: wounded heroes get finished first, the
+highest-firepower hero draws shots, and the round's focus target is announced at
+round start. One-round reaction delay, shortest-route approaches without dodging
+fire lanes. From here the Imperials feel like a competent squad.
+
+**Commandant (S4)** — professional tactics: two-round planning horizon on the
+movement envelope (they race your *options*, they don't read your mind), rare
+fumbles, full planner movement (zone control, covering doors and lanes, threat
+budgeting). Villain special abilities now appear as third popup blocks when their
+printed conditions fit.
+
+**Thrawn (S5)** — everything above plus the complete risk judgement: every option
+is weighed against the full threat model (including the Imperium's own economy —
+spent threat on the table, replacement value of wounded groups). Expect zone
+control *before* you reach the objective, kept-sight-lanes for fire, wounded heroes
+hunted to the death, and no wasted actions. "Play it like the books say" — the top
+of the ladder, and the shipped default.
+
+Difficulty never adds figures, never cheapens costs, never touches dice. A Recruit
+mission and a Thrawn mission contain the same Empire — one plays it sloppily.
+
+---
+
+<a name="command-personas"></a>
+## Command Personas — six Imperial commanders
+
+A **persona** is a named Imperial commander whose doctrine bends *how* the Empire
+plays a mission — priorities, guard behaviour and its signature elite. Pick one
+globally (Options → UI tab, "PERSONA" row) or per campaign (campaign setup); the
+badge chip shows the rank. Persona *texts* ship in all 11 languages (keys
+`personaCapt*` etc. in each `Languages/*/ui.json`); the persona *structure* (ranks
+and effects) is one shared file (`Languages/En/tactical_personas.json`).
+
+| Persona (DE name keys `personaCapt*`) | Doctrine flavour |
+|---|---|
+| **Sturmtruppen-Kapitän** | disciplined lines, forward cover, defensive pinning |
+| **Feldherr** (Warlord) | relentless pressure, guard reserve that still advances |
+| **ISB-Kommandant** | surveillance patterns, shock, sharp target priorities |
+| **Hutt-Kriegsfürst** | bounty/beast priority doctrine — pattern pressure, escalation as business |
+| **Droiden-Direktor** | suppressive droid fire, "steel obeys"; late elite escalation |
+| **Großmoff** | garrisons hold first, veterans enforce, fear closes in |
+
+**Ranks rise with danger.** Each persona has **ranks 1–4**, unlocked by the
+mission's threat level at thresholds **2 / 4 / 6 / 8** — the display shows
+"Rang n/4" in settings, campaign list and briefing. Effects unlock rank by rank:
+
+| Rank (threat ≥) | Unlocks |
+|---|---|
+| 1 (≥2) | signature **Delta-0 elite swap** (Hutt: extra pattern pressure instead) |
+| 2 (≥4) | stronger **pattern weights** (×1.15–1.35 toward the persona's doctrine) |
+| 3 (≥6) | **guard reserve** shifts (how many figures hold the zone) and/or more weight |
+| 4 (≥8) | the persona's **signature line** appears on the briefing; some add a further elite swap |
+
+The exact per-rank effect mix is data, not prose: `tactical_personas.json` is the
+source, pinned by a 144-vector parity canon (`tools/PersonaSwapCanon.cs`).
+
+Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
+
+- **Delta-0:** the elite *replaces* the regular figure; cost stays the regular's
+  printed cost. No extra figures, no discounts — missions stay exactly as balanced.
+- **One elite per name:** never two copies of the same elite on the board; the swap
+  only happens if the elite card exists in your activated collection and is in the
+  deployment hand; unmet conditions deploy the plain regular — harmless.
+- **No expansion is required to be available:** all six personas draw on base-card
+  pools; missing expansions simply make swaps unmet (regular deploys).
+- The persona never adds figures, never rolls hidden bonuses, never sees a hero
+  card. It changes *priorities*, exactly like a different human commander would.
+
+---
+
+<a name="every-difference"></a>
+## Every difference from the legacy mode
+
+| Aspect | Legacy (classic IC2) | Tactical AI |
+|---|---|---|
+| Activation | Random spinner per round; who moves next is luck | Deterministic planned order from the mission posture and threat budget; reproducible per seed; announced round line |
+| Orders per activation | Drawn simple instructions | Printed if–then trees keyed to the figure's doctrine, evaluated by you on the board; focus + doctrine shown up top |
+| Difficulty | One behaviour for everyone | S1–S5 ladder = decision quality only; per-mission badges |
+| Hidden power | Legacy hidden bonus-effect rolls can fire | Never fire in tactical missions; printed stat cards only |
+| MedPac | App convenience HUD available | Switched off for tactical missions (wounded stay wounded in-mission; between-mission recovery unchanged); crates/rewards stop dispensing them |
+| Massive figures | Some printed restrictions relaxed | Printed restrictions enforced: no interiors, no two Massives in one space; every proposed move is legality-checked first |
+| Reinforcement entry | Rolled/drawn deployment points | Deterministic deployment choice from the plan (same seed → same landing zones) |
+| Imperial growth | Baked-in convenience growth | Open growth via the class deck + agenda market purchases (see [campaign extras](#campaign-extras)) |
+| Wound status | Cosmetic in places | Machine-grade input: from Veteran up the AI *reads your marks* and finishes wounded heroes |
+| Officers | Passive stat figures | Command figures: 2 movement (Officer) or movement **or** attack (Executive Officer), gated by a machine-checked rule text |
+| Personas | — | Six commanders, ranks 1–4 by mission threat, doctrine bending + Delta-0 signature elites |
+| Explanations | — | Optional reasoning lines on the pop-ups (EXPLAIN = FULL) |
 
 ### What does NOT change
 
-- Vanilla play is untouched while the master switch is off. New installs default to it on
-  (M6p) — switch it off for the classic app, bit for bit.
-- All printed mission rules, events, XP, credits and the campaign manager work as before.
-- **Custom and embedded cards** (fan-made groups not in the shipped card set) keep the
-  legacy pop-up and the legacy activation draw; the rest of the mission still runs
-  tactically.
-- In Tactical mode, the legacy random **hidden bonus-effect rolls never fire** (fairness
-  rule). Printed stat cards only.
+- **Classic mode is untouched, forever.** With the master switch (or a mission
+  badge) OFF, the app runs the legacy paths verbatim — the same activation draw, the
+  same instructions, bit for bit. (Tactical ON is the new *default*, so you see the
+  new mode first; one click returns to classic.)
+- All printed mission rules, events, XP, credits and the campaign manager work as
+  before.
+- **Custom/embedded fan cards** outside the shipped set keep the legacy pop-up and
+  legacy activation draw; the rest of the mission still runs tactically.
+- Dice remain *your* dice: the AI never touches them (its own RNG stream is for
+  planning-internal decisions only, seeded per campaign).
 
-### Campaign extras (Tactical mode only)
+---
 
-Tactical campaigns add the Imperial counterweights from the printed campaign game:
+<a name="campaign-extras"></a>
+## Campaign extras (Tactical mode only)
 
-- **Imperial class deck** — the **IMPERIUM panel** shows the Empire's class deck and its
-  between-mission XP purchases; acquired cards strengthen the Imperial side (activation
-  efficiency and printed strength), in the same open way hero XP works for you. The deck
-  is picked only from class decks whose expansion you have activated in your collection.
-- **Agenda market** — the Empire spends influence on agenda cards between missions.
+The Imperial counterweights from the printed campaign game:
 
-### Tips and known limits
+- **Imperial class deck** — the **IMPERIUM panel** shows the Empire's class deck and
+  its between-mission purchases; acquired cards strengthen the Imperial side
+  (activation efficiency and printed strength) in the same open way hero XP works
+  for you. Only class decks from expansions you activated in the collection are
+  eligible (`Core/ImperialDecks.cs`).
+- **Agenda market** — the Empire spends influence on agenda cards between missions
+  (`Core/AgendaMarket.cs`, `Core/ImperialPurchases.cs`), deterministically per seed.
 
-- Don't switch the master toggle **mid-mission** — planning is per round, but a clean mode
+---
+
+<a name="tips-and-limits"></a>
+## Tips, limits and honest admissions
+
+- **Don't flip the master toggle mid-mission** — planning is per round; a clean mode
   change belongs between missions.
-- **Don't deploy the same enemy card twice as two separate groups**: planner state is keyed
-  per card id, and a second copy of the same card on the board is planned separately (known
-  limitation). Normal squad sizes on one card (e.g. 2+3 stormtroopers) are fine.
-- The AI has **no line-of-sight model**: it never peeks through walls. Wall-shooting is
-  suppressed via probability zones, not by real sight-line checks — that's also why *you*
-  still enforce sight lines at the board.
-- **Hero status stays manual**: the app has no hero HP tracker — you mark the wounded and
-  defeated status on the hero cards as the printed game does. The AI reads exactly those
-  marks (and focuses accordingly from Veteran up); nothing else.
-- On missions where the tactical world feed is not active yet, the higher levels fall back
-  to the reference brain — the app says so in the log instead of faking it.
+- **Deploy one card as one group.** Planning state is keyed per card id; the same
+  card deployed as two separate groups is planned twice (known limitation). Normal
+  squad sizes on one card (2+3 stormtroopers) are fine.
+- **No line-of-sight model.** The AI never peeks through walls, but it also cannot
+  verify your sight lines — wall-shooting is suppressed via probability zones only.
+  That is *why* you enforce sight lines at the board; the pop-up asks, the board
+  decides.
+- **Hero status stays manual.** No HP tracker: you mark wounded/defeated on the hero
+  cards as the printed game does; the AI reads exactly those marks — nothing else.
+- **Feed fallback.** On the rare missions where the world feed isn't active, high
+  levels fall back to the reference brain; the log says so instead of faking.
+- **Ambusher doctrine** is implemented but unassigned in shipped cards (no printed
+  Ambush keyword yet); ready for custom groups.
+- **Hunter vs aggressive** share the board instructions on purpose; the difference
+  lives in the planner (see [doctrines](#the-doctrines)).
+
+---
+
+<a name="links"></a>
+## Links to the original IC2 documentation
+
+Tactical AI only changes *how the Imperial side is run*. Everything else — installs,
+mission play, the campaign manager, the editor — is documented upstream:
+
+- **IC2 Wiki (Home):** <https://github.com/GlowPuff/ImperialCommander2/wiki>
+- **Getting Started & Basic Settings:**
+  <https://github.com/GlowPuff/ImperialCommander2/wiki/0.-Getting-Started-and-Basic-Settings>
+- **FAQ:** <https://github.com/GlowPuff/ImperialCommander2/wiki/7.-FAQ>
+- **Tips & Tricks:** <https://github.com/GlowPuff/ImperialCommander2/wiki/8.-Tips-and-Tricks>
+- **Editor documentation:** <https://github.com/GlowPuff/ICEditor/wiki>
+
+Within this fork: the mechanics reference
+[`MECHANICS_tactical_ai.md`](MECHANICS_tactical_ai.md) (planner internals) and the
+concept document [`CONCEPT_fair_imperial_ai.md`](CONCEPT_fair_imperial_ai.md)
+(the design rules this mode must never break).
+
+---
+
+*Page status: written against the shipped `feature/tactical-ai` tree; every claim
+carries a file pointer so reviewers can verify it. If something here and something on
+a printed card disagree — the card wins; report it to us.*

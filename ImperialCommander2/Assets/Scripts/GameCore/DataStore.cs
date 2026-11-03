@@ -9,11 +9,13 @@ using UnityEngine;
 public static class DataStore
 {
 	// FORK VERSION LAW (Thomas 03.11): TitleController.CheckVersion compares
-	// the LATEST RELEASE TAG of our fork (wit19) against THIS string. It is
-	// the build identity of the fork tree, not the upstream number: cut a new
-	// release "vX.Y.Z-tacticalai" on the fork and bump this constant in the
-	// same commit, or the title icon stays orange.
-	public static readonly string appVersion = "v2.2.16-tacticalai";
+	// the LATEST RELEASE TAG of our fork (wit19) against THIS string. Format:
+	// upstream number + our build counter after '#'. Git tags forbid spaces,
+	// so the tag is "v.2.2.16#1000" while the release TITLE may show
+	// "v.2.2.16 #1000". On every new fork release: bump the counter, push the
+	// tag from main, cut the release, update THIS constant in the same commit
+	// - or the title icon stays orange.
+	public static readonly string appVersion = "v.2.2.16#1000";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

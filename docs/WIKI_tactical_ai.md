@@ -211,6 +211,10 @@ figure's doctrine (`TacticalAIBridge.PatternTree` → `ui.json` keys
   zone ("Wachzone" — the mission's objective area, see the glossary; *you* identify
   it on the board from the mission, the app never claims its tiles); they offer
   blocking another hero's path to the objective as an alternative to chasing.
+  Every guard popup opens with a one-line Wachzone *definition* header (Playtest
+  Player-19: the plain tree printed the term unexplained when INFO-TEXT is off —
+  it now carries the same definition line the officer trees always did; the INFO
+  line still adds the "extent comes from the board" note when INFO-TEXT is on).
 
 Under the hood the same priorities drive the planner itself (which candidate targets
 a group may consider — `Core/Patterns.cs`), so popup and plan agree; the popup is

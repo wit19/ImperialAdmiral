@@ -44,7 +44,7 @@ flowchart LR
     ME[MapEntityManager\ndeployment point pick]
     DGP[DeploymentGroupPopup\nactivation popup]
     EH[MissionEventHandler\nXP / reward hooks]
-    CM[CampaignScreen\nIMPERIUM panel]
+    CM[CampaignScreen\npersona chip + badges]
   end
   subgraph Bridge [Unity adapters - TacticalAI/]
     BR[TacticalAIBridge]
@@ -299,9 +299,11 @@ serialization, `state.imperialDeck == null` ⇒ no AI-owned economy present).
   mission-end outcome anchors; the mode books Imperial XP **at exactly those same
   anchors** (mirrored hook) plus a fixed per-stage stipend. What the mission doesn't
   pay out to heroes, the Empire doesn't get.
-- **Purchases:** run during the between-mission Imperial Upgrade Stage, deterministic
-  greedy scorer over campaign state (seed salted), fully re-derivable; every purchase is
-  a plain-language line in the IMPERIUM panel (campaign screen).
+- **Purchases:** **RETIRED for the shipped release** (Thomas, personas decision): the
+  deterministic scorer and upgrade-stage design below is implemented and gate-tested
+  in Core, but no Upgrade Stage runs and no IMPERIUM panel exists in the app —
+  `MissionEventHandler` logs "imperial XP retired with the persona system, skipped"
+  at the CM6/CM7 anchors. Historic design text kept for the day this ships.
 - **Effects:** the classification table maps each card to either an executable effect
   (activation efficiency, group attachments following the printed attachment lifecycle,
   stat lines from the card itself) or an announced-only effect (the panel prints it, the
@@ -314,9 +316,9 @@ serialization, `state.imperialDeck == null` ⇒ no AI-owned economy present).
   four cards drawn face-down per upgrade stage, Influence buys, unsold cards return
   unseen to their decks; "Kept Secret" is respected — secret text never appears on the
   rebel side of the UI before the card's own resolution requires it.
-- Purchases: same deterministic scorer pattern; the IMPERIUM panel shows the ledger, and
-  `AgendaPublicLedger()` / `AgendaImperialAuditView()` expose what is public vs. audit-
-  only.
+- Purchases: same deterministic scorer pattern — **retired for the shipped release**
+  (same persona decision); `AgendaPublicLedger()` / `AgendaImperialAuditView()` remain
+  the public-vs-audit split for whenever the market ships.
 
 ```mermaid
 flowchart LR
@@ -341,9 +343,9 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
 | MedPac policy | `SagaController.OnMedPac/ApplyTacticalMedPacPolicy` | MedPac fully off (reference rules) |
 | Reward text | `MissionEventHandler` + `ScrubMedpacRewardText` | crate MedPac rewards skipped & text scrubbed |
 | Deployment point | `MapEntityManager` | deterministic reinforcement entry |
-| XP hooks | `MissionEventHandler` CM6/CM7 | mirrored Imperial XP anchors, upgrade stage |
-| Campaign load/save | `SagaCampaign` | additive Imperial deck/agenda state |
-| Campaign UI | IMPERIUM panel | deck, purchases, agenda ledger |
+| XP hooks | `MissionEventHandler` CM6/CM7 | anchors present, **retired**: hook logs and skips (personas decision) |
+| Campaign load/save | `SagaCampaign` | unchanged in release — Imperial deck/agenda state models exist but are not persisted/wired |
+| Campaign UI | badge chips + persona display | no IMPERIUM panel in this release |
 
 ## 14. Fairness invariants (each one has a test)
 

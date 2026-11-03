@@ -35,7 +35,7 @@ mechanics reference (planner internals, tables, formulas) lives in
 11. [Command Personas — six Imperial commanders](#command-personas)
 12. [Every difference from the legacy mode](#every-difference)
 13. [What does NOT change](#what-does-not-change)
-14. [Campaign extras](#campaign-extras)
+14. [What this release does NOT include](#not-included)
 15. [Tips, limits and honest admissions](#tips-and-limits)
 16. [Links to the original IC2 documentation](#links)
 
@@ -365,8 +365,9 @@ budgeting). Villain special abilities now appear as third popup blocks when thei
 printed conditions fit.
 
 **Thrawn (S5)** — everything above plus the complete risk judgement: every option
-is weighed against the full threat model (including the Imperium's own economy —
-spent threat on the table, replacement value of wounded groups). Expect zone
+is weighed against the full threat model (the Imperium's internal **threat
+currency** — budget spent on the table, replacement value of wounded groups; a
+planning number, not between-mission money). Expect zone
 control *before* you reach the objective, kept-sight-lanes for fire, wounded heroes
 hunted to the death, and no wasted actions. "Play it like the books say" — the top
 of the ladder, and the shipped default.
@@ -438,7 +439,7 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 | MedPac | App convenience HUD available | Switched off for tactical missions (wounded stay wounded in-mission; between-mission recovery unchanged); crates/rewards stop dispensing them |
 | Massive figures | Some printed restrictions relaxed | Printed restrictions enforced: no interiors, no two Massives in one space; every proposed move is legality-checked first |
 | Reinforcement entry | Rolled/drawn deployment points | Deterministic deployment choice from the plan (same seed → same landing zones) |
-| Imperial growth | Baked-in convenience growth | Open growth via the class deck + agenda market purchases (see [campaign extras](#campaign-extras)) |
+| Imperial growth | Baked-in convenience growth | Unchanged — no Imperial purchases in this release (see [what this release does not include](#not-included)) |
 | Wound status | Cosmetic in places | Machine-grade input: from Veteran up the AI *reads your marks* and finishes wounded heroes |
 | Officers | Passive stat figures | Command figures: 2 movement (Officer) or movement **or** attack (Executive Officer), gated by a machine-checked rule text |
 | Personas | — | Six commanders, ranks 1–4 by mission threat, doctrine bending + Delta-0 signature elites |
@@ -459,18 +460,18 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 
 ---
 
-<a name="campaign-extras"></a>
-## Campaign extras (Tactical mode only)
+<a name="not-included"></a>
+## What this release does NOT include
 
-The Imperial counterweights from the printed campaign game:
-
-- **Imperial class deck** — the **IMPERIUM panel** shows the Empire's class deck and
-  its between-mission purchases; acquired cards strengthen the Imperial side
-  (activation efficiency and printed strength) in the same open way hero XP works
-  for you. Only class decks from expansions you activated in the collection are
-  eligible (`Core/ImperialDecks.cs`).
-- **Agenda market** — the Empire spends influence on agenda cards between missions
-  (`Core/AgendaMarket.cs`, `Core/ImperialPurchases.cs`), deterministically per seed.
+- **No Imperial purchases between missions.** The printed-campaign growth machinery
+  (Imperial class deck, agenda market, influence ledger) exists in the code and is
+  machine-tested (`Core/ImperialDecks.cs`, `Core/AgendaMarket.cs`,
+  `Core/ImperialPurchases.cs`) — but it is **not wired into this release**: there is
+  no IMPERIUM panel, no upgrade stage, no Imperial XP income
+  (`MissionEventHandler`: the hook logs *"imperial XP retired with the persona
+  system, skipped"*). The Empire you face grows only from what the mission and the
+  campaign data provide — its flexibility between missions comes from the
+  [personas](#command-personas), not from purchases.
 
 ---
 

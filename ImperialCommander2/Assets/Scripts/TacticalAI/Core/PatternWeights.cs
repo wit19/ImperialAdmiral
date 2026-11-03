@@ -19,17 +19,32 @@ namespace TacticalAI.Core
 {
     public sealed class PatternWeightRow
     {
+        /// Row authoring law: an id row hits exactly its card; an ids row
+        /// hits any card of its pinned id list (Player-19 language-safe
+        /// roster pin); a name row hits by regex; a row with neither is the
+        /// ordered catch-all. Illegal regex never throws (it simply never
+        /// matches).
         public string IdMatch;        // exact card id (optional; then the row is id-only)
+        // Player-19 law (Thomas 03.11): nameMatch regexes carry ENGLISH
+        // card names, but the live catalog hands the LOCALIZED name to the
+        // matcher ("Rote Garde" never hits "Royal Guard"). The ids list
+        // pins the shipped roster members of this role row language-safe:
+        // group ids are identical in every language store (verified
+        // En/De), display names are not. nameMatch stays as the import net.
+        public List<string> Ids;      // exact card ids (optional; language-safe roster)
         public string NameMatch;      // case-insensitive regex over the internal name (optional)
         public Dictionary<string, int> Weights = new Dictionary<string, int>();
 
-        /// Row authoring law: an id row hits exactly its card; a name row
-        /// hits by regex; a row with neither is the ordered catch-all.
-        /// Illegal regex never throws (it simply never matches).
         public bool Matches(string cardId, string name)
         {
             if (!string.IsNullOrEmpty(IdMatch))
                 return string.Equals(IdMatch, cardId, StringComparison.Ordinal);
+            if (Ids != null && cardId != null)
+            {
+                for (int i = 0; i < Ids.Count; i++)
+                    if (string.Equals(Ids[i], cardId, StringComparison.Ordinal)) return true;
+                return false;
+            }
             if (string.IsNullOrEmpty(NameMatch)) return true;
             try
             {
@@ -181,6 +196,19 @@ namespace TacticalAI.Core
                         var r = new PatternWeightRow();
                         object v;
                         if (d.TryGetValue("id", out v) && v != null) r.IdMatch = Json.AsStr(v);
+                        // Player-19: language-safe roster pin (see
+                        // PatternWeightRow) - exact card ids of this role row.
+                        object idsv;
+                        if (d.TryGetValue("ids", out idsv) && idsv != null)
+                        {
+                            r.Ids = new List<string>();
+                            foreach (var raw2 in Json.AsList(idsv))
+                            {
+                                var s2 = Json.AsStr(raw2);
+                                if (!string.IsNullOrEmpty(s2)) r.Ids.Add(s2);
+                            }
+                            if (r.Ids.Count == 0) r.Ids = null;
+                        }
                         if (d.TryGetValue("nameMatch", out v) && v != null)
                             r.NameMatch = Json.AsStr(v);
                         if (d.TryGetValue("weights", out v) && v is Dictionary<string, object>)

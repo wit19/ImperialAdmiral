@@ -27,6 +27,11 @@ namespace TacticalAI.Core
         // activation-order attribution, "" = unknown/none). Event-derived,
         // never a position read - the app cannot see hero cells.
         public string ObjectiveActor = "";
+        // Player-19 (Thomas 03.11): round of that credit (0 = none). The
+        // engaged tier (focus key 2) can hold the credited mover AND a hero
+        // who struck the mission-named figure; the credit ROUND breaks the
+        // tie - the most recent engagement leads.
+        public int ObjectiveActorRound;
         // M8/F5: MissionStart clock inputs, kept so a runtime RoundLimitChanged
         // can re-derive the posture exactly like a fresh MissionStart would.
         // (Canon text unchanged - posture, not its inputs, is the decision.)
@@ -44,6 +49,13 @@ namespace TacticalAI.Core
         {
             public string GroupId;
             public string Name;
+            // Player-19: the group's DISPLAY name from the Spawn payload
+            // (the deployment-card name every player reads). Null when the
+            // spawn event carried no name (old vectors keep their exact
+            // canon). The designation law uses it to catch surname
+            // collisions; the strike law uses it to find the figure the
+            // objective text names.
+            public string DisplayName;
             public bool Deployed;
             public bool Removed;
             public int Size = 1;                 // printed group size (Spawn event)
@@ -104,6 +116,14 @@ namespace TacticalAI.Core
             // sees the same designation - not extra sight.
             public int Marks;                  // how often the mark hit (cumulative)
             public int MarkedRound;            // round of the LAST mark, 0 = never
+            // Player-19 strike credit: GroupDamage events that landed on the
+            // figure the CURRENT mission objective names ("Besiegt Ivan
+            // Talos.") while THIS hero's activation window was open. Public
+            // activation order is the attribution channel (M10b law, mirror
+            // image): the hero whose turn encloses the damage did it. Never
+            // a position read, never a guess from absence.
+            public int Strikes;                // cumulative strikes on the mission-named figure
+            public int StrikeRound;            // round of the LAST strike, 0 = never
         }
 
         public GroupView FindGroup(string id)
@@ -126,15 +146,29 @@ namespace TacticalAI.Core
             sb.Append("threatseen=").Append(ThreatSeen ? 1 : 0).Append('\n');
             sb.Append("seq=").Append(Seq.ToString(CultureInfo.InvariantCulture)).Append('\n');
             foreach (var g in Groups)
+            {
                 sb.Append("G|").Append(g.GroupId).Append('|').Append(g.Name).Append('|')
                   .Append(g.Deployed ? 1 : 0).Append('|').Append(g.Removed ? 1 : 0).Append('|')
                   .Append(g.Alive).Append('|').Append(g.Size).Append('|').Append(g.DeployedRound).Append('|')
-                  .Append(g.Health).Append('|').Append(g.VitalityFrac.ToString()).Append('\n');
+                  .Append(g.Health).Append('|').Append(g.VitalityFrac.ToString());
+                // Player-19: display name appears ONLY where the Spawn
+                // carried one (record discipline: pre-Player-19 canon stays
+                // byte-identical, every old vector keeps its hash).
+                if (!string.IsNullOrEmpty(g.DisplayName))
+                    sb.Append("|name=").Append(g.DisplayName);
+                sb.Append('\n');
+            }
             foreach (var h in Heroes)
+            {
                 sb.Append("H|").Append(h.HeroId).Append('|').Append(h.Name).Append('|')
                   .Append(h.Wounded ? 1 : 0).Append('|').Append(h.Defeated ? 1 : 0).Append('|')
                   .Append(h.Activations).Append('|').Append(h.LastActivatedRound).Append('|')
-                  .Append(h.Marks).Append('|').Append(h.MarkedRound).Append('\n');
+                  .Append(h.Marks).Append('|').Append(h.MarkedRound);
+                // Player-19: strike row appears ONLY where strikes landed.
+                if (h.Strikes > 0)
+                    sb.Append('|').Append(h.Strikes).Append('|').Append(h.StrikeRound);
+                sb.Append('\n');
+            }
             return sb.ToString();
         }
     }
@@ -161,12 +195,18 @@ namespace TacticalAI.Core
 
             // M10b objective attribution (Thomas revision 27.10): the feed
             // knows objective PROGRESS (ObjectiveChange) and WHO ACTIVATED
-            // (HeroActivated) - never cell positions. The captor of the last
-            // objective step is the hero whose activation FOLLOWS the change
-            // ("im Anschluss seine Aktivierung beendet"); if nobody acted
-            // after it, the hero who activated just before keeps the credit.
-            // Pure replay state - same events, same attribution, resync-safe.
+            // (HeroActivated) - never cell positions. Pure replay state -
+            // same events, same attribution, resync-safe.
+            // Player-19 revision (Thomas 03.11): the credit is TERMINAL at
+            // the moment of the change. The captor is the hero whose
+            // activation WINDOW is open (HeroActivationStart ... 
+            // HeroActivated); when the change arrives between turns (mission
+            // events fired during the imperial phase - HOTH11's Face Off),
+            // the hero who acted LAST before it keeps the credit. The old
+            // law let the NEXT activator overwrite the provisional one -
+            // that stole Lokaku's door credit onto MHD-19 in Player-19.
             string lastActivator = null;
+            string heroWindow = null;
             bool attributionPending = false;
             foreach (var e in events)
             {
@@ -185,11 +225,16 @@ namespace TacticalAI.Core
                     case "ObjectiveChange":
                         v.Objective = e.Str("objective") ?? v.Objective;
                         ApplyDesignation(v, v.Objective, e.Round);
-                        // M10b: provisional credit = last activator before
-                        // the change; a later HeroActivated overwrites it
-                        // (the hero who finishes his turn AFTER the capture
-                        // is the one who did it - public activation order).
-                        v.ObjectiveActor = lastActivator ?? "";
+                        // Player-19: terminal credit - open window first,
+                        // else the hero who acted just before the change.
+                        v.ObjectiveActor = heroWindow ?? lastActivator ?? "";
+                        v.ObjectiveActorRound = string.IsNullOrEmpty(v.ObjectiveActor)
+                                                ? 0 : e.Round;
+                        // M10b retro channel (kept, see HeroActivated): logs
+                        // WITHOUT activation-start events still let the hero
+                        // finishing his turn after the change overwrite the
+                        // provisional credit; logs WITH a window trust the
+                        // window (Player-19: open window first).
                         attributionPending = true;
                         break;
                     case "RoundLimitChanged":
@@ -208,6 +253,8 @@ namespace TacticalAI.Core
                         {
                             var g = Group(v, e.Str("group"));
                             g.Deployed = true;
+                            var disp = e.Str("name");
+                            if (!string.IsNullOrEmpty(disp)) g.DisplayName = disp;
                             if (g.DeployedRound == 0) g.DeployedRound = e.Round;
                             long size = e.Long("size", 0);
                             if (size > 0)
@@ -233,6 +280,20 @@ namespace TacticalAI.Core
                             g.Health = (int)e.Long("health");
                             g.Wheels[fig] = e.Long("wheel");
                             g.FiguresSeen = Math.Max(g.FiguresSeen, fig + 1);
+                            // Player-19 strike credit: damage that landed while
+                            // a hero's activation window was open, on the figure
+                            // the CURRENT objective text names ("Besiegt Ivan
+                            // Talos." + a group displaying that name). Public
+                            // activation order is the attribution channel - the
+                            // M10b law, mirror image. Never a position read.
+                            if (heroWindow != null && !string.IsNullOrEmpty(g.DisplayName)
+                                && !string.IsNullOrEmpty(v.Objective)
+                                && NamesHero(v.Objective, g.DisplayName))
+                            {
+                                var striker = Hero(v, heroWindow);
+                                striker.Strikes++;
+                                striker.StrikeRound = e.Round;
+                            }
                             break;
                         }
                     case "HeroWounded":
@@ -251,13 +312,38 @@ namespace TacticalAI.Core
                             h.Activations++;
                             h.LastActivatedRound = e.Round;
                             lastActivator = e.Str("hero");
-                            if (attributionPending)
+                            if (heroWindow == e.Str("hero"))
                             {
+                                heroWindow = null;   // HIS turn ends - window closed
+                            }
+                            else if (heroWindow == null && attributionPending)
+                            {
+                                // M10b (EMPIRE6, pinned by vectors) - the
+                                // legacy channel: no window events in this
+                                // log, so the hero who FINISHES his turn
+                                // after the change is the one who did it.
+                                // A log that carries HeroActivationStart
+                                // never lands here, so Player-19's "open
+                                // window first" law wins whenever the App
+                                // knows who was in turn.
                                 v.ObjectiveActor = lastActivator;
+                                v.ObjectiveActorRound = e.Round;
                                 attributionPending = false;
                             }
+                            // A late closure for a DIFFERENT hero than the
+                            // open window is a drain race (the App noticed
+                            // the next activation start before the previous
+                            // hero's HUD flag) - the window hero is still in
+                            // turn, the window stays open.
                             break;
                         }
+                    case "HeroActivationStart":
+                        // Player-19: the window in which THIS hero's acts land
+                        // (objective credits and strikes on the mission-named
+                        // figure). Derived from the App's own mission-log
+                        // GroupActivation line - public activation order.
+                        heroWindow = e.Str("hero");
+                        break;
                     // M6 aim tokens: the focus marker the human sets in the
                     // existing focus panel (public designation, read passively
                     // from the click - ZERO new input). The mark names a hero;
@@ -405,7 +491,9 @@ namespace TacticalAI.Core
             // M6 retro mark: a designation can exist BEFORE the hero first
             // appears in the stream (healthy heroes emit nothing until they
             // act or bleed) - the standing designation names every hero.
-            if (NamesHero(v.Objective, id))
+            // Player-19: same collision law as ApplyDesignation (this hero
+            // is already in v.Heroes, so uniqueness counts his own name).
+            if (Designates(v, v.Objective, id))
             {
                 x.Marks++;
                 x.MarkedRound = v.Round;
@@ -416,17 +504,85 @@ namespace TacticalAI.Core
         /// <summary>M6 public designation: the current objective text names
         /// this hero as a whole word / whole name (same deterministic
         /// word-splitting law as DerivePosture: 'smuggler' must NOT hit
-        /// 'smuggle', 'Han' must not hit 'Hans').</summary>
+        /// 'smuggle', 'Han' must not hit 'Hans').
+        /// Player-19 collision law (Thomas 03.11): a LONE name token
+        /// designates only while it is UNIQUE in the public name space -
+        /// every hero plus every deployed group's display name, all of it
+        /// table-visible. "Besiegt Ivan Talos." must NOT mark Verena Talos:
+        /// the surname has two public owners, so only the full-name
+        /// sequence may designate her. An objective that fully names an
+        /// imperial figure is a protect signal, never a rebel designation.</summary>
         static void ApplyDesignation(FeedWorldView v, string text, int round)
         {
             if (string.IsNullOrEmpty(text)) return;
             foreach (var h in v.Heroes)
-                if (NamesHero(text, h.HeroId))
+                if (Designates(v, text, h.HeroId))
                 {
                     h.Marks++;
                     h.MarkedRound = round;
                 }
         }
+
+        /// <summary>Player-19 designation law = a NamesHero match AND, when
+        /// the match rests on a LONE name token (no full-name sequence in
+        /// the text), that token must have exactly ONE owner in the public
+        /// name space (all hero names + all group display names). Full-name
+        /// sequences are never ambiguous and always designate. With no group
+        /// display names known (old event logs) the hero names alone decide
+        /// - the pre-Player-19 behaviour for every name that is unique
+        /// among the heroes, which is exactly what the old vectors encode.</summary>
+        static bool Designates(FeedWorldView v, string text, string heroId)
+        {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(heroId) || heroId == "?")
+                return false;
+            var words = SplitWords(text);
+            var name = SplitWords(heroId);
+            if (name.Count == 0 || words.Count == 0) return false;
+            // full-name sequence -> unambiguous, designates
+            if (words.Count >= name.Count)
+                for (int i = 0; i + name.Count <= words.Count; i++)
+                {
+                    bool hit = true;
+                    for (int j = 0; j < name.Count; j++)
+                        if (string.Compare(words[i + j], name[j], StringComparison.OrdinalIgnoreCase) != 0)
+                        { hit = false; break; }
+                    if (hit) return true;
+                }
+            // lone name part -> only when the token is public-name-space unique
+            foreach (var n in name)
+                if (n.Length >= 3 && ContainsWord(words, n) && TokenOwners(v, n) <= 1)
+                    return true;
+            return false;
+        }
+
+        static bool ContainsWord(List<string> words, string token)
+        {
+            foreach (var w in words)
+                if (string.Compare(w, token, StringComparison.OrdinalIgnoreCase) == 0)
+                    return true;
+            return false;
+        }
+
+        /// Owners of a name token in the public name space: every hero plus
+        /// every group whose DISPLAY name is known (Spawn carried "name").
+        static int TokenOwners(FeedWorldView v, string token)
+        {
+            int n = 0;
+            foreach (var h in v.Heroes)
+                if (ContainsWord(SplitWords(h.Name ?? h.HeroId), token)) n++;
+            foreach (var g in v.Groups)
+                if (!string.IsNullOrEmpty(g.DisplayName) && ContainsWord(SplitWords(g.DisplayName), token))
+                    n++;
+            return n;
+        }
+
+        /// <summary>Player-19 public seam: does this text name this figure
+        /// by full-name sequence or lone name token (the same NamesHero law
+        /// the designation logic runs)? Exposed so the app layer can
+        /// recognise a PROTECT objective ("Besiegt Ivan Talos." names a
+        /// deployed imperial figure).</summary>
+        public static bool TextNames(string text, string displayName)
+            => NamesHero(text, displayName);
 
         static bool NamesHero(string text, string heroId)
         {

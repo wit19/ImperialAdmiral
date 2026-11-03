@@ -1189,8 +1189,22 @@ namespace TacticalAI
                     Health = h.health,
                     // M10b: event-derived objective credit (view-level, the
                     // feed names the hero - never a cell/position read).
-                    ObjectiveActor = view != null && !string.IsNullOrEmpty(view.ObjectiveActor)
-                        && System.StringComparer.Ordinal.Equals(view.ObjectiveActor, id),
+                    // Player-19 (Thomas 03.11): the strike credit joins the
+                    // SAME engaged tier - the hero whose activation window
+                    // enclosed damage on the figure the objective names
+                    // ("Besiegt Ivan Talos.") is the live threat to the
+                    // Empire's mission, exactly like the objective-mover.
+                    // EngagedRound breaks ties inside the tier (most recent
+                    // engagement leads); the +1 econ bump is per-tier, so a
+                    // hero with both credits still carries it exactly once.
+                    ObjectiveActor =
+                        (view != null && !string.IsNullOrEmpty(view.ObjectiveActor)
+                            && System.StringComparer.Ordinal.Equals(view.ObjectiveActor, id))
+                        || (hv != null && hv.Strikes > 0),
+                    EngagedRound = System.Math.Max(
+                        hv != null ? hv.StrikeRound : 0,
+                        view != null && System.StringComparer.Ordinal.Equals(
+                            view.ObjectiveActor, id) ? view.ObjectiveActorRound : 0),
                     // M11d READY-TO-WIRE (the honest half): the strain BUFFER
                     // is public printed data and is fully wired - card
                     // reactions + the hero's current unspent campaign XP
@@ -1868,6 +1882,20 @@ namespace TacticalAI
             catch { return null; }
         }
 
+        /// Player-19 Punkt 3: is "guard" the single strongest weight of this
+        /// role distribution? (Rote Garde row guard:55 vs aggressive:25,
+        /// blocker:20 -> true; a hunter row -> false.) Evaluated on the RAW
+        /// role row, before any posture modifier, so the mission posture can
+        /// never flip the duty.
+        static bool GuardDominant(System.Collections.Generic.Dictionary<string, int> w)
+        {
+            int g;
+            if (w == null || !w.TryGetValue("guard", out g)) return false;
+            foreach (var kv in w)
+                if (kv.Key != "guard" && kv.Value >= g) return false;
+            return true;
+        }
+
         /// M4 printed-trait x posture classification (fairness whitelist only:
         /// Id/Speed/AttackType/MiniSize/Keywords - all printed, all public).
         /// defend: immobile AND melee figures hold the objective zone (several
@@ -1899,8 +1927,32 @@ namespace TacticalAI
                 var dist0 = tbl.WeightsFor(c.Id, c.Name);
                 if (dist0 != null)
                 {
+                    // Player-19 (Thomas 03.11, Punkt 3): PROTECT-OBJECTIVE
+                    // law. When the current objective FULLY names a deployed
+                    // imperial figure ("Besiegt Ivan Talos." - the feed's
+                    // display names, all public), that figure is the Empire's
+                    // mission: a guard-role group (guard is its row's single
+                    // strongest weight) holds its post and rolls under the
+                    // DEFEND modifier row instead of the mission posture -
+                    // whoever stands guard at the mission figure does not
+                    // march away while the enemy is ordered at exactly him.
+                    // No position data is read anywhere: objective text and
+                    // role table are public. Old event logs (no display
+                    // names) never fire this - bit-identical canon holds.
+                    var effPosture = posture;
+                    var fv = _lastFeedView;
+                    if (fv != null && !string.IsNullOrEmpty(fv.Objective) && GuardDominant(dist0))
+                        foreach (var g in fv.Groups)
+                            if (g.Deployed && !g.Removed && !string.IsNullOrEmpty(g.DisplayName)
+                                && Tac.WorldEventVector.TextNames(fv.Objective, g.DisplayName))
+                            {
+                                effPosture = "defend";
+                                Debug.Log("TacticalAIBridge::guardhold " + c.Id +
+                                          " (objective names " + g.DisplayName + ")");
+                                break;
+                            }
                     var dist = Tac.PatternWeightTable.FilterIllegal(
-                        tbl.Effective(dist0, posture), c.IsMassive);
+                        tbl.Effective(dist0, effPosture), c.IsMassive);
                     int draw;
                     var pat = tbl.Roll(dist, SessionSeed(), CurrentRound(), c.Id, out draw);
                     if (pat != null)

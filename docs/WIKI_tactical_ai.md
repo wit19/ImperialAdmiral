@@ -293,10 +293,15 @@ badge back to it any time.
 Every Imperial figure — officers included, who just get their own order trees —
 carries a battlefield **doctrine**. The live assignment law is a *printed dice
 law*: once per round each figure rolls into a doctrine from the **public weight
-table** `Resources/Languages/En/tactical_pattern_weights.json` (rows matched by
-card id / name, seeded deterministically from mission + card + round; the defend
+table** `Resources/Languages/En/tactical_pattern_weights.json` (every shipped
+card is pinned there by its **group id** — the table rolls the same
+distribution in every language; the name-matching net only catches custom
+imports; seeded deterministically from mission + card + round; the defend
 posture is the one modifier row, and the emplacement print rule is the single
-pre-roll exception) — shifting round to round like a real battlefield, yet
+pre-roll exception; one protect law sits over the dice: while the mission
+objective names a deployed Imperial figure — "Defeat Ivan Talos." — guard-role
+groups hold their post and roll their row under the defend modifier, a
+bodyguard at the mission figure does not march away) — shifting round to round like a real battlefield, yet
 identical every time for the same seed. A final mix in the dice hash makes sure
 the round number actually moves each figure's roll. Stance text
 `Core/Doctrine.StanceText`; popup label `doc*` keys — the label appears in the

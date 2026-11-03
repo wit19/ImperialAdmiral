@@ -1344,6 +1344,72 @@
      "wounded": false
     }
    ]
+  },
+  {
+   "name": "p19_engaged_round_tiebreak",
+   "posture": "eliminate",
+   "counter": null,
+   "comment": "Player-19: two ENGAGED heroes (feed actor + strike credits both raise the tier) - the more recent engagement leads, whatever the row order says (Lokaku sat in the counter slot; Jyn just struck the mission figure).",
+   "heroes": [
+    {
+     "hero": "Jyn Odan",
+     "row": 2,
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6,
+     "objective_actor": true,
+     "engaged_round": 5
+    },
+    {
+     "hero": "Lokaku",
+     "row": 0,
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6,
+     "objective_actor": true,
+     "engaged_round": 3
+    },
+    {
+     "hero": "Verena Talos",
+     "row": 1,
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6,
+     "objective_actor": false
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Jyn Odan",
+     "marked": false,
+     "threat": "10/3",
+     "threat_econ": "10/3",
+     "wounded": false
+    },
+    {
+     "basis": "proxy",
+     "hero": "Lokaku",
+     "marked": false,
+     "threat": null,
+     "threat_econ": null,
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Verena Talos",
+     "marked": false,
+     "threat": "3/2",
+     "threat_econ": "3/2",
+     "wounded": false
+    }
+   ]
   }
  ]
 }

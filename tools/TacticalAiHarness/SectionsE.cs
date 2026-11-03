@@ -100,6 +100,12 @@ namespace TacticalAiHarness
                             // M10b: optional per-hero flag (default false).
                             ObjectiveActor = h.ContainsKey("objective_actor")
                                 && Json.AsBool(h["objective_actor"]),
+                            // Player-19: optional engagement round (the live
+                            // bridge folds feed actor-round + strike-round
+                            // into it). ABSENT -> 0 keeps every pre-Player-19
+                            // case bit-identical.
+                            EngagedRound = h.ContainsKey("engaged_round")
+                                ? (int)Json.AsLong(h["engaged_round"]) : 0,
                             // M11b: the printed hero card by NAME (same key
                             // the live bridge uses); rows outside the 21-hero
                             // roster (fixture heroes) stay on the fallback.

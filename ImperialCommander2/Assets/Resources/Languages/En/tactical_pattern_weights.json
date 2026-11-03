@@ -1,54 +1,297 @@
 {
-  "_meta": {
-    "file": "tactical_pattern_weights.json",
-    "schema": "tacai.pattern_weights/1",
-    "note": "PUBLIC data (fairness rule): per-group doctrine weight distributions for the M13u per-round pattern dice. Rolled doctrine = row weights + posture modifier row (defend = terminal/escort in play) + printed-law filter, drawn with the mission seed. First matching row wins. No hidden modifiers ever."
+ "_meta": {
+  "file": "tactical_pattern_weights.json",
+  "schema": "tacai.pattern_weights/1",
+  "note": "PUBLIC data (fairness rule): per-group doctrine weight distributions for the M13u per-round pattern dice. Rolled doctrine = row weights + posture modifier row (defend = terminal/escort in play) + printed-law filter, drawn with the mission seed. First matching row wins. No hidden modifiers ever Language law (Player-19, 03.11): every shipped card is pinned by ids - group ids are identical in ALL language stores, display names are not, so ids decide for the shipped roster and nameMatch stays only the net for custom imports. A role row without ids that its EN names hit is a bug."
+ },
+ "postureModifiers": {
+  "defend": {
+   "aggressive": -25,
+   "hunter": -10,
+   "guard": 20,
+   "blocker": 15
+  }
+ },
+ "rows": [
+  {
+   "id": "DG007",
+   "weights": {
+    "guard": 100
+   }
   },
-  "postureModifiers": {
-    "defend": { "aggressive": -25, "hunter": -10, "guard": 20, "blocker": 15 }
+  {
+   "id": "DG008",
+   "weights": {
+    "guard": 100
+   }
   },
-  "rows": [
-    { "id": "DG007", "weights": { "guard": 100 } },
-    { "id": "DG008", "weights": { "guard": 100 } },
-    { "id": "DG071", "weights": { "hunter": 80, "aggressive": 20 } },
-    { "nameMatch": "Boba Fett|Dengar|Bossk|Greedo|BT-1|4-LOM|Zuckuss|Cad Bane",
-      "weights": { "hunter": 60, "aggressive": 30, "guard": 10 } },
-    { "nameMatch": "Darth Vader|Maul",
-      "weights": { "aggressive": 50, "hunter": 40, "guard": 10 } },
-    { "nameMatch": "Grand Inquisitor",
-      "weights": { "hunter": 50, "aggressive": 40, "guard": 10 } },
-    { "nameMatch": "Palpatine",
-      "weights": { "aggressive": 45, "guard": 30, "blocker": 25 } },
-    { "nameMatch": "Thrawn",
-      "weights": { "guard": 45, "aggressive": 35, "blocker": 15, "hunter": 5 } },
-    { "nameMatch": "Hondo",
-      "weights": { "aggressive": 50, "guard": 25, "hunter": 15, "blocker": 10 } },
-    { "nameMatch": "Jabba",
-      "weights": { "guard": 50, "blocker": 35, "aggressive": 15 } },
-    { "nameMatch": "0-0-0",
-      "weights": { "aggressive": 55, "hunter": 30, "guard": 15 } },
-    { "nameMatch": "Weiss",
-      "weights": { "blocker": 45, "aggressive": 25, "guard": 20, "hunter": 10 } },
-    { "nameMatch": "Captain Terro",
-      "weights": { "aggressive": 40, "blocker": 30, "guard": 20, "hunter": 10 } },
-    { "nameMatch": "Imperial Officer|General Sorin|Kayn Somos",
-      "weights": { "aggressive": 45, "guard": 35, "blocker": 15, "hunter": 5 } },
-    { "nameMatch": "ISB Infiltrator|Agent Blaise",
-      "weights": { "aggressive": 40, "hunter": 40, "guard": 20 } },
-    { "nameMatch": "Loth-cat",
-      "weights": { "hunter": 50, "aggressive": 35, "guard": 15 } },
-    { "nameMatch": "Tusken Raider",
-      "weights": { "aggressive": 40, "hunter": 40, "guard": 20 } },
-    { "nameMatch": "Trandoshan Hunter|HK Assassin|Clawdite|Weequay",
-      "weights": { "hunter": 45, "aggressive": 40, "guard": 15 } },
-    { "nameMatch": "Probe Droid",
-      "weights": { "hunter": 45, "aggressive": 30, "guard": 25 } },
-    { "nameMatch": "Royal Guard|Gamorrean",
-      "weights": { "guard": 55, "aggressive": 25, "blocker": 20 } },
-    { "nameMatch": "AT-ST|AT-DP|SC2-M|Repulsor",
-      "weights": { "blocker": 40, "aggressive": 35, "hunter": 15, "guard": 10 } },
-    { "nameMatch": "Wampa|Nexu|Rancor|Dewback|Bantha",
-      "weights": { "blocker": 48, "guard": 26, "aggressive": 22, "hunter": 4 } },
-    { "weights": { "aggressive": 55, "hunter": 10, "guard": 25, "blocker": 10 } }
-  ]
+  {
+   "id": "DG071",
+   "weights": {
+    "hunter": 80,
+    "aggressive": 20
+   }
+  },
+  {
+   "nameMatch": "Boba Fett|Dengar|Bossk|Greedo|BT-1|4-LOM|Zuckuss|Cad Bane",
+   "weights": {
+    "hunter": 60,
+    "aggressive": 30,
+    "guard": 10
+   },
+   "ids": [
+    "DG076",
+    "DG077",
+    "DG080",
+    "DG089",
+    "DG090"
+   ]
+  },
+  {
+   "nameMatch": "Darth Vader|Maul",
+   "weights": {
+    "aggressive": 50,
+    "hunter": 40,
+    "guard": 10
+   },
+   "ids": [
+    "DG072",
+    "DG084"
+   ]
+  },
+  {
+   "nameMatch": "Grand Inquisitor",
+   "weights": {
+    "hunter": 50,
+    "aggressive": 40,
+    "guard": 10
+   },
+   "ids": [
+    "DG087"
+   ]
+  },
+  {
+   "nameMatch": "Palpatine",
+   "weights": {
+    "aggressive": 45,
+    "guard": 30,
+    "blocker": 25
+   },
+   "ids": [
+    "DG083"
+   ]
+  },
+  {
+   "nameMatch": "Thrawn",
+   "weights": {
+    "guard": 45,
+    "aggressive": 35,
+    "blocker": 15,
+    "hunter": 5
+   },
+   "ids": [
+    "DG085"
+   ]
+  },
+  {
+   "nameMatch": "Hondo",
+   "weights": {
+    "aggressive": 50,
+    "guard": 25,
+    "hunter": 15,
+    "blocker": 10
+   },
+   "ids": [
+    "DG086"
+   ]
+  },
+  {
+   "nameMatch": "Jabba",
+   "weights": {
+    "guard": 50,
+    "blocker": 35,
+    "aggressive": 15
+   },
+   "ids": [
+    "DG081"
+   ]
+  },
+  {
+   "nameMatch": "0-0-0",
+   "weights": {
+    "aggressive": 55,
+    "hunter": 30,
+    "guard": 15
+   },
+   "ids": [
+    "DG088"
+   ]
+  },
+  {
+   "nameMatch": "Weiss",
+   "weights": {
+    "blocker": 45,
+    "aggressive": 25,
+    "guard": 20,
+    "hunter": 10
+   },
+   "ids": [
+    "DG073"
+   ]
+  },
+  {
+   "nameMatch": "Captain Terro",
+   "weights": {
+    "aggressive": 40,
+    "blocker": 30,
+    "guard": 20,
+    "hunter": 10
+   },
+   "ids": [
+    "DG082"
+   ]
+  },
+  {
+   "nameMatch": "Imperial Officer|General Sorin|Kayn Somos",
+   "weights": {
+    "aggressive": 45,
+    "guard": 35,
+    "blocker": 15,
+    "hunter": 5
+   },
+   "ids": [
+    "DG004",
+    "DG005",
+    "DG006",
+    "DG075",
+    "DG078"
+   ]
+  },
+  {
+   "nameMatch": "ISB Infiltrator|Agent Blaise",
+   "weights": {
+    "aggressive": 40,
+    "hunter": 40,
+    "guard": 20
+   },
+   "ids": [
+    "DG068",
+    "DG069",
+    "DG079"
+   ]
+  },
+  {
+   "nameMatch": "Loth-cat",
+   "weights": {
+    "hunter": 50,
+    "aggressive": 35,
+    "guard": 15
+   },
+   "ids": [
+    "DG060",
+    "DG061"
+   ]
+  },
+  {
+   "nameMatch": "Tusken Raider",
+   "weights": {
+    "aggressive": 40,
+    "hunter": 40,
+    "guard": 20
+   },
+   "ids": [
+    "DG021",
+    "DG022"
+   ]
+  },
+  {
+   "nameMatch": "Trandoshan Hunter|HK Assassin|Clawdite|Weequay",
+   "weights": {
+    "hunter": 45,
+    "aggressive": 40,
+    "guard": 15
+   },
+   "ids": [
+    "DG015",
+    "DG016",
+    "DG026",
+    "DG027",
+    "DG042",
+    "DG043",
+    "DG044",
+    "DG053",
+    "DG054",
+    "DG055"
+   ]
+  },
+  {
+   "nameMatch": "Probe Droid",
+   "weights": {
+    "hunter": 45,
+    "aggressive": 30,
+    "guard": 25
+   },
+   "ids": [
+    "DG011",
+    "DG012",
+    "DG013"
+   ]
+  },
+  {
+   "nameMatch": "Royal Guard|Gamorrean",
+   "weights": {
+    "guard": 55,
+    "aggressive": 25,
+    "blocker": 20
+   },
+   "ids": [
+    "DG009",
+    "DG010",
+    "DG039",
+    "DG040",
+    "DG041",
+    "DG074"
+   ]
+  },
+  {
+   "nameMatch": "AT-ST|AT-DP|SC2-M|Repulsor",
+   "weights": {
+    "blocker": 40,
+    "aggressive": 35,
+    "hunter": 15,
+    "guard": 10
+   },
+   "ids": [
+    "DG014",
+    "DG025",
+    "DG046"
+   ]
+  },
+  {
+   "nameMatch": "Wampa|Nexu|Rancor|Dewback|Bantha",
+   "weights": {
+    "blocker": 48,
+    "guard": 26,
+    "aggressive": 22,
+    "hunter": 4
+   },
+   "ids": [
+    "DG017",
+    "DG018",
+    "DG028",
+    "DG029",
+    "DG045",
+    "DG062",
+    "DG065"
+   ]
+  },
+  {
+   "weights": {
+    "aggressive": 55,
+    "hunter": 10,
+    "guard": 25,
+    "blocker": 10
+   }
+  }
+ ]
 }

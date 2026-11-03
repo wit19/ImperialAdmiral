@@ -62,6 +62,12 @@ namespace TacticalAI.Core
             "MissionStart", "Spawn", "Move", "Death", "Removal",
             "ObjectiveChange", "TileChange", "FocusChange", "ThreatSpend",
             "ActivationStart", "ActivationEnd",
+            // Player-19 (Thomas 03.11): the hero-turn OPEN marker (the App's
+            // own mission-log GroupActivation line names the hero - public
+            // activation order, the same channel M10b attribution already
+            // uses). It lets the feed tell an objective change that happened
+            // DURING a hero's turn from one that happened between turns.
+            "HeroActivationStart",
             "HeroActivated", "HeroWounded", "HeroDefeated",
             "GroupDamage", "RoundEnd",
             // M8/F5: mission clock re-wired at runtime (ModifyRndLimit event
@@ -77,6 +83,12 @@ namespace TacticalAI.Core
             "group", "figure", "wheel", "health", "hero", "zone", "tile",
             "objective", "focus", "balance", "roundLimit", "priorityTarget",
             "mission", "missionType", "resync", "size",
+            // Player-19: the group's DISPLAY NAME on Spawn (the same name the
+            // table reads on the deployment card - public). The designation
+            // law needs it to catch name collisions (Ivan Talos / Verena
+            // Talos): a mission text naming an imperial figure must never
+            // mark the rebel hero who merely shares the surname.
+            "name",
         };
 
         // Minimal per-kind shape guard (typos fail loud, not silently).
@@ -94,6 +106,7 @@ namespace TacticalAI.Core
             { "ThreatSpend",      new[] { "balance" } },
             { "ActivationStart",  new[] { "group" } },
             { "ActivationEnd",    new[] { "group" } },
+            { "HeroActivationStart", new[] { "hero" } },
             { "HeroActivated",    new[] { "hero" } },
             { "HeroWounded",      new[] { "hero" } },
             { "HeroDefeated",     new[] { "hero" } },

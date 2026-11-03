@@ -122,6 +122,13 @@ namespace TacticalAI.Core
         // cardSurcharge (owned focus_surcharge rows); false default keeps
         // every pre-M12d fixture bit-identical.
         public bool Conditioned;
+        // Player-19 (Thomas 03.11): round of the ENGAGEMENT credit - either
+        // the terminal objective credit (feed ObjectiveActorRound) or the
+        // LAST strike on the figure the objective names (feed StrikeRound).
+        // 0 = not engaged (bit-identical pre-Player-19 canon). Where the
+        // engaged tier holds more than one hero, the most recent engagement
+        // leads - the human GM looks at what just HAPPENED on the table.
+        public int EngagedRound;
 
         public bool Marked { get { return Marks > 0; } }
     }
@@ -421,6 +428,15 @@ namespace TacticalAI.Core
             //    human's aim mark, key 1, still overrides him).
             if (a.C.ObjectiveActor != b.C.ObjectiveActor)
                 return a.C.ObjectiveActor ? -1 : 1;
+            // Player-19 (Thomas 03.11): engaged-vs-engaged - the most recent
+            // engagement leads (the door-crusher from two rounds ago yields
+            // to the hero who just struck the mission figure). 0/0 rows (all
+            // pre-Player-19 canon) keep the old fall-through order verbatim.
+            if (a.C.ObjectiveActor && b.C.ObjectiveActor)
+            {
+                int er = b.C.EngagedRound.CompareTo(a.C.EngagedRound);
+                if (er != 0) return er;
+            }
             // 2a. WOUNDED-FOCUS FIX (Thomas 03.11): under a woundAll counter
             //     the sim's LEADING counter slot applies - "healthy BEATS
             //     wounded, every hit counts and counter progress is

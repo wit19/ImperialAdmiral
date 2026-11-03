@@ -943,6 +943,183 @@
     "seq": 3,
     "threat": 0
    }
+  },
+  {
+   "name": "p19_window_terminal_credit",
+   "comment": "Player-19 law (Thomas 03.11): the door opens while Lokaku is in turn -> LOKAKU is the designator, not the previous activator. Jyn's activation closed long before; no HeroActivated for Lokaku yet - the window is what credits him.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Open the door to the command center.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p19",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 3,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "ObjectiveChange",
+     "round": 3,
+     "payload": {
+      "objective": "Defeat Ivan Talos."
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Defeat Ivan Talos.",
+    "objective_actor": "Lokaku",
+    "round": 3,
+    "threat": 0,
+    "seq": 5,
+    "hash": "1ef5e33a5422388e90d66ab22dafb1c5dbf03256bf7ace9d7861aa22474c1699",
+    "canon": "mission=vector|p19_window_terminal_credit\nround=3\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=5\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0\n"
+   }
+  },
+  {
+   "name": "p19_window_stays_open_late_closure",
+   "comment": "Drain race pinned (Player-19): the PREVIOUS hero's HeroActivated is observed AFTER the next hero's activation start (adapter polls). The late closure must not close the open window - the objective still credits the hero in turn.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Open the door to the command center.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p19",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 3,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    },
+    {
+     "kind": "ObjectiveChange",
+     "round": 3,
+     "payload": {
+      "objective": "Defeat Ivan Talos."
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Defeat Ivan Talos.",
+    "objective_actor": "Lokaku",
+    "round": 3,
+    "threat": 0,
+    "seq": 5,
+    "hash": "5f4c8569188afc87ce84958e5e78d372008e83861a2d5e98ed0f511e2b2fd04f",
+    "canon": "mission=vector|p19_window_stays_open_late_closure\nround=3\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=5\nH|Jyn Odan|Jyn Odan|0|0|1|3|0|0\n"
+   }
+  },
+  {
+   "name": "p19_window_strike_credit",
+   "comment": "Strike law (Player-19): GroupDamage on the figure the objective NAMES ('Defeat Ivan Talos.' + Spawn display name 'Ivan Talos') lands while this hero's window is open -> strike credit (canon H-row gets the strikes|round tail; the group row gets |name=).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Open the door to the command center.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p19",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "ObjectiveChange",
+     "round": 2,
+     "payload": {
+      "objective": "Defeat Ivan Talos."
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 2,
+     "payload": {
+      "group": "GIVAN",
+      "size": 1,
+      "name": "Ivan Talos"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GIVAN",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Defeat Ivan Talos.",
+    "objective_actor": "Lokaku",
+    "round": 2,
+    "threat": 0,
+    "seq": 6,
+    "hash": "1870e04238ac483fd2bee225d13ecbffd3710380d07be99254c22356c48538e3",
+    "canon": "mission=vector|p19_window_strike_credit\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=6\nG|GIVAN|GIVAN|1|0|1|1|2|5|3/5|name=Ivan Talos\nH|Lokaku|Lokaku|0|0|1|2|0|0|1|2\n"
+   }
   }
  ]
 }

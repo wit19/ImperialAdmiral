@@ -262,7 +262,12 @@ namespace TacticalAI
                         Append("Removal", r, P("group", IdForName(name)));
                         break;
                     case Saga.MissionLogType.GroupActivation:
+                        // Player-19: heroes now OPEN their activation window
+                        // (the App's own log line names the hero - public
+                        // activation order). The feed uses the window for the
+                        // terminal objective credit and strike attribution.
                         if (!IsHeroName(name)) Append("ActivationStart", r, P("group", IdForName(name)));
+                        else Append("HeroActivationStart", r, P("hero", name));
                         break;
                 }
             }
@@ -282,6 +287,10 @@ namespace TacticalAI
                     {
                         { "group", cd.id },
                         { "size", (long)Math.Max(1, cd.size) },
+                        // Player-19: the deployment-card display name (the
+                        // same name the table reads). Public; powers the
+                        // designation collision law and the strike law.
+                        { "name", cd.name ?? "" },
                     });
                     continue;
                 }
@@ -372,6 +381,7 @@ namespace TacticalAI
                 {
                     { "group", cd.id },
                     { "size", (long)Math.Max(1, cd.size) },
+                    { "name", cd.name ?? "" },   // Player-19 display name
                     { "resync", true },
                 }));
                 _wheels[cd.id] = (int[])cd.woundTrackerValue.Clone();

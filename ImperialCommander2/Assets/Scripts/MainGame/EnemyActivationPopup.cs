@@ -101,7 +101,26 @@ public class EnemyActivationPopup : MonoBehaviour
 		}
 
 		//rebel target
-		if ( cardDescriptor.hasActivated && cardDescriptor.rebelName != null )
+		// TACTICAL AI (concept 4.2.1): when the global switch is ON and the
+		// bridge can plan, the printed order-deck card + a deterministic
+		// target replace the random instruction option, the hidden bonus
+		// roll and the random hero pick. tacPlan == null (Default: switch
+		// OFF, or planner data unavailable) keeps ALL legacy blocks verbatim.
+		TacticalAI.ActivationPlanData tacPlan = null;
+		// only a FRESH activation gets a tactical plan; re-showing an already
+		// activated group must keep the legacy "RE-USING PREVIOUS ACTIVATION
+		// DATA" replay below (otherwise a mere re-view would consume a deck card).
+		if ( TacticalAI.TacticalAISettings.Enabled && !cardDescriptor.hasActivated )
+			TacticalAI.TacticalAIBridge.TryBuildActivationPlan( cd, out tacPlan );
+
+		if ( tacPlan != null && tacPlan.HasTarget )
+		{
+			//TACTICAL AI: deterministic focus target from the bridge (no hidden RNG)
+			rebel1 = tacPlan.TargetName;
+			cardDescriptor.rebelName = rebel1;
+			Debug.Log( $"ShowSaga()::TACTICAL target -> {rebel1}" );
+		}
+		else if ( cardDescriptor.hasActivated && cardDescriptor.rebelName != null )
 		{
 			Debug.Log( "***RE-USING PREVIOUS ACTIVATION DATA::rebelName***" );
 			rebel1 = cardDescriptor.rebelName;
@@ -126,7 +145,42 @@ public class EnemyActivationPopup : MonoBehaviour
 		}
 
 		//instruction
-		if ( cardDescriptor.hasActivated && cardDescriptor.instructionOption != null )
+		if ( tacPlan != null )
+		{
+			//TACTICAL AI (concept 4.2.1/4.2.2): the PRINTED order-deck card blocks
+			//replace the random instruction option - no random option pick, no
+			//GetModifiedRepositioning rewrite. Mission event instruction overrides
+			//still apply (they are scenario rules, not hidden enemy knowledge).
+			Debug.Log( $"ShowSaga()::TACTICAL activation {tacPlan.CardId} ({tacPlan.Blocks.Length} blocks)" );
+			// Thomas 29.10: reading order = FOCUS TARGET first, then the
+			// action blocks, then (only when the ERKLÄRUNG setting is on) the
+			// explanation last. '\n' splits every decision-tree branch onto
+			// its own popup row (ParseInstructions keeps a fixed row height).
+			List<string> tacInstructions = new List<string>();
+			// Thomas 02.11 (popup declutter): the persona line left the top
+			// of the card - you KNOW who you play against; ExplainFor now
+			// carries it as an EXPLAIN section (tacPlan.PersonaLine).
+			if ( tacPlan.HasTarget && !string.IsNullOrEmpty( tacPlan.TargetWhy ) )
+				tacInstructions.Add( tacPlan.TargetWhy );
+			// M6p (Thomas 02.11): the doctrine row left the EXPLAIN block and
+			// rides here permanently - directly after the focus-target line,
+			// independent of the EXPLAIN level (same visibility law as the
+			// focus target itself).
+			if ( !string.IsNullOrEmpty( tacPlan.DoctrineLine ) )
+				tacInstructions.Add( tacPlan.DoctrineLine );
+			tacInstructions.AddRange( tacPlan.Blocks ?? new string[0] );
+			if ( !string.IsNullOrEmpty( tacPlan.ExplainLine ) )
+				tacInstructions.Add( tacPlan.ExplainLine );
+			tacInstructions = GetModifiedInstructions( cd.id, tacInstructions, true );
+			var tacRows = new List<string>();
+			foreach ( string line in tacInstructions )
+				tacRows.AddRange( line.Split( new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries ) );
+			tacInstructions = tacRows;
+			ParseInstructions( tacInstructions );
+			//store activation data
+			cardDescriptor.instructionOption = new InstructionOption() { instruction = tacInstructions };
+		}
+		else if ( cardDescriptor.hasActivated && cardDescriptor.instructionOption != null )
 		{
 			Debug.Log( "***RE-USING PREVIOUS ACTIVATION DATA::instructionOption***" );
 			ParseInstructions( cardDescriptor.instructionOption.instruction );
@@ -158,7 +212,17 @@ public class EnemyActivationPopup : MonoBehaviour
 		}
 
 		//bonus
-		if ( cardDescriptor.hasActivated
+		if ( tacPlan != null )
+		{
+			//TACTICAL AI fairness rule (concept section 2): hidden bonuseffects.json
+			//rolls NEVER fire in Tactical AI mode - the printed stat card is the
+			//only source of enemy power. Boxes stay empty, nothing is stored.
+			bonusNameText.text = "";
+			bonusText.text = "";
+			cardDescriptor.bonusName = "";
+			cardDescriptor.bonusText = "";
+		}
+		else if ( cardDescriptor.hasActivated
 			&& cardDescriptor.bonusName != null
 			&& cardDescriptor.bonusText != null )
 		{
@@ -277,6 +341,15 @@ public class EnemyActivationPopup : MonoBehaviour
 			//replace glyphs
 			item = ReplaceGlyphs( item );
 
+			// M13s (Thomas): bold the leading LABEL of each instruction line
+			// for readability - "Fokus-Ziel:", "Doktrin:", "Grundregel:",
+			// "Aktion 1"/"Aktion 2" ... Purely a render effect: the stored
+			// instruction strings and all game logic stay tag-free. A label
+			// is the first <=14 characters when directly followed by ':' or
+			// the ' -' block separator (en dash), so question-style branch
+			// lines ("Noch nicht angegriffen? Dann: ...") stay untouched.
+			item = BoldLeadLabel( item );
+
 			//add bullets (light blue text)
 			if ( item.Contains( "{-}" ) )
 			{
@@ -296,6 +369,61 @@ public class EnemyActivationPopup : MonoBehaviour
 			nt.text = item;
 			var rt = go.GetComponent<RectTransform>();
 			rt.sizeDelta = new Vector2( 1100, 100 );
+		}
+	}
+
+	/// <summary>M13s: bolds the leading label (<=14 chars directly before a
+	/// ':' or the '–' en-dash block separator) of an instruction row.
+	/// TMP rich text; everything after the label is returned untouched.
+	/// M13y (Thomas screenshot: '"Stattdessen:" ist hervorgehoben - gehört
+	/// zu Aktion 2'): the plain colon rule also caught ordinary BODY lines,
+	/// because "Stattdessen:" looks exactly like a label to it. Real headers
+	/// are mechanically distinguishable: numbered headers come from
+	/// actionFormat ("Aktion {0} – {1}", en-dash - the dash never appears
+	/// as a label separator in body text) and every colon-style header word
+	/// is a prefix of a known header format ("Aktion: {0}",
+	/// "Sonderaktion: ...", "Interaktion: ..."). So: dash => always bold;
+	/// colon => bold only whitelisted header words, derived at runtime from
+	/// the localized strings themselves - no word lists, all 11 languages
+	/// correct without touching a dictionary.</summary>
+	static string BoldLeadLabel( string s )
+	{
+		if ( string.IsNullOrEmpty( s ) )
+			return s;
+		var m = System.Text.RegularExpressions.Regex.Match( s, @"^(\s*)([^:–\n]{1,14})(?=\s*[:–])" );
+		if ( !m.Success || m.Groups[ 2 ].Value.Trim().Length == 0 )
+			return s;
+		var rest = s.Substring( m.Groups[ 1 ].Value.Length + m.Groups[ 2 ].Value.Length );
+		if ( rest.TrimStart().StartsWith( ":" ) && !HeaderLabels.Contains( m.Groups[ 2 ].Value.Trim().ToLowerInvariant() ) )
+			return s;   // body line ("Stattdessen: ...") - stays plain
+		return m.Groups[ 1 ].Value + "<b>" + m.Groups[ 2 ].Value + "</b>" + rest;
+	}
+
+	// header words before a ':' are not a wordlist - they ARE the first
+	// word of our own format strings, re-derived whenever the UI language
+	// object changes (cheap, and immune to reloads/language switches)
+	static HashSet<string> headerLabelsCache;
+	static UILanguage headerLabelsOwner;
+	static HashSet<string> HeaderLabels
+	{
+		get
+		{
+			var owner = DataStore.uiLanguage;
+			if ( headerLabelsCache != null && ReferenceEquals( headerLabelsOwner, owner ) && owner != null )
+				return headerLabelsCache;
+			var set = new HashSet<string>();
+			var tl = owner != null ? owner.uiTacticalAI : null;
+			if ( tl != null )
+				foreach ( var fmt in new[] { tl.specialAsPrinted, tl.interactLine,
+				                             tl.doctrineHeader, tl.ordRiskLabel, tl.ordMarked } )
+				{
+					if ( string.IsNullOrEmpty( fmt ) ) continue;
+					int i = fmt.IndexOf( ':' );
+					if ( i > 0 ) set.Add( fmt.Substring( 0, i ).Trim().ToLowerInvariant() );
+				}
+			headerLabelsCache = set;
+			headerLabelsOwner = owner;
+			return set;
 		}
 	}
 
@@ -551,7 +679,7 @@ public class EnemyActivationPopup : MonoBehaviour
 		diceRoller.Show( cardDescriptor, false, OnReturn );
 	}
 
-	public List<string> GetModifiedInstructions( string ID, List<string> linesOut )
+	public List<string> GetModifiedInstructions( string ID, List<string> linesOut, bool tactical = false )
 	{
 		//all
 		var ci = DataStore.sagaSessionData.gameVars.GetDeploymentOverride()?.changeInstructions;
@@ -559,7 +687,7 @@ public class EnemyActivationPopup : MonoBehaviour
 		{
 			List<string> lines = ci.theText.Split( new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
 			if ( ci.instructionType == CustomInstructionType.Replace )
-				linesOut = lines;
+				linesOut = tactical ? TacticalMerge( lines, linesOut ) : lines;
 			else if ( ci.instructionType == CustomInstructionType.Top )
 				linesOut = lines.Concat( linesOut ).ToList();
 			else if ( ci.instructionType == CustomInstructionType.Bottom )
@@ -573,7 +701,7 @@ public class EnemyActivationPopup : MonoBehaviour
 		{
 			List<string> lines = dgOvrd.theText.Split( new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
 			if ( dgOvrd.instructionType == CustomInstructionType.Replace )
-				linesOut = lines;
+				linesOut = tactical ? TacticalMerge( lines, linesOut ) : lines;
 			else if ( dgOvrd.instructionType == CustomInstructionType.Top )
 				linesOut = lines.Concat( linesOut ).ToList();
 			else if ( dgOvrd.instructionType == CustomInstructionType.Bottom )
@@ -582,6 +710,23 @@ public class EnemyActivationPopup : MonoBehaviour
 		}
 
 		return linesOut;
+	}
+
+	/// <summary>M13w (Thomas 30.10., EMPIRE13: AT-DP showed the OLD action
+	/// text): a mission Replace-override used to wipe the tactical doctrine
+	/// tree entirely. Those overrides are MIXED blocks: scenario rules
+	/// printed as '{-}' rule bullets (EMPIRE13's "CHARGE GENERATORS: ..."
+	/// is the AT-DP's immunity rule - losing it would change the mission!)
+	/// plus legacy action lines written in dice-glyph shorthand ('{Q}',
+	/// '{A}', ... prefixes - language-independent, the glyphs are markup,
+	/// never translated). Tactical mode keeps the doctrine tree as the
+	/// ACTIONS and appends only the rule lines. Top/Bottom overrides are
+	/// additive and stay untouched.</summary>
+	static List<string> TacticalMerge( List<string> missionLines, List<string> tacLines )
+	{
+		var rules = missionLines.Where( l => !Regex.IsMatch( l.TrimStart(), @"^(\{[QAR]\})+\s" ) ).ToList();
+		Debug.Log( $"TacticalMerge: {missionLines.Count} mission lines -> {rules.Count} rule lines kept, doctrine tree stays" );
+		return rules.Count > 0 ? tacLines.Concat( rules ).ToList() : tacLines;
 	}
 
 	public List<string> GetModifiedRepositioning( string ID, List<string> linesOut )

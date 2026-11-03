@@ -1,0 +1,1349 @@
+{
+ "comment": "M6 overlord focus pins; expect recorded via harness --record (reviewed, never hand-written). Layer inputs are feed facts + the PRINTED hero cards (tactical_hero_cards.json, M11b) + the curated fallback table for rows outside the 21-hero roster only - fairness canon. Case-level \"defense\" (M11b) = the engaging imperial figure's printed defense dice.",
+ "cases": [
+  {
+   "name": "eliminate_economy",
+   "posture": "eliminate",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Squad Stranger",
+     "row": 3,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 5,
+     "health": 4
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "basis": "economy"
+    },
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "basis": "card"
+    },
+    {
+     "hero": "Gaarkhan",
+     "marked": false,
+     "wounded": true,
+     "threat": "5/6",
+     "threat_econ": "5/3",
+     "basis": "card"
+    },
+    {
+     "hero": "Squad Stranger",
+     "marked": false,
+     "wounded": true,
+     "threat": null,
+     "threat_econ": null,
+     "basis": "proxy"
+    }
+   ]
+  },
+  {
+   "name": "woundall_chip_law",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Squad Stranger",
+     "row": 3,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 5,
+     "health": 4
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "basis": "chip"
+    },
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": true,
+     "threat": "7/2",
+     "threat_econ": "7",
+     "basis": "chip"
+    },
+    {
+     "hero": "Gaarkhan",
+     "marked": false,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "basis": "chip"
+    },
+    {
+     "hero": "Squad Stranger",
+     "marked": false,
+     "wounded": true,
+     "threat": null,
+     "threat_econ": null,
+     "basis": "proxy"
+    }
+   ]
+  },
+  {
+   "name": "mark_beats_economy",
+   "posture": "eliminate",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": false,
+     "marks": 1,
+     "marked_round": 4,
+     "attack_dice": 4,
+     "health": 6
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Gaarkhan",
+     "marked": true,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "basis": "mark"
+    },
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "basis": "economy"
+    }
+   ]
+  },
+  {
+   "name": "mark_recency",
+   "posture": "eliminate",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 1,
+     "marked_round": 3,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": false,
+     "marks": 2,
+     "marked_round": 5,
+     "attack_dice": 4,
+     "health": 6
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Gaarkhan",
+     "marked": true,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "basis": "mark"
+    },
+    {
+     "hero": "Han Solo",
+     "marked": true,
+     "wounded": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "basis": "mark"
+    }
+   ]
+  },
+  {
+   "name": "protect_runner_value",
+   "posture": "protect",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Diala Passil",
+     "row": 2,
+     "profile": "Diala Passil",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": false,
+     "threat": "14",
+     "threat_econ": "14",
+     "basis": "economy"
+    },
+    {
+     "hero": "Diala Passil",
+     "marked": false,
+     "wounded": false,
+     "threat": "4",
+     "threat_econ": "4",
+     "basis": "card"
+    },
+    {
+     "hero": "Gaarkhan",
+     "marked": false,
+     "wounded": true,
+     "threat": "1",
+     "threat_econ": "1",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "deny_proxy_fallback",
+   "posture": "deny",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": null,
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": null,
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 5
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Gaarkhan",
+     "marked": false,
+     "wounded": true,
+     "threat": null,
+     "threat_econ": null,
+     "basis": "proxy"
+    },
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": false,
+     "threat": null,
+     "threat_econ": null,
+     "basis": "proxy"
+    },
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": null,
+     "threat_econ": null,
+     "basis": "proxy"
+    }
+   ]
+  },
+  {
+   "name": "m10a_campaign_loadout_breaks_row_queue",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Biv Bodhrik",
+     "row": 0,
+     "profile": "Biv Bodhrik",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Davith Elso",
+     "row": 1,
+     "profile": "Davith Elso",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [],
+      "skills": []
+     }
+    },
+    {
+     "hero": "CT-1701",
+     "row": 2,
+     "profile": "CT-1701",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Drokkatta",
+     "row": 3,
+     "profile": "Drokkatta",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item328"
+      ],
+      "skills": [
+       "drokkata05"
+      ]
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Drokkatta",
+     "marked": false,
+     "wounded": false,
+     "threat": "12",
+     "threat_econ": "12",
+     "basis": "card"
+    },
+    {
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "wounded": false,
+     "threat": "6",
+     "threat_econ": "6",
+     "basis": "card"
+    },
+    {
+     "hero": "CT-1701",
+     "marked": false,
+     "wounded": false,
+     "threat": "6",
+     "threat_econ": "6",
+     "basis": "card"
+    },
+    {
+     "hero": "Davith Elso",
+     "marked": false,
+     "wounded": false,
+     "threat": "2",
+     "threat_econ": "2",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m10a_wounded_beats_investment",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Biv Bodhrik",
+     "row": 0,
+     "profile": "Biv Bodhrik",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item315"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Saska Teft",
+     "row": 1,
+     "profile": "Saska Teft",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [],
+      "skills": []
+     }
+    },
+    {
+     "hero": "CT-1701",
+     "row": 2,
+     "profile": "CT-1701",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Saska Teft",
+     "marked": false,
+     "wounded": true,
+     "threat": "6",
+     "threat_econ": "6",
+     "basis": "card"
+    },
+    {
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "wounded": false,
+     "threat": "6",
+     "threat_econ": "6",
+     "basis": "card"
+    },
+    {
+     "hero": "CT-1701",
+     "marked": false,
+     "wounded": false,
+     "threat": "6",
+     "threat_econ": "6",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m10a_equal_investment_keeps_row",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Biv Bodhrik",
+     "row": 0,
+     "profile": "Biv Bodhrik",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item328"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Davith Elso",
+     "row": 1,
+     "profile": "Davith Elso",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item328"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "wounded": false,
+     "threat": "12",
+     "threat_econ": "12",
+     "basis": "card"
+    },
+    {
+     "hero": "Davith Elso",
+     "marked": false,
+     "wounded": false,
+     "threat": "12",
+     "threat_econ": "12",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m10b_actor_plus1_pure",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "objective_actor": false
+    },
+    {
+     "hero": "Han Solo Two",
+     "row": 1,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "objective_actor": true
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Han Solo Two",
+     "marked": false,
+     "wounded": false,
+     "threat": "15",
+     "threat_econ": "15",
+     "basis": "economy"
+    },
+    {
+     "hero": "Han Solo",
+     "marked": false,
+     "wounded": false,
+     "threat": "14",
+     "threat_econ": "14",
+     "basis": "economy"
+    }
+   ]
+  },
+  {
+   "name": "m11b_mixed_roster_common_basis",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "White"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Biv Bodhrik",
+     "row": 2,
+     "profile": "Biv Bodhrik",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "MHD-19",
+     "row": 3,
+     "profile": "MHD-19",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item328"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "MHD-19",
+     "marked": false,
+     "wounded": false,
+     "threat": "8/3",
+     "threat_econ": "8/3",
+     "basis": "card"
+    },
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": "7/6",
+     "threat_econ": "7/6",
+     "basis": "card"
+    },
+    {
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "wounded": false,
+     "threat": "7/6",
+     "threat_econ": "7/6",
+     "basis": "card"
+    },
+    {
+     "hero": "Gaarkhan",
+     "marked": false,
+     "wounded": true,
+     "threat": "0",
+     "threat_econ": "0",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m11b_equal_threat_investment_tie",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "Black"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 1,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item315"
+      ],
+      "skills": [
+       "murne03"
+      ]
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Murne Rin",
+     "marked": false,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "basis": "card"
+    },
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m11b_real_wound_runner",
+   "posture": "protect",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Diala Passil",
+     "row": 0,
+     "profile": "Diala Passil",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item303"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Diala Passil",
+     "row": 1,
+     "profile": "Diala Passil",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item303"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Diala Passil",
+     "marked": false,
+     "wounded": false,
+     "threat": "4",
+     "threat_econ": "4",
+     "basis": "card"
+    },
+    {
+     "hero": "Diala Passil",
+     "marked": false,
+     "wounded": true,
+     "threat": "2",
+     "threat_econ": "2",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m11d_strain_full_flips_tie",
+   "comment": "M11d flip pin: SAME two heroes as m11b_equal_threat_investment_tie (card threat 5/6 each, defense Black). Murne carries his FULL printed buffer (Foresight-like reactions cost 2 strain -> budget 2) -> he cannot pay his reactions this window: +8 (48/6) on the econ key ONLY makes him 53/6 and flips the 5/6 tie away from squad row. The empty half of the same-hero pair is the untouched canon: with strain absent (live-app state) the OLD case still ranks Murne-first by row, byte-identical (m11b_equal_threat_investment_tie unchanged). Threat itself stays 5/6 - the surcharge lands on threat_econ, after the objective-actor +1 slot, before the deterministic tie-chain.",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "Black"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 1,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "strain_markers": 2
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Murne Rin",
+     "marked": false,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "53/6",
+     "basis": "card",
+     "strain_druck": "8"
+    },
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m11d_strain_below_buffer_and_capped",
+   "comment": "M11d signal-shape pins (defense None -> eliminate EVs: CT 7/3, Drokkatta 13/6, Biv 13/6): (a) Biv carries 2 of his 3-marker buffer = BELOW -> no signal (no strain_druck key), stays on plain 13/6; (b) CT-1701 at his FULL buffer 2 (barrage export twins merged to ONE reaction, budget 2 not 4) fires +8 = 31/3 and overtakes the 13/6 pair - he was LAST pre-M11d, so the window genuinely softens him; (c) the fired pair then orders by the untouched lower keys (Drokkatta row 0 before Biv row 1): the pressure never re-orders rows it did not lift, and it is capped at +8 regardless of overflow (markers 99 would print the same 31/3 row).",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": null,
+   "heroes": [
+    {
+     "hero": "Drokkatta",
+     "row": 0,
+     "profile": "Drokkatta",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Biv Bodhrik",
+     "row": 1,
+     "profile": "Biv Bodhrik",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "strain_markers": 2
+    },
+    {
+     "hero": "CT-1701",
+     "row": 2,
+     "profile": "CT-1701",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "strain_markers": 2
+    }
+   ],
+   "expect": [
+    {
+     "hero": "CT-1701",
+     "marked": false,
+     "wounded": false,
+     "threat": "7/3",
+     "threat_econ": "31/3",
+     "basis": "card",
+     "strain_druck": "8"
+    },
+    {
+     "hero": "Drokkatta",
+     "marked": false,
+     "wounded": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "basis": "card"
+    },
+    {
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "wounded": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m11d_marks_and_wounded_outrank_pressure",
+   "comment": "M11d precedence pins (protect posture; Diala runner values 4 healthy / 2 wounded as in m11b_real_wound_runner, Fenn on the curated prior 10 - eliminate_economy shows the identical card-vs-economy shape). (1) LIGHT, capped: the FULL 3-marker buffer on healthy Diala lifts the econ key 4 -> 12 and nothing else - threat stays 4, no second signal, no scaling. (2) The human aim MARK (key 1) still owns row 0 and carries its own strain_druck cell: pressure rides the econ key, it never demotes the table designation. (3) NO PRIMARY SIGNAL SHIFT: wounded Diala stays ranked by the same econ law she had without any strain input in this family (2 on this key; the reference canon eliminate_economy already pins that wounded rows rank below higher-econ healthy rows), and Biv/Drokkatta-style untouched rows keep their pre-M11d relative order - the +8 only ever moves the row it fires on.",
+   "posture": "protect",
+   "counter": null,
+   "defense": null,
+   "heroes": [
+    {
+     "hero": "Diala Passil",
+     "row": 0,
+     "profile": "Diala Passil",
+     "wounded": false,
+     "marks": 1,
+     "marked_round": 3,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item303"
+      ],
+      "skills": []
+     },
+     "strain_markers": 3
+    },
+    {
+     "hero": "Diala Passil",
+     "row": 1,
+     "profile": "Diala Passil",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item303"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item303"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "hero": "Diala Passil",
+     "marked": true,
+     "wounded": false,
+     "threat": "4",
+     "threat_econ": "12",
+     "basis": "mark",
+     "strain_druck": "8"
+    },
+    {
+     "hero": "Fenn Signis",
+     "marked": false,
+     "wounded": false,
+     "threat": "10",
+     "threat_econ": "10",
+     "basis": "card"
+    },
+    {
+     "hero": "Diala Passil",
+     "marked": false,
+     "wounded": true,
+     "threat": "2",
+     "threat_econ": "2",
+     "basis": "card"
+    }
+   ]
+  },
+  {
+   "name": "m11h_prior_rounds_flip_the_tie",
+   "comment": "M11h flip pin (a): SAME pair as m11d_strain_full_flips_tie, but the prior is ROUND math, not marker knowledge - Murne has completed 2 activations (r = his printed buffer B = 2, healthy endurance 4 -> reachable ceiling U = min(2,4) = 2). Aggressive play spends ~1 strain reaction per round, so his reaction budget is PROBABLY spent: +8 on the econ key (5/6 -> 53/6) flips the tie away from squad row - the same one-place lift as the M11d full-buffer flip, WITHOUT any marker being tracked. The strain_druck key is ABSENT (no marker source); strain_druck_unscharf is the honest, fuzzy stamp.",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "Black"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 1,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 2
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Murne Rin",
+     "marked": false,
+     "strain_druck_unscharf": "8",
+     "threat": "5/6",
+     "threat_econ": "53/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "wounded": false
+    }
+   ]
+  },
+  {
+   "name": "m11h_prior_half_stage_lifts_tie",
+   "comment": "M11h half stage: r=1 of Murne's U=2 ceiling (>= ceil(2/2), < 2) -> +4 only: 5/6 -> 29/6, which already flips THIS tie (the +8 M11d case pins the full stage; the +4 still never outranks a >8 econ gap - lighter than the exact rule's full fire, exactly as designed). Key strain_druck_unscharf = 4, strain_druck stays absent.",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "Black"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 1,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 1
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Murne Rin",
+     "marked": false,
+     "strain_druck_unscharf": "4",
+     "threat": "5/6",
+     "threat_econ": "29/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "wounded": false
+    }
+   ]
+  },
+  {
+   "name": "m11h_round_zero_is_today",
+   "comment": "M11h canon pin (b): r = 0 for BOTH heroes (mission round 1 / no completed activation) -> prior level 0 emits NO dict key: this is byte-identical to the pre-M11h tie canon (same pair, same rows as m11d_strain_full_flips_tie's untouched half) - squad row orders it. Every EXISTING case in this file carries no runden and defaults to r=0, so the whole pre-M11h canon passing untouched is the mechanized bit-identity proof.",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "Black"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 0
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 1,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 0
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Murne Rin",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "wounded": false
+    }
+   ]
+  },
+  {
+   "name": "m11h_no_buffer_pair_stays_silent",
+   "comment": "M11h silence pin (c): Onar Koma and Tress Hacnua print NO strain reactions (budget 0) - after 5/3 completed activations the prior STILL does not fire (null = no buffer, never a stage): no strain key on either row, pure printed-card economy ranks them, exactly the pre-M11h values.",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": null,
+   "heroes": [
+    {
+     "hero": "Onar Koma",
+     "row": 0,
+     "profile": "Onar Koma",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 5
+    },
+    {
+     "hero": "Tress Hacnua",
+     "row": 1,
+     "profile": "Tress Hacnua",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 3
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Tress Hacnua",
+     "marked": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Onar Koma",
+     "marked": false,
+     "threat": "2/3",
+     "threat_econ": "2/3",
+     "wounded": false
+    }
+   ]
+  },
+  {
+   "name": "m11h_max_not_sum",
+   "comment": "M11h combination law pin (d): the app today has ONE strain source at a time (markers are not tracked), so this simultaneity is the future-clean definition: exact M11d rule AND fuzzy prior fire on the same hero -> the econ surcharge is MAX, never the sum. Row 1: markers 2 = full buffer AND r=2 = full ceiling -> strain_druck 8 + strain_druck_unscharf 8, econ 53/6 (a sum would print 61/6 - it must not). Row 2: exact full buffer + fuzzy HALF stage -> strain_druck 8 + strain_druck_unscharf 4, econ STILL 53/6 (the exact fire subsumes the prior, no double count). Rows then order by the untouched tie chain (row 1 before row 2).",
+   "posture": "eliminate",
+   "counter": null,
+   "defense": [
+    "Black"
+   ],
+   "heroes": [
+    {
+     "hero": "Fenn Signis",
+     "row": 0,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 1,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 2,
+     "strain_markers": 2
+    },
+    {
+     "hero": "Murne Rin",
+     "row": 2,
+     "profile": "Murne Rin",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "runden": 1,
+     "strain_markers": 2
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Murne Rin",
+     "marked": false,
+     "strain_druck": "8",
+     "strain_druck_unscharf": "8",
+     "threat": "5/6",
+     "threat_econ": "53/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Murne Rin",
+     "marked": false,
+     "strain_druck": "8",
+     "strain_druck_unscharf": "4",
+     "threat": "5/6",
+     "threat_econ": "53/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/6",
+     "wounded": false
+    }
+   ]
+  }
+ ]
+}

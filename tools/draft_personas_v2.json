@@ -1,0 +1,743 @@
+{
+  "_meta": {
+    "file": "draft_personas_v2.json",
+    "schema": "tacai.personas_v2_draft/2",
+    "status": "ENTWURF M6a v2.1 - kanonischer Entwurf fuer M6b; KEIN Runtime-Asset, tactical_personas.json wird erst in M6b aufgehoben.",
+    "purpose": "Datenbasis der sechs imperialen Personas gemaess CONCEPT_personas_v2.md v2.1 (Abschnitt 2 + Beschluesse 10-12, Thomas 02.11.); die Raenge folgen automatisch der Threat-Stufe 2/4/6/8.",
+    "generated_by": "tools/gen_personas_v2.py (M6a v2.1)",
+    "generated_from": {
+      "enemies": "ImperialCommander2/Assets/Resources/CardData/enemies.json",
+      "villains": "ImperialCommander2/Assets/Resources/CardData/villains.json",
+      "decks": "ImperialCommander2/Assets/Resources/Languages/En/tactical_imperial_decks.json",
+      "agendas": "ImperialCommander2/Assets/Resources/Languages/En/tactical_agenda_cards.json"
+    },
+    "schema_law": {
+      "flat_filters": "internalNameMatch/factionMatch/amount stehen FLACH auf dem Effekt - genau so liest Personas.cs Load(). Das bestehende Runtime-Asset nestet unter 'filter' und nutzt 'count'; weder Loader noch tacai_persona_twin.py wickeln das ab, alle bestehenden Filter treffen daher runtime ALLES (M6a-Befund Sec.1.2-1, Belege in Assets/Tests/Fixtures/tacai/personas.json). Der Loader-Bug wird NICHT in diesem Hop behoben (M6b); M6b darf das nested-Schema NICHT kopieren.",
+      "amount": "elite_swap-Anzahl heisst 'amount' (Loader-Lesart), nicht 'count'.",
+      "dev_fields": "elite_card/source_ids/source_note/essence/concept sind Dev-Felder; Personas.Load() ignoriert Unbekanntes, M6b kann sie im Asset lassen."
+    },
+    "delta_zero_law": "Beschluss 10-12 (Geschenke-Exit + Delta-0 + RRG-Elitenregel): free_deployment/cost_reduction sind retirement-ROT (R1); keine Persona bringt je eine Figur mehr aufs Brett als baseline. elite_swap ist count- und budget-neutral by construction (Sec.1.1): Regular-Karte -> gedrucktes Elite-Pendant gleichen Namens zum Regular-Preis, Namens-Cap 1/Mission (Statik-Regeln R2/R3/R7 im Validator, jede mit Mutationstest).",
+    "adaptations": [
+      "Geschenke-Exit (Beschluss 10): der v2-Entwurf nutzte free_deployment/cost_reduction (Commit 66e4cc5). Beide Kinds sind ersatzlos geflogen und werden vom Validator ROT geworfen; die Geschenke-Raenge sind gemaess Sec.2-v2.1-Tabelle auf die vier legalen Raenge umbaut (Delta-0: swap ersetzt eine Figur, bringt nie eine neue).",
+      "88-Z -> elite_swap Probe Droid (Sec.2 P5 R1): Die Karte reactive_defenses__active_surveillance druckt 88-Z ('At the start of each mission, deploy 88-Z'); ein 88-Z gibt es im App-Pool (CardData enemies+villains) nicht - die Probe-Droid-Elite (DG013) ist der ehrliche Ersatz ('88-Z-Qualitaet'), dokumentierte Adaption statt erfundener Karte. Der v2-Ersatz BT-1 (DG089, gratis) ist mit den Geschenken geflogen.",
+      "armored_battle_group (Quellenzeile Sec.2 P5 R3) existiert nicht in den digitalisierten Decks (Pruefung 02.11: kein Kartenname mit battle/group in 109 Deck- + 126 Agendakarten). Ersatz: armored_onslaught__armor_corps ('Armor Corps', Panzer-Verband im selben Deck).",
+      "the_emperor_s_wrath (Quellenzeile Sec.2 P6 R4) existiert nicht in den digitalisierten Inhalten (Pruefung 02.11: kein Deck/Agenda-Set/Agenda-Karte mit 'wrath'; die Emperor's-Wrath-Erweiterung ist nicht digitalisiert). Ersatz: the_emperor_s_plots ('The Emperor's Plots', naechster echter Kaiser-Agenda-Satz) neben inquisition.",
+      "pattern_weight-Filter 'DROID|E-Web', 'DROID|HEAVY WEAPON|VEHICLE', 'Boesewicht' und 'Mercenary': Die Engine matcht nur interne Kartennamen, keine Traits - die Filter sind daher als Namens-Enumeration aus den shipped groupTraits bzw. villains.json bzw. der Mercenary-Fraktion abgeleitet (siehe _meta.derivations); Elite-Varianten erben per Substring-Match.",
+      "'alle hunter'/'alle ambusher'/'alle Figuren': die Engine kennt als Fraktion nur Imperial und Mercenary; 'alle' ist als factionMatch Imperial gesetzt. Bei den Jagd-Reihen des Hutt (P4 R1 villains-Riege, R2 Soeldner, R3 Imperial) verhindert die Aufteilung multiplikatives Stapeln derselben Karte ueber mehrere Active-Raenge (PatternFor kettet).",
+      "Sec.2 P6 R2 'pattern_weight Garnison (guard) aggressive x1.2': konservativ als guard-Muster (patterns=[guard]) gelesen - R1 heisst 'Garnison haelt Gebiete', die v2-Zeile war 'guard alle x1.2', und die Persona-Identitaet (guard_split 30/40) ist Defensive. Die literal 'aggressive'-Lesart waere ein aggressiver Einschlag in einer rein defensiven Raenfreihe; abweichende Lesart bitte als Playtest-Korridor in M6f.",
+      "Alte->neue Persona-IDs (M6a v2.1 aendert nichts an Save-Tokens): trooper_captain bleibt, isb_commander bleibt (Konzept-Ziel-ID isb_commandant erst in M6c), hutt_lord bleibt; neu: feldherr, droiden_direktor, grossmoff."
+    ],
+    "persona_id_migration": {
+      "trooper_captain": "trooper_captain (P1, Geschenke->swap)",
+      "isb_commander": "isb_commander (P3, Geschenke->swap; Ziel-ID isb_commandant in M6c)",
+      "hutt_lord": "hutt_lord (P4, rein verhaltens-getragen)",
+      "(neu)": "feldherr (P2), droiden_direktor (P5), grossmoff (P6)"
+    },
+    "m6c_ui_keys_pending": [
+      "personaCaptFeldherr + personaCaptFeldherrMotto",
+      "personaCaptDroidenDirektor + personaCaptDroidenDirektorMotto",
+      "personaCaptGrossmoff + personaCaptGrossmoffMotto",
+      "NEU signaturText-Keys: personaFeldherrSignature (P2 R4), personaIsbSignature (P3 R4), personaDroidenDirektorSignature (P5 R4), personaGrossmoffSignature (P6 R4)",
+      "bestehende Keys bleiben: personaCaptTrooper/Motto, personaCaptSignature, personaCaptIsb/Motto, personaCaptHutt/Motto, personaHuttSignature"
+    ],
+    "derivations": {
+      "heavy_droid_hw_vehicle_names": [
+        "AT-DP",
+        "AT-ST",
+        "E-Web Engineer",
+        "HK Assassin Droid",
+        "Heavy Stormtrooper",
+        "Jet Trooper",
+        "Probe Droid",
+        "SC2-M Repulsor Tank",
+        "Sentry Droid"
+      ],
+      "droid_eweb_names": [
+        "E-Web Engineer",
+        "HK Assassin Droid",
+        "Probe Droid",
+        "Sentry Droid"
+      ],
+      "villain_roster_names": [
+        "0-0-0",
+        "Agent Blaise",
+        "BT-1",
+        "Boba Fett",
+        "Bossk",
+        "Captain Terro",
+        "Darth Vader",
+        "Dengar",
+        "Emperor Palpatine",
+        "General Sorin",
+        "General Weiss",
+        "Greedo",
+        "Hondo Ohnaka",
+        "IG-88",
+        "Jabba the Hutt",
+        "Kayn Somos",
+        "Maul",
+        "Royal Guard Champion",
+        "The Grand Inquisitor",
+        "Thrawn"
+      ],
+      "mercenary_non_villain_names": [
+        "Bantha Rider",
+        "Clawdite Shapeshifter",
+        "Gamorrean Guard",
+        "HK Assassin Droid",
+        "Hired Gun",
+        "Jawa Scavenger",
+        "Loth-cat",
+        "Nexu",
+        "Rancor",
+        "Trandoshan Hunter",
+        "Tusken Raider",
+        "Ugnaught Tinkerer",
+        "Wampa",
+        "Weequay Pirate",
+        "Wing Guard"
+      ],
+      "core_swap_pairs": [
+        "E-Web Engineer",
+        "Imperial Officer",
+        "Nexu",
+        "Probe Droid",
+        "Royal Guard",
+        "Stormtrooper",
+        "Trandoshan Hunter"
+      ]
+    },
+    "fairness_law": "Nur die vier v2.1-Kanaele pattern_weight/guard_split/signaturText/elite_swap; Geschenke-Kinds sind ROT (Beschluss 10). elite_swap ist count- und budget-neutral (Delta-0, Beschluss 11) und respektiert die RRG-Elitenregel (Beschluss 12: hochstens eine Elite pro Figurennamen). Kein Zufall ausser der geseedeten pattern_weight-Entscheidung. Alles oeffentlich sichtbar."
+  },
+  "personas": [
+    {
+      "id": "trooper_captain",
+      "nameKey": "personaCaptTrooper",
+      "mottoKey": "personaCaptTrooperMotto",
+      "flavor": "Masse, die rollt. Das Sturmtruppen-Class-Deck als Persona: Veteranen ersetzen die Billig-Masse, vorwaerts, die Reserve haelt.",
+      "concept": "P1 v2.1 (Bestand, auf swap umgebaut; Deck military_might + precision_training; Agendas stormtrooper_support, imperial_discipline u.a.)",
+      "ranks": [
+        {
+          "rank": 1,
+          "minThreat": 2,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^Stormtrooper$",
+              "elite_card": "DG003",
+              "essence": true,
+              "concept": "Sec.2 P1 R1 v2.1 (elite_swap Sturmtruppe x1, DG003 zum Regular-Preis)",
+              "source_ids": [
+                "military_might__endless_ranks"
+              ],
+              "source_note": "endless_ranks-Essenz: 'Raenge ohne Ende' = Veteranen statt Billig-Masse - eine Sturmtruppe wird zur Elite (DG003), die Differenz zahlt die Persona."
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "minThreat": 4,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.2,
+              "patterns": [
+                "aggressive"
+              ],
+              "internalNameMatch": "stormtrooper",
+              "essence": true,
+              "concept": "Sec.2 P1 R2 v2.1 (pattern_weight Sturmtruppe aggressive x1.2)",
+              "source_ids": [
+                "military_might__combat_veterans",
+                "military_might__shock_troopers",
+                "imperial_discipline__fire_at_will"
+              ],
+              "source_note": "Essenz: die Angriffsboni-Karten des Decks wirken als Muster-Druck, nicht als Manipulation der Zufallsmechanik."
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "minThreat": 6,
+          "effects": [
+            {
+              "kind": "guard_split",
+              "guardPercent": 25,
+              "internalNameMatch": "stormtrooper",
+              "concept": "Sec.2 P1 R3 v2.1 (guard_split 25,_scope Sturmtruppe)",
+              "source_ids": [
+                "military_might__show_of_force",
+                "military_might__sustained_fire"
+              ],
+              "source_note": "show_of_force + sustained_fire: Druck-Essenz - die Wache-Band der Truppen wird 75/25 zugunsten Angriff."
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "minThreat": 8,
+          "effects": [
+            {
+              "kind": "guard_split",
+              "guardPercent": 40,
+              "internalNameMatch": "stormtrooper",
+              "concept": "Sec.2 P1 R4 v2.1 (guard_split 40, scope Sturmtruppe)",
+              "source_ids": [
+                "military_might__show_of_force",
+                "military_might__sustained_fire"
+              ],
+              "source_note": "Eskalation der Wache-Band-Reihe auf 60/40 - dieselbe Deck-Familie wie R3."
+            },
+            {
+              "kind": "signaturText",
+              "key": "personaCaptSignature",
+              "concept": "Sec.2 P1 R4 v2.1 (signaturText 'Raenge ohne Ende')",
+              "source_ids": [
+                "military_might__endless_ranks"
+              ],
+              "source_note": "Deck-Motto endless_ranks als Signaturtext (ui.json-Key, reine Anzeige)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feldherr",
+      "nameKey": "personaCaptFeldherr",
+      "mottoKey": "personaCaptFeldherrMotto",
+      "flavor": "Er reitet voran. Das Anfuehrungs-Deck laeuft in vorderster Linie - Offiziere ruecken vor, der Elite-Kommandeur kommt zum Regular-Preis, alle Figuren folgen dem Vorstoss.",
+      "concept": "P2 v2.1 (NEU; inspiring_leadership - reichster Pool mit 6 Verhaltenskarten; Agendas field_commander, the_art_of_war, pursuit_of_the_enemy)",
+      "ranks": [
+        {
+          "rank": 1,
+          "minThreat": 2,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^Imperial Officer$",
+              "elite_card": "DG006",
+              "essence": true,
+              "concept": "Sec.2 P2 R1 v2.1 (elite_swap Imperial Officer x1, DG006 = Executive-Order-Baum)",
+              "source_ids": [
+                "inspiring_leadership__supervisory_agent",
+                "inspiring_leadership__field_officer"
+              ],
+              "source_note": "supervisory_agent + field_officer-Essenz: der vormalige 'gratis Offizier' wird der Elite-Kommandeur zum Regular-Preis - DG006 traegt den Executive-Order-Baum, sofort sichtbar."
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "minThreat": 4,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.25,
+              "patterns": [
+                "aggressive"
+              ],
+              "internalNameMatch": "^Imperial Officer$",
+              "essence": true,
+              "concept": "Sec.2 P2 R2 v2.1 (pattern_weight Offizier aggressive x1.25)",
+              "source_ids": [
+                "inspiring_leadership__field_officer",
+                "inspiring_leadership__noble_sacrifice"
+              ],
+              "source_note": "field_officer + noble_sacrifice-Essenz: die Fuehrungspraesenz zieht die Angriffsmuster an."
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "minThreat": 6,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.15,
+              "patterns": [
+                "aggressive"
+              ],
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P2 R3 v2.1 (pattern_weight alle Figuren aggressive x1.15; Beschluss 4)",
+              "source_ids": [
+                "inspiring_leadership__lead_by_example"
+              ],
+              "source_note": "lead_by_example ist Verhaltens-Anker (tabu-frei): breite Wirkung ueber alle Figuren = Beschluss 4."
+            },
+            {
+              "kind": "guard_split",
+              "guardPercent": 20,
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P2 R3 v2.1 (guard_split 20; gewichtet alle Figuren)",
+              "source_ids": [
+                "inspiring_leadership__lead_by_example"
+              ],
+              "source_note": "Vorwaerts-Identitaet ueber die ganze Garnison: Wache-Anteil 20. Playtest-Korridor 15-25 (Sec.6)."
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "minThreat": 8,
+          "effects": [
+            {
+              "kind": "guard_split",
+              "guardPercent": 30,
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P2 R4 v2.1 (guard_split 30)",
+              "source_ids": [
+                "inspiring_leadership__field_general"
+              ],
+              "source_note": "field_general: die Reserve wird groesser, die Linie bleibt vorn."
+            },
+            {
+              "kind": "signaturText",
+              "key": "personaFeldherrSignature",
+              "concept": "Sec.2 P2 R4 v2.1 (signaturText)",
+              "source_ids": [
+                "inspiring_leadership__field_general",
+                "the_art_of_war"
+              ],
+              "source_note": "field_general (Executive Order) + the_art_of_war als Signaturtext (ui.json-Key, reine Anzeige; Schluessel in M6c)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "isb_commander",
+      "nameKey": "personaCaptIsb",
+      "mottoKey": "personaCaptIsbMotto",
+      "flavor": "Der Schatten vor dem Schuss. Tarn-Infrastruktur, Zermuerbung, Hinterhalt-Doktrin - ISB-Agenden als schmales, scharfes Profil.",
+      "concept": "P3 v2.1 (Bestand, auf swap umgebaut; imperial_black_ops + subversive_tactics + ISB-/Infiltrations-Agendas; Ziel-ID in M6c: isb_commandant)",
+      "ranks": [
+        {
+          "rank": 1,
+          "minThreat": 2,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^Probe Droid$",
+              "elite_card": "DG013",
+              "essence": true,
+              "concept": "Sec.2 P3 R1 v2.1 (elite_swap Probe Droid x1, DG013)",
+              "source_ids": [
+                "imperial_black_ops__in_the_shadows"
+              ],
+              "source_note": "in_the_shadows-Essenz: Ueberwachung bester Guete - der Vorpost-Droide kommt als Elite-Modell (DG013) zum Regular-Preis."
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "minThreat": 4,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.35,
+              "patterns": [
+                "ambusher"
+              ],
+              "factionMatch": "Imperial",
+              "essence": true,
+              "concept": "Sec.2 P3 R2 v2.1 (pattern_weight alle ambusher x1.35; Hidden->Hinterhalt-Essenz)",
+              "source_ids": [
+                "imperial_black_ops__in_the_shadows",
+                "imperial_black_ops__shadow_corps",
+                "imperial_black_ops__stealth",
+                "imperial_black_ops__surprise_attack"
+              ],
+              "source_note": "Hidden-Essenz: die Tarn-Karten wirken als Hinterhalt-Doktrin, keine Geheimnis-Verwaltung."
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "minThreat": 6,
+          "effects": [
+            {
+              "kind": "guard_split",
+              "guardPercent": 30,
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P3 R3 v2.1 (guard_split 30)",
+              "source_ids": [
+                "security_protocols"
+              ],
+              "source_note": "security_protocols (Die Apparat-Hueterin): die Apparate halten Gebiete - Wache-Anteil 30."
+            },
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.2,
+              "patterns": [
+                "blocker"
+              ],
+              "internalNameMatch": "E-Web Engineer|HK Assassin Droid|Probe Droid|Sentry Droid",
+              "concept": "Sec.2 P3 R3 v2.1 (pattern_weight Droid blocker x1.2)",
+              "source_ids": [
+                "security_protocols"
+              ],
+              "source_note": "security_protocols: die Droiden-Apparate blocken (Filter: aus groupTraits Droid + E-Web abgeleitete Namens-Enumeration, siehe _meta.derivations)."
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "minThreat": 8,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.25,
+              "patterns": [
+                "aggressive"
+              ],
+              "factionMatch": "Imperial",
+              "essence": true,
+              "concept": "Sec.2 P3 R4 v2.1 (pattern_weight alle aggressive x1.25)",
+              "source_ids": [
+                "subversive_tactics__prey_upon_doubt",
+                "subversive_tactics__surgical_strike",
+                "imperial_black_ops__execution_squad"
+              ],
+              "source_note": "Zermuerbungs-Essenz: Hinrichtungskommando und Schockangriffe wirken als Muster-Druck."
+            },
+            {
+              "kind": "signaturText",
+              "key": "personaIsbSignature",
+              "concept": "Sec.2 P3 R4 v2.1 (signaturText)",
+              "source_ids": [
+                "imperial_security_bureau__internal_affairs"
+              ],
+              "source_note": "internal_affairs als Signaturtext der Behoerde (ui.json-Key, reine Anzeige; Schluessel in M6c)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hutt_lord",
+      "nameKey": "personaCaptHutt",
+      "mottoKey": "personaCaptHuttMotto",
+      "flavor": "Kopfgeld ist Geschaeft. Die Jagddoktrin liegt ueber allem, was Beute wittert - der Hutt eskaliert ueber Verhalten, nicht ueber Figuren.",
+      "concept": "P4 v2.1 (Bestand, rein verhaltens-getragen; nemeses + hutt_mercenaries + contract_gunmen u.a.; kein swap-Ziel: Soeldner-/Boesewicht-Namen haben kein Core-Elite-Pendant - bewusst ehrlich)",
+      "ranks": [
+        {
+          "rank": 1,
+          "minThreat": 2,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.15,
+              "patterns": [
+                "hunter"
+              ],
+              "internalNameMatch": "0-0-0|Agent Blaise|BT-1|Boba Fett|Bossk|Captain Terro|Darth Vader|Dengar|Emperor Palpatine|General Sorin|General Weiss|Greedo|Hondo Ohnaka|IG-88|Jabba the Hutt|Kayn Somos|Maul|Royal Guard Champion|The Grand Inquisitor|Thrawn",
+              "concept": "Sec.2 P4 R1 v2.1 (pattern_weight Boesewicht hunter x1.15)",
+              "source_ids": [
+                "nemeses__leave_them_to_me",
+                "nemeses__powerful_foes"
+              ],
+              "source_note": "leave_them_to_me + powerful_foes: die Boesewichte sind die Hauptware - Jagddoktrin auf die Boesewichts-Riege (Filter: Namens-Enumeration villains.json, siehe _meta.derivations)."
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "minThreat": 4,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.3,
+              "patterns": [
+                "hunter"
+              ],
+              "internalNameMatch": "Bantha Rider|Clawdite Shapeshifter|Gamorrean Guard|HK Assassin Droid|Hired Gun|Jawa Scavenger|Loth-cat|Nexu|Rancor|Trandoshan Hunter|Tusken Raider|Ugnaught Tinkerer|Wampa|Weequay Pirate|Wing Guard",
+              "essence": true,
+              "concept": "Sec.2 P4 R2 v2.1 (pattern_weight Mercenary hunter x1.3)",
+              "source_ids": [
+                "hutt_mercenaries__guild_hunters",
+                "hutt_mercenaries__most_wanted",
+                "nemeses__ringleader"
+              ],
+              "source_note": "Kopfgeldjagd-Essenz: guild_hunters/most_wanted/ringleader wirken als Jagddoktrin (Filter: Nicht-Boesewicht-Soeldner-Namen, damit R1 und R2 nicht auf dieselben Karten stapeln - _meta.adaptations)."
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "minThreat": 6,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.2,
+              "patterns": [
+                "hunter"
+              ],
+              "factionMatch": "Imperial",
+              "essence": true,
+              "concept": "Sec.2 P4 R3 v2.1 (pattern_weight alle hunter x1.2)",
+              "source_ids": [
+                "nemeses__prepare_the_ambush",
+                "nemeses__devastating_legion"
+              ],
+              "source_note": "prepare_the_ambush + devastating_legion als Essenz: die ganze Maschine jagt (Filter = imperriale Seite, damit Boesewicht-Karten nicht ueber R1/R2/R3 dreifach ueber die Jagd-Reihen fallen)."
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "minThreat": 8,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.2,
+              "patterns": [
+                "ambusher"
+              ],
+              "factionMatch": "Imperial",
+              "essence": true,
+              "concept": "Sec.2 P4 R4 v2.1 (pattern_weight alle ambusher x1.2)",
+              "source_ids": [
+                "ohnaka_gang",
+                "punishing_tactics"
+              ],
+              "source_note": "ohnaka_gang + punishing_tactics als Essenz: Hinterhalt ueber die imperriale Seite (Filter-Adaption 'alle' = factionMatch Imperial, siehe _meta.adaptations)."
+            },
+            {
+              "kind": "signaturText",
+              "key": "personaHuttSignature",
+              "concept": "Sec.2 P4 R4 v2.1 (signaturText)",
+              "source_ids": [
+                "nemeses__ringleader"
+              ],
+              "source_note": "Signaturtext der Kopfgeld-Dynastie (ui.json-Key, reine Anzeige)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "droiden_direktor",
+      "nameKey": "personaCaptDroidenDirektor",
+      "mottoKey": "personaCaptDroidenDirektorMotto",
+      "flavor": "Sondroid-Pflicht, Stahl gehorcht. Der Direktor der Schlachtserien: Drohnen und schwere Serien ruecken hart vor, die Elite-Modelle ersetzen die Regular zum selben Preis.",
+      "concept": "P5 v2.1 (NEU; technological_superiority + reactive_defenses + armored_onslaught, Technik-Cluster inkl. Panzer Beschluss 1; 88-Z->Probe-Droid-Adaption siehe _meta.adaptations)",
+      "ranks": [
+        {
+          "rank": 1,
+          "minThreat": 2,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^Probe Droid$",
+              "elite_card": "DG013",
+              "concept": "Sec.2 P5 R1 v2.1 (elite_swap Probe Droid x1, DG013 - '88-Z-Qualitaet')",
+              "source_ids": [
+                "reactive_defenses__active_surveillance"
+              ],
+              "source_note": "active_surveillance druckt 88-Z ('At the start of each mission, deploy 88-Z'); 88-Z existiert nicht im App-Pool - die Vorpost-Droide-Elite (DG013) ist der ehrliche Ersatz, Adaption dokumentiert in _meta.adaptations."
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "minThreat": 4,
+          "effects": [
+            {
+              "kind": "guard_split",
+              "guardPercent": 25,
+              "internalNameMatch": "E-Web Engineer|HK Assassin Droid|Probe Droid|Sentry Droid",
+              "concept": "Sec.2 P5 R2 v2.1 (guard_split 25, scope DROID|E-Web)",
+              "source_ids": [
+                "reactive_defenses__mechanical_protocol",
+                "defensive_tactics"
+              ],
+              "source_note": "mechanical_protocol + defensive_tactics: die Serien halten 25 Prozent Wache-Anteil."
+            },
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.2,
+              "patterns": [
+                "blocker"
+              ],
+              "internalNameMatch": "E-Web Engineer|HK Assassin Droid|Probe Droid|Sentry Droid",
+              "concept": "Sec.2 P5 R2 v2.1 (pattern_weight 'DROID|E-Web' blocker x1.2)",
+              "source_ids": [
+                "reactive_defenses__mechanical_protocol",
+                "defensive_tactics"
+              ],
+              "source_note": "Die Apparate blocken (Filter-Enumeration aus groupTraits Droid + E-Web Engineer, siehe _meta.derivations)."
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "minThreat": 6,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.3,
+              "patterns": [
+                "aggressive"
+              ],
+              "internalNameMatch": "AT-DP|AT-ST|E-Web Engineer|HK Assassin Droid|Heavy Stormtrooper|Jet Trooper|Probe Droid|SC2-M Repulsor Tank|Sentry Droid",
+              "essence": true,
+              "concept": "Sec.2 P5 R3 v2.1 (pattern_weight 'DROID|HEAVY WEAPON|VEHICLE' aggressive x1.3)",
+              "source_ids": [
+                "armored_onslaught__rapid_dominance",
+                "reactive_defenses__overclock",
+                "armored_onslaught__armor_corps",
+                "defensive_tactics"
+              ],
+              "source_note": "rapid_dominance ist Verhaltens-Anker (tabu-frei); overclock/armor_corps als Zonen-Essenz: schwere Serien ruecken aggressiv nach (Filter: aus groupTraits Droid/HeavyWeapon/Vehicle abgeleitete Namens-Enumeration, siehe _meta.derivations)."
+            },
+            {
+              "kind": "guard_split",
+              "guardPercent": 30,
+              "internalNameMatch": "AT-DP|AT-ST|E-Web Engineer|HK Assassin Droid|Heavy Stormtrooper|Jet Trooper|Probe Droid|SC2-M Repulsor Tank|Sentry Droid",
+              "essence": true,
+              "concept": "Sec.2 P5 R3 v2.1 (guard_split 30 schwere Einheiten)",
+              "source_ids": [
+                "reactive_defenses__mechanical_protocol",
+                "defensive_tactics"
+              ],
+              "source_note": "mechanical_protocol + defensive_tactics als Verteidigungs-Essenz: schwere Einheiten halten 30 Prozent Wache-Anteil."
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "minThreat": 8,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^E-Web Engineer$",
+              "elite_card": "DG008",
+              "concept": "Sec.2 P5 R4 v2.1 (elite_swap E-Web Engineer x1, DG008)",
+              "source_ids": [
+                "weapons_division",
+                "imperial_industry_imperial_agenda"
+              ],
+              "source_note": "weapons_division + imperial_industry: die Geschuetz-Series laeuft in Elite-Ausfuehrung (DG008) zum Regular-Preis."
+            },
+            {
+              "kind": "signaturText",
+              "key": "personaDroidenDirektorSignature",
+              "concept": "Sec.2 P5 R4 v2.1 (signaturText 'Stahl gehorcht')",
+              "source_ids": [
+                "weapons_division",
+                "imperial_industry_imperial_agenda"
+              ],
+              "source_note": "'Stahl gehorcht' als Signaturtext (ui.json-Key, reine Anzeige; Schluessel in M6c)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grossmoff",
+      "nameKey": "personaCaptGrossmoff",
+      "mottoKey": "personaCaptGrossmoffMotto",
+      "flavor": "Angst. Der Grosse Moff haelt Flaeche: Garnisonen bleiben, Veteranen uebernehmen die Posten, und am Ende zieht die Furcht selbst ein.",
+      "concept": "P6 v2.1 (NEU; overwhelming_oppression + power_of_the_dark_side; Agendas inquisition u.a.)",
+      "ranks": [
+        {
+          "rank": 1,
+          "minThreat": 2,
+          "effects": [
+            {
+              "kind": "guard_split",
+              "guardPercent": 30,
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P6 R1 v2.1 (guard_split 30, Garnison haelt Gebiete)",
+              "source_ids": [
+                "overwhelming_oppression__commence_landing",
+                "overwhelming_oppression__implacable"
+              ],
+              "source_note": "commence_landing + implacable: Landungsdruck und Unbeugsamkeit als Garnison-Doktrin (Wache-Anteil 30 pro Tabelle)."
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "minThreat": 4,
+          "effects": [
+            {
+              "kind": "pattern_weight",
+              "multiplier": 1.2,
+              "patterns": [
+                "guard"
+              ],
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P6 R2 v2.1 (pattern_weight Garnison (guard) x1.2 - siehe _meta.adaptations zur Lesart)",
+              "source_ids": [
+                "overwhelming_oppression"
+              ],
+              "source_note": "Das Ueberwaeltigungs-Deck als Familien-Anker: die Garnison haelt die Flaeche - Wache-Muster x1.2. Tabellenzeile 'Garnison (guard) aggressive' konservativ als guard-Muster gelesen (R1-Wording 'Garnison haelt Gebiete', v2-Zeile war 'guard alle x1.2')."
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "minThreat": 6,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^Stormtrooper$",
+              "elite_card": "DG003",
+              "concept": "Sec.2 P6 R3 v2.1 (elite_swap Sturmtruppe x1, Veteranen der Okkupation)",
+              "source_ids": [
+                "overwhelming_oppression__tie_landers",
+                "overwhelming_oppression__redouble_our_efforts"
+              ],
+              "source_note": "tie_landers + redouble_our_efforts: die Landungsboote bringen Veteranen - eine Sturmtruppe wird zur Elite (DG003) zum Regular-Preis."
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "minThreat": 8,
+          "effects": [
+            {
+              "kind": "elite_swap",
+              "amount": 1,
+              "internalNameMatch": "^E-Web Engineer$",
+              "elite_card": "DG008",
+              "concept": "Sec.2 P6 R4 v2.1 (elite_swap E-Web Engineer x1)",
+              "source_ids": [
+                "inquisition",
+                "the_emperor_s_plots"
+              ],
+              "source_note": "Inquisition-Set + the_emperor_s_plots: schwere Geschuetze in Elite-Ausfuehrung (DG008) auf den Okkupationsposten. Tabellenquelle the_emperor_s_wrath existiert nicht in den digitalisierten Karten - Adaption siehe _meta.adaptations."
+            },
+            {
+              "kind": "guard_split",
+              "guardPercent": 40,
+              "factionMatch": "Imperial",
+              "concept": "Sec.2 P6 R4 v2.1 (guard_split 40)",
+              "source_ids": [
+                "inquisition",
+                "the_emperor_s_plots"
+              ],
+              "source_note": "Die Besatzung verdichtet sich: Wache-Anteil 40 ueber die ganze Garnison."
+            },
+            {
+              "kind": "signaturText",
+              "key": "personaGrossmoffSignature",
+              "concept": "Sec.2 P6 R4 v2.1 (signaturText 'Angst')",
+              "source_ids": [
+                "inquisition"
+              ],
+              "source_note": "Inquisition-Set-Motto 'Angst' als Signaturtext (ui.json-Key, reine Anzeige; Schluessel in M6c)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -28,6 +28,23 @@ namespace Saga
 		public List<string> campaignItems = new List<string>();
 		public List<string> campaignRewards = new List<string>();
 		public List<string> campaignIgnored = new List<string>();
+
+		// TACTICAL AI (Personas, Thomas 02.11.): the campaign's imperial
+		// persona (tactical_personas.json asset id); "" = follow the global
+		// settings default, "none" = explicit no persona (= exactly the
+		// pre-persona behaviour on every hook). ADDITIVE field only,
+		// formatVersion STAYS 2: older saves load "" (= keine Persona) and
+		// play untouched (the aiMode migration pattern). The persona REPLACES
+		// the class-deck/agenda card system (CONCEPT_personas.md 6) - its
+		// SagaCampaign fields and methods were removed with it.
+		public string persona = "";
+
+		// Personas (M2): the rank LAST announced at the table - announcement
+		// bookkeeping ONLY (the live rank is always recomputed from persona x
+		// threat; this field only prevents repeat QMs and names the change
+		// direction "von Rang X auf Rang Y"). ADDITIVE, may be null in old
+		// saves (= nothing announced yet).
+		public Saga.PersonaRankMark personaRank;
 		//public bool isImported, isCustom;
 		public CampaignType campaignType;
 		public CampaignPackage campaignPackage;
@@ -187,6 +204,15 @@ namespace Saga
 				var state = JsonConvert.DeserializeObject<SagaCampaign>( json );
 				//skip loading custom/import structure template, only translate official Mission data
 				state.LoadCampaignData( true );
+
+				// TACTICAL AI (AUTO rework dev 2): campaign saves from before the
+				// AUTO badge stored "legacy" as an untouched default, which would
+				// silently outvote the global AI MODE. Nobody could have chosen
+				// legacy deliberately yet (the per-mission switch is new), so
+				// normalize it to "" = AUTO (follow the global setting).
+				if ( state.campaignStructure != null )
+					foreach ( var cs in state.campaignStructure )
+						if ( cs.aiMode == "legacy" ) cs.aiMode = "";
 
 				Debug.Log( "***CAMPAIGN LOADED***" );
 				return state;
@@ -370,5 +396,6 @@ namespace Saga
 				Utils.LogWarning( $"ModifyNextMissionThreatLevel()::ERROR\n{e.Message}" );
 			}
 		}
+
 	}
 }

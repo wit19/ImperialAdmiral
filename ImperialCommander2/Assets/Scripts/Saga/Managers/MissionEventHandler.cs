@@ -21,6 +21,10 @@ namespace Saga
 		public void ShowTextBox( string m, Action callback = null )
 		{
 			Debug.Log( "SagaEventManager()::PROCESSING ShowTextBox" );
+			// REF/ORD law: the MedPac reward is mechanically skipped in
+			// tactical missions, so its promise must not be shown either
+			// (Thomas playtest 29.10., crate pickup text).
+			m = TacticalAI.TacticalAIBridge.ScrubMedpacRewardText( m );
 			if ( string.IsNullOrEmpty( m?.Trim() ) )
 			{
 				Debug.Log( "ShowTextBox()::NO TEXT" );
@@ -206,6 +210,16 @@ namespace Saga
 				Debug.Log( $"Round limit [{old}] SET to [{DataStore.sagaSessionData.gameVars.roundLimit}]" );
 			}
 
+			// TACTICAL AI M8/F5: the mission clock is public table info - when
+			// an event rewires it mid-mission the passive world feed re-reads
+			// the value each poll and emits RoundLimitChanged (a start
+			// snapshot alone would leave the planner on a stale clock).
+			if ( DataStore.sagaSessionData.gameVars.roundLimit != old )
+			{
+				var feedAdapter = FindObjectOfType<TacticalAI.WorldEventsUnity>();
+				if ( feedAdapter != null ) feedAdapter.MarkRuntimeDirty();
+			}
+
 			var sc = FindObjectOfType<SagaController>();
 			sc.UpdateRoundNumberUI();
 
@@ -283,10 +297,12 @@ namespace Saga
 			ovrd.useGenericMugshot = ed.useGenericMugshot;
 
 			//check if this deployment uses threat cost, and apply any modification
+			// Personas (M2): the persona discount rides the printed cost;
+			// the event's own modifier stays on top (public math).
 			if ( ed.useThreat )
 			{
 				Debug.Log( $"EnemyDeployment::APPLYING THREAT COST ({card.cost})::MODIFIER ({ed.threatCost})" );
-				DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( card.cost + ed.threatCost, 0, 100 )) );
+				DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( TacticalAI.PersonaState.CostFor( card, card.cost ) + ed.threatCost, 0, 100 )) );
 			}
 
 			//finally, do the actual deployment
@@ -829,6 +845,34 @@ namespace Saga
 			NextEventAction();
 		}
 
+		// TACTICAL AI M12c: Imperial-side sibling of ModifyXP. Mission-end
+		// Imperial XP (victory bonus, mission loot XP, hero-kill bonus) is
+		// booked into the SINGLE truth source - the M12b XP account on the
+		// stored class deck (append-only xpLog). Tactical campaigns without
+		// deck data re-derive the deterministic choice first (same pure
+		// path as the load backfill). Non-tactical campaigns keep the M12b
+		// 'kein Deck' state: nothing to book to, honestly skipped - the
+		// upgrade stage there stays mode-restricted (Scope 3). Purchases do
+		// NOT trigger here: the RR upgrade stage runs BETWEEN missions, the
+		// campaign-load hook in SagaCampaign spends the XP.
+		// Personas (M4): ModifyImperialXP / ModifyInfluence event actions
+		// are HONEST NO-OPS now. They fed the class-deck XP and agenda
+		// influence accounts, which the persona system replaced (printed
+		// mission files still carry the actions - old MIJ files must keep
+		// loading and stepping through, so the handlers stay, book nothing
+		// and say so in the log).
+		void ModifyImperialXP( CampaignModifyImperialXP mixp )
+		{
+			Debug.Log( $"SagaEventManager()::ModifyImperialXP({mixp.xpToAdd})::imperial XP retired with the persona system, skipped" );
+			NextEventAction();
+		}
+
+		void ModifyInfluence( CampaignModifyInfluence mci )
+		{
+			Debug.Log( $"SagaEventManager()::ModifyInfluence({mci.influenceToAdd})::agenda influence retired with the persona system, skipped" );
+			NextEventAction();
+		}
+
 		void ModifyCredits( CampaignModifyCredits mcredits )
 		{
 			if ( RunningCampaign.sagaCampaignGUID != Guid.Empty )
@@ -949,11 +993,20 @@ namespace Saga
 			//medpacks
 			if ( acr.medpacsToModify != 0 )
 			{
+				// TACTICAL REF/ORD: MedPacs do not exist in the printed
+				// reference rules - crates do not hand them out (dev 15).
+				if ( TacticalAI.TacticalAIBridge.TacticalMissionActive() )
+				{
+					Debug.Log( $"SagaEventManager()::TACTICAL mode::MedPac reward SKIPPED ({acr.medpacsToModify:+#;-#})" );
+				}
+				else
+				{
 				string mod = acr.medpacsToModify > 0 ? "+" : "-";
 				DataStore.sagaSessionData.gameVars.medPacCount = Math.Max( 0, DataStore.sagaSessionData.gameVars.medPacCount + acr.medpacsToModify );
 				FindObjectOfType<SagaController>().UpdateMedPacCountUI();
 				sagaController.toastManager.ShowToast( $"Medpac: {mod}{acr.medpacsToModify}" );
 				Debug.Log( $"SagaEventManager()::AddCampaignRewards::Modify MedPacs: {acr.medpacsToModify}, new MedPac count: {DataStore.sagaSessionData.gameVars.medPacCount}" );
+				}
 			}
 
 			NextEventAction();

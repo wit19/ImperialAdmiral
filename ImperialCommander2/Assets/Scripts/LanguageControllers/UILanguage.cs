@@ -13,9 +13,141 @@ public class UILanguage
 	public List<MissionCard> uiMissionCards;
 	public UICampaign uiCampaign;
 	public UILogger uiLogger;
+	public UITacticalAI uiTacticalAI;
 	public UIHelpOverlay uiHelpOverlay;
 
 	public UIHelpOverlay uiHelpOverlayBackup;//the English version to fall back to for missing entries in translations
+}
+
+// Player-facing texts of the tactical AI layer (activation popups, doctrine
+// orders, focus explanations). All keys live in Languages/<Lang>/ui.json.
+public class UITacticalAI
+{
+	public string doctrineHeader, docAggressive, docGuard, docBlocker, docHunter, docSupport, docAmbusher;
+	// Aufgabe 4 (Thomas 02.11): the fixed "Aktion 1/2" pair and ALL per-block
+	// move/attack trees (actionFormat, actionSoloFormat, moveFocus*, moveGuard,
+	// moveBlocker, moveSupport, moveAmbusher, attackFocus/NoTarget, attack
+	// Guard*, attackAmbush*, attackSupport*, attack2Move*, attackSecondIntro/
+	// Tail, assaultSecondAttack, tripod trees) are RETIRED with the universal
+	// action block - fields and ui.json keys removed in the same commit
+	// (M13g rule). New frame: apHead/apHeadAssault = detected AP counter
+	// ({0}/{1}), apRule = reading rule, apTree* = per-doctrine multi-line
+	// decision trees ({0} = printed speed), apEnd = loop-trap marker. TMP
+	// tags are language-owned (ui.json law); solo/numbered labelling and the
+	// doctrineTreeLead/"Grundregel" removals of M13a/M13c stay in force.
+	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd;
+	// Thomas 02.11: command trees for cards that PRINT a command ability on
+	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
+	// rolled "guard" still commands, so every pattern keeps its own action
+	// wording AND the Order branch). Plain "Order" -> apTreeOfficer<Pattern>,
+	// elite "Executive Order" -> apTreeOfficerElite<Pattern>; a missing elite
+	// row falls back to the plain officer row, then to the pattern tree.
+	public string apTreeOfficerAggressive, apTreeOfficerGuard, apTreeOfficerBlocker, apTreeOfficerSupport, apTreeOfficerAmbush;
+	public string apTreeOfficerEliteAggressive, apTreeOfficerEliteGuard, apTreeOfficerEliteBlocker, apTreeOfficerEliteSupport, apTreeOfficerEliteAmbush;
+	public string overlordFallback;
+	// M13c (Thomas 30.10): shuffleNote DELETED ("(afterwards: shuffle this
+	// group's deck)" does not exist in this app's flow - honest removal).
+	public string specialAsPrinted, restLine, interactLine;
+	public string focusPrefix, focusWounded, focusFirepower;
+	// M6 overlord explain parts (public threat economy + aim marks + risk).
+	// M13c (Thomas 30.10): ordRoundFocus + focusNoChance REMOVED from the
+	// focus-target WHY line (the "all groups converge...; no chance" tail).
+	public string ordThreat, ordMarked;
+	// M11d: light strain-pressure note in the round-focus WHY line
+	public string ordStrainPressure;
+	// M11h: fuzzy strain-usage prior in the round-focus WHY line - args
+	// {0} = completed round, {1} = reachable buffer; wording says
+	// "wahrscheinlich/probably" (a prior, never marker knowledge).
+	public string ordStrainFuzzy;
+	// M11e: heading line for the printed {A} option block in the activation popup
+	public string ordOptionPrinted;
+	// M13n (Thomas 29.10): general RR reminder block printed under the action
+	// blocks, BEFORE the gated explanation: attack = weapon/ability use, and
+	// the door law (RR DOORS: opening a door is an INTERACT - one of the five
+	// action types - so it costs an action; locked doors only per mission).
+	// M13n + M13c: the general RR info block under the action blocks - ONE
+	// merged paragraph: basic attack rule, attack line, door law.
+	public string ordInfoRule, ordInfoAttack, ordInfoDoor;
+	public string ordRiskLabel, ordRiskPress, ordRiskHold, ordRiskGuardHold, ordRiskDisengage;
+	public string whyPrefix, whyRank;
+	public string setHeading, setMode, setSkill, setExplain, setInfo, setOn, setOff, setRowFormat;
+	// M13h (Thomas 28.10): the setCardSkills note field is REMOVED - the note
+	// line it fed is gone from the settings screen (stale 'S4' wording).
+
+	// skill ladder DISPLAY names (dev 18: recruit..5-star general, Thomas).
+	// Stored/logged token stays s1..s5 - these are labels only (PR rule:
+	// display via language files).
+	public string skillS1, skillS2, skillS3, skillS4, skillS5;
+	public string badgeAuto, badgeOff;
+	// M11f (Einsatzkarte): plain-text mission badge that replaces the legacy
+	// difficulty toggle while the tactical planner is in charge. {0} = ladder
+	// rung number, {1} = skillS name. The (auto) variant marks ""/AUTO tokens
+	// that resolve to the global ladder rung.
+	public string badgeMissionFormat, badgeMissionAutoFormat, badgeMissionOff;
+	// Personas (M1/M3, Thomas 02.11.): the persona REPLACED the class-deck
+	// and agenda-card system - its ui.json keys (impBuyLog/agendaBuy*/imp*)
+	// are removed with it, 11-language parity re-checked. Vocabulary:
+	// picker words, rank chips (activation-card line), QM announcements,
+	// the persona name/motto/signature rows (keys are the asset's
+	// nameKey/mottoKey/signaturText), settings row heading.
+	// M6l (Delta-0, M6g QA-FUND C2): the gift-era chip/QM keys
+	// personaBonusCost, personaBonusSubsidy and personaSubsidyQM are REMOVED
+	// together with their ui.json lines and the PersonaState consumer
+	// branches in the same commit (Sprachgesetz 5b) - the kinds behind them
+	// occur 0x in the shipped v2.1 asset.
+	public string personaFollowDefault, personaNone, personaRank;
+	public string personaBonusDoctrine, personaBonusGuard;
+	public string personaRankUpQM, personaRankDownQM;
+	public string personaButton, personaPopupHeader, setPersona;
+	public string personaPlainNote, personaRankColumn, personaCycleNote;
+	public string personaCaptTrooper, personaCaptTrooperMotto, personaCaptIsb, personaCaptIsbMotto;
+	public string personaCaptHutt, personaCaptHuttMotto;
+	// M6l (RR-B rewrite + v2.1 fleet): the three pre-Delta-0 signatures are
+	// REWRITTEN onto v2.1 reality (elite_swap as 'seine Elite', no gift or
+	// discount wording); the three NEW personas get their signature keys so
+	// the asset's signaturText effects finally have a channel (they were
+	// dead data: Localized() found no field). personaDelta0Hint is the
+	// once-per-popup sentence explaining the Delta-0 law (his elite
+	// replaces the regular figure, cost and figure count stay equal).
+	public string personaCaptSignature, personaIsbSignature, personaHuttSignature;
+	public string personaFeldherrSignature, personaDroidenDirektorSignature, personaGrossmoffSignature;
+	public string personaDelta0Hint;
+	// v2.1 fleet (M6c, CONCEPT_personas_v2.md Sec.2, Planpunkt 3): the three
+	// NEW personas (P2 Feldherr, P5 Droiden-Direktor, P6 Grossmoff) get
+	// name/motto keys; the three Bestands personas REUSE their Alt-fleet keys
+	// (personaCaptTrooper/Isb/Hutt + Mottos - keine Dubletten, Key-Matrix im
+	// M6c-Abschlusskommentar). personaRankCounter is the 'Rang n/max' display
+	// (Beschluss 5, Sec.3): the use site lands with M6d, the legacy
+	// single-number personaRank chip stays UNTOUCHED (live {0} callers).
+	public string personaCaptFeldherr, personaCaptFeldherrMotto;
+	public string personaCaptDroidenDirektor, personaCaptDroidenDirektorMotto;
+	public string personaCaptGrossmoff, personaCaptGrossmoffMotto;
+	public string personaRankCounter;
+	// Noldorion review 2.11 (PR #194): popup note for non-villain groups
+	// whose printed abilities stay in the human lane (the mode never
+	// pre-decides "may" abilities it cannot see the board for). (The card
+	// announce line ordCardEffect is GONE - personas own that slot now.)
+	public string ordAbilitiesLane;
+	// Noldorion direction reply 2.11: "the power score needs to be very
+	// transparent" - EXPLAIN=VOLL discloses the real focus computation:
+	// score + what the number measures (posture-dependent) + wound economy
+	// + decision basis + runner-up. Numbers are the fixture-pinned sim
+	// values (FocusPick.AsDict), every input is a public table artifact.
+	public string ordFocusDetail;
+	// Basis/measure labels for the disclosure line (code maps the machine
+	// vocabulary; unknown basis falls through as the raw token).
+	public string ordFocusMeasureDamage, ordFocusMeasureRunner;
+	public string ordFocusBasisMark, ordFocusBasisChip, ordFocusBasisConditioned;
+	public string ordFocusBasisEconomy, ordFocusBasisPrinted;
+	// Punkt 2 (Thomas 01.11.): doctrine phase disclosure - one-shot QM at
+	// the defend->hunt flip and the EXPLAIN line naming both phases.
+	public string ordPhaseShiftQM, ordPhaseExplain, ordPhaseDefend, ordPhaseHunt;
+	public string ordPatternRoll;
+	// Thomas 02.11 (popup declutter): EXPLAIN section header + the focus
+	// target reasoning line that moved out of the action area.
+	public string ordExplainHead, ordExplainFocusWhy;
+	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
+	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }
 
 public class UISettings
@@ -40,7 +172,8 @@ public class SagaUISetup
 
 public class SagaMainApp
 {
-	public string tooltipHideUIUC, roundIncreasedUC, endOfMissionUC, deployMessageUC, noDPWarningUC, mmAddTilesUC, mmRemoveTilesUC, mmCoreTileNameUC, mmTwinTileNameUC, mmHothTileNameUC, mmBespinTileNameUC, mmJabbaTileNameUC, mmEmpireTileNameUC, mmLothalTileNameUC, mmAddEntitiesUC, groupsReadyUC, groupsExhaustUC, repositionTargetUC, doorsUC, cratesUC, terminalsUC, tokensUC, woundUC, withdrawUC, exhaustUC, defeatUC, imperialMenu, medpacInfoUC, cannotDefeatUC, missionLogTitle;
+	// M13c optional-deployment revival keys (last field block): ui.json sagaMainApp, 11 languages.
+	public string tooltipHideUIUC, roundIncreasedUC, endOfMissionUC, deployMessageUC, noDPWarningUC, mmAddTilesUC, mmRemoveTilesUC, mmCoreTileNameUC, mmTwinTileNameUC, mmHothTileNameUC, mmBespinTileNameUC, mmJabbaTileNameUC, mmEmpireTileNameUC, mmLothalTileNameUC, mmAddEntitiesUC, groupsReadyUC, groupsExhaustUC, repositionTargetUC, doorsUC, cratesUC, terminalsUC, tokensUC, woundUC, withdrawUC, exhaustUC, defeatUC, imperialMenu, medpacInfoUC, cannotDefeatUC, missionLogTitle, optionalDeployTitleUC, optionalDeployPickGroupUC, optionalDeployPickDpUC, optionalDeployNoGroupsUC, optionalDeployCostFormatUC, optionalDeployDpFormatUC, optionalDeployConfirmUC, optionalTacticalAnnounceUC;
 }
 
 public class UIMainApp

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -80,14 +81,16 @@ namespace Saga
 			float pixelHeightOfCurrentScreen = Screen.height;//.currentResolution.height;
 			float pixelWidthOfCurrentScreen = Screen.width;//.currentResolution.width;
 			aspect = pixelWidthOfCurrentScreen / pixelHeightOfCurrentScreen;
-			if ( aspect < 1.7f )//less than 16:9, such as 16:10 and 4:3
-			{
-				//switch to single view
-				switchButton.SetActive( true );
-				leftPanel.SetActive( false );
-			}
-			else
-				campaignHelpMockup.SetActive( true );
+			// M13c2 (Thomas 30.10.): the base game's small-screen single-view
+			// mode (mission list hidden, 'switch view button' shown whenever
+			// aspect < 1.7) is RETIRED for this screen: the mission list and
+			// the hero information are ALWAYS shown together, the switch
+			// button never appears. Campaign-manager dual layout exactly as
+			// the game showed it on wide screens before; the IMP bar button
+			// (Thomas: keep as is) is untouched.
+			if ( switchButton != null ) switchButton.SetActive( false );
+			leftPanel.SetActive( true );
+			campaignHelpMockup.SetActive( true );
 
 			FileManager.SetupDefaultFolders();
 
@@ -233,6 +236,10 @@ namespace Saga
 			}
 			foreach ( var item in items.OrderBy( x => x.Value ) )
 				AddItemToUI( sagaCampaign.GetItemFromID( item.Key ) );
+			//M13k: Imperial class-deck info behind a bar button + scrollable
+			//popup (the old inline section crowded the overview and overlapped
+			//the rebel items list - Thomas playtest 29.10.)
+			AddPersonaButtonToBar();
 			//allies
 			foreach ( var ally in sagaCampaign.campaignAllies.OrderBy( x => x.name ) )
 				AddAllyToUI( ally );
@@ -373,6 +380,454 @@ namespace Saga
 			} );
 		}
 
+		/// <summary>
+		/// M13k (Thomas playtest 29.10.): the Imperial class-deck/agenda info
+		/// moves off the crowded overview into a scrollable popup behind a new
+		/// button inserted in the top-right bar, LEFT of the yellow "?" help
+		/// button (clone of that button: same visual language, zero prefab/
+		/// scene edits - the M12e runtime-build doctrine). Cloned onClick is
+		/// replaced with a fresh ButtonClickedEvent so the inherited "show
+		/// help" persistent call cannot fire; recolor + "IMP" overlay mark it
+		/// apart. Hidden entirely when the feature or a deck is absent
+		/// (classic campaigns render exactly as before).
+		/// </summary>
+		void AddPersonaButtonToBar()
+		{
+			try
+			{
+				// Personas (M1): the IMP button became the PERSONA control -
+				// it shows the live persona line, a click cycles the choice.
+				// Visible whenever the tactical AI plays (also at 'none':
+				// the button is HOW you pick one).
+				if ( !TacticalAI.TacticalAISettings.Enabled ) return;
+				// M13o (Thomas Player-10.log): at this call the bar may not
+				// be ACTIVE yet (GameObject.Find only sees activeInHierarchy)
+				// - the run failed with "help button not found" and the
+				// button never appeared. Locate + clone through a retry
+				// coroutine that waits for the bar (and its first layout).
+				if ( personaButtonCo == null ) personaButtonCo = StartCoroutine( TryAddPersonaButtonCo() );
+			}
+			catch ( Exception e )
+			{
+				Utils.LogWarning( "AddPersonaButtonToBar skipped: " + e.Message );
+			}
+		}
+
+		Coroutine personaButtonCo;
+		TMPro.TextMeshProUGUI personaButtonLabel;   // live persona line
+
+		GameObject FindPersonaBarAnchor()
+		{
+			// M13b (Player-13/14/15): the scene names scanned before are
+			// the SAGA GAME help names - the Campaign Manager's "?" is the
+			// screen's own serialized campaignInfoButton reference, which
+			// was never consulted here (why the hunt timed out every run).
+			// Reference first; name scans only as fallback.
+			var own = campaignInfoButton != null && campaignInfoButton.gameObject.scene.IsValid()
+				? campaignInfoButton.gameObject : null;
+			if ( own != null ) return own;
+			var go = GameObject.Find( "Help Activation Button" ) ?? GameObject.Find( "info Button" );
+			if ( go != null ) return go;
+			// bar members can still be hidden at this moment: scan every
+			// loaded scene Transform by NAME (M13aa lesson: these objects
+			// can carry a name but NO Button component, so a Button-typed
+			// scan finds nothing)
+			foreach ( var t in Resources.FindObjectsOfTypeAll<Transform>() )
+			{
+				if ( t == null || !t.gameObject.scene.IsValid() ) continue;
+				var n = t.name;
+				if ( n == "Help Activation Button" || n == "info Button" ) return t.gameObject;
+			}
+			return null;
+		}
+
+		IEnumerator TryAddPersonaButtonCo()
+		{
+			GameObject helpGO = null;
+			for ( int i = 0; i < 240 && helpGO == null; i++ )
+			{
+				helpGO = FindPersonaBarAnchor();
+				if ( helpGO == null ) yield return new WaitForEndOfFrame();
+			}
+			var btn0 = helpGO != null ? helpGO.GetComponent<Button>() : null;
+			if ( helpGO == null )
+			{
+				// M13b: abort ONLY on a missing anchor object - help
+				// objects legitimately lack a Button component (M13aa),
+				// the clone gets one added instead.
+				Utils.LogWarning( "AddPersonaButtonToBar skipped: bar anchor not found after 4s" );
+				personaButtonCo = null;
+				yield break;
+			}
+			if ( btn0 == null ) Debug.Log( "AddPersonaButtonToBar::anchor has no Button component - clone gets a fresh one" );
+			yield return AddPersonaButtonClone( helpGO );
+			personaButtonCo = null;
+		}
+
+		IEnumerator AddPersonaButtonClone( GameObject helpGO )
+		{
+			var bar = helpGO.transform.parent;
+			var clone = Instantiate( helpGO, bar );
+			clone.name = "tacaiPersonaButton";
+			clone.SetActive( true );
+			// full detour from the clone's inherited help behaviour:
+			// fresh event object, persistent calls cannot survive it
+			// (M13b: help anchors can lack the component outright)
+			var btn = clone.GetComponent<Button>() ?? clone.gameObject.AddComponent<Button>();
+			btn.onClick = new Button.ButtonClickedEvent();
+			btn.onClick.AddListener( OnPersonaButtonClicked );
+			// visual difference: teal (the tactical-AI accent) + own label
+			var img = clone.GetComponent<Image>();
+			if ( img != null ) img.color = new Color( 0.40f, 0.85f, 0.75f, 1f );
+			for ( int i = clone.transform.childCount - 1; i >= 0; i-- )
+				Destroy( clone.transform.GetChild( i ).gameObject );
+			var label = new GameObject( "label", typeof( RectTransform ) ).AddComponent<TMPro.TextMeshProUGUI>();
+			label.transform.SetParent( clone.transform, false );
+			var lrt = label.GetComponent<RectTransform>();
+			lrt.anchorMin = Vector2.zero;
+			lrt.anchorMax = Vector2.one;
+			lrt.offsetMin = Vector2.zero;
+			lrt.offsetMax = Vector2.one * -1f;
+			label.font = TMPro.TMP_Settings.defaultFontAsset;
+			label.fontSize = 10;
+			label.fontStyle = TMPro.FontStyles.Bold;
+			label.alignment = TMPro.TextAlignmentOptions.Center;
+			label.color = new Color( 0.02f, 0.10f, 0.09f, 1f );
+			// Thomas playtest 02.11.: long persona names overflowed the
+			// 20pt unwrapped label - wrap inside the button, 10pt.
+			label.enableWordWrapping = true;
+			// (TMP 3.0.9 has no enableHyphenation yet - Ellipsis below is
+			// the guarantee that nothing can ever overflow again)
+			label.overflowMode = TMPro.TextOverflowModes.Ellipsis;
+			label.raycastTarget = false;
+			label.text = PersonaButtonLabel();
+			personaButtonLabel = label;
+			// sit it left of the "?": a bar layout group re-flows it, a
+			// manually placed bar needs the measured offset - so wait for
+			// the anchor's REAL rect (M13o: no more zero-rect placement)
+			var h = helpGO.transform as RectTransform;
+			var c = clone.transform as RectTransform;
+			bool barHasLayout = bar.GetComponent<UnityEngine.UI.LayoutGroup>() != null;
+			if ( barHasLayout )
+				c.SetSiblingIndex( h.GetSiblingIndex() );
+			else
+			{
+				for ( int i = 0; i < 40 && h.rect.width <= 0f; i++ )
+					yield return new WaitForEndOfFrame();
+				c.anchorMin = h.anchorMin;
+				c.anchorMax = h.anchorMax;
+				c.pivot = h.pivot;
+				c.sizeDelta = h.sizeDelta;
+				c.anchoredPosition = h.anchoredPosition - new Vector2( h.rect.width + 10f, 0f );
+			}
+			Debug.Log( "AddPersonaButtonToBar::persona=" + TacticalAI.PersonaState.DescribeSelection( sagaCampaign ) );
+		}
+
+		GameObject personaPopup;   // at most one open persona popup
+
+		/// <summary>Button click = cycle the campaign persona (the old IMP
+		/// popup stays reachable through the long list? No: click CYCLES -
+		/// one control, live label, the popup opens from the same click via
+		/// the details toggle below). Every change is saved immediately,
+		/// like every other campaign field.</summary>
+		void OnPersonaButtonClicked()
+		{
+			try
+			{
+				var snd = UnityEngine.Object.FindObjectOfType<Sound>();
+				if ( snd != null ) snd.PlaySound( FX.Click );
+			}
+			catch { }
+			var next = TacticalAI.PersonaState.Cycle( sagaCampaign );
+			if ( personaButtonLabel != null ) personaButtonLabel.text = PersonaButtonLabel();
+			// an open popup is live: rebuild it on the new choice
+			if ( personaPopup != null ) ShowPersonaPopup();
+			Debug.Log( "PersonaButton::cycle -> " + next );
+		}
+
+		/// <summary>Short live label: the persona NAME only (Thomas playtest
+		/// 02.11.: the "PERSONA: " head pushed long names over the button
+		/// edge - the teal colour plus the popup header identify the
+		/// control, the label carries just the selection).</summary>
+		string PersonaButtonLabel()
+		{
+			try
+			{
+				var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
+				var id = TacticalAI.PersonaState.EffectiveId( sagaCampaign );
+				if ( string.IsNullOrEmpty( id ) || id == TacticalAI.PersonaState.ExplicitNone )
+					return tl != null && !string.IsNullOrEmpty( tl.personaNone )
+						? tl.personaNone : "none";
+				return TacticalAI.PersonaState.DisplayName( id );
+			}
+			catch { return "PERSONA"; }
+		}
+
+		/// <summary>All persona info (choice, rank per mission at ITS own
+		/// threat, motto + signature of the active persona) in one scrollable
+		/// text popup; click beside the box or the close button dismisses it.
+		/// Replaces the M12e class-deck popup 1:1 in look and place.</summary>
+		void ShowPersonaPopup()
+		{
+			try
+			{
+				if ( personaPopup != null ) Destroy( personaPopup );
+				if ( sagaCampaign == null ) return;
+				var canvas = GameObject.Find( "Canvas" )?.transform;
+				if ( canvas == null ) return;
+				var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
+
+				// full-screen dim catch layer: any click outside closes
+				personaPopup = new GameObject( "tacaiPersonaPopup", typeof( RectTransform ) );
+				personaPopup.transform.SetParent( canvas, false );
+				var pr = personaPopup.GetComponent<RectTransform>();
+				pr.anchorMin = Vector2.zero;
+				pr.anchorMax = Vector2.one;
+				pr.offsetMin = Vector2.zero;
+				pr.offsetMax = Vector2.zero;
+				var dim = personaPopup.AddComponent<Image>();
+				dim.color = new Color( 0f, 0f, 0f, 0.55f );
+				var dimBtn = personaPopup.AddComponent<Button>();
+				dimBtn.transition = Selectable.Transition.None;
+				dimBtn.onClick.AddListener( () => { if ( personaPopup != null ) Destroy( personaPopup ); } );
+
+				var tl2 = DataStore.uiLanguage;
+				// centred box
+				var box = new GameObject( "box", typeof( RectTransform ) );
+				box.transform.SetParent( personaPopup.transform, false );
+				var brt = box.GetComponent<RectTransform>();
+				brt.anchorMin = new Vector2( .5f, .5f );
+				brt.anchorMax = new Vector2( .5f, .5f );
+				brt.pivot = new Vector2( .5f, .5f );
+				brt.sizeDelta = new Vector2( 760f, 560f );
+				var bg = box.AddComponent<Image>();
+				bg.color = new Color( 0.02f, 0.10f, 0.09f, 0.97f );
+
+				// header (same localized line as the old section used)
+				var headerGO = new GameObject( "header", typeof( RectTransform ) ).AddComponent<TMPro.TextMeshProUGUI>();
+				headerGO.transform.SetParent( box.transform, false );
+				var hrt = headerGO.GetComponent<RectTransform>();
+				hrt.anchorMin = new Vector2( 0f, 1f );
+				hrt.anchorMax = new Vector2( 1f, 1f );
+				hrt.pivot = new Vector2( .5f, 1f );
+				hrt.anchoredPosition = new Vector2( 0f, -10f );
+				hrt.sizeDelta = new Vector2( -20f, 34f );
+				headerGO.font = TMPro.TMP_Settings.defaultFontAsset;
+				headerGO.fontSize = 20;
+				headerGO.fontStyle = TMPro.FontStyles.Bold;
+				headerGO.alignment = TMPro.TextAlignmentOptions.Center;
+				headerGO.color = Color.white;
+				headerGO.text = Utils.ReplaceGlyphs(
+					tl != null && !string.IsNullOrEmpty( tl.personaPopupHeader ) ? tl.personaPopupHeader : "IMPERIAL PERSONA" );
+
+				// scroll window
+				var scrollGO = new GameObject( "scroll", typeof( RectTransform ) ).AddComponent<ScrollRect>();
+				scrollGO.transform.SetParent( box.transform, false );
+				var srt = scrollGO.GetComponent<RectTransform>();
+				srt.anchorMin = new Vector2( 0f, 0f );
+				srt.anchorMax = new Vector2( 1f, 1f );
+				srt.offsetMin = new Vector2( 12f, 56f );
+				srt.offsetMax = new Vector2( -12f, -50f );
+				var viewport = new GameObject( "viewport", typeof( RectTransform ) );
+				viewport.transform.SetParent( scrollGO.transform, false );
+				var vrt = viewport.GetComponent<RectTransform>();
+				vrt.anchorMin = Vector2.zero;
+				vrt.anchorMax = Vector2.one;
+				vrt.offsetMin = Vector2.zero;
+				vrt.offsetMax = Vector2.zero;
+				viewport.AddComponent<UnityEngine.UI.RectMask2D>();
+				var contentGO = new GameObject( "content", typeof( RectTransform ) ).AddComponent<TMPro.TextMeshProUGUI>();
+				contentGO.transform.SetParent( viewport.transform, false );
+				var crt = contentGO.GetComponent<RectTransform>();
+				crt.anchorMin = new Vector2( 0f, 1f );
+				crt.anchorMax = new Vector2( 1f, 1f );
+				crt.pivot = new Vector2( 0f, 1f );
+				crt.anchoredPosition = Vector2.zero;
+				contentGO.font = TMPro.TMP_Settings.defaultFontAsset;
+				contentGO.fontSize = 12;
+				contentGO.color = Color.white;
+				contentGO.enableWordWrapping = true;
+				contentGO.richText = true;
+				contentGO.alignment = TMPro.TextAlignmentOptions.TopLeft;
+				contentGO.text = Utils.ReplaceGlyphs( BuildPersonaPopupText() );
+				contentGO.rectTransform.sizeDelta = new Vector2( 0f, contentGO.GetPreferredValues( contentGO.text, 700f, 0f ).y );
+				crt.sizeDelta = new Vector2( 0f, Mathf.Max( crt.sizeDelta.y, contentGO.GetPreferredValues( contentGO.text, 700f, 0f ).y ) );
+				scrollGO.horizontal = false;
+				scrollGO.vertical = true;
+				scrollGO.movementType = ScrollRect.MovementType.Clamped;
+				scrollGO.viewport = vrt;
+				scrollGO.content = crt;
+
+				// close button (localized)
+				var closeGO = new GameObject( "close", typeof( RectTransform ) );
+				closeGO.transform.SetParent( box.transform, false );
+				var clrt = closeGO.GetComponent<RectTransform>();
+				clrt.anchorMin = new Vector2( .5f, 0f );
+				clrt.anchorMax = new Vector2( .5f, 0f );
+				clrt.pivot = new Vector2( .5f, 0f );
+				clrt.anchoredPosition = new Vector2( 0f, 10f );
+				clrt.sizeDelta = new Vector2( 180f, 36f );
+				var cimg = closeGO.AddComponent<Image>();
+				cimg.color = new Color( 1f, .62f, .2f, 1f );
+				var cbtn = closeGO.AddComponent<Button>();
+				cbtn.onClick.AddListener( () => { if ( personaPopup != null ) Destroy( personaPopup ); } );
+				var closeLabel = new GameObject( "label", typeof( RectTransform ) ).AddComponent<TMPro.TextMeshProUGUI>();
+				closeLabel.transform.SetParent( closeGO.transform, false );
+				var cl2 = closeLabel.GetComponent<RectTransform>();
+				cl2.anchorMin = Vector2.zero;
+				cl2.anchorMax = Vector2.one;
+				cl2.offsetMin = Vector2.zero;
+				cl2.offsetMax = Vector2.zero;
+				closeLabel.font = TMPro.TMP_Settings.defaultFontAsset;
+				closeLabel.fontSize = 14;
+				closeLabel.fontStyle = TMPro.FontStyles.Bold;
+				closeLabel.alignment = TMPro.TextAlignmentOptions.Center;
+				closeLabel.color = Color.white;
+				closeLabel.raycastTarget = false;
+				closeLabel.text = Utils.ReplaceGlyphs(
+					tl2?.uiMainApp?.close != null ? tl2.uiMainApp.close.ToUpper() : "CLOSE" ).Replace( "\r", "" ).Replace( "\n", "" );
+
+				personaPopup.transform.SetAsLastSibling();   // on top of every panel
+				Debug.Log( "ShowPersonaPopup::persona=" + TacticalAI.PersonaState.DescribeSelection( sagaCampaign ) );
+			}
+			catch ( Exception e )
+			{
+				if ( personaPopup != null ) Destroy( personaPopup );
+				Utils.LogWarning( "ShowPersonaPopup skipped: " + e.Message );
+			}
+		}
+
+		/// <summary>Persona popup body (rich text): the current choice with
+		/// motto, the persona signature (what it does to its troops), then ONE
+		/// row per campaign mission - mission name, its threat budget and the
+		/// rank the persona WILL play there (rank law: pure threat function,
+		/// so it can be shown before the mission is even started). All
+		/// ui.json vocabulary; printed-name doctrine does not apply (personas
+		/// are app chrome, fully localized).</summary>
+		string BuildPersonaPopupText()
+		{
+			var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
+			var sb = new System.Text.StringBuilder();
+			sb.Append( "<color=white><b>" ).Append(
+				TacticalAI.PersonaState.DescribeSelection( sagaCampaign ) ).Append( "</b></color>\n" );
+
+			var id = TacticalAI.PersonaState.EffectiveId( sagaCampaign );
+			bool none = string.IsNullOrEmpty( id ) || id == TacticalAI.PersonaState.ExplicitNone;
+			if ( none )
+			{
+				// 'none' explained once - the honest zero-state sentence
+				sb.Append( "<color=#C9D6D3><i>" ).Append( PersonaChrome(
+					tl != null ? tl.personaPlainNote : null,
+					"Standard folgen = keine KI-Persona: die Imperiale Seite spielt sachneutral." ) )
+				  .Append( "</i></color>\n" );
+			}
+			var def = none ? null : TacticalAI.PersonaState.Def( id );
+			if ( def != null )
+			{
+				var motto = PersonaKeyText( def.MottoKey );
+				if ( !string.IsNullOrEmpty( motto ) )
+					sb.Append( "<color=#8FE3C8><i>" ).Append( motto ).Append( "</i></color>\n\n" );
+				var sig = PersonaKeyText( PersonaSigKey( def ) );
+				if ( !string.IsNullOrEmpty( sig ) )
+					sb.Append( "<color=#C9D6D3>" ).Append( sig ).Append( "</color>\n\n" );
+				// M6l (RR-B): the Delta-0 sentence - shown once per popup
+				// right under the signature, so no text can promise more
+				// than the swap law delivers: his elite REPLACES the
+				// regular figure, cost and figure count stay equal
+				// (Beschluss 11). One sentence, no numbers.
+				sb.Append( "<color=#8FA8A0><i>" ).Append( PersonaChrome(
+					tl != null ? tl.personaDelta0Hint : null,
+					"Seine Elite ersetzt die Regular-Figur: Kosten und Figurenzahl bleiben gleich." ) )
+				  .Append( "</i></color>\n\n" );
+			}
+
+			sb.Append( "<color=white><b>" ).Append( PersonaChrome(
+				tl != null ? tl.personaRankColumn : null, "Rang je Mission" ) )
+			  .Append( "</b></color>\n" );
+			var structs = sagaCampaign.campaignStructure ?? new List<CampaignStructure>();
+			foreach ( var cs in structs )
+			{
+				if ( cs == null ) continue;
+				var v = TacticalAI.PersonaState.ResolveFor( id, cs.threatLevel );
+				var name = PersonaMissionName( cs );
+				string rankTxt = v.Rank > 0
+					? RankChip( tl, v )
+					: ( tl != null ? tl.personaNone : "none" );
+				sb.Append( "<color=#C9D6D3>" ).Append( name ).Append( "</color>  " )
+				  .Append( "<color=#8FE3C8>" ).Append( cs.threatLevel ).Append( "</color>  " )
+				  .Append( "<color=orange><b>" ).Append( rankTxt ).Append( "</b></color>\n" );
+			}
+			if ( def == null )
+				sb.Append( "\n<color=#C9D6D3><i>" ).Append( PersonaChrome(
+					tl != null ? tl.personaCycleNote : null,
+					"Klick auf die PERSONA-Schaltflaeche waehlt die Persona (KEINE = sachneutral)." ) )
+				  .Append( "</i></color>" );
+			return sb.ToString();
+		}
+
+		/// <summary>Popup chrome: ui.json text with the German dev fallback
+		/// (same pattern as the settings dialog's Pick()).</summary>
+		static string PersonaChrome( string localized, string fallback )
+		{
+			return string.IsNullOrEmpty( localized ) ? fallback : localized;
+		}
+
+		/// <summary>Mission display name for a structure row (the SAME
+		/// translated source the mission list rows use - missionCards per
+		/// expansion; custom/imported missions carry projectItem.Title).</summary>
+		string PersonaMissionName( CampaignStructure cs )
+		{
+			try
+			{
+				if ( cs.projectItem != null && !string.IsNullOrEmpty( cs.projectItem.Title ) )
+					return cs.projectItem.Title;
+				if ( DataStore.missionCards != null && cs.expansionCode != null
+					&& DataStore.missionCards.ContainsKey( cs.expansionCode ) )
+				{
+					var mc = DataStore.missionCards[cs.expansionCode]
+						.FirstOrDefault( x => x.id == cs.missionID );
+					if ( mc != null && !string.IsNullOrEmpty( mc.name ) ) return mc.name;
+				}
+			}
+			catch { }
+			return cs.missionID;
+		}
+
+		static string RankChip( UITacticalAI tl, TacticalAI.Core.PersonaView v )
+		{
+			// M6d Beschluss 5: 'Rang n/max' with the persona's own defined
+			// maximum as denominator (shared PersonaState text); the
+			// single-number personaRank stays the fallback.
+			var counter = TacticalAI.PersonaState.RankCounterText( v );
+			if ( !string.IsNullOrEmpty( counter ) ) return counter;
+			var fmt = tl != null && !string.IsNullOrEmpty( tl.personaRank ) ? tl.personaRank : "rank {0}";
+			return fmt.Replace( "{0}", v.Rank.ToString( System.Globalization.CultureInfo.InvariantCulture ) );
+		}
+
+		/// <summary>ui.json field lookup by key (motto/signaturText keys are
+		/// asset data - the asset stays the validator, reflection like
+		/// PersonaState.Localized).</summary>
+		static string PersonaKeyText( string key )
+		{
+			if ( string.IsNullOrEmpty( key ) ) return null;
+			var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
+			if ( tl == null ) return null;
+			var fi = typeof( UITacticalAI ).GetField( key );
+			return fi == null ? null : fi.GetValue( tl ) as string;
+		}
+
+		/// <summary>The signature key of a persona def = the signaturText
+		/// effect key its highest rank carries (Core.Personas keeps it as an
+		/// effect row so the planner and the UI read the SAME key).</summary>
+		static string PersonaSigKey( TacticalAI.Core.PersonaDef def )
+		{
+			if ( def == null || def.Ranks == null ) return null;
+			foreach ( var r in def.Ranks )
+				foreach ( var e in r.Effects ?? new List<TacticalAI.Core.PersonaEffect>() )
+					if ( e.Kind == "signaturText" && !string.IsNullOrEmpty( e.Key ) ) return e.Key;
+			return null;
+		}
+
 		void AddRewardToUI( CampaignReward item )
 		{
 			if ( item == null )
@@ -380,7 +835,6 @@ namespace Saga
 				Utils.LogWarning( $"AddRewardToUI()::item is null" );
 				return;
 			}
-
 			List<string> rewards = new List<string>();
 			foreach ( var campaignReward in sagaCampaign.campaignRewards )
 			{

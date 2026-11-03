@@ -1,0 +1,2475 @@
+{
+ "_comment": "M6b elite_swap canon - HAND-AUTHORED (same documented route as action_tree.json / optional_deploy.json: no --record, the C# Core is never executed while authoring; the expect vectors were derived by an independent Python re-implementation of the Sec.1.1 law - this very script, tools/gen_personas_swap_fixture.py - and hand-verified against the concept tables). Canon law (CONCEPT_personas_v2 v2.1 Sec.1.1/Sec.5-2c): every persona x test mission x T2/4/6/8 vector pins (a) the Delta-0 parity - figure count AND booked cost of the persona plan equal the baseline (persona=none) plan EXACTLY, checked by the harness against a second plan run, never trusted from the expect alone; (b) double-elite non-existence - never two models of one figure name with an elite print among them; (c) the swap proof - the plan carries the elite card-set identity (DG003/DG006/DG013/DG008) wherever the persona is entitled to swap, including stacked budgets >1 across rank rows (droiden_direktor/ grossmoff at T8). swap_personas mirrors the M6a2 draft rank ladders so the flat loader schema (elite_card) is exercised end-to-end; the LEGACY elite rails are read-only inputs (elite_on_board), never modified (Sec.1.2-2, Thomas 02.11).",
+ "swap_personas": [
+  {
+   "id": "trooper_captain",
+   "nameKey": "personaCaptTrooper",
+   "mottoKey": "personaCaptTrooperMotto",
+   "ranks": [
+    {
+     "rank": 1,
+     "minThreat": 2,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^Stormtrooper$",
+       "elite_card": "DG003"
+      }
+     ]
+    },
+    {
+     "rank": 2,
+     "minThreat": 4,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.2,
+       "internalNameMatch": "stormtrooper",
+       "patterns": [
+        "aggressive"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 3,
+     "minThreat": 6,
+     "effects": [
+      {
+       "kind": "guard_split",
+       "internalNameMatch": "stormtrooper",
+       "guardPercent": 25
+      }
+     ]
+    },
+    {
+     "rank": 4,
+     "minThreat": 8,
+     "effects": [
+      {
+       "kind": "guard_split",
+       "internalNameMatch": "stormtrooper",
+       "guardPercent": 40
+      },
+      {
+       "kind": "signaturText",
+       "key": "personaCaptSignature"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "feldherr",
+   "nameKey": "personaCaptFeldherr",
+   "mottoKey": "personaCaptFeldherrMotto",
+   "ranks": [
+    {
+     "rank": 1,
+     "minThreat": 2,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^Imperial Officer$",
+       "elite_card": "DG006"
+      }
+     ]
+    },
+    {
+     "rank": 2,
+     "minThreat": 4,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.25,
+       "internalNameMatch": "^Imperial Officer$",
+       "patterns": [
+        "aggressive"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 3,
+     "minThreat": 6,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.15,
+       "factionMatch": "Imperial",
+       "patterns": [
+        "aggressive"
+       ]
+      },
+      {
+       "kind": "guard_split",
+       "factionMatch": "Imperial",
+       "guardPercent": 20
+      }
+     ]
+    },
+    {
+     "rank": 4,
+     "minThreat": 8,
+     "effects": [
+      {
+       "kind": "guard_split",
+       "factionMatch": "Imperial",
+       "guardPercent": 30
+      },
+      {
+       "kind": "signaturText",
+       "key": "personaFeldherrSignature"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "isb_commander",
+   "nameKey": "personaCaptIsb",
+   "mottoKey": "personaCaptIsbMotto",
+   "ranks": [
+    {
+     "rank": 1,
+     "minThreat": 2,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^Probe Droid$",
+       "elite_card": "DG013"
+      }
+     ]
+    },
+    {
+     "rank": 2,
+     "minThreat": 4,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.35,
+       "factionMatch": "Imperial",
+       "patterns": [
+        "ambusher"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 3,
+     "minThreat": 6,
+     "effects": [
+      {
+       "kind": "guard_split",
+       "factionMatch": "Imperial",
+       "guardPercent": 30
+      },
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.2,
+       "internalNameMatch": "E-Web Engineer|HK Assassin Droid|Probe Droid|Sentry Droid",
+       "patterns": [
+        "blocker"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 4,
+     "minThreat": 8,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.25,
+       "factionMatch": "Imperial",
+       "patterns": [
+        "aggressive"
+       ]
+      },
+      {
+       "kind": "signaturText",
+       "key": "personaIsbSignature"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hutt_lord",
+   "nameKey": "personaCaptHutt",
+   "mottoKey": "personaCaptHuttMotto",
+   "ranks": [
+    {
+     "rank": 1,
+     "minThreat": 2,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.15,
+       "internalNameMatch": "0-0-0|Agent Blaise|BT-1|Boba Fett|Bossk|Captain Terro|Darth Vader|Dengar|Emperor Palpatine|General Sorin|General Weiss|Greedo|Hondo Ohnaka|IG-88|Jabba the Hutt|Kayn Somos|Maul|Royal Guard Champion|The Grand Inquisitor|Thrawn",
+       "patterns": [
+        "hunter"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 2,
+     "minThreat": 4,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.3,
+       "internalNameMatch": "Bantha Rider|Clawdite Shapeshifter|Gamorrean Guard|HK Assassin Droid|Hired Gun|Jawa Scavenger|Loth-cat|Nexu|Rancor|Trandoshan Hunter|Tusken Raider|Ugnaught Tinkerer|Wampa|Weequay Pirate|Wing Guard",
+       "patterns": [
+        "hunter"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 3,
+     "minThreat": 6,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.2,
+       "factionMatch": "Imperial",
+       "patterns": [
+        "hunter"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 4,
+     "minThreat": 8,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.2,
+       "factionMatch": "Imperial",
+       "patterns": [
+        "ambusher"
+       ]
+      },
+      {
+       "kind": "signaturText",
+       "key": "personaHuttSignature"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "droiden_direktor",
+   "nameKey": "personaCaptDroidenDirektor",
+   "mottoKey": "personaCaptDroidenDirektorMotto",
+   "ranks": [
+    {
+     "rank": 1,
+     "minThreat": 2,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^Probe Droid$",
+       "elite_card": "DG013"
+      }
+     ]
+    },
+    {
+     "rank": 2,
+     "minThreat": 4,
+     "effects": [
+      {
+       "kind": "guard_split",
+       "internalNameMatch": "E-Web Engineer|HK Assassin Droid|Probe Droid|Sentry Droid",
+       "guardPercent": 25
+      },
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.2,
+       "internalNameMatch": "E-Web Engineer|HK Assassin Droid|Probe Droid|Sentry Droid",
+       "patterns": [
+        "blocker"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 3,
+     "minThreat": 6,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.3,
+       "internalNameMatch": "AT-DP|AT-ST|E-Web Engineer|HK Assassin Droid|Heavy Stormtrooper|Jet Trooper|Probe Droid|SC2-M Repulsor Tank|Sentry Droid",
+       "patterns": [
+        "aggressive"
+       ]
+      },
+      {
+       "kind": "guard_split",
+       "internalNameMatch": "AT-DP|AT-ST|E-Web Engineer|HK Assassin Droid|Heavy Stormtrooper|Jet Trooper|Probe Droid|SC2-M Repulsor Tank|Sentry Droid",
+       "guardPercent": 30
+      }
+     ]
+    },
+    {
+     "rank": 4,
+     "minThreat": 8,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^E-Web Engineer$",
+       "elite_card": "DG008"
+      },
+      {
+       "kind": "signaturText",
+       "key": "personaDroidenDirektorSignature"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grossmoff",
+   "nameKey": "personaCaptGrossmoff",
+   "mottoKey": "personaCaptGrossmoffMotto",
+   "ranks": [
+    {
+     "rank": 1,
+     "minThreat": 2,
+     "effects": [
+      {
+       "kind": "guard_split",
+       "factionMatch": "Imperial",
+       "guardPercent": 30
+      }
+     ]
+    },
+    {
+     "rank": 2,
+     "minThreat": 4,
+     "effects": [
+      {
+       "kind": "pattern_weight",
+       "multiplier": 1.2,
+       "factionMatch": "Imperial",
+       "patterns": [
+        "guard"
+       ]
+      }
+     ]
+    },
+    {
+     "rank": 3,
+     "minThreat": 6,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^Stormtrooper$",
+       "elite_card": "DG003"
+      }
+     ]
+    },
+    {
+     "rank": 4,
+     "minThreat": 8,
+     "effects": [
+      {
+       "kind": "elite_swap",
+       "amount": 1,
+       "internalNameMatch": "^E-Web Engineer$",
+       "elite_card": "DG008"
+      },
+      {
+       "kind": "guard_split",
+       "factionMatch": "Imperial",
+       "guardPercent": 40
+      },
+      {
+       "kind": "signaturText",
+       "key": "personaGrossmoffSignature"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "budgets": {
+  "trooper_captain": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "feldherr": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "isb_commander": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "hutt_lord": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "droiden_direktor": [
+   1,
+   1,
+   1,
+   2
+  ],
+  "grossmoff": [
+   0,
+   0,
+   1,
+   2
+  ]
+ },
+ "missions": {
+  "core_mixed": {
+   "draft": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG011",
+     "name": "Probe Droid",
+     "faction": "Imperial",
+     "cost": 3,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG007",
+     "name": "E-Web Engineer",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG063",
+     "name": "Hired Gun",
+     "faction": "Mercenary",
+     "cost": 4,
+     "size": 2,
+     "elite": 0
+    }
+   ],
+   "board": [],
+   "hand": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG002",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG003",
+     "name": "Stormtrooper (Elite)",
+     "faction": "Imperial",
+     "cost": 8,
+     "size": 3,
+     "elite": 1
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG006",
+     "name": "Imperial Officer (Elite)",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 1
+    },
+    {
+     "id": "DG011",
+     "name": "Probe Droid",
+     "faction": "Imperial",
+     "cost": 3,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG012",
+     "name": "Probe Droid",
+     "faction": "Imperial",
+     "cost": 3,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG013",
+     "name": "Probe Droid (Elite)",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 1
+    },
+    {
+     "id": "DG007",
+     "name": "E-Web Engineer",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG008",
+     "name": "E-Web Engineer (Elite)",
+     "faction": "Imperial",
+     "cost": 7,
+     "size": 1,
+     "elite": 1
+    },
+    {
+     "id": "DG063",
+     "name": "Hired Gun",
+     "faction": "Mercenary",
+     "cost": 4,
+     "size": 2,
+     "elite": 0
+    }
+   ]
+  },
+  "storm_double": {
+   "draft": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG002",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    }
+   ],
+   "board": [],
+   "hand": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG002",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG003",
+     "name": "Stormtrooper (Elite)",
+     "faction": "Imperial",
+     "cost": 8,
+     "size": 3,
+     "elite": 1
+    }
+   ]
+  },
+  "elite_on_board": {
+   "draft": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG011",
+     "name": "Probe Droid",
+     "faction": "Imperial",
+     "cost": 3,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG007",
+     "name": "E-Web Engineer",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG063",
+     "name": "Hired Gun",
+     "faction": "Mercenary",
+     "cost": 4,
+     "size": 2,
+     "elite": 0
+    }
+   ],
+   "board": [
+    {
+     "id": "DG003",
+     "name": "Stormtrooper (Elite)",
+     "faction": "Imperial",
+     "cost": 8,
+     "size": 3,
+     "elite": 1
+    }
+   ],
+   "hand": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG002",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG006",
+     "name": "Imperial Officer (Elite)",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 1
+    },
+    {
+     "id": "DG011",
+     "name": "Probe Droid",
+     "faction": "Imperial",
+     "cost": 3,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG012",
+     "name": "Probe Droid",
+     "faction": "Imperial",
+     "cost": 3,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG013",
+     "name": "Probe Droid (Elite)",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 1
+    },
+    {
+     "id": "DG007",
+     "name": "E-Web Engineer",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG008",
+     "name": "E-Web Engineer (Elite)",
+     "faction": "Imperial",
+     "cost": 7,
+     "size": 1,
+     "elite": 1
+    },
+    {
+     "id": "DG063",
+     "name": "Hired Gun",
+     "faction": "Mercenary",
+     "cost": 4,
+     "size": 2,
+     "elite": 0
+    }
+   ]
+  },
+  "elite_missing": {
+   "draft": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    }
+   ],
+   "board": [],
+   "hand": [
+    {
+     "id": "DG001",
+     "name": "Stormtrooper",
+     "faction": "Imperial",
+     "cost": 6,
+     "size": 3,
+     "elite": 0
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    }
+   ]
+  },
+  "mercenary_draft": {
+   "draft": [
+    {
+     "id": "DG063",
+     "name": "Hired Gun",
+     "faction": "Mercenary",
+     "cost": 4,
+     "size": 2,
+     "elite": 0
+    },
+    {
+     "id": "DG015",
+     "name": "Trandoshan Hunter",
+     "faction": "Mercenary",
+     "cost": 7,
+     "size": 2,
+     "elite": 0
+    }
+   ],
+   "board": [],
+   "hand": [
+    {
+     "id": "DG063",
+     "name": "Hired Gun",
+     "faction": "Mercenary",
+     "cost": 4,
+     "size": 2,
+     "elite": 0
+    },
+    {
+     "id": "DG015",
+     "name": "Trandoshan Hunter",
+     "faction": "Mercenary",
+     "cost": 7,
+     "size": 2,
+     "elite": 0
+    }
+   ]
+  },
+  "elite_in_draft": {
+   "draft": [
+    {
+     "id": "DG003",
+     "name": "Stormtrooper (Elite)",
+     "faction": "Imperial",
+     "cost": 8,
+     "size": 3,
+     "elite": 1
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    }
+   ],
+   "board": [],
+   "hand": [
+    {
+     "id": "DG003",
+     "name": "Stormtrooper (Elite)",
+     "faction": "Imperial",
+     "cost": 8,
+     "size": 3,
+     "elite": 1
+    },
+    {
+     "id": "DG004",
+     "name": "Imperial Officer",
+     "faction": "Imperial",
+     "cost": 2,
+     "size": 1,
+     "elite": 0
+    },
+    {
+     "id": "DG006",
+     "name": "Imperial Officer (Elite)",
+     "faction": "Imperial",
+     "cost": 5,
+     "size": 1,
+     "elite": 1
+    }
+   ]
+  }
+ },
+ "cases": [
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG003",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG003",
+    "DG002"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 2,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG003",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG003",
+    "DG002"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 4,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG003",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG003",
+    "DG002"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 6,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG003",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG003",
+    "DG002"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "trooper_captain",
+   "threat": 8,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 2,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG006"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 4,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG006"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 6,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG006"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG006",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "feldherr",
+   "threat": 8,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG006"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 2,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 4,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 6,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "isb_commander",
+   "threat": 8,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 2,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 4,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 6,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "hutt_lord",
+   "threat": 8,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 2,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 4,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 6,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG008",
+    "DG063"
+   ],
+   "expect_swaps": 2
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG013",
+    "DG008",
+    "DG063"
+   ],
+   "expect_swaps": 2
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "droiden_direktor",
+   "threat": 8,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 2,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG001",
+    "DG002"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 4,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG003",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG003",
+    "DG002"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG007",
+    "DG063"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 6,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "mission": "core_mixed",
+   "expect_out": [
+    "DG003",
+    "DG004",
+    "DG011",
+    "DG008",
+    "DG063"
+   ],
+   "expect_swaps": 2
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "mission": "storm_double",
+   "expect_out": [
+    "DG003",
+    "DG002"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "mission": "elite_on_board",
+   "expect_out": [
+    "DG001",
+    "DG004",
+    "DG011",
+    "DG008",
+    "DG063"
+   ],
+   "expect_swaps": 1
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "mission": "elite_missing",
+   "expect_out": [
+    "DG001",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "mission": "mercenary_draft",
+   "expect_out": [
+    "DG063",
+    "DG015"
+   ],
+   "expect_swaps": 0
+  },
+  {
+   "persona": "grossmoff",
+   "threat": 8,
+   "mission": "elite_in_draft",
+   "expect_out": [
+    "DG003",
+    "DG004"
+   ],
+   "expect_swaps": 0
+  }
+ ]
+}

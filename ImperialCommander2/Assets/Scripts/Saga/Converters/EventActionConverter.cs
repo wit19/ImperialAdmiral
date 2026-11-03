@@ -126,6 +126,12 @@ namespace Saga
 					case 30:
 						eventActionAction = item.ToObject<AddCampaignReward>();
 						break;
+					case 31: // CM6 (M12c): Imperial-side mission reward XP
+						eventActionAction = item.ToObject<CampaignModifyImperialXP>();
+						break;
+					case 32: // CM7 (M12d2): Imperial-side influence income
+						eventActionAction = item.ToObject<CampaignModifyInfluence>();
+						break;
 				}
 				eObserver.Add( eventActionAction );
 			}

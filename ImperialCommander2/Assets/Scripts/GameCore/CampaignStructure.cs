@@ -29,6 +29,13 @@ namespace Saga
 		public bool canModify = true;
 		public bool threatModifiedByMission = false;
 
+		// TACTICAL AI (concept 4.2.7, AUTO rework dev 2): "" (default) = AUTO,
+		// follow the global AI MODE setting; explicit override only via the
+		// per-mission badge ("legacy" | "reference" | "overlord"). Older
+		// saves carrying the pre-AUTO default "legacy" are migrated to ""
+		// on load (see SagaCampaign.LoadCampaignState).
+		public string aiMode = "";
+
 		public CampaignStructure()
 		{
 			structureGUID = Guid.NewGuid();

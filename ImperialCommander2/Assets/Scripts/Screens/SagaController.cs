@@ -86,6 +86,11 @@ namespace Saga
 		{
 			Debug.Log( "ENTERING SAGA GAME" );
 
+			//M12e: the Imperium play-area panel mounts itself (no scene edits);
+			// Personas (M4): the play-area ImperialPanel is GONE with the
+			// class/agenda card system - the persona announces itself on the
+			// activation popup (TacticalAIBridge.PersonaLine), no side panel.
+
 			//Exception handling for any Unity thrown exception, such as from asset management
 			Application.logMessageReceived += LogCallback;
 
@@ -421,6 +426,12 @@ namespace Saga
 			//set round number
 			UpdateRoundNumberUI();
 
+			//TACTICAL REF/ORD: apply the HUD layout policy from the very first
+			//frame (Thomas playtest 29.10.: previously it only ran on the
+			//restore path, so a fresh tactical mission still showed the
+			//MedPac icon and the "?" sat in its legacy spot).
+			ApplyTacticalMedPacPolicy();
+
 			//create deployment hand and manual deploy list
 			DataStore.CreateDeploymentHand( DataStore.sagaSessionData.EarnedVillains, DataStore.sagaSessionData.setupOptions.threatLevel );
 			DataStore.CreateManualDeployment();
@@ -607,8 +618,32 @@ namespace Saga
 
 			//medpac count
 			medPacText.text = DataStore.sagaSessionData.gameVars.medPacCount.ToString();
+			//TACTICAL REF/ORD missions replace app healing with the printed
+			//reference rules (wounded stays wounded until mission end) - the
+			//MedPac HUD element and its button are switched off there (dev 15).
+			ApplyTacticalMedPacPolicy();
 			//restore deployed enemies and heroes/allies
 			dgManager.RestoreState();
+
+			// TACTICAL AI resume re-anchor (Noldorion PR #194 bug 2.11: after
+			// reopening the app the current round still showed the legacy
+			// instructions until the master switch was toggled). A resumed
+			// mission never passes the mission-start IncreaseRound hook, so
+			// the planner state must be rebuilt here: ResetSession clears ALL
+			// statics (catalog, round plan, focus, ledger - nothing stale may
+			// survive the restore), OnNewRound then rebuilds the plan for the
+			// RESTORED round from the freshly restored state. Both are
+			// ActiveNow-gated internally: a legacy-mode resume is a no-op.
+			try
+			{
+				TacticalAI.TacticalAIBridge.ResetSession();
+				TacticalAI.TacticalAIBridge.OnNewRound( DataStore.sagaSessionData.gameVars.round );
+			}
+			catch ( Exception e )
+			{
+				Debug.LogWarning( "TacticalAIBridge::resume re-anchor failed (legacy fallback): " + e );
+			}
+
 			//fame button
 			fameButton.interactable = DataStore.sagaSessionData.setupOptions.useAdaptiveDifficulty;
 			//set objective
@@ -731,19 +766,29 @@ namespace Saga
 			var groups = dgManager.GetNonExhaustedGroups();
 			if ( groups.Count > 0 )
 			{
-				var p1 = groups.Where( x => x.priority == 1 ).ToList();
-				var others = groups.Where( x => x.priority != 1 ).ToList();
-				var all = p1.Concat( others ).ToList();
-				//70% chance to priority 1 groups
-				if ( p1.Count > 0 && GlowEngine.RandomBool( 70 ) )
-				{
-					rnd = GlowEngine.GenerateRandomNumbers( p1.Count );
-					toActivate = p1[rnd[0]];
-				}
+				// TACTICAL AI action queue (concept 4.2.4): next group in the
+				// planner's round order instead of the 70%-priority random draw.
+				// Default OFF (or unplanned group): the legacy random draw below
+				// runs VERBATIM.
+				if ( TacticalAI.TacticalAISettings.Enabled
+				&& TacticalAI.TacticalAIBridge.TryPeekNextActivation( groups, out toActivate ) )
+					Debug.Log( $"OnActivateImperial()::TACTICAL order -> {toActivate.name}" );
 				else
 				{
-					rnd = GlowEngine.GenerateRandomNumbers( all.Count );
-					toActivate = all[rnd[0]];
+					var p1 = groups.Where( x => x.priority == 1 ).ToList();
+					var others = groups.Where( x => x.priority != 1 ).ToList();
+					var all = p1.Concat( others ).ToList();
+					//70% chance to priority 1 groups
+					if ( p1.Count > 0 && GlowEngine.RandomBool( 70 ) )
+					{
+						rnd = GlowEngine.GenerateRandomNumbers( p1.Count );
+						toActivate = p1[rnd[0]];
+					}
+					else
+					{
+						rnd = GlowEngine.GenerateRandomNumbers( all.Count );
+						toActivate = all[rnd[0]];
+					}
 				}
 
 				DataStore.sagaSessionData.gameVars.activatedGroup = toActivate;
@@ -900,6 +945,10 @@ namespace Saga
 
 		public void OnMedPac()
 		{
+			// TACTICAL REF/ORD: healing follows the printed reference rules -
+			// the MedPac mechanic is switched off for this mission (dev 15).
+			if ( TacticalAI.TacticalAIBridge.TacticalMissionActive() )
+				return;
 			sound.PlaySound( FX.Click );
 			EventSystem.current.SetSelectedGameObject( null );
 			if ( !eventManager.IsUIHidden )
@@ -914,6 +963,118 @@ namespace Saga
 		public void UpdateMedPacCountUI()
 		{
 			medPacText.text = DataStore.sagaSessionData.gameVars.medPacCount.ToString();
+		}
+
+		/// <summary>
+		/// TACTICAL HUD layout policy (idempotent), M13r final form:
+		/// - switches off the MedPac slot completely (icon, counter, the red
+		///   disc graphic on the base itself, and its interactability) -
+		///   reference rules keep wounded units wounded until mission end,
+		///   so there is nothing to medpac;
+		/// - the mission panel's "i" and every other HUD object stay exactly
+		///   where the game put them (the M13o/p "?"-into-slot moves were a
+		///   mis-identification and are reverted, including mid-game saves
+		///   that already got an evicted "i" - those are re-seated).
+		Dictionary<UnityEngine.UI.Graphic, bool> impMedpacGfx;
+
+		void ApplyTacticalMedPacPolicy()
+		{
+			var tactical = TacticalAI.TacticalAIBridge.TacticalMissionActive();
+			// M13q/r layout policy for tactical missions (supersedes the
+			// M13o/M13p button moves - those evicted the mission panel's "i",
+			// see Saga.unity truth below):
+			//   Canvas / bottom button grid  (the blue mission panel)
+			//     [settings | dashboard Button "i" | fame | debug | rules]
+			//   Canvas / activate imperial Button (big red cog)
+			//   Canvas / medpac button base / medpac button + counter
+			// ONLY the medpac slot is switched off, fully (reference rules:
+			// wounded units stay wounded until mission end - nothing to
+			// medpac). Everything else in the HUD stays untouched.
+			GameObject medBase = GameObject.Find( "medpac button base" );
+			RectTransform medBtn = null;
+			foreach ( var th in Resources.FindObjectsOfTypeAll<TooltipHandler>() )
+			{
+				if ( th == null || !th.gameObject.scene.IsValid() ) continue;
+				if ( th.tooltip != "MedPac" ) continue;
+				medBtn = th.transform as RectTransform;
+				if ( medBase == null ) medBase = th.transform.parent != null ? th.transform.parent.gameObject : null;
+			}
+			if ( medBase == null )
+			{
+				Debug.LogWarning( "SagaController()::TACTICAL mode - 'medpac button base' not found; medpac slot NOT switched off (M13r)" );
+				return;
+			}
+			if ( medPacText != null ) medPacText.gameObject.SetActive( !tactical );
+			foreach ( Transform c in medBase.transform )
+				if ( c.name.StartsWith( "medpac counter" ) ) c.gameObject.SetActive( !tactical );
+			if ( !tactical )
+			{
+				medBase.SetActive( true );
+				if ( medBtn != null ) medBtn.gameObject.SetActive( true );
+				if ( impMedpacGfx != null )
+				{
+					foreach ( var kvp in impMedpacGfx )
+						if ( kvp.Key != null ) kvp.Key.enabled = kvp.Value;
+					impMedpacGfx = null;
+				}
+				return;
+			}
+			// NOTE: the BASE itself stays ACTIVE - it is the empty 100x100
+			// slot the tactical HUD badges measure their right edge from,
+			// and GameObject.Find would stop seeing an inactive base.
+			if ( medBtn != null ) medBtn.gameObject.SetActive( false );
+			// M13r (Thomas screenshot: "ein roter Kreis. Warum?"): the BASE
+			// object itself carries the red medpac disc graphic - it was
+			// simply hidden behind the moved "i" until M13q put the "i" back.
+			// Kill ALL graphics in the subtree (base included), so whatever
+			// sprite layer draws the disc goes away for any artwork version;
+			// original enabled-states are remembered for the restore path.
+			if ( impMedpacGfx == null )
+			{
+				impMedpacGfx = new Dictionary<UnityEngine.UI.Graphic, bool>();
+				foreach ( var g in medBase.GetComponentsInChildren<UnityEngine.UI.Graphic>( true ) )
+				{
+					impMedpacGfx[ g ] = g.enabled;
+					g.enabled = false;
+				}
+				// an invisible-but-clickable slot would still open the medpac
+				// popup - switch the interactables off too
+				foreach ( var s in medBase.GetComponentsInChildren<UnityEngine.UI.Selectable>( true ) )
+					s.interactable = false;
+			}
+
+			// M13q (Thomas screenshot): the "i" (tip[Dashboard]) belongs
+			// INSIDE the blue mission panel = 'bottom button grid'
+			// [settings | dashboard(i) | fame | debug | rules]. M13p evicted
+			// it into the medpac slot - wrong object, wrong idea. Restore it
+			// to the grid at its original sibling slot; the grid's layout
+			// group re-sizes/re-positions it exactly like its siblings, so
+			// the Ursprungszustand is re-established, not approximated.
+			var btnGO = GameObject.Find( "dashboard Button" );
+			var btnRT = btnGO != null ? btnGO.transform as RectTransform : null;
+			if ( infoBtnTX != null && btnRT != null && infoBtnTX.transform.parent != btnRT )
+				infoBtnTX.transform.SetParent( btnRT, false );   // undo any image-level move
+			var grid = GameObject.Find( "bottom button grid" );
+			if ( btnRT == null || grid == null )
+			{
+				Debug.LogWarning( "SagaController()::TACTICAL mode - 'dashboard Button'/'bottom button grid' not found; only medpac icon/counter were switched off (M13q)" );
+				return;
+			}
+			if ( btnRT.parent != grid.transform )
+			{
+				btnRT.SetParent( grid.transform, false );
+				btnRT.SetSiblingIndex( 1 );   // scene order: settings, dashboard, fame, debug, rules
+				var sib = grid.transform.GetChild( 0 ) as RectTransform;   // 'settings' - same layout regime
+				if ( sib != null )
+				{
+					btnRT.anchorMin = sib.anchorMin;
+					btnRT.anchorMax = sib.anchorMax;
+					btnRT.pivot = sib.pivot;
+					btnRT.sizeDelta = sib.sizeDelta;
+					btnRT.anchoredPosition = sib.anchoredPosition;
+				}
+			}
+			Debug.Log( "SagaController()::TACTICAL mode - medpac slot off (graphics+interactables, M13r), \"i\" confirmed in the mission panel" );
 		}
 
 		public void OnImperialPopup()
@@ -991,6 +1152,13 @@ namespace Saga
 			UpdateRoundNumberUI();
 
 			Debug.Log( $"IncreaseRound()::Current round: {DataStore.sagaSessionData.gameVars.round}" );
+
+			// TACTICAL AI round planner (concept 4.2.4): the nearest existing
+			// equivalent of the concept's round-end 'deployment_finished' event
+			// trigger (that event type does not exist in this codebase - see
+			// PR draft deviations). Default OFF: no planner call, no behaviour.
+			if ( TacticalAI.TacticalAISettings.Enabled )
+				TacticalAI.TacticalAIBridge.OnNewRound( DataStore.sagaSessionData.gameVars.round );
 		}
 
 		public void OnPauseThreat( Toggle t )

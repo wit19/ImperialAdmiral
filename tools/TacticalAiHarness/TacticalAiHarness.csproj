@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>TacticalAiHarness</AssemblyName>
+    <RootNamespace>TacticalAiHarness</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TacticalAI.Core\TacticalAI.Core.csproj" />
+    <!-- M12d2: the REAL store class (no mirror) - the anti-leak law must be
+         pinned where it lives. AgendaState.cs depends only on System +
+         TacticalAI.Core, so it compiles here without Unity stubs. -->
+    <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\AgendaState.cs" Link="LinkedFiles\AgendaState.cs" />
+  </ItemGroup>
+</Project>

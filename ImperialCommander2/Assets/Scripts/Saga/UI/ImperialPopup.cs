@@ -81,12 +81,22 @@ namespace Saga
 
 			Close();
 			Debug.Log( "ImperialPopup::OptionalDeployment()::PROCESSING OptionalDeployment" );
+			//M13c (Thomas 28.10): tactical campaign missions -> the AI places
+			//(existing deterministic DP law) and the spot is MARKED + announced;
+			//legacy missions -> the manual placement window for the DM. The
+			//fork is the Core decision (OptionalDeploy.Path, pinned by the
+			//harness fixture), delivered through the Bridge seam.
+			bool manual = TacticalAI.TacticalAIBridge.OptionalDeployPath()
+				== TacticalAI.Core.OptionalDeploy.PathManual;
 			DeploymentGroupOverride ovrd = new DeploymentGroupOverride( "" );
 			ovrd.deploymentPoint = DeploymentSpot.Active;
 			ovrd.specificDeploymentPoint = System.Guid.Empty;
 			ovrd.useThreat = true;
 			ovrd.threatCost = 0;
-			FindObjectOfType<SagaController>().deploymentPopup.Show( DeployMode.Landing, true, true, null, ovrd );
+			//M13f: buttonFlow=true is the explicit DM-button marker; the
+			//predicate in SagaDeploymentPopup must never infer the flow
+			//from ovrd (this call passes ovrd NON-null).
+			FindObjectOfType<SagaController>().deploymentPopup.Show( DeployMode.Landing, true, true, null, ovrd, manual, buttonFlow: true );
 		}
 
 		public void OnHelpClick()

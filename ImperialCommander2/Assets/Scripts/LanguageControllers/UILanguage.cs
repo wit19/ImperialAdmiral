@@ -35,7 +35,7 @@ public class UITacticalAI
 	// decision trees ({0} = printed speed), apEnd = loop-trap marker. TMP
 	// tags are language-owned (ui.json law); solo/numbered labelling and the
 	// doctrineTreeLead/"Grundregel" removals of M13a/M13c stay in force.
-	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd;
+	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd, apCustomHeader;
 	// Thomas 02.11: command trees for cards that PRINT a command ability on
 	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
 	// rolled "guard" still commands, so every pattern keeps its own action

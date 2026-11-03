@@ -163,7 +163,12 @@ Mission-authored figures — the special ones a scenario spawns for you (a named
 villain like Ivan Talos, custom bosses, mission troopers) — are planned
 tactically too: the mission file states which printed card each of them
 represents, and the planner uses that role for its doctrine dice while all
-values, orders and text stay exactly the figure's own printed card. Only truly
+values, orders and text stay exactly the figure's own printed card. Their
+activation pop-up also shows their mission-authored rule lines (bonus
+sentences and printed abilities, in your mission language) under a
+"Sonderregeln dieser Figur" header, right below the action tree — public
+sheet text, so the fairness rule against hidden bonus rolls stays untouched.
+Only truly
 foreign groups (your own imported fan characters) still fall back to the legacy
 instruction draw; the rest of the mission still runs tactically around them.
 

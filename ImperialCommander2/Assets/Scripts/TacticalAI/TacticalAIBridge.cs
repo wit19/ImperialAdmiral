@@ -891,6 +891,44 @@ namespace TacticalAI
                 if (!string.IsNullOrEmpty(line.Trim()))
                     outp.Add(line.Replace("{0}", speed));
             if (!string.IsNullOrEmpty(L.apEnd)) outp.Add(L.apEnd);
+            // M6s-B11 (Thomas 03.11, 'zeige die missionseigenen Textzeilen
+            // mit an'): a MISSION-AUTHORED custom figure carries its own
+            // printed rule lines - the mission's bonus sentences and its
+            // ability texts. These are public scenario card text (the human
+            // reads them off the figure sheet), NOT the hidden legacy bonus
+            // roll which stays forbidden in tactical mode; the fairness law
+            // is untouched. Mission files are loaded in the player's own
+            // language, so these lines render in the active language
+            // untranslated-by-us - verbatim what the mission authored.
+            // Pool cards carry no override/custom abilities -> zero added
+            // rows, every existing popup stays byte-identical.
+            if (cd != null && cd.isCustomEnemyDeployment)
+            {
+                var rules = new List<string>();
+                try
+                {
+                    var ovrd = DataStore.sagaSessionData != null && DataStore.sagaSessionData.gameVars != null
+                        ? DataStore.sagaSessionData.gameVars.GetDeploymentOverride(cd.id) : null;
+                    if (ovrd != null && ovrd.customBonuses != null)
+                        foreach (var b in ovrd.customBonuses)
+                            if (!string.IsNullOrEmpty(b) && !string.IsNullOrWhiteSpace(b))
+                                rules.Add(b.Trim());
+                }
+                catch { /* campaign not live: abilities alone */ }
+                if (cd.abilities != null)
+                    foreach (var a in cd.abilities)
+                        if (a != null && !string.IsNullOrWhiteSpace(a.text))
+                            rules.Add(string.IsNullOrEmpty(a.name)
+                                ? a.text.Trim()
+                                : a.name + ": " + a.text.Trim());
+                if (rules.Count > 0)
+                {
+                    if (!string.IsNullOrEmpty(L.apCustomHeader)) outp.Add(L.apCustomHeader);
+                    // the popup row splitter turns every embedded \r\n into
+                    // its own row - a full sentence per row, exactly once.
+                    foreach (var r in rules) outp.Add(r);
+                }
+            }
             return outp.ToArray();
         }
 

@@ -4,7 +4,12 @@ class P {
     static void Eq(object a, object b, string m) { if (!Equals(a, b)) { Console.WriteLine("FAIL: " + m + " (" + a + " != " + b + ")"); Environment.ExitCode = 1; } else Console.WriteLine("ok: " + m); }
     static void Main() {
         TacticalAISettings.ResetDefaults();
-        Eq("reference", TacticalAISettings.Mode, "S1 derives reference");
+        // M6p (Thomas 02.11): defaults re-clamped ON at S5/Thrawn. Old pin was
+        // Eq("reference", Mode, "S1 derives reference"); the derivation law is
+        // untouched - only the default rung moved, so the picture inverts.
+        Eq(true, TacticalAISettings.Enabled, "M6p default is ON");
+        Eq("S5", TacticalAISettings.SkillLevel, "M6p default is S5/Thrawn");
+        Eq("overlord", TacticalAISettings.Mode, "S5 derives overlord");
         TacticalAISettings.Enabled = true;
         // dev 21 cycle
         string t = "";

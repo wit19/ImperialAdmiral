@@ -26,7 +26,10 @@ Three design promises come with it:
 - **Deterministic.** Same seed, same decisions. No hidden difficulty buffs, no rubber-banding.
 - **Explainable.** Every order card can tell you *why* it did what it did.
 
-With the master switch off (the default), the app is untouched legacy — bit for bit.
+With the master switch off, the app is untouched legacy — bit for bit. New installs start
+with the switch **on** at difficulty **Thrawn** (since M6p): a freshly started game plays
+tactically out of the box. Once you touch a setting, your stored values always win over
+these defaults.
 
 ### Where to find it
 
@@ -34,9 +37,9 @@ Options window → **UI** tab, bottom section. There are exactly **four rows**:
 
 | Row | Values | What it does |
 |---|---|---|
-| **TACTICAL AI** | OFF (default) / ON | Master switch. OFF = the app behaves exactly like before, including the random activation order. |
-| **DIFFICULTY** | Recruit → Stormtrooper → Veteran → Commandant → Thrawn | How well the Imperials *choose* between their legal actions. It never changes stats, ranges, action counts or dice — only decisions. See "Difficulty" below. |
-| **EXPLAIN** | NONE → AFTER THE FACT → FULL | The AI's reasoning texts. `AFTER THE FACT` explains decisions after they happen; `FULL` also prints the "why" lines directly on the activation pop-ups. |
+| **TACTICAL AI** | ON (default) / OFF | Master switch. New installs start ON (M6p); OFF = the app behaves exactly like before, including the random activation order. |
+| **DIFFICULTY** | Recruit → Stormtrooper → Veteran → Commandant → Thrawn (default: Thrawn) | How well the Imperials *choose* between their legal actions. It never changes stats, ranges, action counts or dice — only decisions. See "Difficulty" below. |
+| **EXPLAIN** | OFF (default) / ON | The AI's reasoning texts, printed directly on the activation pop-ups. |
 | **INFO TEXT** | ON (default) / OFF | Adds the short rules reminder under the action texts on every activation pop-up (attack cap, door-opening rule). Turn it off once you know the drill. |
 
 On top of that, every mission in a campaign list — and the mission setup panel — carries a
@@ -139,7 +142,8 @@ Each pop-up reads top to bottom:
    remaining heroes". This information is deliberately public; a human Imperial player has
    it too.
 2. **Doctrine line**: the role this figure plays in *this mission*, named in plain words —
-   e.g. `Doctrine: Guard (hold the zone, never be lured out)`. Doctrines are
+   e.g. `Doctrine: Guard (hold the zone, never be lured out)`. Shown permanently directly
+   below the focus line — independent of the EXPLAIN setting (since M6p). Doctrines are
    situation-driven: on defend-type missions, immobile and melee figures guard the
    objective, big bases block the lanes; on hunt-type missions nobody guards — everyone
    sweeps. Each figure's printed traits decide its role, never hidden data.
@@ -172,12 +176,15 @@ Each pop-up reads top to bottom:
    villain card prints a special action, it appears as its own block carrying the printed
    condition text ("within 4 spaces and line of sight…"). You decide at the board whether
    the condition is met; the block proposes, it never overrides the rules.
-5. **Explanation line** (with EXPLAIN at FULL): the why behind this activation — target
-   ranking, doctrine, risk posture — right on the pop-up.
+5. **Explanation line** (with EXPLAIN on): the why behind this activation — target
+   ranking, risk posture, the pattern-roll draw value — right on the pop-up. The doctrine
+   itself is *not* repeated here; it stands on its permanent line directly under the
+   focus target.
 
 ### What does NOT change
 
-- Vanilla play is untouched while the master switch is off — this is the default.
+- Vanilla play is untouched while the master switch is off. New installs default to it on
+  (M6p) — switch it off for the classic app, bit for bit.
 - All printed mission rules, events, XP, credits and the campaign manager work as before.
 - **Custom and embedded cards** (fan-made groups not in the shipped card set) keep the
   legacy pop-up and the legacy activation draw; the rest of the mission still runs

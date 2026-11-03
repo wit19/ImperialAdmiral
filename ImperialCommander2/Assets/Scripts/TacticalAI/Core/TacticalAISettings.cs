@@ -6,7 +6,10 @@
 // HARD RULE: every Tactical-AI behaviour in the game checks
 //   if (TacticalAI.TacticalAISettings.Enabled)
 // and keeps the original legacy path verbatim as the else/default branch.
-// DEFAULT IS OFF ("legacy") - behaviour bit-compatible with the shipped game.
+// M6p (Thomas 02.11): the FRESH default is ON at S5/Thrawn - a new install
+// plays the tactical mode out of the box. This changed the DEFAULT ONLY:
+// any stored player setting always wins (Load reads the saved fields), and
+// OFF stays the bit-compatible legacy path exactly as before.
 //
 // NOTE (documented deviation): the class lives in the parent namespace
 // `TacticalAI` (not `TacticalAI.Core`) so the hook-table condition
@@ -30,11 +33,16 @@ namespace TacticalAI
         // to the default (AUS) by Validate on load - no throw, no crash.
         public static readonly string[] ExplainLevelValues = { "none", "full" };
 
-        // ---- defaults: OFF, legacy, printed rules only -------------------
-        public const bool DefaultEnabled = false;
+        // ---- defaults (M6p, Thomas 02.11): ON at S5/Thrawn ----------------
+        // Fresh installs start tactical; a stored PlayerPrefs value always
+        // wins (Load), so existing setups stay bittreu. OFF remains the exact
+        // legacy path - nothing on that rail changed.
+        public const bool DefaultEnabled = true;
         // dev 20: no stored mode dial; kept as legacy token for missions/tests.
         public const string DefaultMode = "legacy";
-        public const string DefaultSkillLevel = "S1";
+        // M6p: difficulty default is S5 ("Thrawn") - Thomas wants the shipped
+        // best public-information play out of the box; S1..S4 stay selectable.
+        public const string DefaultSkillLevel = "S5";
         // M13h (Thomas 28.10): default is 'none' - explanations must be asked
         // for, not served unprompted. Post-hoc/full stay selectable per row.
         public const string DefaultExplainLevel = "none";
@@ -57,8 +65,9 @@ namespace TacticalAI
 
         static Func<string, string> _saveHook;   // (jsonToStore) -> storedJson|null
 
-        /// <summary>Global master switch. FALSE by default: every hook falls
-        /// through to the untouched legacy path.</summary>
+        /// <summary>Global master switch. TRUE by default since M6p (fresh
+        /// installs play tactical; stored settings always win). When false,
+        /// every hook falls through to the untouched legacy path.</summary>
         public static bool Enabled
         {
             get { return _enabled; }

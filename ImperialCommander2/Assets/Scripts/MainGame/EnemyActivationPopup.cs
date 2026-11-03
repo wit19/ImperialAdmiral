@@ -162,6 +162,12 @@ public class EnemyActivationPopup : MonoBehaviour
 			// carries it as an EXPLAIN section (tacPlan.PersonaLine).
 			if ( tacPlan.HasTarget && !string.IsNullOrEmpty( tacPlan.TargetWhy ) )
 				tacInstructions.Add( tacPlan.TargetWhy );
+			// M6p (Thomas 02.11): the doctrine row left the EXPLAIN block and
+			// rides here permanently - directly after the focus-target line,
+			// independent of the EXPLAIN level (same visibility law as the
+			// focus target itself).
+			if ( !string.IsNullOrEmpty( tacPlan.DoctrineLine ) )
+				tacInstructions.Add( tacPlan.DoctrineLine );
 			tacInstructions.AddRange( tacPlan.Blocks ?? new string[0] );
 			if ( !string.IsNullOrEmpty( tacPlan.ExplainLine ) )
 				tacInstructions.Add( tacPlan.ExplainLine );

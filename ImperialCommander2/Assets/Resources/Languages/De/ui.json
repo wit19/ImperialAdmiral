@@ -327,7 +327,7 @@
     "ordPhaseExplain": "Phase: {0} -> {1} (Missionsuhr im letzten Drittel).",
     "ordPhaseDefend": "Verteidigungshaltung",
     "ordPhaseHunt": "Jagd",
-    "ordPatternRoll": "Muster-Wurf: {0} (Wurf {1}/100)",
+    "ordPatternRoll": "Muster-Wurf: {0}/100",
     "ordExplainHead": "ERKLÄRUNG",
     "ordExplainFocusWhy": "Fokus-Ziel {0}: {1}",
     "apHead": "<color=#C9A6FF><b>AKTIONSPUNKTE: {0} — DAVON ANGRIFFSPUNKTE: {1}</b></color>",

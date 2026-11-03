@@ -85,13 +85,14 @@ in the app is the code the tests replay.
 
 ## 3. Where settings live
 
-`TacticalAISettings` (serialized like other app settings, default **OFF**):
+`TacticalAISettings` (serialized like other app settings; since M6p the FRESH defaults are
+master switch **ON** at difficulty **S5/Thrawn** — a stored player value always wins):
 
 | Setting | Values | Consumed by |
 |---|---|---|
-| Master switch | OFF / ON | every hook; OFF means the legacy code path executes verbatim |
-| Difficulty | S1..S5 named Recruit…Thrawn | `SkillProfile.For()` (§8) |
-| Explain | NONE / AFTER THE FACT / FULL | popup "why" lines |
+| Master switch | OFF / ON (default ON) | every hook; OFF means the legacy code path executes verbatim |
+| Difficulty | S1..S5 named Recruit…Thrawn (default S5) | `SkillProfile.For()` (§8) |
+| Explain | NONE / FULL (default NONE) | popup "why" lines |
 | Info text | ON / OFF | rules reminder block on popups |
 
 Per mission, a campaign-mission badge cycles `AUTO → OFF → S1..S5 → AUTO`; `AUTO`
@@ -180,9 +181,11 @@ per round from **one single rule engine for every mission**:
    a positive shift can open a pattern the row never carried). No second code branch —
    the mission clock's final third switches the row off (hunt phase), announced once.
 4. **Per-round draw**: seed = mission session key ^ Fnv1a64(card id + round), so the
-   doctrine is stable within a round, differs per mission, replays identically, and is
-   disclosed in EXPLAIN=AUSFÜHRLICH as "Muster-Wurf: <doctrine> (draw N/100)" plus the
-   full effective distribution on the Debug channel.
+   doctrine is stable within a round, differs per mission, replays identically. The rolled
+   doctrine NAME stands permanently on the doctrine line directly under the focus line of
+   every activation popup (independent of EXPLAIN, since M6p); EXPLAIN=FULL adds only the
+   draw value as "Muster-Wurf: N/100", plus the full effective distribution on the Debug
+   channel.
 5. On top of the roll the two persona layers still apply unchanged: the captain's guard
    band pins the back half of the advancing squad in defend deployments (S4/S5), and
    persona pattern multipliers bias flips.

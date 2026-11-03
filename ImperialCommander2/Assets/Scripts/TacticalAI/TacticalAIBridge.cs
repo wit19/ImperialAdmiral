@@ -52,6 +52,12 @@ namespace TacticalAI
         public string ExplainLine;      // printed why-string (ExplainLevel)
         public bool HasTarget;
         public string Pattern;          // doctrine pattern (dev 11); null = aggressive
+        // M6p (Thomas 02.11): the doctrine line renders PERMANENTLY right after
+        // the focus-target line - independent of the EXPLAIN level, exactly
+        // like the focus line itself. Built from the existing uiTacticalAI keys
+        // (doctrineHeader + doc* name); ExplainFor does not carry the doctrine
+        // anymore (no double display).
+        public string DoctrineLine;
         // M13t (Thomas 30.10.): the activation's card prints Stativ/Tripod.
         // The renderer swaps in the emplacement action trees: every move
         // forfeits the attack, so the tree must never suggest one while a
@@ -695,8 +701,18 @@ namespace TacticalAI
             // catalog record - see the block synthesis above.)
             plan.Pattern = _patternByCard != null && _patternByCard.TryGetValue(cd.id, out var pat)
                            && !string.IsNullOrEmpty(pat) ? pat : "aggressive";
-            // Thomas 02.11: explain is built AFTER the pattern exists (its
-            // doctrine row reads plan.Pattern) and before the blocks render.
+            // M6p (Thomas 02.11): the doctrine moved OUT of the gated explain
+            // block into this permanent line - the popup prints it directly
+            // after the focus-target line, always visible (EXPLAIN level is
+            // irrelevant, same law as the focus line). Reuses the existing
+            // uiTacticalAI keys doctrineHeader + doc* (no new key, 11/11 by
+            // construction). Missing key -> no line (never a blank row).
+            if (UIx != null && !string.IsNullOrEmpty(UIx.doctrineHeader))
+                plan.DoctrineLine = TF(UIx.doctrineHeader,
+                                       DoctrineName(plan.Pattern ?? "aggressive", UIx));
+            // Thomas 02.11: explain is built AFTER the pattern exists (M6p: it
+            // no longer reads it - the doctrine left the explain block) and
+            // before the blocks render.
             plan.ExplainLine = ExplainFor(cd.id, plan);
             // Playtest 27.10 (Thomas): raw deck tokens ('move', 'attack') are
             // not an instruction a human Imperial player can execute. Render
@@ -1414,24 +1430,22 @@ namespace TacticalAI
                     line = (line == null ? "" : line + "\n") + phaseLine;
                 }
                 // M13u (variant c): the per-round doctrine dice is fully
-                // transparent - rolled doctrine, the 53-bit draw as 0-99
-                // and the effective distribution it was drawn from (row
-                // weights + posture modifier + printed-law filter). All
-                // three are public data (asset + mission structure).
-                // Thomas 02.11 (request 2): the doctrine NAME moved out of
-                // the action area into this section (above its own roll).
-                if (UIx != null && plan != null && !string.IsNullOrEmpty(UIx.doctrineHeader))
-                    line = (line == null ? "" : line + "\n")
-                           + TF(UIx.doctrineHeader,
-                                DoctrineName(plan.Pattern ?? "aggressive", UIx));
+                // transparent - the 53-bit draw as 0-99 (the exact match
+                // window of the rolled pattern), the round and the card id,
+                // so a player can replay any activation. All data is public
+                // (asset + mission structure).
+                // M6p (Thomas 02.11): the doctrine NAME left this block - it
+                // renders permanently right after the focus-target line now
+                // (ActivationPlanData.DoctrineLine). The roll row keeps only
+                // the draw value: the name would be a double display, and the
+                // explain section must not contain the doctrine any more.
                 if (UIx != null && !string.IsNullOrEmpty(UIx.ordPatternRoll)
                     && _patternRoll.TryGetValue(groupId, out var rolled))
                 {
                     var bits = rolled.Split('|');
                     if (bits.Length >= 2)
                     {
-                        var rollLine = TF(UIx.ordPatternRoll,
-                            DoctrineName(bits[0], UIx), bits[1]);
+                        var rollLine = TF(UIx.ordPatternRoll, bits[1]);
                         line = (line == null ? "" : line + "\n") + rollLine;
                         Debug.Log("TacticalAIBridge::patternRoll " + groupId +
                                   ": " + rolled + " posture=" + _doctrineEffective);

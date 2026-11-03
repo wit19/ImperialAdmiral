@@ -327,7 +327,7 @@
     "ordPhaseExplain": "Phase: {0} -> {1} (mission clock in its final third).",
     "ordPhaseDefend": "Defensive posture",
     "ordPhaseHunt": "Hunt",
-    "ordPatternRoll": "Rolled doctrine: {0} (draw {1}/100)",
+    "ordPatternRoll": "Pattern roll: {0}/100",
     "ordExplainHead": "EXPLANATION",
     "ordExplainFocusWhy": "Focus target {0}: {1}",
     "apHead": "<color=#C9A6FF><b>ACTION POINTS: {0} — OF WHICH ATTACK POINTS: {1}</b></color>",

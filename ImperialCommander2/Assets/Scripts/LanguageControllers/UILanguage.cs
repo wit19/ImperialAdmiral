@@ -68,6 +68,12 @@ public class UITacticalAI
 	// M13n + M13c: the general RR info block under the action blocks - ONE
 	// merged paragraph: basic attack rule, attack line, door law.
 	public string ordInfoRule, ordInfoAttack, ordInfoDoor;
+	// M6s (Thomas 03.11., B1): guard-zone definition line in the same INFO
+	// block - the bridge adds it ONLY when plan.Pattern == "guard" (the
+	// Wachschutz popup); the zone extent itself is board knowledge the
+	// player reads off the mission (wiki Kalt-Lesetest: the popup knows
+	// no zone tiles), which is exactly what this line says.
+	public string ordInfoGuardZone;
 	public string ordRiskLabel, ordRiskPress, ordRiskHold, ordRiskGuardHold, ordRiskDisengage;
 	public string whyPrefix, whyRank;
 	public string setHeading, setMode, setSkill, setExplain, setInfo, setOn, setOff, setRowFormat;

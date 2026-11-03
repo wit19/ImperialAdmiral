@@ -760,6 +760,14 @@ namespace TacticalAI
                 if (!string.IsNullOrEmpty(Li.ordInfoRule)) infoLines.Add(Li.ordInfoRule);
                 if (!string.IsNullOrEmpty(Li.ordInfoAttack)) infoLines.Add(Li.ordInfoAttack);
                 if (!string.IsNullOrEmpty(Li.ordInfoDoor)) infoLines.Add(Li.ordInfoDoor);
+                // M6s (Thomas 03.11., B1): the guard-zone definition rides the
+                // Wachschutz popup ONLY (plan.Pattern == "guard" - the same
+                // pattern the tree/renderer already resolved above); every
+                // other doctrine popup stays zone-free (OfficerTextGate bug3
+                // law in prose form). EXPLAIN level irrelevant (like the
+                // doctrine line, M6p law); InfoText switch keeps its gate.
+                if (plan.Pattern == "guard" && !string.IsNullOrEmpty(Li.ordInfoGuardZone))
+                    infoLines.Add(Li.ordInfoGuardZone);
                 if (infoLines.Count > 0)
                 {
                     var withInfo = new List<string>(plan.Blocks ?? new string[0]);

@@ -208,8 +208,9 @@ figure's doctrine (`TacticalAIBridge.PatternTree` → `ui.json` keys
 - **Printed limits only.** Move distance, range and legality come from the card and
   the mission's threat budget. Trees never ask for more than the figure prints.
 - **Guard-zone discipline.** Guard trees keep figures inside or entering the guard
-  zone ("Wachzone") and remind you of its meaning on first use; they offer blocking
-  another hero's path to the objective as an alternative to chasing.
+  zone ("Wachzone" — the mission's objective area, see the glossary; *you* identify
+  it on the board from the mission, the app never claims its tiles); they offer
+  blocking another hero's path to the objective as an alternative to chasing.
 
 Under the hood the same priorities drive the planner itself (which candidate targets
 a group may consider — `Core/Patterns.cs`), so popup and plan agree; the popup is

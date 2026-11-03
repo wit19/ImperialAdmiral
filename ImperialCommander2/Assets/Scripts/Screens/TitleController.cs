@@ -385,7 +385,10 @@ public class TitleController : MonoBehaviour
 
 	public void OnDownloadLatest()
 	{
-		Application.OpenURL( "https://github.com/GlowPuff/ImperialCommander2/releases" );
+		// FORK UPDATE LAW (Thomas 03.11): updates come from OUR fork - never
+		// from the upstream repo, whose releases would replace the tactical
+		// AI tree. The donate link above still honours the original author.
+		Application.OpenURL( "https://github.com/wit19/ImperialCommander2/releases" );
 	}
 
 	public void OnLanguageChange()
@@ -640,8 +643,10 @@ public class TitleController : MonoBehaviour
 
 	private IEnumerator CheckVersion()
 	{
-		// /repos/{owner}/{repo}/releases
-		var web = UnityWebRequest.Get( "https://api.github.com/repos/GlowPuff/ImperialCommander2/releases/latest" );
+		// /repos/{owner}/{repo}/releases - OUR fork (wit19), see the fork
+		// update law on OnDownloadLatest: a green icon means "current for
+		// THIS tree", upstream releases are irrelevant to us.
+		var web = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialCommander2/releases/latest" );
 		yield return web.SendWebRequest();
 		if ( web.result == UnityWebRequest.Result.ConnectionError )
 		{

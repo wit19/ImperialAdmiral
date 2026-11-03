@@ -8,7 +8,12 @@ using UnityEngine;
 
 public static class DataStore
 {
-	public static readonly string appVersion = "v.2.2.16";
+	// FORK VERSION LAW (Thomas 03.11): TitleController.CheckVersion compares
+	// the LATEST RELEASE TAG of our fork (wit19) against THIS string. It is
+	// the build identity of the fork tree, not the upstream number: cut a new
+	// release "vX.Y.Z-tacticalai" on the fork and bump this constant in the
+	// same commit, or the title icon stays orange.
+	public static readonly string appVersion = "v2.2.16-tacticalai";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

@@ -148,6 +148,39 @@ namespace TacticalAiHarness
             }
             Check("defend_hold_share_rises", true, holdDef > holdHunt);
 
+            // ------------ M6s-B8 role anchor (Player-19 Ivan Talos, Go 03.11.)
+            // A mission-custom figure (id = mission GUID, DE name) is no
+            // pool card. Its thumbnail role id (DG006) resolves the authored
+            // officer row; the role drives pattern weights ONLY.
+            var ivanGuid = "bcd900bf-d4f2-491c-810b-94f4f66ac5b3";
+            var officerRow = t.WeightsFor("DG006", "");
+            Check("role_officer_row_hit", true, officerRow != null);
+            var viaRole = t.WeightsFor(ivanGuid, "Ivan Talos", "DG006");
+            Check("role_row_equals_pool_row", true,
+                  viaRole != null && officerRow != null &&
+                  string.Join(",", officerRow.OrderBy(kv => kv.Key).Select(kv => kv.Key + ":" + kv.Value))
+                  == string.Join(",", viaRole.OrderBy(kv => kv.Key).Select(kv => kv.Key + ":" + kv.Value)));
+            // role miss = no verdict: the card's own id/name lookup still
+            // runs, row-for-row the old behavior (fresh copies -> compare
+            // CONTENT, never dictionary references).
+            var aMiss = t.WeightsFor(ivanGuid, "Ivan Talos", "DG999");
+            var bOld = t.WeightsFor(ivanGuid, "Ivan Talos");
+            Check("role_miss_falls_through", true,
+                  (aMiss == null && bOld == null) ||
+                  (aMiss != null && bOld != null &&
+                   string.Join(",", aMiss.OrderBy(kv => kv.Key).Select(kv => kv.Key + ":" + kv.Value))
+                   == string.Join(",", bOld.OrderBy(kv => kv.Key).Select(kv => kv.Key + ":" + kv.Value))));
+            // empty role = exact old path (pool cards unaffected).
+            Check("role_empty_identical", true,
+                  t.WeightsFor("DG001", "Stormtrooper", "") != null &&
+                  t.WeightsFor("DG001", "Stormtrooper", "").Count == t.WeightsFor("DG001", "Stormtrooper").Count);
+            // without the role the custom card must NOT magically wear the
+            // officer row (nameMatch on an ids row stays a miss - id verdict).
+            var roleless = t.WeightsFor(ivanGuid, "Ivan Talos");
+            Check("roleless_not_the_officer_row", true,
+                  roleless == null || !roleless.TryGetValue("guard", out var gRoleless) ||
+                  gRoleless != officerRow["guard"]);
+
             // --------------------------------------- no-asset fallback law
             PatternWeights.PrimeDoc(null);
             var empty = PatternWeights.Load();

@@ -60,6 +60,11 @@ public class DeploymentCard : IEquatable<DeploymentCard>
 	public string mugShotPath;
 	public string deploymentOutlineColor;
 	public Guid customCharacterGUID;
+	// Player-19 M6s-B8: the thumbnail's role id (DG006 = Imperialer
+	// Offizier Elite) kept as a machine-readable fact. The tactical AI uses
+	// it ONLY as the role anchor (doctrine pattern row) for mission-spawned
+	// custom figures - printed values, texts and identity stay this card's.
+	public string roleGroupId;
 	//==end other properties
 
 	public bool Equals( DeploymentCard obj )
@@ -155,6 +160,15 @@ public class DeploymentCard : IEquatable<DeploymentCard>
 				card.mugShotPath = $"CardThumbnails/StockVillain{ced.thumbnailGroupImperial.GetDigits()}";
 			else
 				card.mugShotPath = $"CardThumbnails/StockImperial{ced.thumbnailGroupImperial.GetDigits()}";
+		}
+
+		// Player-19 M6s-B8: keep the raw role id (DG006 ...) of the thumbnail
+		// as a machine-readable fact for the tactical AI's role anchor.
+		{
+			var roleRaw = ced.iconType == MarkerType.Rebel ? ced.thumbnailGroupRebel : ced.thumbnailGroupImperial;
+			var digits = ( roleRaw ?? "" ).GetDigits();
+			if ( int.TryParse( digits, out var rn ) && rn > 0 )
+				card.roleGroupId = $"DG{rn:D3}";
 		}
 
 		if ( ced.enemyGroupData.useGenericMugshot )

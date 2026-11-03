@@ -148,8 +148,24 @@ comes up". Tactical mode replaces both halves with planning
   mission; the skill level decides how wisely the budget is spent, never how big it
   is (see [Difficulty](#difficulty)).
 
-When a custom (fan-made) group activates that is not part of the shipped card set,
-it falls back to the legacy draw — the rest of the mission still runs tactically.
+**Flip the hero switch at the END of the hero's activation.** This is your side of
+the deal in tactical mode: ticking a hero's activation checkbox is the one public
+signal that says *"this hero's turn is over now"*, and the tactical AI reads the
+mission log exactly like the table reads it — events written *before* your flip
+belong to that hero (the figure who opened the door gets the door; the hero who
+shot the named target gets the strike credit). If you flip the box at the *start*
+of a turn instead, the AI credits the events to the wrong hero — and it will look
+"very dumb", because the AI only knows what the log says. The flips also appear
+as regular lines in the in-game mission log panel (same kind of line the imperial
+activation pop-ups have always written there).
+
+Mission-authored figures — the special ones a scenario spawns for you (a named
+villain like Ivan Talos, custom bosses, mission troopers) — are planned
+tactically too: the mission file states which printed card each of them
+represents, and the planner uses that role for its doctrine dice while all
+values, orders and text stay exactly the figure's own printed card. Only truly
+foreign groups (your own imported fan characters) still fall back to the legacy
+instruction draw; the rest of the mission still runs tactically around them.
 
 ---
 

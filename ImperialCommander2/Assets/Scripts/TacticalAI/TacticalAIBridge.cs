@@ -1924,7 +1924,7 @@ namespace TacticalAI
             var tbl = PatternWeightTable();
             if (tbl != null && tbl.IsActive)
             {
-                var dist0 = tbl.WeightsFor(c.Id, c.Name);
+                var dist0 = tbl.WeightsFor(c.Id, c.Name, c.RoleId);
                 if (dist0 != null)
                 {
                     // Player-19 (Thomas 03.11, Punkt 3): PROTECT-OBJECTIVE
@@ -2061,10 +2061,26 @@ namespace TacticalAI
             if (cd.id == "DG007" || cd.id == "DG008" ||
                 cd.id == "DG046" || cd.id == "DG071") assault = true;
             if (assault && !kws.Contains("Assault")) kws.Add("Assault");
+            // M6s-B8 (Player-19 Ivan Talos): the ROLE ANCHOR. A mission-
+            // spawned custom card is not a pool card - its mission-GUID id
+            // and DE display name match no pattern-weight row. The mission
+            // file's own thumbnail says which printed card the figure
+            // REPRESENTS (CreateCustomCard kept it as roleGroupId; belt:
+            // old saves without the field still carry the number in the
+            // mugshot path). The role feeds the pattern row ONLY - speed,
+            // dice, health, texts below stay this card's printed data.
+            string role = "";
+            {
+                var roleRaw = !string.IsNullOrEmpty(cd.roleGroupId) ? cd.roleGroupId : cd.mugShotPath;
+                var digits = new string(((roleRaw ?? "").Where(char.IsDigit)).ToArray());
+                int rn;
+                if (int.TryParse(digits, out rn) && rn > 0) role = "DG" + rn.ToString("D3");
+            }
             return new Dictionary<string, object>
             {
                 { "id", cd.id },
                 { "name", cd.name },
+                { "role", role },
                 { "subname", cd.subname ?? "" },
                 { "miniSize", cd.miniSize.ToString() },
                 { "speed", cd.speed },
@@ -2131,6 +2147,35 @@ namespace TacticalAI
                 if (cd == null || cd.isDummy) continue;
                 if (cd.currentSize <= 0) continue;             // wiped group
                 if (!seen.Add(cd.id)) continue;                // first instance = the group
+                // M6s-B8 (Player-19 Ivan Talos): mission-authored custom
+                // figures are NOT in DataStore.deploymentCards - the event
+                // handler keeps them on the override (ovrd.customCard), so
+                // the pool-iterating catalog could never see them and every
+                // one fell to the legacy draw (Thomas bug 4: "Ivan wurde mit
+                // den alten Texten angezeigt"). A MISSION-CUSTOM imperial
+                // card is adopted here, at its first appearance, straight
+                // from its printed data + role thumbnail: it enters this
+                // round's plan, doctrine dice, ORD focus and risk like any
+                // pool card. Fan IMPORTS (isCustomEnemyDeployment false)
+                // keep the legacy fallback - they are not authored card
+                // data. Same membership law as EnsureCatalog.
+                if (!_catalog.ContainsKey(cd.id) && cd.isCustomEnemyDeployment
+                    && cd.characterType == Saga.CharacterType.Imperial)
+                {
+                    try
+                    {
+                        var adopted = Tac.DeploymentCard.FromRecord(ToRecord(cd));
+                        adopted.Pattern = ClassifyPattern(adopted, MissionPosture());
+                        _catalog[cd.id] = adopted;
+                        Debug.Log("TacticalAIBridge::catalog adopt " + cd.id +
+                                  " '" + cd.name + "' role=" + adopted.RoleId +
+                                  " pattern=" + adopted.Pattern);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning("TacticalAIBridge::adopt skip " + cd.id + ": " + e.Message);
+                    }
+                }
                 if (!_catalog.TryGetValue(cd.id, out var core)) continue;  // unknown card: legacy fallback
                 var gv = feedView != null ? feedView.FindGroup(cd.id) : null;
                 var vitality = gv != null ? gv.VitalityFrac : Tac.Rational.One;

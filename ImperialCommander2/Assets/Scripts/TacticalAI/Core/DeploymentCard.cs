@@ -10,6 +10,11 @@ namespace TacticalAI.Core
     {
         public string Id;
         public string Name;
+        // M6s-B8 role anchor (Player-19 Ivan Talos): the printed pool card
+        // this card REPRESENTS (mission thumbnailGroupImperial). "" = the
+        // card IS its own role. Roles drive pattern rows only - never
+        // values, texts or identity (see Core.PatternWeights role law).
+        public string RoleId = "";
         public string MiniSize;
         public int Speed;
         public int Health;
@@ -56,6 +61,7 @@ namespace TacticalAI.Core
             "id","name","subname","miniSize","speed","health",
             "attackType","attacks","keywords","isElite","defense","surges",
             "traits","faction","characterType","tier","cost","size","priority",
+            "role",
         };
 
         public static DeploymentCard FromRecord(Dictionary<string, object> rec)
@@ -67,6 +73,7 @@ namespace TacticalAI.Core
             {
                 Id = Json.AsStr(rec["id"]),
                 Name = Json.AsStr(rec["name"]),
+                RoleId = Json.AsStr(Json.Get(rec, "role", "")),
                 MiniSize = Json.AsStr(rec["miniSize"]),
                 Speed = Json.AsInt(rec["speed"]),
                 Health = Json.AsInt(rec["health"]),

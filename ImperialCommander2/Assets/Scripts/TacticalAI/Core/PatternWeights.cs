@@ -39,8 +39,13 @@ namespace TacticalAI.Core
         {
             if (!string.IsNullOrEmpty(IdMatch))
                 return string.Equals(IdMatch, cardId, StringComparison.Ordinal);
-            if (Ids != null && cardId != null)
+            if (Ids != null)
             {
+                // M6s-B8 note: an ids row is an ID VERDICT (B6 design) - a null
+                // or non-pinned id is a miss, never a nameMatch fallback. The
+                // role-anchor lookup (WeightsFor(cardId, name, role)) passes the
+                // role AS cardId against exactly these rows.
+                if (cardId == null) return false;
                 for (int i = 0; i < Ids.Count; i++)
                     if (string.Equals(Ids[i], cardId, StringComparison.Ordinal)) return true;
                 return false;
@@ -71,6 +76,28 @@ namespace TacticalAI.Core
                 if (r.Matches(cardId, name))
                     return new Dictionary<string, int>(r.Weights);
             return null;
+        }
+
+        /// M6s-B8 (Player-19 Ivan Talos, Thomas Go 03.11.): ROLE ANCHOR.
+        /// A mission-authored custom figure (spawned by a CustomDeployment
+        /// event, id = mission GUID) is not a pool card: its id and DE name
+        /// match no row. The mission file itself says which printed card it
+        /// REPRESENTS (thumbnailGroupImperial, machine-readable in all 39
+        /// official custom deployments) - the app layer passes that id as
+        /// role. A role is only ever resolved against rows that pin an
+        /// explicit card id (a catch-all or name row is never a role), and
+        /// a role that hits no row is not a verdict: the card's own
+        /// id/name lookup still runs (exact old behavior). The role is the
+        /// ROLE only - values, texts and state always stay the mission
+        /// card's own printed data (Thomas' Repraesentation-is-nicht-
+        /// Identitaets rule: a real DG006 group can sit on the same board).
+        public Dictionary<string, int> WeightsFor(string cardId, string name, string role)
+        {
+            if (!string.IsNullOrEmpty(role))
+                foreach (var r in Rows)
+                    if ((!string.IsNullOrEmpty(r.IdMatch) || r.Ids != null) && r.Matches(role, name))
+                        return new Dictionary<string, int>(r.Weights);
+            return WeightsFor(cardId, name);
         }
 
         /// Posture shift (the data row that replaced the defend code

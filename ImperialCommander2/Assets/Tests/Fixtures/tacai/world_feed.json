@@ -1120,6 +1120,117 @@
     "hash": "1870e04238ac483fd2bee225d13ecbffd3710380d07be99254c22356c48538e3",
     "canon": "mission=vector|p19_window_strike_credit\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=6\nG|GIVAN|GIVAN|1|0|1|1|2|5|3/5|name=Ivan Talos\nH|Lokaku|Lokaku|0|0|1|2|0|0|1|2\n"
    }
+  },
+  {
+   "name": "p19_causal_strike_closer",
+   "comment": "M6s-B7 real-game strike law (Player-19 table discipline): the checkbox flip is the END of a turn and now a causal mission-log line. Damage on the objective-named figure arms a pending strike; the hero whose turn closes next is the shooter. MHD-19 can no longer steal it by flipping its (first-ever) box first.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat Ivan Talos.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p19",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GIVAN",
+      "size": 1,
+      "name": "Ivan Talos"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GIVAN",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Defeat Ivan Talos.",
+    "objective_actor": "",
+    "round": 2,
+    "threat": 0,
+    "seq": 4,
+    "hash": "ebdd1d5467628996640536d3710be18ef84fe5f6dea5c501727fa7d8bf31af44",
+    "canon": "mission=vector|p19_causal_strike_closer\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0|1|2\n"
+   }
+  },
+  {
+   "name": "p19_strike_expires_round_end",
+   "comment": "M6s-B7: a strike credit survives no round boundary - damage from the finished round is history, not the next closer's causation.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat Ivan Talos.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p19",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GIVAN",
+      "size": 1,
+      "name": "Ivan Talos"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GIVAN",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 2,
+     "payload": {}
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Defeat Ivan Talos.",
+    "objective_actor": "",
+    "round": 3,
+    "threat": 0,
+    "seq": 5,
+    "hash": "1faadf03b40ded139a1d36a80b9d3e1488c108bf6eea983a4a87c3dd065205a3",
+    "canon": "mission=vector|p19_strike_expires_round_end\nround=3\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos\nH|Jyn Odan|Jyn Odan|0|0|1|3|0|0\n"
+   }
   }
  ]
 }

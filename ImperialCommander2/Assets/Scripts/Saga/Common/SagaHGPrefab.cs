@@ -107,6 +107,16 @@ namespace Saga
 			if ( !activationToggle1.gameObject.activeInHierarchy )
 				return;
 			cardDescriptor.heroState.hasActivated[0] = activationToggle1.isOn;
+
+			// Player-19 M6s-B7: the checkbox flip is the table's OWN "his
+			// turn is over" signal (players switch the hero status at the END
+			// of the activation, never at its start). Writing it into the
+			// mission log makes hero turn order a causal public fact with the
+			// exact same line kind the imperial popups already write - the
+			// tactical feed's objective/strike attribution reads table order
+			// from table data instead of guessing it from poll timing.
+			if ( activationToggle1.isOn && DataStore.sagaSessionData != null )
+				DataStore.sagaSessionData.missionLogger.LogEvent( MissionLogType.GroupActivation, cardDescriptor.name );
 		}
 
 		public void OnActivation2()
@@ -114,6 +124,10 @@ namespace Saga
 			if ( !activationToggle2.gameObject.activeInHierarchy )
 				return;
 			cardDescriptor.heroState.hasActivated[1] = activationToggle2.isOn;
+
+			// Player-19 M6s-B7: see OnActivation1.
+			if ( activationToggle2.isOn && DataStore.sagaSessionData != null )
+				DataStore.sagaSessionData.missionLogger.LogEvent( MissionLogType.GroupActivation, cardDescriptor.name );
 		}
 
 		//popup menu for wound/defeat

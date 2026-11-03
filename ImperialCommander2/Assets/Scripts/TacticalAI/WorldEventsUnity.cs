@@ -50,6 +50,9 @@ namespace TacticalAI
         readonly HashSet<string> _heroWounded = new HashSet<string>();
         readonly HashSet<string> _heroDefeated = new HashSet<string>();
         readonly HashSet<string> _heroActivated = new HashSet<string>();
+        // M6s-B7: heroes whose end-of-turn checkbox flip is already in the
+        // mission log (name#round) - the HUD flag poll must not double-count.
+        readonly HashSet<string> _heroLoggedActivated = new HashSet<string>();
 
         // M8/F5 mission-clock watch: the authored/runtime roundLimit only
         // EXIST if the player's roundLimitToggle setting lets the app show
@@ -155,6 +158,13 @@ namespace TacticalAI
                 _lastRoundLimit = lim;
             }
 
+            // M6s-B7 causal order (Player-19 law): damage first, then the
+            // table's words about it. The wheel dials are polled BEFORE the
+            // logger drain and the objective HUD, so a shot observed in the
+            // same batch as the shooter's end-of-turn checkbox line keeps the
+            // causal sequence shot -> close (strike credit depends on it).
+            PollGroups(round);
+
             // threat + objective (public HUD state)
             long threat = gv.currentThreat;
             if (threat != _threat)
@@ -173,8 +183,8 @@ namespace TacticalAI
             // mission logger: what the App wrote for the player's own log
             DrainLogger(round);
 
-            // deployed groups + per-figure damage wheels + hero markers
-            PollGroups(round);
+            // hero markers (checkbox fallback for sessions without the
+            // M6s-B7 activation lines)
             PollHeroes(round);
         }
 
@@ -192,6 +202,7 @@ namespace TacticalAI
             _heroWounded.Clear();
             _heroDefeated.Clear();
             _heroActivated.Clear();
+            _heroLoggedActivated.Clear();
 
             var sd = DataStore.sagaSessionData;
             var mp = TryMissionProperties();
@@ -262,12 +273,15 @@ namespace TacticalAI
                         Append("Removal", r, P("group", IdForName(name)));
                         break;
                     case Saga.MissionLogType.GroupActivation:
-                        // Player-19: heroes now OPEN their activation window
-                        // (the App's own log line names the hero - public
-                        // activation order). The feed uses the window for the
-                        // terminal objective credit and strike attribution.
+                        // M6s-B7: heroes now WRITE this line too (SagaHGPrefab
+                        // logs the end-of-turn checkbox flip) - the log order
+                        // IS the table order, so "the hero whose turn closed
+                        // after the event did it" runs on real, causally
+                        // ordered data (M10b law finally fed correctly).
+                        // Imperial popups keep their ActivationStart meaning.
                         if (!IsHeroName(name)) Append("ActivationStart", r, P("group", IdForName(name)));
-                        else Append("HeroActivationStart", r, P("hero", name));
+                        else if (_heroLoggedActivated.Add(name + "#" + r))
+                            Append("HeroActivated", r, P("hero", name));
                         break;
                 }
             }
@@ -343,7 +357,16 @@ namespace TacticalAI
                     for (int i = 0; i < hs.hasActivated.Length; i++)
                     {
                         if (!hs.hasActivated[i]) continue;
-                        var tag = name + "#" + i;
+                        // M6s-B7: the logger line is the causal source; the
+                        // HUD flag only fills in sessions whose log predates
+                        // the activation-line change (old saves).
+                        if (_heroLoggedActivated.Contains(name + "#" + round)) continue;
+                        // The tag carries the ROUND: the checkbox resets each
+                        // round, so a flip is a per-round fact - the old
+                        // round-free tag emitted each hero exactly ONCE per
+                        // game (Player-19 saw MHD-19 take the door credit
+                        // simply because its first-ever flip followed it).
+                        var tag = name + "#" + i + "#" + round;
                         if (_heroActivated.Add(tag))
                             Append("HeroActivated", round, P("hero", name));
                     }

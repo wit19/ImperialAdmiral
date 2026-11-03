@@ -208,6 +208,13 @@ namespace TacticalAI.Core
             string lastActivator = null;
             string heroWindow = null;
             bool attributionPending = false;
+            // Player-19 M6s-B7 strike channel: damage on the objective-named
+            // figure that could not credit an open window arms a pending
+            // strike; the hero whose turn CLOSES next (causal - the checkbox
+            // flip is now a mission-log line, M6s-B7 adapter) is the shooter
+            // or the blocker that made it happen. Expires at RoundEnd: a
+            // damage older than the round is history, not causation.
+            bool strikePending = false;
             foreach (var e in events)
             {
                 if (e.Round > v.Round) v.Round = e.Round;
@@ -294,6 +301,12 @@ namespace TacticalAI.Core
                                 striker.Strikes++;
                                 striker.StrikeRound = e.Round;
                             }
+                            else if (heroWindow == null && !string.IsNullOrEmpty(g.DisplayName)
+                                && !string.IsNullOrEmpty(v.Objective)
+                                && NamesHero(v.Objective, g.DisplayName))
+                            {
+                                strikePending = true;   // credits the closer
+                            }
                             break;
                         }
                     case "HeroWounded":
@@ -335,6 +348,19 @@ namespace TacticalAI.Core
                             // the next activation start before the previous
                             // hero's HUD flag) - the window hero is still in
                             // turn, the window stays open.
+                            if (strikePending)
+                            {
+                                // M6s-B7: THIS hero's turn closed right after
+                                // the mission-named figure took damage - with
+                                // the checkbox flip now a causal log line,
+                                // the closer is the shooter (their table
+                                // discipline: status flips at the END of the
+                                // turn, and events fire mid-turn).
+                                var s = Hero(v, e.Str("hero"));
+                                s.Strikes++;
+                                s.StrikeRound = e.Round;
+                                strikePending = false;
+                            }
                             break;
                         }
                     case "HeroActivationStart":
@@ -359,6 +385,12 @@ namespace TacticalAI.Core
                             }
                             break;
                         }
+                    case "RoundEnd":
+                        // M6s-B7: a strike credit survives no round boundary -
+                        // damage from the finished round is history, not the
+                        // next closer's causation.
+                        strikePending = false;
+                        break;
                     // ActivationStart/End, Move, TileChange,
                     // RoundEnd: recorded history for the audit trail and for
                     // consumers that DO have a belief layer; the view itself

@@ -1,0 +1,10 @@
+{
+  "_comment": "M6t (hand-pinned, NOT --record; same route as personas_signature.json): avalanche regression for the per-round doctrine dice. Player-18 playtest 03.11.: Roll salted with Fnv1a64(\"pw|<id>|r<round>\") ^ missionSeed but read only the TOP 53 bits, and FNV-1a does not spread a LAST-CHARACTER change (the round!) into the upper bits - the round salt was inert (DG011 37/37 same pattern). Pair construction: rounds (1,2),(3,4),... kept ONLY where the two keys change exactly ONE character at the END (digit-boundary pairs like r9/r10 are skipped), 100 pairs total. expect_changed_draws = pairs whose draw bucket (Roll's out drawPct) differs: pre-fix this measured 0/100 with this exact seed, post FMix64 finalizer it is pinned at 100/100 (twin-computed, harness cross-check). min_changed_draws = the standing law (>= 90/100 must move) that pins the bug CLASS even if the hash is ever swapped again. expect_changed_patterns = the same count at pattern level: 61 - the categorical ceiling of a 55/10/25/10 weighted 4-way draw is ~61.5% differing pairs, so a future 'fix' that compares patterns and expects near 100 misunderstands the metric.",
+  "card_id": "DG001",
+  "posture": "hunt",
+  "seed": 81985529216486895,
+  "pairs": 100,
+  "min_changed_draws": 90,
+  "expect_changed_draws": 100,
+  "expect_changed_patterns": 61
+}

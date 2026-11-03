@@ -142,6 +142,7 @@ namespace TacticalAiHarness
             Run("personas.json", SecPersonas);
             Run("personas_swap.json", SecPersonasSwap);
             Run("pattern_weights.json", SecPatternWeights);
+            Run("pattern_avalanche.json", SecPatternAvalanche);
             Run("personas_signature.json", SecPersonasSignature);
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +

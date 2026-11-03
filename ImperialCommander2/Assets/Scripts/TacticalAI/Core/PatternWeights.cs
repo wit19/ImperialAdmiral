@@ -92,8 +92,14 @@ namespace TacticalAI.Core
             return dist;
         }
 
-        /// The per-round draw. Same hash family as the persona pattern flip
-        /// (Fnv1a64 over a public key, XOR the mission seed, 53-bit draw).
+        /// The per-round draw. Key: Fnv1a64 over a public key, XOR the
+        /// mission seed, 53-bit draw -- but the hash first passes the FMix64
+        /// finalizer (MurmurHash3 final mix; M6t, 03.11., Player-18
+        /// playtest). FNV-1a alone does not spread a change of the LAST key
+        /// character (the round!) into the upper bits, and the draw reads
+        /// only the top 53 bits -- without the finalizer the round salt was
+        /// inert and every figure kept one pattern for the whole mission.
+        /// Key format, the >>11 draw and the 53-bit division are unchanged.
         /// Deterministic pattern order (ordinal key sort) so the cumulative
         /// pick never depends on Dictionary enumeration order. Empty/zero
         /// distribution -> null (caller falls back to the legacy branch).
@@ -108,6 +114,9 @@ namespace TacticalAI.Core
             foreach (var k in keys) if (dist[k] > 0) total += dist[k];
             if (total <= 0) return null;
             var h = ImperialDecks.Fnv1a64("pw|" + (cardId ?? "") + "|r" + roundNo) ^ missionSeed;
+            h ^= h >> 30; h *= 0xBF58476D1CE4E5B9UL;
+            h ^= h >> 27; h *= 0x94D049BB133111EBUL;
+            h ^= h >> 31;
             var draw = (h >> 11) * (1.0 / 9007199254740992.0);   // [0,1), 53 bits
             double target = draw * total;
             double acc = 0;

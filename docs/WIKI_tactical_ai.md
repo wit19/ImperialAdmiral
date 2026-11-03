@@ -293,7 +293,8 @@ table** `Resources/Languages/En/tactical_pattern_weights.json` (rows matched by
 card id / name, seeded deterministically from mission + card + round; the defend
 posture is the one modifier row, and the emplacement print rule is the single
 pre-roll exception) — shifting round to round like a real battlefield, yet
-identical every time for the same seed. Stance text
+identical every time for the same seed. A final mix in the dice hash makes sure
+the round number actually moves each figure's roll. Stance text
 `Core/Doctrine.StanceText`; popup label `doc*` keys — the label appears in the
 **doctrine line** directly under the focus line on every activation pop-up; German
 labels as shipped):

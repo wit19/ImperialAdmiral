@@ -82,7 +82,15 @@ namespace Saga
 			if ( incVehicle )
 				traits.Add( "Vehicle" );
 
-			if ( !traits.Any( x => enemyToAdd.traits.Contains( x ) ) )
+			//Player-25 M14b-C1: the token list above is ENGLISH by
+			//construction, so it must be compared against the card's ENGLISH
+			//trait lane. `traits` carries the LOCALIZED text after
+			//SetCardTranslations ("Droide" in DE != "Droid" here), which
+			//filtered EVERY DP out in non-EN languages (findings Player-25 C).
+			//Cards with an EN cache compare EN-vs-EN; cards without one
+			//(imported cards, pre-cache saves) keep the old comparison.
+			string[] cardTraits = enemyToAdd.traitsEn ?? enemyToAdd.traits;
+			if ( !traits.Any( x => cardTraits.Contains( x ) ) )
 				return true;
 
 			return false;

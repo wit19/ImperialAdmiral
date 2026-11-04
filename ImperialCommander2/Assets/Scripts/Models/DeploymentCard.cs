@@ -29,6 +29,15 @@ public class DeploymentCard : IEquatable<DeploymentCard>
 	public int speed;
 	//[JsonIgnore]
 	public string[] traits;
+	// Player-25 M14b-C1: the SHIPPED ENGLISH trait lane, cached by the FIRST
+	// SetCardTranslations pass before the localized overwrite erases it (the
+	// data truth: Languages/<lang>/DeploymentGroups/*.json carry the traits
+	// translated - DG013 EN "Droid" / DE "Droide"). Machine-token consumers
+	// (DeploymentPointProps.IsFilteredOut compares against EN tokens) read
+	// this lane; the display lane `traits` stays the localized one.
+	// null = no EN history (imported cards, pre-cache saves) -> consumers
+	// fall back to `traits`, which is the pre-fix behavior.
+	public string[] traitsEn;
 	//[JsonIgnore]
 	public string[] surges;
 	//[JsonIgnore]

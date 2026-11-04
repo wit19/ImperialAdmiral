@@ -491,6 +491,13 @@ public static class DataStore
 					//sanity check, will fail for imported characters (normal behavior when loading state)
 					if ( langcard != null )
 					{
+						//Player-25 M14b-C1: cache the ENGLISH trait lane on the
+						//FIRST pass, before the localized overwrite erases it
+						//(??= keeps the first capture; later passes - state
+						//restore re-runs this - must not re-cache the localized
+						//lane as EN). Imported cards (langcard==null branch)
+						//never get a cache -> consumers keep the old comparison.
+						toCards[i].traitsEn = toCards[i].traitsEn ?? toCards[i].traits;
 						toCards[i].name = langcard.name;
 						toCards[i].subname = langcard.subname;
 						toCards[i].ignored = langcard.ignored;

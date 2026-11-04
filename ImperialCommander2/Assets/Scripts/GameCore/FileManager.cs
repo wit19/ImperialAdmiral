@@ -20,7 +20,7 @@ namespace Saga
 		{
 			Debug.Log( "SETTING UP DEFAULT FOLDERS" );
 			//Application.persistentDataPath for different OSes
-			//Android: storage/emulated/<userid>/Android/data/com.GlowPuff.ImperialCommander2/files
+			//Android: storage/emulated/<userid>/Android/data/com.GlowPuff.ImperialCommander2.tacai/files
 			//MacOS: ~/Library/Application Support/GlowPuff/Imperial Commander 2
 			//Windows: %localappdata%low\GlowPuff\Imperial Commander 2
 			//Linux: $XDG_CONFIG_HOME/unity3d or $HOME/.config/unity3d

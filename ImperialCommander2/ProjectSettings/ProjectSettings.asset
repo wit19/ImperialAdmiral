@@ -156,7 +156,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.GlowPuff.ImperialCommander2
+    Android: com.GlowPuff.ImperialCommander2.tacai
     Standalone: com.GlowPuff.Imperial-Commander-2
   buildNumber:
     Standalone: 0

@@ -130,9 +130,10 @@ namespace TacticalAI.Core
             return map;
         }
 
-        /// Highest PrintedEvTotal x VitalityFrac among the receiver pool
-        /// (the finisher key; the card must be known - unknown EV is never
-        /// bet on). Ties keep the LOWER Index (Python max keeps first).
+        /// Tiered receiver pick - see FigurePayloadKey for the SINGLE-
+        /// FIGURE yardstick (never the PrintedEvTotal group sum) and the
+        /// law header for the ENGAGED-FIRST tiers. Ties keep the LOWER
+        /// Index (Python max keeps first).
         ///
         /// Player-24 log review (Thomas 04.11, Player-24.log R2): ENGAGED
         /// FIRST. A raw-EV pick sent the Vollstreckungsbefehl's plan to the

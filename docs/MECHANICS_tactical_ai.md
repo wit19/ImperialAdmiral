@@ -402,3 +402,33 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   the work dir; the app has no wall knowledge and the feed remains a
   state-differ; `Belief.cs` is still harness-only. Listed here so nobody
   mistakes the concept for the build.
+
+---
+
+## Section-space module (chain in progress — 2026-11-04, NOT player-visible yet)
+
+Positioning layer per `CONCEPT_positionierung_v1.md` (work dir). Landed in
+this range, worker-committed, pending controller QA + push:
+
+- **S-A (20c283a).** Feed producers, state-diff pattern like doors
+  (`WorldEventsUnity.cs`): `SectionActivated` (hook at
+  `TileManager.ActivateMapSection`, caller MissionEventHandler),
+  `EntityInteract` (entity isActive diff keyed by GUID + PlayerSelection
+  logger join), mission-critical table as data file.
+- **S-B (7f4c191).** Pure Core module: `SectionGraph` (tri-state edges —
+  unknown edges are ALWAYS passable, no blocking conclusions ever),
+  `sec:` ledger facts next to `obj:`/`door-GUID:`/`at:`, `SectionMask`
+  per group (deploy-fact seeding), speed trace (section changes per
+  activation window), disjunctives (anonymous victim, HeroWounded).
+  Mandatory fixtures: guard/objective-section case, new-section-with-
+  intruder case. Section census documented.
+- **S-C (1611aeb/1dc3b99).** Mask update rules wired into a
+  SectionSpace projection per computation in the app lifecycle; trust
+  threshold as DATA table (rational constant); skill curve — exception
+  rules run at ALL skill levels (fact-reaction is fairness, not an
+  intelligence bonus), mask refinement / posture clamps / support
+  navigation gate by skill; calibration rail (audit channel only).
+- **Pending, NOT shipped:** consumers (S-D: guard-zone exception order,
+  C(shooter) retaliation key, new-section priority, ringZones feed,
+  posture clamp) and S-QA. Until then the module changes no player-
+  visible behaviour; canon vectors stay byte-identical (pinned).

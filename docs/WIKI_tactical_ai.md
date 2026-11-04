@@ -281,7 +281,7 @@ Officers are the Empire's remote control — their orders go to *another* figure
 - **Officer (DG004/DG005)** — "Order": gives another Imperial figure in range **2
   movement points**. No attack order.
 - **Executive Officer (DG006, elite)** — "Executive Order": gives a figure in range
-  **either 2 movement OR one attack** — one order per command, never both
+  **either 2 movement points OR one attack** — one order per command, never both
   simultaneously; the order consumes the officer's own attack point.
 - Which figure, and which target / which direction, is chosen at the board through
   the pop-up questions. The officer's own fragility (and its cover trick of
@@ -502,7 +502,7 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 | Reinforcement entry | Rolled/drawn deployment points | Deterministic deployment choice from the plan (same seed → same landing zones) |
 | Imperial growth | Baked-in convenience growth | Unchanged — no Imperial purchases in this release (see [what this release does not include](#not-included)) |
 | Wound status | Cosmetic in places | Machine-grade input: from Veteran up the AI *reads your marks* and finishes wounded heroes |
-| Officers | Passive stat figures | Command figures: 2 movement (Officer) or movement **or** attack (Executive Officer), gated by a machine-checked rule text |
+| Officers | Passive stat figures | Command figures: 2 movement points (Officer) or movement **or** attack (Executive Officer), gated by a machine-checked rule text |
 | Personas | — | Six commanders, ranks 1–4 by mission threat, doctrine bending + Delta-0 signature elites |
 | Explanations | — | Optional reasoning lines on the pop-ups (EXPLAIN = FULL) |
 

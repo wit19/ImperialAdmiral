@@ -17,7 +17,7 @@ public static class DataStore
 	// how we see which build is current. Tag + release move WITH the push in
 	// the same step (tag from main, same tag as release title), or the title
 	// icon goes orange: the counter and the latest tag must stay married.
-	public static readonly string appVersion = "v.2.2.16#1002";
+	public static readonly string appVersion = "v.2.2.16#1003";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

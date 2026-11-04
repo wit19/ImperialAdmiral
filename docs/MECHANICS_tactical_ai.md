@@ -450,9 +450,14 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   the chain slot (`order_plan.player20.*`, `order_plan.player21.*`).
   Canon: 45266 → 45282 checks, additions only, no existing fixture
   touched.
-- **Canon through the whole chain:** 45174 -> 45266 checks, additions
-  only, no existing fixture touched; every new behaviour fires only on a
-  present fact or a trusted belief, never on absence.
+- **Canon through the whole chain:** 45174 -> 45312 checks. Additions
+  only, with ONE deliberate law-flip exception: `p19_causal_strike_closer`
+  flips its expected objective_actor from empty to Jyn Odan because the
+  Player-21-b closed-window credit now also moves the marker (commented in
+  the fixture). Every new behaviour fires only on a present fact or a
+  trusted belief, never on absence; Player-22's `|crit=` column prints
+  only where the Spawn carried the key, so every pre-Player-22 vector
+  stays byte-identical.
 
 ---
 

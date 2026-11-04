@@ -65,11 +65,18 @@ namespace TacticalAI.Core
         public int? ArrivedRound;               // null: on board from mission start
         public bool IsHeavy;                    // Large/Massive base (printed size)
         public bool IsSwarm;                    // small + fast doctrine of many bodies
+        // R-C: the App's public deployment priority flag (DeploymentCard.
+        // priority == 1, the same fact the legacy random draw biases toward).
+        // PlanRound NEVER reads it (canon untouched); ReactionOrder consumes
+        // it ONLY inside the unknown-card block (fan imports without a
+        // catalog entry), where it is the only ordering knowledge there is.
+        public bool PriorityOne;
 
         public GroupFacts(string groupId, int index, string cardId, string name,
                           string pattern, int nAlive, Rational vitalityFrac,
                           string zone = null, int? arrivedRound = null,
-                          bool isHeavy = false, bool isSwarm = false)
+                          bool isHeavy = false, bool isSwarm = false,
+                          bool priorityOne = false)
         {
             GroupId = groupId;
             Index = index;
@@ -82,6 +89,7 @@ namespace TacticalAI.Core
             ArrivedRound = arrivedRound;
             IsHeavy = isHeavy;
             IsSwarm = isSwarm;
+            PriorityOne = priorityOne;
         }
     }
 

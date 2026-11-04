@@ -582,11 +582,17 @@ namespace TacticalAI
 
         // ------------------------------------------------------ activation hook
 
-        /// <summary>OnActivateImperial hook: next group in the planned order
-        /// instead of the legacy 70%-priority random draw. Returns false (=>
-        /// caller keeps legacy RNG path verbatim) when the planned group is
-        /// not among the candidates (e.g. custom-imported cards without a
-        /// catalog entry, deployed but never planned).</summary>
+        /// <summary>OnActivateImperial hook: R-C (concept v1.2 par.2.2,
+        /// Thomas decision 04.11., IMMER) - the order is re-scored from the
+        /// REMAINING figures at EVERY press: ReactionOrder.SelectNext over
+        /// exactly the candidates handed here (the App's GetNonExhaustedGroups
+        /// IS the pending set; ExhaustGroup per activation keeps the
+        /// permutation), round plan as basis + public feed reaction pushes.
+        /// The old "first still-present slot of the cached _slots scan" is
+        /// retired - the round plan stays as the basis and the per-round
+        /// dice (M13u via EnsureRound), never as the pick. Returns false
+        /// (=> caller keeps legacy RNG path verbatim) when TACTICAL is off
+        /// or ANY exception fires (playtest fail-open law 27.10.).</summary>
         public static bool TryPeekNextActivation(List<global::DeploymentCard> candidates,
                                                  out global::DeploymentCard next)
         {
@@ -599,12 +605,75 @@ namespace TacticalAI
                 // an activation order for a mission the user switched OFF.
                 if (!ActiveNow() || candidates == null || candidates.Count == 0)
                     return false;
-                EnsureRound(CurrentRound());
-                foreach (var slot in _slots)
+                var roundNo = CurrentRound();
+                // M13u contract stays untouched: EnsureRound keeps the
+                // per-round doctrine dice/focus/posture (one pattern roll per
+                // figure per ROUND) and the cached plan as the PREVIEW the
+                // popup line shows. Only the PICK moves from the slot scan to
+                // the per-click re-evaluation.
+                EnsureRound(roundNo);
+
+                var view = _lastFeedView;   // EnsureSessionFresh pulled it fresh
+                BuildGroups(out var factsFresh, out var figuresFresh, view);
+                var factById = new Dictionary<string, Tac.GroupFacts>();
+                foreach (var f in factsFresh)
+                    if (!factById.ContainsKey(f.GroupId)) factById[f.GroupId] = f;
+
+                var pending = new List<string>();
+                var selFacts = new List<Tac.GroupFacts>();
+                var seenIds = new HashSet<string>();
+                int synthIdx = factsFresh.Count;
+                foreach (var cd in candidates)
                 {
-                    var cd = candidates.FirstOrDefault(x => x.id == slot.GroupId);
-                    if (cd != null) { next = cd; return true; }
+                    if (cd == null || string.IsNullOrEmpty(cd.id)) continue;
+                    if (!seenIds.Add(cd.id)) continue;      // one candidate per group
+                    Tac.GroupFacts f;
+                    if (!factById.TryGetValue(cd.id, out f))
+                    {
+                        // Not in BuildGroups' roster: a fan IMPORT without a
+                        // catalog entry (M6s-B8 law: legacy popup, but it
+                        // participates in the order - no random-draw fallback
+                        // while TACTICAL picks) or a group that left the live
+                        // roster between polls. Honest minimal fact: pattern
+                        // from this round's snapshot when present; priority==1
+                        // is public deployment knowledge (unknown-block law).
+                        string pat = null;
+                        if (_patternByCard != null) _patternByCard.TryGetValue(cd.id, out pat);
+                        f = new Tac.GroupFacts(cd.id, synthIdx++, cd.id, cd.name,
+                            pattern: pat,
+                            nAlive: Math.Max(1, cd.currentSize),
+                            vitalityFrac: Tac.Rational.One,
+                            zone: null, arrivedRound: null,
+                            isHeavy: false, isSwarm: false,
+                            priorityOne: cd.priority == 1);
+                    }
+                    pending.Add(cd.id);
+                    selFacts.Add(f);
                 }
+                if (pending.Count == 0) return false;
+
+                var posture = "eliminate";
+                if (view != null && !string.IsNullOrEmpty(view.Posture)) posture = view.Posture;
+                var skill = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
+                int rung = 1;   // defensive: a null profile keeps the honest S1 basis-only handicap
+                if (skill != null && skill.Level != null && skill.Level.Length == 2 && skill.Level[0] == 'S')
+                    rung = skill.Level[1] - '0';
+
+                string why;
+                var pick = Tac.ReactionOrder.SelectNext(roundNo, pending, selFacts, _catalog,
+                    posture, rung, SessionSeed(), view, MissionCounter(), out why);
+                foreach (var cd in candidates)
+                    if (cd != null && cd.id == pick) { next = cd; break; }
+                if (next == null)
+                {
+                    Debug.LogWarning("TacticalAIBridge::TACTICAL pick '" + pick +
+                                     "' not among the candidates -> legacy draw (fail-open)");
+                    return false;
+                }
+                // Thomas reads the log as the explanation UI: the public
+                // points account behind this pick (concept 2.4 why-line).
+                Debug.Log("TacticalAIBridge::" + why);
+                return true;
             }
             catch (Exception e)
             {
@@ -2302,7 +2371,21 @@ namespace TacticalAI
                     pattern: pattern,                          // M4 + Punkt-2 band
                     nAlive: Math.Max(1, cd.currentSize),
                     vitalityFrac: vitality,
-                    zone: null, arrivedRound: null,
+                    // R-C (Bridge:2305 ALT: arrivedRound: null hart - der
+                    // Slot-Gedanke deploy_before_intercept war im App TOT,
+                    // obwohl der Feed DeployedRound kennt. NEU: die Runde, in
+                    // der der Spawn-Event diesen auf das Board brachte.
+                    // Baseline-Gruppen bekommen KEINEN Spawn-Event (Feed-
+                    // Gesetz: Zustand beim Feed-Start ist kein Delta) ->
+                    // DeployedRound 0 -> null = "von Rundenanfang an auf dem
+                    // Brett", genau die alte Canon-Semantik. Nur echte
+                    // Deploy-in-Runde-Faelle (Verstarkungen, Mid-Round-
+                    // Spawns) aktivieren den Intercept-Slot. Harness-Canon
+                    // bleibt ungeruehrt: die order_plan-Vektoren fuehren
+                    // arrivedRound als Fakt mit (gi==4 -> 3 in Runde 3), der
+                    // Zapfen war bisher nur taub.)
+                    zone: null,
+                    arrivedRound: gv != null && gv.DeployedRound > 0 ? gv.DeployedRound : (int?)null,
                     isHeavy: core.IsLargeBase, isSwarm: false));
                 var fig = new Tac.Figure
                 {

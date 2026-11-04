@@ -1,0 +1,1492 @@
+{
+  "_comment": "R-C ReactionOrder golden vectors (concept eventreaktionen v1.2 par.2.2, Thomas decision 04.11.: per-click re-score of the REMAINING figures, IMMER, no switch). Expect blocks were cast once with --record and reviewed case by case (reaction_order_record.json is the raw record twin); the hand-pinned LAWS live at the bottom of SectionsReactionOrder.cs (class dominance, skill gates S1/S2/S3, unknown block + priority==1, fail-loud, finisher_last stays in the BASIS while the overlay overrules it, no-feed pure basis, R3 needs window AND round, multi-push shows the top class). ALT->NEU Begruendung: before R-C the pick was the first still-present slot of the cached round plan (order frozen at round start); these vectors pin the NEW law - events of the current round re-order the pick while the per-round dice (pattern roll, seeded missers via the round seed formula) stay bit-identical to the EnsureRound plan.",
+  "cases": [
+    {
+      "name": "rc_palpatine_case",
+      "comment": "Thomas playtest case 1: the mission names Palpatine, rebels engage HIM in an open hero window this round, he is the S4 finisher parked LAST by finisher_last - the R2 overlay overrules the pick immediately, while the recorded basis still shows him last (finisher_last stays PlanRound law). Storm units are blocker/support pattern so he is the ONLY R2 qualifier (guards around him would share the obligation and precede him on the shared event seq by basis - pinned separately in rc_tie_break).",
+      "round": 3,
+      "skill": 4,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": "woundAll",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill Palpatine.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_palpatine",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "PALP",
+            "size": 1,
+            "name": "Palpatine"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM1",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM2",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "MEDIC",
+            "size": 1,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 3,
+          "payload": {
+            "group": "PALP",
+            "figure": 0,
+            "wheel": 1,
+            "health": 5
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "PALP",
+          "card": "DG021",
+          "index": 0,
+          "name": "Palpatine",
+          "pattern": "aggressive",
+          "n_alive": 1,
+          "vitality": "4/5"
+        },
+        {
+          "id": "STORM1",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "blocker",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "STORM2",
+          "card": "DG001",
+          "index": 2,
+          "name": "Stormtrooper",
+          "pattern": "support",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "MEDIC",
+          "card": "DG009",
+          "index": 3,
+          "name": "Officer",
+          "pattern": "support",
+          "n_alive": 2,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "PALP",
+        "STORM1",
+        "STORM2",
+        "MEDIC"
+      ],
+      "expect": {
+        "pick": "PALP",
+        "why": "TACTICAL next r3 -> Palpatine |R2:3000(seq 7)|basis:3| ; vor Officer |Basis:0|basis:0| — Ziel-Interaktion durch Lokaku",
+        "basis": {
+          "order": [
+            "MEDIC",
+            "STORM2",
+            "STORM1",
+            "PALP"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_retaliation_case",
+      "comment": "R1 Vergeltung (S2): die Stormtrooper-Gruppe wird in Hans offenem Fenster beschossen; die stärkste Gruppe der Basis (Biker hunter) muss sich hinter der Vergeltung einordnen. Der Letztschuss-Held steht öffentlich im why.",
+      "round": 3,
+      "skill": 2,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Eliminate the rebels.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_retaliation",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "BIKER",
+            "size": 2,
+            "name": "Biker"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFFICER",
+            "size": 1,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 3,
+          "payload": {
+            "group": "STORM",
+            "figure": 0,
+            "wheel": 2,
+            "health": 3
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "BIKER",
+          "card": "DG021",
+          "index": 0,
+          "name": "Biker",
+          "pattern": "hunter",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "STORM",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1/3"
+        },
+        {
+          "id": "OFFICER",
+          "card": "DG009",
+          "index": 2,
+          "name": "Officer",
+          "pattern": "support",
+          "n_alive": 1,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "BIKER",
+        "STORM",
+        "OFFICER"
+      ],
+      "expect": {
+        "pick": "STORM",
+        "why": "TACTICAL next r3 -> Stormtrooper |R1:2000(seq 6)|basis:1| ; vor Biker |Basis:0|basis:0| — Reaktion auf Beschuss durch Han",
+        "basis": {
+          "order": [
+            "BIKER",
+            "STORM",
+            "OFFICER"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_intruder_case",
+      "comment": "R3 Eindringling (S2): Der Spawn fiel in Lukes offenes Fenster DIESER Runde (R-B Marker) - die frische Ankunft ist dran, nicht die eingesessene Staerke. Spawn ohne Fenster bzw. Fenster-Spawn einer FRUEHEREN Runde bleiben un-getriggert (Law 7, hand-pinned).",
+      "round": 2,
+      "skill": 2,
+      "seed": 4711,
+      "posture": "stall",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the terminal.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_intruder",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "VET",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Luke"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 2,
+          "payload": {
+            "group": "REINF",
+            "size": 1,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Luke"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "VET",
+          "card": "DG021",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "REINF",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 1,
+          "vitality": "1",
+          "arrived_round": 2
+        }
+      ],
+      "pending": [
+        "VET",
+        "REINF"
+      ],
+      "expect": {
+        "pick": "REINF",
+        "why": "TACTICAL next r2 -> Stormtrooper |R3:1000|basis:1| ; vor Stormtrooper |Basis:0|basis:0| — Neue Ankunft in dieser Runde",
+        "basis": {
+          "order": [
+            "VET",
+            "REINF"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_skill_gate_s1",
+      "comment": "Skill-Gate exakt (Thomas 04.11. #3): S1 liest NUR die Punkte-Basis - ehrliches Handicap. Vektor identisch zu s2/s3 (Objekt-Interaktion im Fenster + spaeterer Schuss): kein einziger Schub, der Basis-Kopf ist dran.",
+      "round": 2,
+      "skill": 1,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the terminal.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_gate",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SHOT",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OTHER",
+            "size": 1,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "SHOT",
+            "figure": 0,
+            "wheel": 1,
+            "health": 3
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "GUARD",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "SHOT",
+          "card": "DG021",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "OTHER",
+          "card": "DG009",
+          "index": 2,
+          "name": "Officer",
+          "pattern": "support",
+          "n_alive": 1,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "GUARD",
+        "SHOT",
+        "OTHER"
+      ],
+      "expect": {
+        "pick": "GUARD",
+        "why": "TACTICAL next r2 -> Stormtrooper |Basis:0|basis:0| ; vor Stormtrooper |Basis:0|basis:1| — Geplante Reihenfolge",
+        "basis": {
+          "order": [
+            "GUARD",
+            "SHOT",
+            "OTHER"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_skill_gate_s2",
+      "comment": "S2 = R1+R3, R2 bleibt AUS: die beschossene Gruppe fuehrt (Vergeltung), die Wach-Ankergruppe mit Objekt-Interaktion bekommt keinen Schutzpunkt (erst ab S3).",
+      "round": 2,
+      "skill": 2,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the terminal.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_gate",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SHOT",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OTHER",
+            "size": 1,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "SHOT",
+            "figure": 0,
+            "wheel": 1,
+            "health": 3
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "GUARD",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "SHOT",
+          "card": "DG021",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "OTHER",
+          "card": "DG009",
+          "index": 2,
+          "name": "Officer",
+          "pattern": "support",
+          "n_alive": 1,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "GUARD",
+        "SHOT",
+        "OTHER"
+      ],
+      "expect": {
+        "pick": "SHOT",
+        "why": "TACTICAL next r2 -> Stormtrooper |R1:2000(seq 9)|basis:0| ; vor Stormtrooper |Basis:0|basis:1| — Reaktion auf Beschuss durch Han",
+        "basis": {
+          "order": [
+            "SHOT",
+            "GUARD",
+            "OTHER"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_skill_gate_s3",
+      "comment": "S3+ = alle Schuebe: Schutzpflicht hebt die Wache ueber die frische Vergeltung (Klasse > Ereignis-Seq, Thomas #4).",
+      "round": 2,
+      "skill": 3,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the terminal.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_gate",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SHOT",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OTHER",
+            "size": 1,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "SHOT",
+            "figure": 0,
+            "wheel": 1,
+            "health": 3
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "GUARD",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "SHOT",
+          "card": "DG021",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "OTHER",
+          "card": "DG009",
+          "index": 2,
+          "name": "Officer",
+          "pattern": "support",
+          "n_alive": 1,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "GUARD",
+        "SHOT",
+        "OTHER"
+      ],
+      "expect": {
+        "pick": "GUARD",
+        "why": "TACTICAL next r2 -> Stormtrooper |R2:3000(seq 6)|basis:2| ; vor Stormtrooper |R1:2001(seq 9)|basis:1| — Missionsziel-Interaktion durch Lokaku",
+        "basis": {
+          "order": [
+            "OTHER",
+            "SHOT",
+            "GUARD"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_determinism_case",
+      "comment": "Zwei Aufrufe auf identischem Pending-Set + identischem Event-Stream liefern identische Wahl UND identische Konto-Zeile (concept 2.4). Der Double-Call laeuft in JEDEM Fall; dieser Fall ist das benannte Golden dafuer.",
+      "round": 2,
+      "skill": 2,
+      "seed": 4242,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the terminal.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_gate",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SHOT",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OTHER",
+            "size": 1,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "SHOT",
+            "figure": 0,
+            "wheel": 1,
+            "health": 3
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "GUARD",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "SHOT",
+          "card": "DG021",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "OTHER",
+          "card": "DG009",
+          "index": 2,
+          "name": "Officer",
+          "pattern": "support",
+          "n_alive": 1,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "GUARD",
+        "SHOT",
+        "OTHER"
+      ],
+      "expect": {
+        "pick": "SHOT",
+        "why": "TACTICAL next r2 -> Stormtrooper |R1:2000(seq 9)|basis:0| ; vor Stormtrooper |Basis:0|basis:1| — Reaktion auf Beschuss durch Han",
+        "basis": {
+          "order": [
+            "SHOT",
+            "GUARD",
+            "OTHER"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_pattern_stability",
+      "comment": "M13u-Vertrag: die Basis-Wuerfel (S3/S4 seeded missers) reproduzieren exakt die Wuerfe der Rundenformel sessionSeed ^ round*GOLDEN - Basis ist der EnsureRound-Plan Wort fuer Wort (AsDict-Vergleich gegen direkten PlanRound-Aufruf im Harness-Code).",
+      "round": 4,
+      "skill": 4,
+      "seed": 20260,
+      "posture": "eliminate",
+      "counter": "woundAll",
+      "pattern_stability": 1,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Eliminate the rebels.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_stability",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "S1",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "S2",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "S3",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "B1",
+            "size": 1,
+            "name": "Biker"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "T1",
+            "size": 1,
+            "name": "Stormtrooper"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "S1",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "S2",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "S3",
+          "card": "DG001",
+          "index": 2,
+          "name": "Stormtrooper",
+          "pattern": "hunter",
+          "n_alive": 2,
+          "vitality": "3/4"
+        },
+        {
+          "id": "B1",
+          "card": "DG021",
+          "index": 3,
+          "name": "Biker",
+          "pattern": "aggressive",
+          "n_alive": 1,
+          "vitality": "1"
+        },
+        {
+          "id": "T1",
+          "card": "DG009",
+          "index": 4,
+          "name": "TIE",
+          "pattern": "support",
+          "n_alive": 2,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "S1",
+        "S2",
+        "S3",
+        "B1",
+        "T1"
+      ],
+      "expect": {
+        "pick": "T1",
+        "why": "TACTICAL next r4 -> TIE |Basis:0|basis:0| ; vor Stormtrooper |Basis:0|basis:1| — Geplante Reihenfolge",
+        "basis": {
+          "order": [
+            "T1",
+            "S3",
+            "B1",
+            "S2",
+            "S1"
+          ],
+          "miss": ""
+        }
+      }
+    },
+    {
+      "name": "rc_permutation_walk",
+      "comment": "Permutations-Invariante als Ablauf (concept 2.4): die Klick-Sequenz ueber den Event-Vektor besucht GENAU die Pending-Menge - kein Duplikat, kein Ueberspringer; REINF ist noch NICHT im Pending: es laeuft erst mit seinem Spawn-Event auf (groups_add, App-Treue: erst Board, dann Kandidat) und wird im naechsten Klick dank R3-Schub (Fenster) plus Deploy-Slot vorgezogen; so zeigt der Walk Schub UND Permutation (Multiset ueber Initiale PLUS Mid-Round-Ankoemmlinge). Multiset- und Duplikats-Gesetze prueft der Harness-Code in JEDEM walk-Fall, der expect-Block pinnt die konkrete Reihenfolge. Alt->Neu: vor R-C war die Sequenz starr der Rundenplan-Cache; jetzt wird nach jedem Klick neu bewertet.",
+      "round": 2,
+      "skill": 3,
+      "seed": 777,
+      "posture": "eliminate",
+      "counter": null,
+      "walk": 1,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Eliminate the rebels.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_walk",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "A1",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "A2",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "H1",
+            "size": 2,
+            "name": "Biker"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "G1",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "A1",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "A2",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "H1",
+          "card": "DG021",
+          "index": 2,
+          "name": "Biker",
+          "pattern": "hunter",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "G1",
+          "card": "DG001",
+          "index": 3,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "A1",
+        "A2",
+        "H1",
+        "G1"
+      ],
+      "mid_events": [
+        {
+          "after_step": 1,
+          "events": [
+            {
+              "kind": "HeroActivationStart",
+              "round": 2,
+              "payload": {
+                "hero": "Luke"
+              }
+            },
+            {
+              "kind": "Spawn",
+              "round": 2,
+              "payload": {
+                "group": "REINF",
+                "size": 1,
+                "name": "Stormtrooper"
+              }
+            },
+            {
+              "kind": "HeroActivated",
+              "round": 2,
+              "payload": {
+                "hero": "Luke"
+              }
+            }
+          ],
+          "groups_add": [
+            {
+              "id": "REINF",
+              "card": "DG001",
+              "index": 4,
+              "name": "Stormtrooper",
+              "pattern": "blocker",
+              "n_alive": 1,
+              "vitality": "1",
+              "arrived_round": 2
+            }
+          ]
+        },
+        {
+          "after_step": 2,
+          "events": [
+            {
+              "kind": "HeroActivationStart",
+              "round": 2,
+              "payload": {
+                "hero": "Han"
+              }
+            },
+            {
+              "kind": "GroupDamage",
+              "round": 2,
+              "payload": {
+                "group": "A2",
+                "figure": 0,
+                "wheel": 1,
+                "health": 3
+              }
+            },
+            {
+              "kind": "HeroActivated",
+              "round": 2,
+              "payload": {
+                "hero": "Han"
+              }
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "pick": "H1",
+        "basis": {
+          "order": [
+            "H1",
+            "A1",
+            "A2",
+            "G1"
+          ],
+          "miss": ""
+        },
+        "walk": [
+          "H1",
+          "REINF",
+          "A2",
+          "A1",
+          "G1"
+        ]
+      }
+    },
+    {
+      "name": "rc_tie_break",
+      "comment": "Kollision exakt: Klasse absteigend (R2 vor allem), innerhalb Klasse Ereignis-Seq absteigend (R1 vom spaeteren seq vor R1 vom frueheren), dann PlanRound-Position (die zwei seq-losen R3-Gruppen C,D nach Basis); dahinter der Unbekannt-Block: Fan-Importe hinter allen Bekannten, priority==1 (U2) springt innerhalb des Blocks nach vorn. walk=1 pinnt die volle Reihenfolge.",
+      "round": 2,
+      "skill": 4,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "walk": 1,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the terminal.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "rc_tie",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "E",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "A",
+            "size": 2,
+            "name": "Biker"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "B",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Leia"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "B",
+            "figure": 0,
+            "wheel": 1,
+            "health": 3
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Leia"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 2,
+          "payload": {
+            "group": "C",
+            "size": 1,
+            "name": "Biker"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 2,
+          "payload": {
+            "group": "D",
+            "size": 1,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Chewbacca"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "A",
+            "figure": 0,
+            "wheel": 1,
+            "health": 5
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Chewbacca"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "E",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "guard",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "A",
+          "card": "DG021",
+          "index": 1,
+          "name": "Biker",
+          "pattern": "hunter",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "B",
+          "card": "DG001",
+          "index": 2,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "C",
+          "card": "DG021",
+          "index": 3,
+          "name": "Biker",
+          "pattern": "aggressive",
+          "n_alive": 1,
+          "vitality": "1",
+          "arrived_round": 2
+        },
+        {
+          "id": "D",
+          "card": "DG001",
+          "index": 4,
+          "name": "Stormtrooper",
+          "pattern": "blocker",
+          "n_alive": 1,
+          "vitality": "1",
+          "arrived_round": 2
+        },
+        {
+          "id": "U2",
+          "card": "CUSTOM_FAN_ELITE",
+          "index": 5,
+          "name": "Fan Import One",
+          "pattern": "aggressive",
+          "n_alive": 1,
+          "vitality": "1",
+          "priority_one": 1
+        },
+        {
+          "id": "U1",
+          "card": "CUSTOM_FAN_BASE",
+          "index": 6,
+          "name": "Fan Import Two",
+          "pattern": "aggressive",
+          "n_alive": 1,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "E",
+        "A",
+        "B",
+        "C",
+        "D",
+        "U2",
+        "U1"
+      ],
+      "expect": {
+        "pick": "E",
+        "basis": {
+          "order": [
+            "D",
+            "C",
+            "B",
+            "E",
+            "A"
+          ],
+          "miss": ""
+        },
+        "walk": [
+          "E",
+          "A",
+          "B",
+          "D",
+          "C",
+          "U2",
+          "U1"
+        ]
+      }
+    }
+  ]
+}

@@ -49,6 +49,11 @@ public class UITacticalAI
 	// group's deck)" does not exist in this app's flow - honest removal).
 	public string specialAsPrinted, restLine, interactLine;
 	public string focusPrefix, focusWounded, focusFirepower;
+	// R-D (Konzept eventreaktionen v1.2 §2.3, Thomas-Punkt 3a): clause on
+	// the focus line when the reaktion key decided the pick; {0} = the
+	// activated figure's name. Pronoun-free wording is deliberate (the
+	// 21-hero roster carries female heroes).
+	public string ordFocusReaktion;
 	// M6 overlord explain parts (public threat economy + aim marks + risk).
 	// M13c (Thomas 30.10): ordRoundFocus + focusNoChance REMOVED from the
 	// focus-target WHY line (the "all groups converge...; no chance" tail).
@@ -145,6 +150,9 @@ public class UITacticalAI
 	public string ordFocusMeasureDamage, ordFocusMeasureRunner;
 	public string ordFocusBasisMark, ordFocusBasisChip, ordFocusBasisConditioned;
 	public string ordFocusBasisEconomy, ordFocusBasisPrinted;
+	// R-D: basis label when the reaktion key decided the focus (EXPLAIN
+	// disclosure line "Grundlage: ...").
+	public string ordFocusBasisReaktion;
 	// Punkt 2 (Thomas 01.11.): doctrine phase disclosure - one-shot QM at
 	// the defend->hunt flip and the EXPLAIN line naming both phases.
 	public string ordPhaseShiftQM, ordPhaseExplain, ordPhaseDefend, ordPhaseHunt;

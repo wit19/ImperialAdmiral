@@ -1468,6 +1468,379 @@
      "wounded": false
     }
    ]
+  },
+  {
+   "name": "reaction_on",
+   "_comment": "R-D reaction_on (Konzept eventreaktionen v1.2 par.2.3, Thomas-Punkt 3a; alt->neu: alt lief Gaarkhan als verwundeter Economy-Dritter, neu fuehrt er - sein Schuss auf die aktivierte Gruppe fiel in DIESER Runde in ein offenes Heldenfenster (R-A Feed-Attribution LastShotHero/LastShotRound), also setzt der Kern den reaktion-Key genau fuer diese Aktivierung. Der Key reiht NACH mark (Designierung des Menschen am Thron bleibt Koenig - hier unmarkiert) und VOR der counter/Economy-Ebene. Basis-Token 'reaktion' + AsDict-Key 'reaktion' reiten NUR auf dieser Zeile (record discipline); alle andern Zeilen canon-idential. Skill rung 2 = S2 (Key laeuft ab S2 wie R1). expect via --record, reviewed.",
+   "posture": "eliminate",
+   "counter": null,
+   "reaction": {
+    "skill": 2,
+    "view_round": 4,
+    "objective": "Defeat the rebels.",
+    "group_id": "DG031",
+    "display": "Reinforced Patrol",
+    "shot_hero": "Gaarkhan",
+    "shot_round": 4,
+    "pattern": "hunter",
+    "key": "Gaarkhan"
+   },
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Squad Stranger",
+     "row": 3,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 5,
+     "health": 4
+    }
+   ],
+   "expect": [
+    {
+     "basis": "reaktion",
+     "hero": "Gaarkhan",
+     "marked": false,
+     "reaktion": true,
+     "threat": "5/6",
+     "threat_econ": "5/3",
+     "wounded": true
+    },
+    {
+     "basis": "economy",
+     "hero": "Han Solo",
+     "marked": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "wounded": false
+    },
+    {
+     "basis": "proxy",
+     "hero": "Squad Stranger",
+     "marked": false,
+     "threat": null,
+     "threat_econ": null,
+     "wounded": true
+    }
+   ]
+  },
+  {
+   "name": "reaction_guard_exception",
+   "_comment": "R-D reaction_guard_exception (WACH-AUSNAHME, Thomas-Formulierung): gleiche Schuss-Lage wie reaction_on, aber die aktivierte Gruppe IST Wach-Ankergruppe am Missionsziel - Guardhold-Deskriptor: der Missionsziel-Text nennt die Figur ('Besiegt Ivan Talos.', Player-19-Gesetz, Wiederverwendung statt Parallelgesetz). Kein reaktion-Key; die Gruppe schaetzt stattdessen die groesste Bedrohung FUERS MISSIONSZIEL - der normale Rank-Kopf (Han Solo, Economy) fuehrt wie in eliminate_economy (expect zahlgleich zu dem Canon-Fall, Begruendung alt->neu: Null-Key == Altpfad).",
+   "posture": "eliminate",
+   "counter": null,
+   "reaction": {
+    "skill": 3,
+    "view_round": 4,
+    "objective": "Besiegt Ivan Talos. Er darf nicht entkommen.",
+    "group_id": "DG055",
+    "display": "Ivan Talos",
+    "shot_hero": "Gaarkhan",
+    "shot_round": 4,
+    "pattern": "hunter",
+    "key": null
+   },
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Squad Stranger",
+     "row": 3,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 5,
+     "health": 4
+    }
+   ],
+   "expect": [
+    {
+     "basis": "economy",
+     "hero": "Han Solo",
+     "marked": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Gaarkhan",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/3",
+     "wounded": true
+    },
+    {
+     "basis": "proxy",
+     "hero": "Squad Stranger",
+     "marked": false,
+     "threat": null,
+     "threat_econ": null,
+     "wounded": true
+    }
+   ]
+  },
+  {
+   "name": "reaction_s1_blind",
+   "_comment": "R-D reaction_s1_blind (Skill-Gate analog R-C, Thomas-Begrundung 04.11.: Fokus ist KEIN Reihenfolge-Thema - der Key bekommt kein eigenes Gate, er reitet exakt R1s Boden: die ganze Reaktionsschicht startet ab S2, S1 bleibt blind = offengelegtes Handicap). Schuss-Lage wie reaction_on, rung 1 -> Key null -> canon Reihenfolge wie eliminate_economy (expect zahlgleich; Begruendung alt->neu: blinder Modus == Altpfad).",
+   "posture": "eliminate",
+   "counter": null,
+   "reaction": {
+    "skill": 1,
+    "view_round": 4,
+    "objective": "Defeat the rebels.",
+    "group_id": "DG031",
+    "display": "Reinforced Patrol",
+    "shot_hero": "Gaarkhan",
+    "shot_round": 4,
+    "pattern": "hunter",
+    "key": null
+   },
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Squad Stranger",
+     "row": 3,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 5,
+     "health": 4
+    }
+   ],
+   "expect": [
+    {
+     "basis": "economy",
+     "hero": "Han Solo",
+     "marked": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Gaarkhan",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/3",
+     "wounded": true
+    },
+    {
+     "basis": "proxy",
+     "hero": "Squad Stranger",
+     "marked": false,
+     "threat": null,
+     "threat_econ": null,
+     "wounded": true
+    }
+   ]
+  },
+  {
+   "name": "canon_null",
+   "_comment": "R-D canon_null (Byte-Identitaets-Nachweis gegen den alten Fixture-Hash): identischer Canon-Fall eliminate_economy, diesmal ABER durch den R-D Codepfad - reaction-Key aktiv aufgebaut (Schuss in Runde 3, view.Runde 4 -> Key mit dieser Aktivierung konsumiert, kein Nachzieh-Effekt) und Rank explizit mit null-Key aufgerufen. expect = eliminate_economy expect WORTLICH (kein Feld geruehrt); zusaetzlich beweist der Git-Diff, dass alle 23 Altfaelle unveraendert durch die neue 8-Argument-Rufstelle laufen (Default null = Altpfad).",
+   "posture": "eliminate",
+   "counter": null,
+   "reaction": {
+    "skill": 2,
+    "view_round": 4,
+    "objective": "Defeat the rebels.",
+    "group_id": "DG031",
+    "display": "Reinforced Patrol",
+    "shot_hero": "Gaarkhan",
+    "shot_round": 3,
+    "pattern": "hunter",
+    "key": null
+   },
+   "heroes": [
+    {
+     "hero": "Han Solo",
+     "row": 0,
+     "profile": "Han Solo",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6
+    },
+    {
+     "hero": "Gaarkhan",
+     "row": 1,
+     "profile": "Gaarkhan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 6
+    },
+    {
+     "hero": "Fenn Signis",
+     "row": 2,
+     "profile": "Fenn Signis",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6
+    },
+    {
+     "hero": "Squad Stranger",
+     "row": 3,
+     "profile": null,
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 5,
+     "health": 4
+    }
+   ],
+   "expect": [
+    {
+     "basis": "economy",
+     "hero": "Han Solo",
+     "marked": false,
+     "threat": "7/2",
+     "threat_econ": "7/2",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "13/6",
+     "threat_econ": "13/6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Gaarkhan",
+     "marked": false,
+     "threat": "5/6",
+     "threat_econ": "5/3",
+     "wounded": true
+    },
+    {
+     "basis": "proxy",
+     "hero": "Squad Stranger",
+     "marked": false,
+     "threat": null,
+     "threat_econ": null,
+     "wounded": true
+    }
+   ]
   }
  ]
 }

@@ -45,6 +45,28 @@ namespace TacticalAiHarness
                 List<string> defender = null;
                 if (c.ContainsKey("defense") && c["defense"] != null)
                     defender = Json.AsList(c["defense"]).ConvertAll(o => Json.AsStr(o));
+                // R-D (concept v1.2 §2.3): optional case-level "reaction" -
+                // the activation facts fed to OverlordFocus.ReactionHeroFor.
+                // The key is computed THROUGH THE REAL HELPER (never a
+                // literal), so the key laws and their rank outcome are pinned
+                // together in the same expect blocks (reviewer-replay law:
+                // one vector pins bug and rule together). No "reaction" block
+                // = null key = the old path - every pre-R-D case replays
+                // bit-identical (the fixture diff stays additive-only).
+                string reactionKey = null;
+                if (c.ContainsKey("reaction") && c["reaction"] != null)
+                {
+                    var ri = Json.AsDict(c["reaction"]);
+                    reactionKey = OverlordFocus.ReactionHeroFor(
+                        FocusReactionView(ri), Json.AsStr(ri["group_id"]),
+                        ri.ContainsKey("pattern") && ri["pattern"] != null ? Json.AsStr(ri["pattern"]) : null,
+                        (int)Json.AsLong(ri["skill"]));
+                    if (ri.ContainsKey("key"))
+                    {
+                        var wantKey = ri["key"] == null ? "" : Json.AsStr(ri["key"]);
+                        Check(name + ".key", wantKey, reactionKey ?? "");
+                    }
+                }
 
                 List<FocusCandidate> Build()
                 {
@@ -134,8 +156,8 @@ namespace TacticalAiHarness
                 }
 
                 // replay twice: the layer is a pure function (determinism law)
-                var d1 = OverlordFocus.Rank(Build(), posture, counter, defender);
-                var d2 = OverlordFocus.Rank(Build(), posture, counter, defender);
+                var d1 = OverlordFocus.Rank(Build(), posture, counter, defender, 0, null, null, reactionKey);
+                var d2 = OverlordFocus.Rank(Build(), posture, counter, defender, 0, null, null, reactionKey);
                 Check(name + ".replay",
                       d1.Select(x => (object)x.AsDict()).ToList(),
                       d2.Select(x => (object)x.AsDict()).ToList());
@@ -158,6 +180,51 @@ namespace TacticalAiHarness
                 }
                 Check(name + ".rank", Json.AsList(c["expect"]), got);
             }
+            // R-D hand-pinned laws (ground truth = the law itself, same
+            // pattern as the reaction_order.json section). The fixture cases
+            // pin the Guardhold (named) leg of the WACH exception; these pin
+            // the OTHER legs and the boundaries the cases cannot reach:
+            //  - guard-doctrine leg: a rolled guard pattern suppresses the
+            //    key even where nothing is named (R-C anchor law reused),
+            //  - a never-shot group and an OLD-round shot stay null (the key
+            //    is consumed with this activation - no carry-over),
+            //  - S1 stays blind (disclosed handicap, R1's floor exactly).
+            Check("law.guard_pattern_suppresses", "",
+                  OverlordFocus.ReactionHeroFor(FocusReactionView(Ri(4, "Defeat the rebels.",
+                        "DG031", "Patrol", "Gaarkhan", 4)), "DG031", "guard", 2) ?? "");
+            Check("law.no_shot_key_null", "",
+                  OverlordFocus.ReactionHeroFor(FocusReactionView(Ri(4, "",
+                        "DG031", "Patrol", null, 0)), "DG031", "hunter", 2) ?? "");
+            Check("law.old_shot_key_null", "",
+                  OverlordFocus.ReactionHeroFor(FocusReactionView(Ri(4, "",
+                        "DG031", "Patrol", "Gaarkhan", 3)), "DG031", "hunter", 2) ?? "");
+            Check("law.s1_blind_key_null", "",
+                  OverlordFocus.ReactionHeroFor(FocusReactionView(Ri(4, "",
+                        "DG031", "Patrol", "Gaarkhan", 4)), "DG031", "hunter", 1) ?? "");
+            // positive control (the helper must STAY able to speak - a
+            // suppression-only law set goes green on an always-null bug):
+            Check("law.plain_shot_key_fires", "Gaarkhan",
+                  OverlordFocus.ReactionHeroFor(FocusReactionView(Ri(4, "Defeat the rebels.",
+                        "DG031", "Patrol", "Gaarkhan", 4)), "DG031", "hunter", 2) ?? "");
+            // R-D insertion rank laws (the card's core claim, pinned as
+            // ground truth): "einzureihen NACH mark ... VOR counter".
+            //  - mark stays king: a marked hero WITHOUT the key outranks
+            //    the reaction hero who carries it;
+            //  - reaktion pre-empts the counter tier: it outranks the M10b
+            //    objective-actor head (the counter law's leading slot).
+            Check("law.mark_stays_king_over_reaktion", "Plain",
+                  OverlordFocus.Rank(new List<FocusCandidate>
+                  {
+                      new FocusCandidate { HeroId = "Plain", SquadRow = 0, Marks = 1, MarkedRound = 4 },
+                      new FocusCandidate { HeroId = "Shooter", SquadRow = 1 },
+                  }, "eliminate", null, null, 0, null, null, "Shooter")[0].HeroId);
+            Check("law.reaktion_beats_objective_actor", "Shooter",
+                  OverlordFocus.Rank(new List<FocusCandidate>
+                  {
+                      new FocusCandidate { HeroId = "Actor", SquadRow = 0, ObjectiveActor = true },
+                      new FocusCandidate { HeroId = "Shooter", SquadRow = 1 },
+                  }, "eliminate", null, null, 0, null, null, "Shooter")[0].HeroId);
+
             if (Record)
             {
                 var path = Path.Combine(FIX, "overlord_focus_record.json");
@@ -165,5 +232,40 @@ namespace TacticalAiHarness
                 Console.WriteLine("   (record) wrote " + path + " for " + recorded.Count + " cases");
             }
         }
+
+        // R-D: the minimal feed view the ReactionHeroFor cases read - Round,
+        // Objective and ONE GroupView row carrying the R-A shot attribution.
+        // Built straight from the fixture fields (no event fold needed - the
+        // helper is a pure reader of exactly these columns).
+        static FeedWorldView FocusReactionView(Dictionary<string, object> ri)
+        {
+            var view = new FeedWorldView();
+            view.Round = (int)Json.AsLong(ri["view_round"]);
+            view.Objective = ri.ContainsKey("objective") && ri["objective"] != null
+                ? Json.AsStr(ri["objective"]) : "";
+            var gv = new FeedWorldView.GroupView { GroupId = Json.AsStr(ri["group_id"]) };
+            if (ri.ContainsKey("display") && ri["display"] != null)
+                gv.DisplayName = Json.AsStr(ri["display"]);
+            if (ri.ContainsKey("shot_hero") && ri["shot_hero"] != null)
+                gv.LastShotHero = Json.AsStr(ri["shot_hero"]);
+            if (ri.ContainsKey("shot_round") && ri["shot_round"] != null)
+                gv.LastShotRound = (int)Json.AsLong(ri["shot_round"]);
+            view.Groups.Add(gv);
+            return view;
+        }
+
+        // hand-pinned-law builder (same field names as the fixture block).
+        static Dictionary<string, object> Ri(int viewRound, string objective,
+                                            string groupId, string display,
+                                            string shotHero, int shotRound)
+            => new Dictionary<string, object>
+            {
+                { "view_round", (long)viewRound },
+                { "objective", objective },
+                { "group_id", groupId },
+                { "display", display },
+                { "shot_hero", (object)shotHero },
+                { "shot_round", (long)shotRound },
+            };
     }
 }

@@ -751,14 +751,16 @@ namespace TacticalAI
             // Aufgabe 4: the fixed move/attack pair synthesis is GONE - the
             // universal AP pool (RenderBlocks) replaces the block sequence;
             // Assault/Tripod still ride as flags on the plan itself.
-            if (TrySelectTarget(cd, out var targetName, out var why))
+            if (TrySelectTarget(cd, out var targetName, out var why, out var reactionTail))
             {
                 plan.HasTarget = true;
                 plan.TargetName = targetName;
                 // Thomas 02.11 (request 1): the action screen shows ONLY the
                 // target name; TrySelectTarget hands back the bare reason,
                 // which ExplainFor renders in the EXPLAIN section.
-                plan.TargetWhy = TF(UIx.focusPrefix) + targetName;
+                // R-D: when the reaktion key decided the pick, the focus line
+                // carries the visible retaliation clause (null = no key).
+                plan.TargetWhy = TF(UIx.focusPrefix) + targetName + (reactionTail ?? "");
                 plan.FocusReason = why;
             }
             // Thomas 29.10: the focus line is NOT part of the explanation
@@ -1119,12 +1121,13 @@ namespace TacticalAI
             if (L == null || string.IsNullOrEmpty(basis)) return "-";
             switch (basis)
             {
-                case "mark":    return L.ordFocusBasisMark;
-                case "chip":    return L.ordFocusBasisChip;
-                case "card":    return L.ordFocusBasisConditioned;
-                case "economy": return L.ordFocusBasisEconomy;
-                case "proxy":   return L.ordFocusBasisPrinted;
-                default:        return basis;
+                case "mark":      return L.ordFocusBasisMark;
+                case "reaktion":  return L.ordFocusBasisReaktion;
+                case "chip":      return L.ordFocusBasisChip;
+                case "card":      return L.ordFocusBasisConditioned;
+                case "economy":   return L.ordFocusBasisEconomy;
+                case "proxy":     return L.ordFocusBasisPrinted;
+                default:          return basis;
             }
         }
 
@@ -1189,9 +1192,10 @@ namespace TacticalAI
         /// across the map. The WorldProvider seam replaces this with the Core
         /// FocusResolver as soon as a hex adapter exists (documented
         /// deviation).</summary>
-        static bool TrySelectTarget(global::DeploymentCard cd, out string heroName, out string why)
+        static bool TrySelectTarget(global::DeploymentCard cd, out string heroName,
+                                    out string why, out string reactionTail)
         {
-            heroName = null; why = null;
+            heroName = null; why = null; reactionTail = null;
             var heroes = DataStore.deployedHeroes;
             if (heroes == null || heroes.Count == 0) return false;
             var living = heroes.Where(h => h.heroState == null || !h.heroState.isDefeated).ToList();
@@ -1217,12 +1221,28 @@ namespace TacticalAI
                     // first, no wound economy) and this figure's printed
                     // attack EV gates the wound x2 by the ERLEDBAR law - only
                     // finishers see the wounded hero doubled.
+                    // R-D (Konzept v1.2 §2.3, Thomas-Punkt 3a): the reaktion
+                    // key for THIS activation, resolved in Core over the R-A
+                    // feed attribution (OverlordFocus.ReactionHeroFor: live-
+                    // round shot, S2 floor, WACH exception). The S2 floor is
+                    // NO focus gate of its own - focus is not an order topic;
+                    // the key rides R1's floor exactly and S1 stays blind
+                    // (the same honest, disclosed handicap as the R-C order
+                    // layer). null = no key = canon rank law, byte-identical.
+                    string rdPattern = null;
+                    if (_patternByCard != null) _patternByCard.TryGetValue(cd.id, out rdPattern);
+                    var rdSkill = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
+                    int rdRung = 1;   // defensive: a null profile keeps the honest S1 blind floor
+                    if (rdSkill != null && rdSkill.Level != null && rdSkill.Level.Length == 2 && rdSkill.Level[0] == 'S')
+                        rdRung = rdSkill.Level[1] - '0';
+                    var reactionHero = Tac.OverlordFocus.ReactionHeroFor(
+                        ordView, cd.id, rdPattern, rdRung);
                     var ranked = Tac.OverlordFocus.Rank(cands,
                         string.IsNullOrEmpty(ordView.Posture) ? "eliminate" : ordView.Posture,
                         MissionCounter(),
                         // M11b: threat v2 runs against THIS figure's printed
                         // defense pool (public deployment-card data).
-                        DefenseOf(cd), 0, null, AttackEvOf(cd));
+                        DefenseOf(cd), 0, null, AttackEvOf(cd), reactionHero);
                     var dec = ranked[0];
                     _roundFocus = dec;
                     _roundFocusHero = dec.HeroId;
@@ -1231,7 +1251,19 @@ namespace TacticalAI
                     if (L0 != null)     // broken language asset -> reference path (legacy popup)
                     {
                         heroName = dec.HeroId;
+                        // R-D popup visibility (Thomas-Punkt 3a): when the
+                        // reaktion key WAS the deciding basis, the focus line
+                        // names the retaliation. Publicly visible facts only
+                        // (the shot at this figure is a board fact every
+                        // player saw), no internal mechanics, no negated
+                        // options. The pronoun-free wording is deliberate:
+                        // the 21-hero roster carries female heroes - "seinem"
+                        // would print a wrong pronoun for them.
+                        if (dec.Basis == "reaktion" && !string.IsNullOrEmpty(L0.ordFocusReaktion))
+                            reactionTail = TF(L0.ordFocusReaktion, cd.name ?? cd.id);
                         why = BuildOverlordWhy(L0, dec, heroName);
+                        Debug.Log("TacticalAIBridge::target " + cd.id + " -> " + dec.HeroId +
+                                  " basis=" + dec.Basis + " reaction=" + (reactionHero ?? "-"));
                         return true;
                     }
                 }

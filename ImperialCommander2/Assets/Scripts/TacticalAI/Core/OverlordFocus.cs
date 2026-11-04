@@ -24,6 +24,21 @@
 //   key (lexicographic, all exact arithmetic, no floats, no RNG):
 //     1. aim mark   - the human's own public designation (FocusChange). All
 //                     groups converge on it: focus fire, table-visible.
+//     1b. reaktion  - R-D (concept eventreaktionen v1.2 §2.3, Thomas-Punkt
+//                     3a): the hero who shot THIS activating figure inside an
+//                     open hero window THIS round (R-A feed attribution
+//                     LastShotHero/LastShotRound) leads right behind the aim
+//                     mark - the human's designation at the throne stays king
+//                     - and BEFORE the counter law. One key, set per
+//                     activation and consumed with it (no carry-over: the
+//                     shot-round must equal the live round). WACH exception
+//                     (ReactionHeroFor): a guard anchor at the mission
+//                     objective (Guardhold: the objective text names the
+//                     figure, or the group rolled the guard doctrine - R-C
+//                     anchor law reused) never sets the key; it values the
+//                     normal greatest-threat-to-the-objective head instead.
+//                     S1 blind (same disclosed handicap as the R-C order
+//                     layer): the key runs from S2 up, exactly like R1.
 //     2. counter    - "woundAll": two counter-law slots (wounded-focus fix,
 //                     Thomas 03.11): FIRST healthy-beats-wounded (the sim's
 //                     leading TargetValue slot - every hit must move the
@@ -133,6 +148,11 @@ namespace TacticalAI.Core
         public bool Marked { get { return Marks > 0; } }
     }
 
+    // R-D (concept v1.2 §2.3) NOTE: the reaktion key does NOT extend
+    // FocusCandidate - like `mark` it is a PER-HERO comparison signal the
+    // caller passes once per Rank call (reactionHero parameter, Row.Reaktion
+    // below), so every pre-R-D candidate construction stays bit-identical.
+
     /// The decision, with its explainable public parts (ui.json localises).
     public sealed class FocusPick
     {
@@ -160,6 +180,12 @@ namespace TacticalAI.Core
         // (Runde r/U)".
         public int? StrainPriorRunden;
         public int? StrainPriorDecke;
+        // R-D (concept v1.2 §2.3): true on the row whose hero carries the
+        // reaktion key of THIS activation (he shot the activating figure
+        // inside an open window this round and no WACH exception suppressed
+        // it). The AsDict "reaktion" key appears ONLY where it is true -
+        // every pre-R-D canon vector stays byte-identical (record discipline).
+        public bool Reaktion;
 
         /// Comparable vector row (harness/NUnit pin), exact string fields.
         /// The strain_druck key appears ONLY on rows where the pressure
@@ -182,6 +208,7 @@ namespace TacticalAI.Core
                 d["strain_druck"] = StrainDruck.Value.ToString();
             if (StrainDruckUnscharf.HasValue && StrainDruckUnscharf.Value > 0)
                 d["strain_druck_unscharf"] = StrainDruckUnscharf.Value.ToString();
+            if (Reaktion) d["reaktion"] = true;
             return d;
         }
     }
@@ -236,12 +263,16 @@ namespace TacticalAI.Core
         /// the healthy threats instead of magnetising onto one wounded bait.
         /// null = round-level projection (no engaging figure) - the classic
         /// blanket x2 the golden vectors pin, bit-identical to pre-fix canon.
+        /// reactionHero (R-D, concept v1.2 §2.3): the hero carrying the
+        /// reaktion key for THIS activation (build it with ReactionHeroFor);
+        /// null/empty = key inactive = every pre-R-D vector byte-identical.
         public static List<FocusPick> Rank(IEnumerable<FocusCandidate> candidates,
                                                string posture, string counter,
                                                IList<string> defenderDefense = null,
                                                int cardSurcharge = 0,
                                                EngagementEffects engage = null,
-                                               Rational? attackerDamageEv = null)
+                                               Rational? attackerDamageEv = null,
+                                               string reactionHero = null)
         {
             var list = candidates == null ? new List<FocusCandidate>()
                                            : candidates.ToList();
@@ -255,6 +286,16 @@ namespace TacticalAI.Core
                               engage, attackerDamageEv),
                 Chip = woundAll && c.Profile != null ? c.Profile.ChipKey() : null,
             }).ToList();
+
+            // R-D REAKTION key (concept v1.2 §2.3, Thomas-Punkt 3a): mark-style
+            // per-hero comparison signal (FocusCandidate stays untouched). The
+            // caller resolves it from the R-A feed attribution via
+            // ReactionHeroFor; null/empty keeps EVERY row Reaktion=false, the
+            // Compare slot never splits and the whole pre-R-D canon runs
+            // byte-identical (the old fixture hash is the pin).
+            if (!string.IsNullOrEmpty(reactionHero))
+                foreach (var r in rows)
+                    if (r.C.HeroId == reactionHero) r.Reaktion = true;
 
             // M10b OBJECTIVE ACTOR: the hero credited with the last
             // objective progress raises his threat by EXACTLY +1 - "die
@@ -339,11 +380,57 @@ namespace TacticalAI.Core
                 // cell "wahrscheinlich" must never double-stamp it).
                 StrainPriorRunden = x.Unscharf > 0 && !(x.Druck > 0) ? x.C.RoundsCompleted : (int?)null,
                 StrainPriorDecke = x.Unscharf > 0 && !(x.Druck > 0) ? x.Decke : (int?)null,
+                Reaktion = x.Reaktion,
+                // R-D: "reaktion" rides behind "mark" (the designation stays
+                // king) and pre-empts chip/economy - the lexicographic law the
+                // Compare slot enforces; null-key rows never see the token.
                 Basis = x.C.Marked ? "mark"
+                        : (x.Reaktion ? "reaktion"
                         : (x.Chip != null ? "chip"
                         : (x.Econ != null ? (x.C.Card != null ? "card" : "economy")
-                                          : "proxy")),
+                                          : "proxy"))),
             }).ToList();
+        }
+
+        /// <summary>R-D (concept eventreaktionen v1.2 §2.3, Thomas-Punkt 3a):
+        /// the reaktion key for ONE activation - the hero who shot the
+        /// activating figure inside an open hero window THIS round (R-A feed
+        /// attribution on the group row), or null when the key must not fire.
+        /// Pure projection over the feed view + the group's already-rolled
+        /// doctrine pattern: no positions, no hidden state, no dice.
+        /// Laws (all pinned in overlord_focus.json reaction_* cases):
+        ///  - S1 blind: the whole reaction layer starts at S2, the key rides
+        ///    R1's floor exactly (honest handicap, disclosed - same law the
+        ///    R-C order layer documents). Focus is NOT an order topic, so it
+        ///    gets no extra gate of its own (Thomas ruling, card t_41d42c7b).
+        ///  - The shot must be from the LIVE round (LastShotRound == view.
+        ///    Round): the key is consumed with this activation, no carry-over
+        ///    effect into later rounds.
+        ///  - WACH exception (Thomas formulation): a guard anchor AT the
+        ///    mission objective never takes revenge - the Guardhold descriptor
+        ///    (the objective text names the figure, WorldEventVector.TextNames
+        ///    - the Player-19 shipped law) or the rolled guard doctrine (the
+        ///    R-C guard-anchor leg) suppress the key; the group values the
+        ///    normal greatest-threat-to-the-objective head (plain Rank top).
+        ///    Existing law building blocks reused, no parallel law invented.
+        /// Hero naming: the feed carries the hero's display name (WorldEvents
+        /// Unity emits P("hero", name)); FocusCandidate.HeroId is the same
+        /// string (bridge BuildFocusCandidates id = h.name ?? h.id) - the
+        /// exact-identity match the R-C match law already relies on.</summary>
+        public static string ReactionHeroFor(FeedWorldView view, string groupId,
+                                             string pattern, int skill)
+        {
+            if (skill < 2) return null;                 // S1 blind (see doc)
+            if (view == null || string.IsNullOrEmpty(groupId)) return null;
+            var gv = view.FindGroup(groupId);
+            if (gv == null || string.IsNullOrEmpty(gv.LastShotHero)) return null;
+            if (gv.LastShotRound != view.Round) return null;   // consumed key
+            // WACH exception - the two shipped anchor descriptors:
+            bool named = !string.IsNullOrEmpty(view.Objective)
+                         && !string.IsNullOrEmpty(gv.DisplayName)
+                         && WorldEventVector.TextNames(view.Objective, gv.DisplayName);
+            if (named || pattern == "guard") return null;
+            return gv.LastShotHero;
         }
 
         /// <summary>M11b threat v2 for one candidate: printed hero card
@@ -407,6 +494,7 @@ namespace TacticalAI.Core
             public int? Druck;              // M11d strain surcharge (see Rank)
             public int? Unscharf;           // M11h fuzzy round-prior stage (see Rank)
             public int? Decke;              // M11h reachable ceiling U behind it
+            public bool Reaktion;           // R-D reaktion key (see Rank)
         }
 
         /// Lexicographic compare of two rows, DESC (a before b => -1).
@@ -421,6 +509,13 @@ namespace TacticalAI.Core
                 int mr = b.C.MarkedRound.CompareTo(a.C.MarkedRound);
                 if (mr != 0) return mr;
             }
+            // 1b. R-D REAKTION (concept v1.2 §2.3, Thomas-Punkt 3a): the hero
+            //     who shot THIS activating figure inside an open window THIS
+            //     round leads right behind the aim mark (the human's
+            //     designation at the throne stays king) and BEFORE the
+            //     counter law. No reactionHero passed -> both rows false,
+            //     slot inert, pre-R-D canon byte-identical.
+            if (a.Reaktion != b.Reaktion) return a.Reaktion ? -1 : 1;
             // 2. counter law (woundAll): sim ChipKey verbatim, higher first.
             //    M10b: an objective actor OUTRANKS the static role doctrine
             //    below - a hero who just did real mission damage is the live

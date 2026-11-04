@@ -415,9 +415,18 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   the same playtest: `buff_before_receiver` EXEMPTS support groups whose
   printed command is the plain +2-movement order
   (`GroupFacts.MovementBuffOnly`, bridge fills it from the printed ability
-  law) — that buff never earns the head of the order; the executive command
-  and plain support keep the chain slot (`order_plan.player20.*`). Canon:
-  45266 → 45276 checks, additions only, no existing fixture touched.
+  law). Player-21 closed the loophole from the other side (Thomas log r1:
+  the plain officer reached PlanPos 0 on RAW guard-fit score): the
+  HEAD-SLOT law now also guards the base order — a plain-buff group never
+  activates first; it swaps with the first non-plain group (an all-plain
+  order keeps its head — the law cannot outvote what it cannot replace).
+  Runs after chains, finisher-last and the missa step so nothing can undo
+  it; S1 index canon untouched; the elite officer (executive command) is
+  NOT demoted — early starts are his; reaction pushes (R2 Schutzpflicht)
+  still outrank the order law. Executive command and plain support keep
+  the chain slot (`order_plan.player20.*`, `order_plan.player21.*`).
+  Canon: 45266 → 45282 checks, additions only, no existing fixture
+  touched.
 - **Canon through the whole chain:** 45174 -> 45266 checks, additions
   only, no existing fixture touched; every new behaviour fires only on a
   present fact or a trusted belief, never on absence.

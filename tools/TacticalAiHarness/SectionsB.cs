@@ -445,6 +445,60 @@ namespace TacticalAiHarness
                       tagOf["E"].Contains("buff_before_receiver"));
                 Check("order_plan.player20.plain_support_chained", true,
                       tagOf["S"].Contains("buff_before_receiver"));
+
+                // Player-21 head-slot law (Thomas 05.11 log r1): the plain
+                // officer won PlanPos 0 on RAW guard-fit score (the chain
+                // exemption had already fired) — so the head slot itself is
+                // guarded, not just the chain. Rebuilds the r1 shape:
+                // stall posture lifts the plain officer's guard fit (7/5)
+                // above the attackers' 4/5 on equal printed EV; S3 keeps the
+                // finisher law off so the scenario isolates this law.
+                {
+                    var r1roster = new List<GroupFacts>
+                    {
+                        new GroupFacts("O", 0, "DG021", "Offizier (normal)", "guard", 2,
+                            Rational.One, supporter: true, movementBuffOnly: true),
+                        new GroupFacts("X", 1, "DG021", "Sturmtruppen", "aggressive", 2,
+                            Rational.One),
+                        new GroupFacts("Y", 2, "DG021", "Jagertrupp", "aggressive", 2,
+                            Rational.One),
+                    };
+                    var plR1 = OrderPlanner.PlanRound(3, r1roster, catalog, "stall",
+                        SkillProfile.For("S3"), new DeterministicRandom(3), 1,
+                        new string[0], null, null);
+                    OrderPlanner.AssertPermutation(plR1, r1roster.Select(g => g.GroupId));
+                    var rankR1 = plR1.Slots.ToDictionary(s => s.GroupId, s => s.Rank);
+                    var tagR1 = plR1.Slots.ToDictionary(s => s.GroupId, s => s.Tags);
+                    Check("order_plan.player21.plain_order_not_head", "X",
+                          plR1.Slots[0].GroupId);
+                    Check("order_plan.player21.demotion_tagged", true,
+                          tagR1["O"].Contains("plain_order_head_demoted"));
+                    // The officer lands right behind the new head — still
+                    // ahead of everyone further back he can buff.
+                    Check("order_plan.player21.demoted_slot", 1L,
+                          (long)rankR1["O"]);
+                    Check("order_plan.player21.buff_still_ahead_of_y", true,
+                          rankR1["O"] < rankR1["Y"]);
+                }
+
+                // The law cannot outvote an all-plain-buff order: head stands.
+                {
+                    var solo = new List<GroupFacts>
+                    {
+                        new GroupFacts("O", 0, "DG021", "Offizier (normal)", "support", 2,
+                            Rational.One, supporter: true, movementBuffOnly: true),
+                        new GroupFacts("P", 1, "DG021", "Offizier (normal 2)", "support", 2,
+                            Rational.One, supporter: true, movementBuffOnly: true),
+                    };
+                    var pl2 = OrderPlanner.PlanRound(3, solo, catalog, "stall",
+                        SkillProfile.For("S5"), new DeterministicRandom(11), 1,
+                        new string[0], null, null);
+                    OrderPlanner.AssertPermutation(pl2, solo.Select(g => g.GroupId));
+                    Check("order_plan.player21.all_plain_head_stands", "O",
+                          pl2.Slots[0].GroupId);
+                    Check("order_plan.player21.all_plain_untagged", false,
+                          pl2.Slots[0].Tags.Contains("plain_order_head_demoted"));
+                }
             }
         }
 

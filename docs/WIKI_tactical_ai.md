@@ -157,6 +157,12 @@ comes up". Tactical mode replaces both halves with planning
   — a deterministic sequence that fits the mission posture (e.g. heavy groups
   before their targets can slip away, blockers before the attacks they enable,
   would-be finishers last).
+- The plain officer's "Order" (+2 movement only) never earns the head of that
+  order — neither through the buff chain nor through its own score. Someone must
+  hand out the movement points *before* the attackers run, but the plain +2 is
+  too thin an order to open the round; the executive officer's order is not that
+  strong until it can also grant an attack, so he *may* lead. (Reaction duties —
+  dashing to an objective a hero is working — still outrank both, whoever holds them.)
 - Which group activates when is **reproducible and inspectable**: the same seed
   gives the same plan, and the pop-ups run exactly that plan — "the deck hated me"
   is no longer a thing.

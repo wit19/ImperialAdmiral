@@ -436,6 +436,35 @@ namespace TacticalAI.Core
                 }
             }
 
+            // Player-21 head-slot law (Thomas 05.11 playtest, extends the
+            // Player-20 buff exemption): the plain +2-movement order NEVER
+            // earns the head slot — not through the buff chain (ApplySlotBuff
+            // exempts it) and not through base efficiency either. Player-21
+            // log r1: DG004 reached PlanPos 0 on raw guard-fit score, which
+            // breaks the same promise from the other side. Law: while the
+            // head is a plain-buff supporter, swap it with the first
+            // non-plain-buff group (the receiver leads; the officer keeps his
+            // slot right where the swap frees it — still ahead of everyone
+            // behind). Only plain-buff groups left -> head stands (the law
+            // cannot outvote an all-officer order). Runs AFTER the missa step
+            // and after finisher_last, so no later law can undo it; S1 index
+            // canon untouched (old-app level stays the old-app level).
+            if (prof != null && level != "S1" && order.Count > 1)
+                while (order[0].Facts.Supporter && order[0].Facts.MovementBuffOnly)
+                {
+                    int j = 1;
+                    while (j < order.Count && order[j].Facts.Supporter &&
+                           order[j].Facts.MovementBuffOnly) j++;
+                    if (j >= order.Count) break;
+                    var head = order[0];
+                    order[0] = order[j];
+                    order[j] = head;
+                    tags[head.Facts.GroupId].Add("plain_order_head_demoted");
+                    why[head.Facts.GroupId].Add(
+                        "Kopfplatz-Gesetz: die schlichte Bewegungsbefehls-Gruppe " +
+                        "führt die Reihenfolge nie an");
+                }
+
             var slots = new List<OrderSlot>();
             for (int i = 0; i < order.Count; i++)
             {

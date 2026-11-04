@@ -184,6 +184,125 @@ namespace TacticalAI
             return Tac.WorldEventVector.Project(Feed.Events, Feed.MissionKey, Feed.Hash());
         }
 
+        /// <summary>S-C belief rail (card t_865d5997, concept 8.1): the
+        /// SectionSpace projection for ONE computation, pulled by the bridge
+        /// exactly like ProjectNow. Producers, all data-of-existence:
+        ///  * seeds: the mission's DeploymentPoint entities' own
+        ///    mapSectionOwner - the S-A result, the digital picker carries no
+        ///    readable per-group DP (R-B finding), so every deployed group
+        ///    gets the CANDIDATE SET of DP sections (concept 5.6 law:
+        ///    kandidatenmenge, never a precision lie). No DP section readable
+        ///    -> unseeded belief, probes simply never fire for it.
+        ///  * doorEdges + doorOwners: mined from the shipped
+        ///    tactical_mission_critical table for THIS mission (missionID =
+        ///    the SessionKey tail); runtimeSwapped rows are skipped by the
+        ///    miner. Missing rows keep pairs unknown-PERMEABLE (Grundgesetz).
+        ///  * refinement: the Thomas-Gesetz 04.11. skill curve - low rungs
+        ///    (S1/S2/reference/no profile) read the coarse chain-entry
+        ///    belief; the event-driven exceptions are ungated in Core.
+        /// RESYNC LAW: full replay with prior=null EVERY pull, never a
+        /// continuation - after a feed Resync (re-log replaces history) the
+        /// hypotheses are buried and only re-logged facts survive; an
+        /// incremental continuation would double-count the re-logged window.
+        /// Loch-Gesetz: everything here is GUIDs and app names, never a
+        /// coordinate; the vector's coordinate-free Public() surface is
+        /// untouched by this rail.</summary>
+        public Tac.SectionSpace ProjectSectionSpaceNow()
+        {
+            try { Poll(); }
+            catch (Exception e) { Debug.LogWarning("WorldEvents::section pull error (ignored): " + e.Message); }
+            if (Feed == null) return null;
+            try
+            {
+                var opts = new Tac.SectionOptions
+                {
+                    Refine = Tac.SectionSkill.MaskRefinementEnabled(SessionSkillProfile()),
+                };
+                var table = TacticalAIAssets.MissionCriticalRoot;
+                var missionId = MissionIdFromKey(Feed.MissionKey);
+                List<string[]> edges = null;
+                if (table != null && !string.IsNullOrEmpty(missionId))
+                {
+                    var owners = Tac.SectionTrust.DoorOwnersOf(table, missionId);
+                    if (owners != null && owners.Count > 0) opts.DoorOwners = owners;
+                    edges = Tac.SectionTrust.MissionDoorEdges(table, missionId);
+                    if (edges != null && edges.Count == 0) edges = null;
+                }
+                var space = Tac.SectionSpace.Project(Feed.Events, null, BuildDeploySeeds(), edges, opts);
+                LogExplainTrail(space);
+                return space;
+            }
+            catch (Exception e)
+            {
+                // the belief rail must NEVER break a decision: the bridge
+                // plans on LastSectionSpace == null exactly like "no feed".
+                Debug.LogWarning("WorldEvents::section space projection failed (belief skipped): " + e.Message);
+                return null;
+            }
+        }
+
+        Tac.SkillProfile SessionSkillProfile()
+        {
+            try
+            {
+                return Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(
+                    DataStore.sagaSessionData?.setupOptions?.aiMode));
+            }
+            catch { return null; }   // unknown token / session not up: coarse rung
+        }
+
+        static string MissionIdFromKey(string key)
+        {
+            if (string.IsNullOrEmpty(key)) return null;
+            int bar = key.IndexOf('|');
+            return bar < 0 ? null : key.Substring(bar + 1);
+        }
+
+        // DP-marker seeds (S-A check 1 outcome: candidate set). Identity
+        // law: group keys are the SAME cd.id strings PollGroups Spawns with.
+        static Dictionary<string, string[]> BuildDeploySeeds()
+        {
+            var seeds = new Dictionary<string, string[]>(StringComparer.Ordinal);
+            try
+            {
+                var ents = DataStore.mission != null ? DataStore.mission.mapEntities : null;
+                if (ents == null) return seeds;
+                var dpSections = new List<string>();
+                foreach (var me in ents)
+                {
+                    if (me == null || me.entityType != Saga.EntityType.DeploymentPoint) continue;
+                    Guid own;
+                    try { own = me.mapSectionOwner; } catch { continue; }
+                    if (own == Guid.Empty) continue;
+                    var s = own.ToString();
+                    if (!dpSections.Contains(s)) dpSections.Add(s);
+                }
+                if (dpSections.Count == 0) return seeds;   // nothing readable: unseeded
+                var arr = dpSections.ToArray();
+                foreach (var cd in DataStore.deployedEnemies)
+                {
+                    if (cd == null || cd.isDummy || string.IsNullOrEmpty(cd.id)) continue;
+                    seeds[cd.id] = arr;   // kandidatenmenge, not a per-group claim
+                }
+            }
+            catch { }
+            return seeds;
+        }
+
+        // EXPLAIN disclosure: whenever the evidence chain MOVED (an event
+        // changed a belief), log the whole trail once. Lines carry
+        // EREIGNIS + REGEL + section GUID/name only - no coordinates. A
+        // Player.log grep for "SectionSpace::" replays why the belief moved.
+        string _lastExplainTrail = "";
+        void LogExplainTrail(Tac.SectionSpace space)
+        {
+            var trail = space.ExplainTrail();
+            var joined = string.Join("\n", trail.ToArray());
+            if (joined == _lastExplainTrail) return;
+            _lastExplainTrail = joined;
+            foreach (var line in trail) Debug.Log("SectionSpace::" + line);
+        }
+
         // ------------------------------------------------------------------
         void Poll()
         {

@@ -24,6 +24,11 @@ namespace TacticalAI
         const string IMPERIAL_CARD_EFFECTS_PATH = "Languages/En/tactical_imperial_card_effects";
         const string AGENDA_CARDS_PATH = "Languages/En/tactical_agenda_cards";
         const string PATTERN_WEIGHTS_PATH = "Languages/En/tactical_pattern_weights";
+        // S-C (card t_865d5997): the mask-trust threshold table and the
+        // S-A mined mission-critical table. Both PLAIN TEXT public data,
+        // loaded lazily through the TacticalAISettings-gated hooks only.
+        const string SECTION_TRUST_PATH = "Languages/En/tactical_section_trust";
+        const string MISSION_CRITICAL_PATH = "Languages/En/tactical_mission_critical";
         const string CAMPAIGN_ITEMS_PATH = "Languages/En/CampaignData/items";
         const string CAMPAIGN_SKILLS_PATH = "Languages/En/CampaignData/skills";
 
@@ -36,6 +41,10 @@ namespace TacticalAI
         static object _agendaCardsRoot;
         static object _patternWeightsRoot;
         static bool _patternWeightsFailed;
+        static object _sectionTrustRoot;
+        static bool _sectionTrustFailed;
+        static object _missionCriticalRoot;
+        static bool _missionCriticalFailed;
         static object _campaignItemsRoot;
         static object _campaignSkillsRoot;
         static bool _lethalityFailed, _heroProfilesFailed,
@@ -137,6 +146,40 @@ namespace TacticalAI
                     if (d != null) Tac.PatternWeights.PrimeDoc(d);
                 }
                 return Tac.PatternWeights.Load();
+            }
+        }
+
+        /// <summary>S-C (card t_865d5997): tacai.section_trust/1 - the mask
+        /// trust threshold. Loads AND primes the Core cache (same seam as
+        /// PatternWeightsRoot: app and harness agree on the doc whoever
+        /// touches it first). Null table -> TryThresholdFor false -> every
+        /// trust-gated consumer key stays OFF = today's canon (fail-closed,
+        /// concept 10 fallback ladder).</summary>
+        public static object SectionTrustRoot
+        {
+            get
+            {
+                if (_sectionTrustRoot == null && !_sectionTrustFailed)
+                {
+                    _sectionTrustRoot = LoadJson(SECTION_TRUST_PATH, ref _sectionTrustFailed);
+                    var d = _sectionTrustRoot as System.Collections.Generic.Dictionary<string, object>;
+                    if (d != null) Tac.SectionTrust.PrimeDoc(d);
+                }
+                return _sectionTrustRoot;
+            }
+        }
+
+        /// <summary>S-A artifact read by the S-C wiring: the mined
+        /// mission-critical table (door owners + section hypothesis edges).
+        /// Raw doc on purpose - SectionTrust.DoorOwnersOf/MissionDoorEdges
+        /// are the ONLY readers, both coordinate-free (Loch-Gesetz).</summary>
+        public static object MissionCriticalRoot
+        {
+            get
+            {
+                if (_missionCriticalRoot == null && !_missionCriticalFailed)
+                    _missionCriticalRoot = LoadJson(MISSION_CRITICAL_PATH, ref _missionCriticalFailed);
+                return _missionCriticalRoot;
             }
         }
 

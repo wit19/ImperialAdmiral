@@ -147,6 +147,16 @@ namespace TacticalAI
         // risk positions and the threat-economy mirror. ALL overlord-mode +
         // feed gated; reference/legacy paths never read these fields.
         static Tac.FeedWorldView _lastFeedView;
+
+        /// <summary>S-C (card t_865d5997): the section-space belief rail -
+        /// the projection computed FOR THE CURRENT decision (PullFeedView),
+        /// never a stale one. Read-only surface for the S-D consumers
+        /// (Wachzone exception ordering, Vergeltung ring, 3c, ringZones
+        /// feed). Null = no feed/belief this computation: every consumer
+        /// must behave exactly like today's canon (fail-closed). The
+        /// projection itself is coordinate-free (Loch-Gesetz): EXPLAIN
+        /// shows Ereignis + Regel, never a position.</summary>
+        public static Tac.SectionSpace LastSectionSpace { get; private set; }
         static string _roundFocusHero;
         static Tac.FocusPick _roundFocus;
         static int _roundFocusRound = -1;
@@ -198,6 +208,8 @@ namespace TacticalAI
             _overlordNoticeShown = false;
             _postureLogRound = -1;
             _lastFeedView = null;
+            LastSectionSpace = null;   // S-C: a stale belief never crosses
+            // the session boundary either (same law as the feed view).
             _roundFocusHero = null;
             _roundFocus = null;
             _roundFocusRound = -1;
@@ -417,6 +429,18 @@ namespace TacticalAI
                 var k = SessionKey();
                 if (k != null && v.MissionKey != k) return null;
                 _lastFeedView = v;      // M6: overlord focus reads this
+                // S-C belief rail: the section-space projection belongs to
+                // THIS computation exactly like the vector view (same
+                // choke point, same mission-key guard above). Staying null
+                // on failure is the documented degradation (plan without
+                // belief = today's canon). S-D consumers read
+                // LastSectionSpace; nothing here changes any decision yet.
+                try { LastSectionSpace = _feedAdapter.ProjectSectionSpaceNow(); }
+                catch (Exception e)
+                {
+                    LastSectionSpace = null;
+                    Debug.LogWarning("TacticalAIBridge::section space pull failed (belief skipped): " + e.Message);
+                }
                 return v;
             }
             catch (Exception e)

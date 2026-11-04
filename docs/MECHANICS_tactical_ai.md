@@ -397,11 +397,13 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
 - **Officer (OA–OC, 4772efe/a91232a/e9ac6a6).** Supporter flag +
   `OfficerEmergency` cascade; `TreeKindFor` picks Keep/Emergency popup
   trees (11 languages); supporter pattern rows split; advance/leash laws.
-- **NOT shipped (planned only).** Section-space positioning (guard zones,
-  C(shooter) mask belief, reachability) — see `PLAN_sektionsraum_v1.md` in
-  the work dir; the app has no wall knowledge and the feed remains a
-  state-differ; `Belief.cs` is still harness-only. Listed here so nobody
-  mistakes the concept for the build.
+- **Section space (S-A..S-E, 20c283a -> 3463c41, 2026-11-04).** Positioning
+  layer shipped: section graph, mask beliefs, trust table, exceptions and
+  consumers — full description in the "Section-space module" section below.
+  Still true after S: the feed remains a state-differ, there is STILL no
+  line-of-sight wall model (the section graph models section-to-section
+  passability, not sight lines), and the old R-chain `Belief.cs` remains
+  harness-only (zero app call sites, grep-pinned by the law scan).
 
 ---
 

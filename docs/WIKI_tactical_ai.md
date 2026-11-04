@@ -18,7 +18,9 @@ reproducible order.)
 This page documents the mode as it is actually implemented. Every section names the
 code or data file behind the claim, so anything here can be checked. The deep
 mechanics reference (planner internals, tables, formulas) lives in
-[`MECHANICS_tactical_ai.md`](MECHANICS_tactical_ai.md) next to this file.
+[`MECHANICS_tactical_ai.md`](MECHANICS_tactical_ai.md) next to this file;
+how to build the Android test APK (modules, signing, app id, save migration)
+in [`ANDROID_build.md`](ANDROID_build.md).
 
 > **Where this came from:** the app's classic behaviour (the "legacy" mode) automates
 > the Imperial player: a random activation draw, simple per-group behaviour, and

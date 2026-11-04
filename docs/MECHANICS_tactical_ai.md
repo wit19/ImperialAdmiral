@@ -377,3 +377,28 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   world feed — logged loudly, never silent.
 - Announcement-only card effects (see §12) require the human to apply them — deliberate,
   so no hidden engine behavior can appear.
+
+---
+
+## Reactive layer — as shipped (2026-11-04)
+
+- **Feed attribution (RA, 7d1dcd8).** `GroupDamage` carries victim+index;
+  the shooter is resolved against the open hero-activation window
+  (lastActivator closes it; `strikePending` at RoundEnd) in
+  `WorldEventsUnity.cs`. Doors enter as GUID events.
+- **Ledger (RB, b893b58).** `WorldEventVector.cs` stores `obj:` /
+  `door-GUID:` / `at:` facts with `fact|hypothesis` grading — symbolic
+  last-seen anchors; the projection stays coordinate-free outside the hole.
+- **Order (RC, 2bbf4d8).** `ReactionOrder.SelectNext` re-evaluates the
+  remaining pool at EVERY activation click; no interrupt feature, no flag.
+- **Focus (RD, fc8200e).** Reaction key in `OverlordFocus.Rank`
+  (`reactionHero` resolved via `ReactionHeroFor`; null => every pre-R-D
+  canon vector byte-identical). Compare-slot pinned.
+- **Officer (OA–OC, 4772efe/a91232a/e9ac6a6).** Supporter flag +
+  `OfficerEmergency` cascade; `TreeKindFor` picks Keep/Emergency popup
+  trees (11 languages); supporter pattern rows split; advance/leash laws.
+- **NOT shipped (planned only).** Section-space positioning (guard zones,
+  C(shooter) mask belief, reachability) — see `PLAN_sektionsraum_v1.md` in
+  the work dir; the app has no wall knowledge and the feed remains a
+  state-differ; `Belief.cs` is still harness-only. Listed here so nobody
+  mistakes the concept for the build.

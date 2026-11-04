@@ -582,3 +582,33 @@ concept document [`CONCEPT_fair_imperial_ai.md`](CONCEPT_fair_imperial_ai.md)
 since November 2026); every claim
 carries a file pointer so reviewers can verify it. If something here and something on
 a printed card disagree — the card wins; report it to us.*
+
+---
+
+## The reactive layer (November 2026)
+
+The Fair Imperial AI now *reacts* to what happens inside a round instead of
+only executing a standing plan. What players feel, with the file behind each
+claim:
+
+- **Shots are remembered.** When an Imperial group is hit, the shooter is
+  attributed to the hero activation window that opened it (public event
+  facts, never a readout of positions), and that hero is ranked ahead for
+  the attacked group's next shot — the *reaction key* in the target ranking
+  (`WorldEventsUnity.cs`, `OverlordFocus.cs`; 11-language player texts).
+- **Every click re-decides.** Pressing "activate Imperials" re-ranks the
+  REMAINING figures from what has happened since the last click. No
+  interruption feature, no switch — always on (`ReactionOrder.cs`).
+- **Last-seen ledger.** The AI keeps symbolic anchors — where a door was
+  opened, where an objective was touched — as memory, never as hidden
+  coordinates (`WorldEventVector.cs`).
+- **Officers under pressure.** Supporter-flagged Imperials run an emergency
+  cascade that picks Keep vs. Notfall (emergency) behaviour trees with a
+  visible why-line; their pattern dice split into supporter rows, and
+  advance/leash laws bound how far they push and when they fall back
+  (`OfficerDoctrine.cs`, pattern tables, popup trees).
+
+All of it is deterministic keys in the existing ranking: at the lowest skill
+levels the behaviour is bit-for-bit the pre-November canon (golden vectors
+pin this). No new switches exist — the skill level alone decides how much of
+the reactive brain is used.

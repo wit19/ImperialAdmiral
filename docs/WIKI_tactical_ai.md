@@ -20,11 +20,15 @@ code or data file behind the claim, so anything here can be checked. The deep
 mechanics reference (planner internals, tables, formulas) lives in
 [`MECHANICS_tactical_ai.md`](MECHANICS_tactical_ai.md) next to this file.
 
-> **Where this came from:** the app's classic behaviour (the "legacy" mode) replaces
-> the Imperial player with automation: a random activation draw, simple per-group
-> behaviour, and some power that was rolled behind the scenes. Tactical AI keeps the
-> *automation* of that bookkeeping but replaces its *decisions and cheats* with
-> printed, fair rules — see "Every difference from the legacy mode" below.
+> **Where this came from:** the app's classic behaviour (the "legacy" mode) automates
+> the Imperial player: a random activation draw, simple per-group behaviour, and
+> power sources that the printed card does not show — activation bonus rolls the app
+> grants beyond the card, and chance-based difficulty adjustments (figures silently
+> upgrading or downgrading at deploy). None of that is unusual for an app balancing
+> itself against human players, but none of it is printed on a card either. Tactical
+> AI keeps the *automation* of that bookkeeping and limits every decision to printed,
+> published rules — figures do exactly what their cards print, no more, no less. See
+> "Every difference from the legacy mode" below.
 
 ---
 

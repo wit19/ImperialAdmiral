@@ -536,6 +536,27 @@ namespace TacticalAI
         }
 
         // ------------------------------------------------------- group wheels
+        // Player-22 (Thomas 04.11, objective-panel screenshot): is this
+        // group's DEFEAT wired into the scenario? Read at emit time from the
+        // deployment override registry (SagaGameVars.dgOverrides) - the
+        // game's OWN ledger: ParseMission seeds it for every initial group
+        // (SagaController.cs:360-370) and the event deploy actions fill it
+        // for event spawns; both copies carry defeatedTrigger/defeatedEvent
+        // (DeploymentGroupOverride.cs:87-88 and 139-140). A non-empty GUID
+        // means "when this group falls, mission machinery fires" - the
+        // FACT that separates EMPIRE2's diner garrison (Elite officer DG006
+        // + Riot Troopers DG047, both wired) from ambient waves (Stormtrooper
+        // DG002, Probe Droids DG012, unwired). No guessing, no text parsing.
+        static bool DeploymentCritical(string groupId)
+        {
+            var sd = DataStore.sagaSessionData;
+            if (sd == null || sd.gameVars == null || string.IsNullOrEmpty(groupId))
+                return false;
+            var ovrd = sd.gameVars.GetDeploymentOverride(groupId);
+            return ovrd != null
+                && (ovrd.setTrigger != Guid.Empty || ovrd.setEvent != Guid.Empty);
+        }
+
         void PollGroups(int round)
         {
             // R-B card point 3 asked whether the Spawn payload can carry the
@@ -572,6 +593,9 @@ namespace TacticalAI
                         // same name the table reads). Public; powers the
                         // designation collision law and the strike law.
                         { "name", cd.name ?? "" },
+                        // Player-22: scenario-critical defeat wiring (see
+                        // DeploymentCritical) - fact, always explicit.
+                        { "critical", DeploymentCritical(cd.id) },
                     });
                     continue;
                 }
@@ -854,6 +878,7 @@ namespace TacticalAI
                     { "group", cd.id },
                     { "size", (long)Math.Max(1, cd.size) },
                     { "name", cd.name ?? "" },   // Player-19 display name
+                    { "critical", DeploymentCritical(cd.id) },  // Player-22 fact
                     { "resync", true },
                 }));
                 _wheels[cd.id] = (int[])cd.woundTrackerValue.Clone();

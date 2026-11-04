@@ -43,6 +43,18 @@ namespace TacticalAI.Core
             object v;
             return Payload.TryGetValue(key, out v) ? Json.AsLong(v) : dflt;
         }
+        // Player-22 (Thomas 04.11): boolean payload reader, same pattern.
+        // Paired with Has() so a MISSING key stays distinguishable from a
+        // present false (data-existence law - absence never reads as fact).
+        public bool Bool(string key, bool dflt = false)
+        {
+            object v;
+            return Payload.TryGetValue(key, out v) ? Json.AsBool(v) : dflt;
+        }
+        public bool Has(string key)
+        {
+            return Payload.ContainsKey(key);
+        }
     }
 
     /// <summary>Append-only public-event history for ONE mission run. Seq is

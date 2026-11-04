@@ -329,18 +329,29 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   the shooter is resolved against the open hero-activation window
   (lastActivator closes it; `strikePending` at RoundEnd) in
   `WorldEventsUnity.cs`. Doors enter as GUID events.
-- **Strike = objective work (Player-21-b, Thomas 04.11).** Two laws in
-  `WorldEventVector`. GARRISON: a hero's in-window damage on a group the
-  mission Spawned DURING the current objective (spawn round >= change round,
-  only after a change) MOVES `ObjectiveActor` onto the shooter — EMPIRE2's
-  "Sucht im Diner nach dem Duros." never names the garrison, but fighting it
-  IS the phase's objective work. CLOSED-WINDOW CREDITS: the closer who
-  finishes a `strikePending` window also takes the marker. The door-opener
+- **Strike = objective work (Player-21-b + -22, Thomas 04.11).** Two laws in
+  `WorldEventVector`. GARRISON, TWO-FACTOR (Player-22, Thomas' objective-
+  panel screenshot law: "Truppen, die NICHT Missionskritisch sind, würden
+  den Missionsmarker auf sich ziehen - dicker Bug"): (1) the Spawn carries
+  a `critical` FACT - the emitter reads the group's deployment override
+  (`gameVars.dgOverrides`, `setTrigger`/`setEvent != Guid.Empty`: the
+  mission file wires THIS group's defeat to scenario machinery; EMPIRE2's
+  diner garrison DG006/DG047 are wired, the mid-war Stormtrooper DG002 and
+  probe droids DG012 are NOT); and (2) the group is the CURRENT phase's own
+  spawn (deployed during/after the last ObjectiveChange). Rounds alone
+  dragged the marker onto ambient mid-phase waves; the flag alone would
+  credit a last phase's kill during this one - only AND arms it. EMPIRE2's
+  "Sucht im Diner nach dem Duros." never names the garrison (the naming
+  bullet in the objective PANEL is not the feed payload), yet fighting the
+  garrison IS the phase's objective work. CLOSED-WINDOW CREDITS: the closer
+  who finishes a `strikePending` window also takes the marker. The door-opener
   Davith case: no attack = no marker (he lost it to CT-1701 who shot the
   phase troops). BEFORE the first ObjectiveChange the garrison channel is
   closed (initial vectors byte-identical). `engages` = named-hero canon
-  branch OR garrison branch; pinned `p21_garrison_strike_window` +
-  `p21_prechange_spawn_inert`.
+  branch OR two-factor garrison branch; pinned `p21_garrison_strike_window`
+  (critical=true) + `p22_ambient_spawn_inert` (critical=false stays inert) +
+  `p21_prechange_spawn_inert`. Canon prints `|crit=0|1` ONLY where the
+  Spawn carried the key (data-existence law, old vectors byte-identical).
 - **Ledger (RB, b893b58).** `WorldEventVector.cs` stores `obj:` /
   `door-GUID:` / `at:` facts with `fact|hypothesis` grading — symbolic
   last-seen anchors; the projection stays coordinate-free outside the hole.

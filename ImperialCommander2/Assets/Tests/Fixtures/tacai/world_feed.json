@@ -1457,7 +1457,7 @@
   },
   {
    "name": "p21_garrison_strike_window",
-   "comment": "Player-21-b (Thomas 04.11, EMPIRE2 log): the objective text ('Sucht im Diner nach dem Duros.') never names the garrison, but the troops the mission Spawned DURING this objective are its phase troops - damage inside a hero's window moves the objective marker. Facts only: spawn round vs change round vs window.",
+   "comment": "Player-21-b (Thomas 04.11, EMPIRE2 log): the objective text ('Sucht im Diner nach dem Duros.') never names the garrison, but the troops the mission Spawned DURING this objective are its phase troops - damage inside a hero's window moves the objective marker. Facts only: spawn round vs change round vs window. Player-22 (Thomas screenshot 04.11): the spawn carries critical=true - the two-factor law (scenario-critical fact AND current-phase spawn).",
    "events": [
     {
      "kind": "MissionStart",
@@ -1490,7 +1490,8 @@
      "payload": {
       "group": "GGARR",
       "size": 2,
-      "name": "Imperiale Ordnungssoldaten"
+      "name": "Imperiale Ordnungssoldaten",
+      "critical": true
      }
     },
     {
@@ -1519,8 +1520,8 @@
     }
    ],
    "expect": {
-    "canon": "mission=vector|p21_garrison_strike_window\nround=2\nposture=stall\nobjective=Sucht im Diner nach dem Duros.\nobjective_actor=CT-1701\nthreat=0\nthreatseen=0\nseq=7\nG|GGARR|GGARR|1|0|2|2|2|5|9/10|name=Imperiale Ordnungssoldaten|shot=CT-1701|6|2\nH|CT-1701|CT-1701|0|0|1|2|0|0|1|2\nseen=CT-1701 zone=at:GGARR kind=hypothesis seq=6 round=2\nH|Davith Elso|Davith Elso|0|0|1|1|0|0\n",
-    "hash": "684d75068f757e211c0f67a75a0a8a78e45c5f1413cd8fbe5c51fea455bf8d97",
+    "canon": "mission=vector|p21_garrison_strike_window\nround=2\nposture=stall\nobjective=Sucht im Diner nach dem Duros.\nobjective_actor=CT-1701\nthreat=0\nthreatseen=0\nseq=7\nG|GGARR|GGARR|1|0|2|2|2|5|9/10|name=Imperiale Ordnungssoldaten|crit=1|shot=CT-1701|6|2\nH|CT-1701|CT-1701|0|0|1|2|0|0|1|2\nseen=CT-1701 zone=at:GGARR kind=hypothesis seq=6 round=2\nH|Davith Elso|Davith Elso|0|0|1|1|0|0\n",
+    "hash": "b46260cdc94fe3d17307beb9afc6dc05f19fce4630a8d0bed9497b307884ca92",
     "objective": "Sucht im Diner nach dem Duros.",
     "objective_actor": "CT-1701",
     "posture": "stall",
@@ -1586,6 +1587,91 @@
     "posture": "stall",
     "round": 1,
     "seq": 5,
+    "threat": 0
+   }
+  },
+  {
+   "name": "p22_ambient_spawn_inert",
+   "comment": "Player-22 (Thomas 04.11, 'Es kann sein, dass auch so mal Truppen gespawnt werden, die NICHT Missionskritisch sind'): an ambient wave spawns DURING the diner objective but its defeat drives NO trigger/event (critical=false - the EMPIRE2 mid-war Stormtrooper DG002 / probe droid DG012 reality). Shooting it must NOT move the objective marker: the round window alone was the bug, only critical AND current-phase arms the garrison channel.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Befragt die Informanten.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p22",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 1,
+     "payload": {
+      "hero": "CT-1701"
+     }
+    },
+    {
+     "kind": "ObjectiveChange",
+     "round": 2,
+     "payload": {
+      "objective": "Sucht im Diner nach dem Duros."
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 2,
+     "payload": {
+      "group": "GGARR",
+      "size": 2,
+      "name": "Imperiale Ordnungssoldaten",
+      "critical": true
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 2,
+     "payload": {
+      "group": "GAMB",
+      "size": 3,
+      "name": "Sturmtruppen-Verstaerkung",
+      "critical": false
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Biv Bodhrik"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GAMB",
+      "figure": 0,
+      "wheel": 1,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Biv Bodhrik"
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p22_ambient_spawn_inert\nround=2\nposture=stall\nobjective=Sucht im Diner nach dem Duros.\nobjective_actor=CT-1701\nthreat=0\nthreatseen=0\nseq=8\nG|GAMB|GAMB|1|0|3|3|2|5|14/15|name=Sturmtruppen-Verstaerkung|crit=0|shot=Biv Bodhrik|7|2\nG|GGARR|GGARR|1|0|2|2|2|0|1|name=Imperiale Ordnungssoldaten|crit=1\nH|Biv Bodhrik|Biv Bodhrik|0|0|1|2|0|0\nseen=Biv Bodhrik zone=at:GAMB kind=hypothesis seq=7 round=2\nH|CT-1701|CT-1701|0|0|1|1|0|0\n",
+    "hash": "7c9a8e78c3b04ae0d4e28b201ee55b84d6b3397b6acb2c91f1659e5bf82f8460",
+    "objective": "Sucht im Diner nach dem Duros.",
+    "objective_actor": "CT-1701",
+    "posture": "stall",
+    "round": 2,
+    "seq": 8,
     "threat": 0
    }
   }

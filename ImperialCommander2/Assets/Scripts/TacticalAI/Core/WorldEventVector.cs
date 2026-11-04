@@ -99,6 +99,20 @@ namespace TacticalAI.Core
             // input; the spawn ROUND already rides DeployedRound.
             public bool SpawnedInHeroWindow;
 
+            // Player-22 (Thomas 04.11, objective-panel screenshot): the
+            // Spawn payload's "critical" flag - a FACT read at emit time
+            // from the group's deployment override: setTrigger/setEvent
+            // non-empty means THIS group's defeat moves the scenario
+            // machinery (the mission file wired a defeated-trigger/event
+            // for it - EMPIRE2: the Elite officer DG006 and the Riot
+            // Troopers DG047 carry one, the mid-war Stormtrooper wave DG002
+            // and the probe droids DG012 carry NONE). CriticalKnown keeps a
+            // missing key (pre-Player-22 vectors) apart from a real false:
+            // absence never reads as fact, and old vectors keep byte-
+            // identical canon and hash.
+            public bool Critical;
+            public bool CriticalKnown;
+
             /// <summary>Remaining group vitality as exact Rational (M9-F6/A0,
             /// closes M7-F4): the wound dials show ERLITTENER Schaden per
             /// figure — a fresh group reads 0 (Thomas board fact 2026-10-27;
@@ -220,6 +234,12 @@ namespace TacticalAI.Core
                 // byte-identical, every old vector keeps its hash).
                 if (!string.IsNullOrEmpty(g.DisplayName))
                     sb.Append("|name=").Append(g.DisplayName);
+                // Player-22: the crit column appears ONLY where the Spawn
+                // carried the flag (record discipline: pre-Player-22 canon
+                // byte-identical; where the fact exists the column MUST show
+                // - true AND false print, data-existence law).
+                if (g.CriticalKnown)
+                    sb.Append("|crit=").Append(g.Critical ? 1 : 0);
                 // R-A: the shooter column appears ONLY where a hit landed
                 // inside an open hero window (record discipline: vectors
                 // without that fact keep their exact canon and hash; where
@@ -350,18 +370,22 @@ namespace TacticalAI.Core
             // or the blocker that made it happen. Expires at RoundEnd: a
             // damage older than the round is history, not causation.
             bool strikePending = false;
-            // Player-21-b single arming question for the strike channel:
+            // Player-21-b/-22 single arming question for the strike channel:
             // does damage on THIS group count as working the CURRENT
             // objective? Canon branch: the objective text NAMES the figure
-            // (Player-19 law, e.g. "Besiegt Ivan Talos."). Garrison branch:
-            // the Spawn put the group out during the current objective's
-            // round (only after a change) - the phase's own troops, fought
-            // where the mission text never names them.
+            // (Player-19 law, e.g. "Besiegt Ivan Talos."). Garrison branch
+            // TWO-factor (Thomas 04.11 screenshot law): the group must be
+            // SCENARIO-CRITICAL (Spawn "critical" fact: its defeat drives a
+            // wired trigger/event) AND it must be the CURRENT phase's own
+            // spawn (deployed during/after the last change). One without the
+            // other is exactly the two bugs: rounds alone dragged the marker
+            // onto ambient mid-phase reinforcements; the flag alone would
+            // credit a LAST phase's kill during this one.
             Func<FeedWorldView.GroupView, bool> engages = g =>
                 (!string.IsNullOrEmpty(v.Objective) && !string.IsNullOrEmpty(g.DisplayName)
                     && NamesHero(v.Objective, g.DisplayName))
-                || (v.ObjectiveChanged && g.DeployedRound > 0
-                    && g.DeployedRound >= v.ObjectiveSinceRound);
+                || (v.ObjectiveChanged && g.Critical && g.CriticalKnown
+                    && g.DeployedRound > 0 && g.DeployedRound >= v.ObjectiveSinceRound);
             foreach (var e in events)
             {
                 if (e.Round > v.Round) v.Round = e.Round;
@@ -477,6 +501,14 @@ namespace TacticalAI.Core
                             g.Deployed = true;
                             var disp = e.Str("name");
                             if (!string.IsNullOrEmpty(disp)) g.DisplayName = disp;
+                            // Player-22: the scenario-critical fact rides the
+                            // Spawn (deployment-override trigger/event read at
+                            // emit time); a missing key = unknown, never false.
+                            if (e.Has("critical"))
+                            {
+                                g.CriticalKnown = true;
+                                g.Critical = e.Bool("critical");
+                            }
                             if (g.DeployedRound == 0) g.DeployedRound = e.Round;
                             long size = e.Long("size", 0);
                             if (size > 0)

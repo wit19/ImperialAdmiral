@@ -173,6 +173,13 @@ namespace TacticalAI
         static string _sdClampActive;        // posture clamp in force this round
         static readonly Dictionary<string, string> _sdVergByGroup =
             new Dictionary<string, string>();  // group -> suspected shooter hero
+        // S-E (card t_9dd56737): the supporter mask-trust decision of THIS
+        // activation (strike AND support - both ride the gated EXPLAIN
+        // section; the cached decision is a rendered read, never a decision
+        // itself). Rebuilt per activation in TrySelectTarget, cleared per
+        // engagement like the S-D reads.
+        static readonly Dictionary<string, Tac.SupporterTrustDecision> _sdSupportByGroup =
+            new Dictionary<string, Tac.SupporterTrustDecision>();
         // S-D EXPLAIN name lookups: group id -> printed group name, taken
         // from the round facts (BuildGroups output), never re-derived.
         static Dictionary<string, string> _nameByGroup;
@@ -246,6 +253,7 @@ namespace TacticalAI
             _sdThreeCByGroup = null;
             _sdClampActive = null;
             _sdVergByGroup.Clear();
+            _sdSupportByGroup.Clear();
             _nameByGroup = null;
             _roundFocusHero = null;
             _roundFocus = null;
@@ -909,17 +917,71 @@ namespace TacticalAI
             // Aufgabe 4: the fixed move/attack pair synthesis is GONE - the
             // universal AP pool (RenderBlocks) replaces the block sequence;
             // Assault/Tripod still ride as flags on the plan itself.
-            if (TrySelectTarget(cd, out var targetName, out var why, out var reactionTail))
+            // O-C (card t_a2d88c50): supporter-codex tree variant + emergency
+            // why-line, decided by the pure OfficerDoctrine.TreeKindFor. The
+            // machine proves what the FEED shows (E1 under fire, E4 last
+            // group; E3 stays silent without a designated threat hero, E2
+            // "a hero stands right next to him" is TABLE knowledge the keep
+            // branch hands to the human reader). Null roster/threat inputs
+            // fail-closed to None - a missing signal can never fabricate the
+            // Emergency variant (same injection discipline as O-A/O-B).
+            // S-E (card t_9dd56737): this block runs BEFORE the target
+            // choice because the supporter mask-trust channel (Baustein 6)
+            // may only speak while the cascade reads NO emergency - E1..E4
+            // are facts and FAKT SCHLAEGT MASKE (Z6 law). The identical
+            // sup/em values are reused below for the tree choice (no
+            // second EmergencyFor computation).
+            plan.OfficerKeep = false;
+            plan.EmergencyWhy = null;
+            bool seSupporterMaskContext = false;
+            if (plan.Officer)
             {
-                plan.HasTarget = true;
-                plan.TargetName = targetName;
-                // Thomas 02.11 (request 1): the action screen shows ONLY the
-                // target name; TrySelectTarget hands back the bare reason,
-                // which ExplainFor renders in the EXPLAIN section.
-                // R-D: when the reaktion key decided the pick, the focus line
-                // carries the visible retaliation clause (null = no key).
-                plan.TargetWhy = TF(UIx.focusPrefix) + targetName + (reactionTail ?? "");
-                plan.FocusReason = why;
+                var ocs = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
+                int ocr = 1;   // defensive: a null profile keeps the honest S1 basis
+                if (ocs != null && ocs.Level != null && ocs.Level.Length == 2 && ocs.Level[0] == 'S')
+                    ocr = ocs.Level[1] - '0';
+                List<Tac.GroupFacts> ocRoster; List<Tac.Figure> ocFigures;
+                BuildGroups(out ocRoster, out ocFigures, _lastFeedView);
+                Tac.GroupFacts ocSelf = null;
+                foreach (var gf in ocRoster)
+                    if (gf.GroupId == cd.id) { ocSelf = gf; break; }
+                bool sup = ocSelf != null && ocSelf.Supporter;
+                var em = Tac.OfficerDoctrine.EmergencyFor(ocr, _lastFeedView,
+                    ocSelf, ocRoster, null, _catalog, false);
+                seSupporterMaskContext = sup && em.Stage == Tac.OfficerEmergency.None;
+                var kind = Tac.OfficerDoctrine.TreeKindFor(ocr, sup, em.Stage);
+                if (kind == Tac.OfficerTreeKind.Keep) plan.OfficerKeep = true;
+                else if (kind == Tac.OfficerTreeKind.Emergency)
+                {
+                    // a missing/malformed key never ships raw braces to the
+                    // player - the tree itself stays correct either way.
+                    var ocWhy = UIx != null ? TF(UIx.apTreeOfficerNotfall, em.Why) : null;
+                    if (!string.IsNullOrEmpty(ocWhy) && ocWhy.IndexOf('{') < 0)
+                        plan.EmergencyWhy = ocWhy;
+                }
+            }
+            if (TrySelectTarget(cd, out var targetName, out var why, out var reactionTail,
+                                seSupporterMaskContext))
+            {
+                // S-E (card t_9dd56737, Z6): the supporter's mask-trust
+                // channel may answer "support" INSTEAD of naming a target
+                // ("der Offizier supportet, statt zu raten") - an empty
+                // name is itself the decision: the focus row stays unbuilt
+                // (no guessed target on the popup), the gated EXPLAIN line
+                // (ordExplainSupportHalten) discloses the why. Every other
+                // path hands back a name, so today's canon is untouched.
+                if (!string.IsNullOrEmpty(targetName))
+                {
+                    plan.HasTarget = true;
+                    plan.TargetName = targetName;
+                    // Thomas 02.11 (request 1): the action screen shows ONLY the
+                    // target name; TrySelectTarget hands back the bare reason,
+                    // which ExplainFor renders in the EXPLAIN section.
+                    // R-D: when the reaktion key decided the pick, the focus line
+                    // carries the visible retaliation clause (null = no key).
+                    plan.TargetWhy = TF(UIx.focusPrefix) + targetName + (reactionTail ?? "");
+                    plan.FocusReason = why;
+                }
             }
             // Thomas 29.10: the focus line is NOT part of the explanation
             // anymore - the popup prints it ABOVE the action blocks (focus
@@ -935,41 +997,10 @@ namespace TacticalAI
             // catalog record - see the block synthesis above.)
             plan.Pattern = _patternByCard != null && _patternByCard.TryGetValue(cd.id, out var pat)
                            && !string.IsNullOrEmpty(pat) ? pat : "aggressive";
-            // O-C (card t_a2d88c50): supporter-codex tree variant + emergency
-            // why-line, decided by the pure OfficerDoctrine.TreeKindFor. The
-            // machine proves what the FEED shows (E1 under fire, E4 last
-            // group; E3 stays silent without a designated threat hero, E2
-            // "a hero stands right next to him" is TABLE knowledge the keep
-            // branch hands to the human reader). Null roster/threat inputs
-            // fail-closed to None - a missing signal can never fabricate the
-            // Emergency variant (same injection discipline as O-A/O-B).
-            plan.OfficerKeep = false;
-            plan.EmergencyWhy = null;
-            if (plan.Officer)
-            {
-                var ocs = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
-                int ocr = 1;   // defensive: a null profile keeps the honest S1 basis
-                if (ocs != null && ocs.Level != null && ocs.Level.Length == 2 && ocs.Level[0] == 'S')
-                    ocr = ocs.Level[1] - '0';
-                List<Tac.GroupFacts> ocRoster; List<Tac.Figure> ocFigures;
-                BuildGroups(out ocRoster, out ocFigures, _lastFeedView);
-                Tac.GroupFacts ocSelf = null;
-                foreach (var gf in ocRoster)
-                    if (gf.GroupId == cd.id) { ocSelf = gf; break; }
-                bool sup = ocSelf != null && ocSelf.Supporter;
-                var em = Tac.OfficerDoctrine.EmergencyFor(ocr, _lastFeedView,
-                    ocSelf, ocRoster, null, _catalog, false);
-                var kind = Tac.OfficerDoctrine.TreeKindFor(ocr, sup, em.Stage);
-                if (kind == Tac.OfficerTreeKind.Keep) plan.OfficerKeep = true;
-                else if (kind == Tac.OfficerTreeKind.Emergency)
-                {
-                    // a missing/malformed key never ships raw braces to the
-                    // player - the tree itself stays correct either way.
-                    var ocWhy = UIx != null ? TF(UIx.apTreeOfficerNotfall, em.Why) : null;
-                    if (!string.IsNullOrEmpty(ocWhy) && ocWhy.IndexOf('{') < 0)
-                        plan.EmergencyWhy = ocWhy;
-                }
-            }
+            // O-C supporter-codex tree variant + emergency why-line are now
+            // resolved ABOVE (before the target choice, so the S-E supporter
+            // mask-trust channel sees the emergency fact). plan.OfficerKeep /
+            // plan.EmergencyWhy are already set by that hoisted block.
             // M6p (Thomas 02.11): the doctrine moved OUT of the gated explain
             // block into this permanent line - the popup prints it directly
             // after the focus-target line, always visible (EXPLAIN level is
@@ -1340,6 +1371,9 @@ namespace TacticalAI
                 // never a silently wrong label).
                 case "wachzone":  return L.ordFocusBasisWachzone;
                 case "vergeltung": return L.ordFocusBasisVergeltung;
+                // S-E (card t_9dd56737): the supporter's mask-trust basis
+                // reads its label from ui.json like every other basis.
+                case "maskenvertrauen": return L.ordFocusBasisMaskenvertrauen;
                 case "chip":      return L.ordFocusBasisChip;
                 case "card":      return L.ordFocusBasisConditioned;
                 case "economy":   return L.ordFocusBasisEconomy;
@@ -1410,7 +1444,8 @@ namespace TacticalAI
         /// FocusResolver as soon as a hex adapter exists (documented
         /// deviation).</summary>
         static bool TrySelectTarget(global::DeploymentCard cd, out string heroName,
-                                    out string why, out string reactionTail)
+                                    out string why, out string reactionTail,
+                                    bool supporterMaskContext = false)
         {
             heroName = null; why = null; reactionTail = null;
             var heroes = DataStore.deployedHeroes;
@@ -1495,13 +1530,49 @@ namespace TacticalAI
                                              "(canon rank): " + e.Message);
                         }
                     }
+                    // S-E (card t_9dd56737, concept positionierung v1 Z6/D4):
+                    // the SUPPORTER-MASKEN-VERTRAUEN channel of THIS
+                    // activation. supporterMaskContext (caller): printed
+                    // supporter AND the O-C cascade reads None - E1..E4 are
+                    // facts, FAKT SCHLAEGT MASKE. The Core entry point adds
+                    // the rest of the law: skill gate (mask-Verfeinerung-
+                    // Rung, SectionSkill table - S1/S2 read null = canon),
+                    // the fact keys above (all null here or it stays silent),
+                    // MASKE NULL = canon, and unique-fresh-anchor-or-support
+                    // inside the trust-gated own section. strike -> the hero
+                    // rides the Rank slot 1e ("Feuer in die richtige
+                    // Sektion statt Bedrohungs-Schaetzung"); support -> the
+                    // decision names NO target below (Z6: der Offizier
+                    // supportet, statt zu raten); null -> today's popup
+                    // bit-identical.
+                    string supporterTrustHero = null;
+                    Tac.SupporterTrustDecision sdSupport = null;
+                    if (sdSpace != null && supporterMaskContext)
+                    {
+                        try
+                        {
+                            sdSupport = Tac.SectionConsumers.SupporterTargetFor(
+                                sdSpace, ordView, rdSkill, cd.id, reactionHero,
+                                wachzoneHero, vergeltungHero);
+                            if (sdSupport != null &&
+                                sdSupport.Mode == Tac.SupporterTrustDecision.ModeStrike)
+                                supporterTrustHero = sdSupport.Hero;
+                        }
+                        catch (Exception e)
+                        {
+                            sdSupport = null;
+                            supporterTrustHero = null;
+                            Debug.LogWarning("TacticalAIBridge::supporter mask trust failed " +
+                                             "(canon rank): " + e.Message);
+                        }
+                    }
                     var ranked = Tac.OverlordFocus.Rank(cands,
                         ClampPosture(string.IsNullOrEmpty(ordView.Posture) ? "eliminate" : ordView.Posture, rdSkill),
                         MissionCounter(),
                         // M11b: threat v2 runs against THIS figure's printed
                         // defense pool (public deployment-card data).
                         DefenseOf(cd), 0, null, AttackEvOf(cd), reactionHero,
-                        wachzoneHero, vergeltungHero);
+                        wachzoneHero, vergeltungHero, supporterTrustHero);
                     var dec = ranked[0];
                     _roundFocus = dec;
                     _roundFocusHero = dec.HeroId;
@@ -1528,12 +1599,47 @@ namespace TacticalAI
                             reactionTail = TF(L0.ordFocusWachzone, cd.name ?? cd.id);
                         else if (dec.Basis == "vergeltung" && !string.IsNullOrEmpty(L0.ordFocusVergeltung))
                             reactionTail = TF(L0.ordFocusVergeltung, cd.name ?? cd.id);
+                        // S-E (card t_9dd56737): the same visibility law on
+                        // the supporter's mask-trust basis - the focus line
+                        // names what the AI does publicly (it strikes at the
+                        // hero standing in its own section), never internal
+                        // mechanics. The strike hero always carries this
+                        // basis: the fact keys are null whenever the channel
+                        // speaks (Core law), so no higher slot pre-empts it.
+                        else if (dec.Basis == "maskenvertrauen" && !string.IsNullOrEmpty(L0.ordFocusMaskenvertrauen))
+                            reactionTail = TF(L0.ordFocusMaskenvertrauen, cd.name ?? cd.id);
                         if (vergeltungHero != null) _sdVergByGroup[cd.id] = vergeltungHero;
+                        // S-E disclosure (Loch-Gesetz: the decision rides the
+                        // gated EXPLAIN section with its why-line, both for
+                        // the strike and for the support verdict).
+                        if (sdSupport != null) _sdSupportByGroup[cd.id] = sdSupport;
+                        else _sdSupportByGroup.Remove(cd.id);   // no stale disclosure
+                        if (sdSupport != null &&
+                            sdSupport.Mode == Tac.SupporterTrustDecision.ModeSupport)
+                        {
+                            // Z6: der Offizier supportet, statt zu raten.
+                            // NO target is named - the empty name IS the
+                            // decision (the caller leaves the focus row
+                            // unbuilt); the activation names no round focus
+                            // either. The EXPLAIN line (ordExplainSupport-
+                            // Halten) discloses the why; the rank vector
+                            // above ran untouched canon law (permutation
+                            // fairness never sees this branch - nothing is
+                            // filtered, the supporter simply does not point).
+                            _roundFocus = null; _roundFocusHero = null;
+                            heroName = null; why = null; reactionTail = null;
+                            Debug.Log("TacticalAIBridge::supporter trust " + cd.id +
+                                      " mode=support - no target named (Z6)" +
+                                      " section=" + (sdSupport.Section ?? "-") +
+                                      " round=" + sdSupport.Round);
+                            return true;
+                        }
                         why = BuildOverlordWhy(L0, dec, heroName);
                         Debug.Log("TacticalAIBridge::target " + cd.id + " -> " + dec.HeroId +
                                   " basis=" + dec.Basis + " reaction=" + (reactionHero ?? "-") +
                                   " wachzone=" + (wachzoneHero ?? "-") +
-                                  " vergeltung=" + (vergeltungHero ?? "-"));
+                                  " vergeltung=" + (vergeltungHero ?? "-") +
+                                  " masktrust=" + (supporterTrustHero ?? "-"));
                         return true;
                     }
                 }
@@ -2139,6 +2245,26 @@ namespace TacticalAI
                         && !string.IsNullOrEmpty(UIx.ordExplainVergeltung))
                         sdLine = TF(UIx.ordExplainVergeltung,
                             GroupDisplay(groupId), HeroDisplay(verg));
+                    // S-E (card t_9dd56737): the supporter mask-trust decision
+                    // of THIS activation (strike AND support). Coord-free law:
+                    // the section rides its AUTHORED name (Graph.SectionName),
+                    // never an id or a coordinate; one rule per line.
+                    Tac.SupporterTrustDecision supp;
+                    if (sdLine == null && _sdSupportByGroup.TryGetValue(groupId, out supp)
+                        && supp != null)
+                    {
+                        string secName = LastSectionSpace != null
+                            ? (LastSectionSpace.Graph.SectionName(supp.Section) ?? supp.Section)
+                            : supp.Section;
+                        if (supp.Mode == Tac.SupporterTrustDecision.ModeStrike
+                            && !string.IsNullOrEmpty(UIx.ordExplainSupportMaske))
+                            sdLine = TF(UIx.ordExplainSupportMaske,
+                                GroupDisplay(groupId), secName);
+                        else if (supp.Mode == Tac.SupporterTrustDecision.ModeSupport
+                            && !string.IsNullOrEmpty(UIx.ordExplainSupportHalten))
+                            sdLine = TF(UIx.ordExplainSupportHalten,
+                                GroupDisplay(groupId));
+                    }
                     if (sdLine != null)
                         line = (line == null ? "" : line + "\n") + sdLine;
                     if (!string.IsNullOrEmpty(_sdClampActive)

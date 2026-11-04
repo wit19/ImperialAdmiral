@@ -69,6 +69,13 @@ public class UITacticalAI
 	// tail-clause law for the two section bases; {0} = the activated
 	// figure's name, pronoun-free like the reaktion tail above.
 	public string ordFocusWachzone, ordFocusVergeltung;
+	// S-E (card t_9dd56737, concept positionierung v1 Z6/D4): the supporter's
+	// mask-trust focus tail ({0} = activated figure's name, pronoun-free),
+	// its basis label, and the two EXPLAIN why-lines (strike: {0} group +
+	// {1} authored section name; support: {0} group). ui.json-owned, no
+	// coordinates (coord-free-Law).
+	public string ordFocusMaskenvertrauen, ordFocusBasisMaskenvertrauen,
+		ordExplainSupportMaske, ordExplainSupportHalten;
 	// M6 overlord explain parts (public threat economy + aim marks + risk).
 	// M13c (Thomas 30.10): ordRoundFocus + focusNoChance REMOVED from the
 	// focus-target WHY line (the "all groups converge...; no chance" tail).

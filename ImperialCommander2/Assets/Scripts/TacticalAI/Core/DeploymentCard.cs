@@ -8,6 +8,13 @@ namespace TacticalAI.Core
 {
     public sealed class DeploymentCard
     {
+        // O-A field-commander exceptions (Thomas-Gesetz 04.11.): these named
+        // villains keep FULL self-combat even if a card ever prints a command
+        // token - they are commanders, not supporters. Id-keyed, never names
+        // (see FromRecord). OfficerDoctrine references the same law.
+        public static readonly HashSet<string> FieldCommanderExceptions =
+            new HashSet<string>(StringComparer.Ordinal) { "DG075", "DG078" };
+
         public string Id;
         public string Name;
         // M6s-B8 role anchor (Player-19 Ivan Talos): the printed pool card
@@ -23,6 +30,16 @@ namespace TacticalAI.Core
         public HashSet<string> Keywords = new HashSet<string>();
         public bool IsEliteCard;
         public string Subname = "";
+        // O-A supporter identity (concept offizier_supporter §2, Thomas-Gesetz
+        // 04.11.): officers print a command token (Order/Executive Order) -
+        // they keep commanding per doctrine, but their SELF-COMBAT runs only
+        // in an emergency (OfficerDoctrine.EmergencyFor, O-B/O-C consume).
+        // Source is the PRINTED token ONLY: the bridge injects the keywords
+        // "OfficerOrder"/"OfficerExecOrder" from the ability lane + DG-id
+        // belt (TacticalAIBridge.ToRecord), so imports that print the token
+        // inherit automatically. NEVER the card name. Field-commander
+        // exceptions are id-keyed (FieldCommanderExceptions below).
+        public bool Supporter;
 
         // printed surge/defence lines (optional catalog fields; empty = none)
         public string[] SurgeLines = Array.Empty<string>();
@@ -85,6 +102,21 @@ namespace TacticalAI.Core
             };
             foreach (var k in Json.AsList(Json.Get(rec, "keywords", new List<object>())))
                 c.Keywords.Add(Json.AsStr(k));
+            // O-A (concept offizier_supporter §2): supporter = the PRINTED
+            // command token (bridge keyword lane OfficerOrder/OfficerExecOrder,
+            // see field comment above). The id exclusion is HART eingebaut per
+            // Thomas-Gesetz 04.11.: the named villains DG075/DG078 stay field
+            // commanders with full self-combat. Shipped-name truth 04.11.:
+            // DG075 = Kayn Somos, DG078 = General Sorin (the concept text has
+            // the pair swapped; both ids are excluded, so behaviour is
+            // identical either way). Keyed by id, never by name - imports
+            // with the token inherit, names never decide. Today (verified
+            // 04.11. over CardData pools + all 11 language overlays) exactly
+            // DG004/DG005/DG006 print a command token and DG075/DG078 print
+            // none - the exclusion is the standing wall against data drift.
+            c.Supporter = (c.Keywords.Contains("OfficerOrder") ||
+                           c.Keywords.Contains("OfficerExecOrder"))
+                          && !FieldCommanderExceptions.Contains(c.Id ?? "");
             c.SurgeLines = StrArray(Json.Get(rec, "surges", new List<object>()));
             c.Defense = StrArray(Json.Get(rec, "defense", new List<object>()));
             return c;

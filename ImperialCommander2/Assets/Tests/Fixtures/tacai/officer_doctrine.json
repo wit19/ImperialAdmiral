@@ -1,0 +1,1711 @@
+{
+  "_comment": "O-A supporter-codex vectors (concept offizier_supporter v1 par.2, Thomas-Gesetz 04.11., card t_4acaa220): OfficerDoctrine.EmergencyFor pins the emergency cascade E1..E4 for officers (printed Order/Executive Order token; field-commander id exclusion DG075/DG078 - shipped names: DG075 = Kayn Somos, DG078 = General Sorin, the concept text has the pair swapped, ids exclude so behaviour is identical). Card stats are the shipped printed values (CardData pools 04.11.), the token rides the bridge keyword lane (OfficerOrder/OfficerExecOrder) exactly as TacticalAIBridge.ToRecord injects it. Expect blocks were cast once with `dotnet run -- <fixtures> --record` and reviewed case by case (officer_doctrine_record.json is the raw record twin); the hand-pinned LAWS live in SectionsOfficerDoctrine.cs (card identity flags, S1 silence on EVERY case, legacy-ctor neutrality on EVERY case, determinism stage+why on EVERY case). No popup/ActionBuilder consumes the codex yet (O-B/O-C hops).",
+  "cards": [
+    {
+      "id": "DG004",
+      "name": "Imperial Officer",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "DG005",
+      "name": "Imperial Officer",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "DG006",
+      "name": "Imperial Officer (Elite)",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 5,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": true,
+      "keywords": [
+        "OfficerExecOrder"
+      ]
+    },
+    {
+      "id": "DG075",
+      "name": "Kayn Somos",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 12,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Blue",
+        "Green"
+      ],
+      "isElite": true,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "DG078",
+      "name": "General Sorin",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 7,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": true,
+      "keywords": [
+        "OfficerExecOrder"
+      ]
+    },
+    {
+      "id": "CUSTOM_FAN",
+      "name": "Fan Officer Import",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "CUSTOM_FAN_MEL",
+      "name": "Fan Melee Officer Import",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Melee",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "DG021",
+      "name": "Tusken Raider",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Melee",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false
+    },
+    {
+      "id": "DG009",
+      "name": "Royal Guard",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Melee",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false
+    },
+    {
+      "id": "DG046",
+      "name": "AT-DP",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 6,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Blue",
+        "Black"
+      ],
+      "isElite": false,
+      "keywords": [
+        "Assault"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "od_e1_under_fire",
+      "comment": "E1: a hero shot the officer inside HIS open activation window in the live round (R-A attribution) - codex stage E1, the why-line names the shooter.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "E1",
+        "why": "Er steht unter Feuer (Lokaku)."
+      }
+    },
+    {
+      "name": "od_e1_stale_history",
+      "comment": "E1 consumption law: the shot landed in round 2, the view is already in round 3 - a finished round's damage is history, not causation (same law as OverlordFocus/ReactionOrder). No other condition -> None.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "Leia"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e2_direct_threat_named",
+      "comment": "E2 with the label channel: the executing site signals melee (directThreatSeen - the human sees it; the app popup has no adjacency law) AND names the threatener.",
+      "skill": 3,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Lokaku",
+      "direct_threat": 1,
+      "expect": {
+        "stage": "E2",
+        "why": "Ein Held bedroht ihn direkt (Lokaku)."
+      }
+    },
+    {
+      "name": "od_e2_signal_without_name",
+      "comment": "E2 honest-degradation: melee signal present, the threatener is NOT named -> the stage fires, the why-line stays nameless (never invents a hero).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        }
+      ],
+      "direct_threat": 1,
+      "expect": {
+        "stage": "E2",
+        "why": "Ein Held bedroht ihn direkt."
+      }
+    },
+    {
+      "name": "od_e3_only_he_can",
+      "comment": "E3 core: objective designated, the executing site names the threatener (public focus designation), the supporter is printed Ranged and the ONLY other living imperials print melee - by the public catalog fact (NO position!) nobody else can reach him.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "E3",
+        "why": "Das Missionsziel ist akut bedroht (Jabba) - nur er kann eingreifen."
+      }
+    },
+    {
+      "name": "od_e3_other_shooter_blocks",
+      "comment": "E3 fail-closed: one more living imperial prints Ranged (AT-DP, not even a supporter) -> it could reach the threatener -> the codex stays silent (Nie raten).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "ADTP",
+            "size": 2,
+            "name": "AT-DP"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        },
+        {
+          "id": "ADTP",
+          "card": "DG046",
+          "name": "AT-DP",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e3_unknown_print_blocks",
+      "comment": "E3 fail-closed on unknown prints: a living fan-import group without a catalog entry has unknowable printed capability -> counts as could-attack -> no E3.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "FANX",
+            "size": 2,
+            "name": "Fan Import"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "FANX",
+          "card": "CUSTOM_OTHER",
+          "name": "Fan Import",
+          "n_alive": 1,
+          "supporter": 0
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e3_no_objective",
+      "comment": "E3 needs the Missionsziel-Designierung: MissionStart carries no objective text -> nothing is 'akut bedroht' -> None.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e3_threat_defeated",
+      "comment": "E3 fail-closed: the designated threatener was defeated this round (public feed fact) -> the emergency is over -> None.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        },
+        {
+          "kind": "HeroDefeated",
+          "round": 2,
+          "payload": {
+            "hero": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e3_no_catalog",
+      "comment": "E3 fail-closed without printed knowledge: catalog=null (adapter has no card data) -> capability unprovable -> None.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "catalog_null": 1,
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e3_self_melee_blocked",
+      "comment": "E3 needs the supporter's OWN printed ranged capability: a token-carrying melee import cannot reach the threatener by the catalog fact -> None (fail-closed both sides of the fact).",
+      "skill": 2,
+      "self": "FANM",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "FANM",
+            "size": 2,
+            "name": "Fan Melee Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "FANM",
+          "card": "CUSTOM_FAN_MEL",
+          "name": "Fan Melee Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e3_threat_never_seen",
+      "comment": "E3 fail-closed: the named threatener has NO event in the feed (unknown hero) -> the designation cannot be checked -> None (never act on unverifiable designations).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "NeverSeenHero",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_e4_last_group",
+      "comment": "E4: every other imperial group is wiped (NAlive=0 on the roster) - the supporter is the last living empire on the board.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer (Elite)"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG006",
+          "name": "Officer (Elite)",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 0
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 0
+        }
+      ],
+      "expect": {
+        "stage": "E4",
+        "why": "Er ist die letzte lebende imperiale Gruppe."
+      }
+    },
+    {
+      "name": "od_precedence_e1_first",
+      "comment": "First-match-wins: E1 AND E2 AND E4 conditions ALL hold (shot this round + melee signal + last group) -> exactly E1, the why-line names exactly one reason.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 0
+        }
+      ],
+      "threat_hero": "Lokaku",
+      "direct_threat": 1,
+      "expect": {
+        "stage": "E1",
+        "why": "Er steht unter Feuer (Lokaku)."
+      }
+    },
+    {
+      "name": "od_precedence_e2_before_e3",
+      "comment": "First-match-wins: E2 AND E3 conditions hold (melee signal + full E3 fact set) -> E2 (the direct threat outranks the objective claim).",
+      "skill": 3,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "direct_threat": 1,
+      "expect": {
+        "stage": "E2",
+        "why": "Ein Held bedroht ihn direkt (Jabba)."
+      }
+    },
+    {
+      "name": "od_sorin_full_commander",
+      "comment": "Thomas-Ausnahme 04.11. id wall: the record carries the plain Order token but the id is the field-commander exception (shipped name: Kayn Somos) -> Supporter=false -> the codex NEVER speaks, not even under direct fire.",
+      "skill": 2,
+      "self": "SON",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SON",
+            "size": 2,
+            "name": "Kayn Somos"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "SON",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "SON",
+          "card": "DG075",
+          "name": "Kayn Somos",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 0
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_somos_full_commander",
+      "comment": "Thomas-Ausnahme 04.11. second id (shipped name: General Sorin; the concept text swaps the pair, both ids exclude): full E3 fact set -> still None, field commanders fight on always.",
+      "skill": 2,
+      "self": "SOR",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escort the convoy off the landing pad.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SOR",
+            "size": 2,
+            "name": "General Sorin"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "FocusChange",
+          "round": 2,
+          "payload": {
+            "focus": "Jabba"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "SOR",
+          "card": "DG078",
+          "name": "General Sorin",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "threat_hero": "Jabba",
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_plain_trooper_neutral",
+      "comment": "The codex is the SUPPORTERS' law: a plain Tusken (no command token) with ALL emergency conditions holds -> None, its plan is untouched.",
+      "skill": 2,
+      "self": "TUSK",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "TUSK",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 0
+        }
+      ],
+      "threat_hero": "Lokaku",
+      "direct_threat": 1,
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    },
+    {
+      "name": "od_import_token_inherits",
+      "comment": "Keyword inheritance, not names: a fan import whose record carries the printed-token keyword (no DG id, no 'Officer' name check) is a Supporter -> E1 fires like for the pool trio.",
+      "skill": 2,
+      "self": "FAN",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "FAN",
+            "size": 2,
+            "name": "Imported Friend"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Kanan"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "FAN",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "FAN",
+          "card": "CUSTOM_FAN",
+          "name": "Imported Friend",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "E1",
+        "why": "Er steht unter Feuer (Kanan)."
+      }
+    },
+    {
+      "name": "od_dead_self_no_emergency",
+      "comment": "A wiped supporter (NAlive=0) has no emergencies even with the shot of the live round on its corpse - stage None.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oa",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 0
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": ""
+      }
+    }
+  ]
+}

@@ -71,12 +71,18 @@ namespace TacticalAI.Core
         // it ONLY inside the unknown-card block (fan imports without a
         // catalog entry), where it is the only ordering knowledge there is.
         public bool PriorityOne;
+        // O-A supporter identity (concept offizier_supporter §2): the card
+        // prints a command token and is not a field-commander exception
+        // (DeploymentCard.Supporter, filled by the adapter from the catalog
+        // card / printed lane). Default false keeps EVERY pre-O-A vector and
+        // caller bit-identical; only OfficerDoctrine reads it.
+        public bool Supporter;
 
         public GroupFacts(string groupId, int index, string cardId, string name,
                           string pattern, int nAlive, Rational vitalityFrac,
                           string zone = null, int? arrivedRound = null,
                           bool isHeavy = false, bool isSwarm = false,
-                          bool priorityOne = false)
+                          bool priorityOne = false, bool supporter = false)
         {
             GroupId = groupId;
             Index = index;
@@ -90,6 +96,7 @@ namespace TacticalAI.Core
             IsHeavy = isHeavy;
             IsSwarm = isSwarm;
             PriorityOne = priorityOne;
+            Supporter = supporter;
         }
     }
 

@@ -645,7 +645,11 @@ namespace TacticalAI
                             vitalityFrac: Tac.Rational.One,
                             zone: null, arrivedRound: null,
                             isHeavy: false, isSwarm: false,
-                            priorityOne: cd.priority == 1);
+                            priorityOne: cd.priority == 1,
+                            // O-A: no catalog record here (fan import / left
+                            // roster) - read the PRINTED lane directly, the
+                            // same law ToRecord applies for catalog cards.
+                            supporter: PrintedOfficerSupporter(cd));
                     }
                     pending.Add(cd.id);
                     selFacts.Add(f);
@@ -2220,6 +2224,37 @@ namespace TacticalAI
             return "aggressive";
         }
 
+        /// O-A supporter identity WITHOUT a catalog record (the synthetic
+        /// GroupFacts path, Bridge:642): fan imports and groups that left
+        /// the live roster have no DeploymentCard in _catalog, so the same
+        /// printed-token law ToRecord encodes as keywords is read straight
+        /// off the ability lane. Same source strings as ToRecord's officer
+        /// block (De+En print it; partial overlays fall back to the EN
+        /// name - the 02.11 overwrite-law finding), same DG-id belt, same
+        /// Thomas-Ausnahme 04.11. (DG075/DG078 stay field commanders - they
+        /// can reach THIS path as deployed villains, so the wall lives here
+        /// too, not only in Core FromRecord).
+        static bool PrintedOfficerSupporter(global::DeploymentCard cd)
+        {
+            bool token = false;
+            var ab = cd.abilities;
+            if (ab != null)
+                foreach (var a in ab)
+                {
+                    if (a == null) continue;
+                    if (a.name == "{A} Order" || a.name == "{A} Befehl" ||
+                        a.name == "{A} Executive Order" ||
+                        a.name == "{A} Vollstreckungsbefehl")
+                    { token = true; break; }
+                }
+            // DG-id belt (ToRecord twin): exactly DG004/DG005 print the plain
+            // command ability, DG006 the executive one (verified 02.11 over
+            // all shipped language assets).
+            if (cd.id == "DG004" || cd.id == "DG005" || cd.id == "DG006") token = true;
+            if (cd.id == "DG075" || cd.id == "DG078") token = false;
+            return token;
+        }
+
         /// <summary>Only the PRINTED card values go through (fairness
         /// whitelist Core DeploymentCard.CardFieldWhitelist); no bonus data.</summary>
         static Dictionary<string, object> ToRecord(global::DeploymentCard cd)
@@ -2418,7 +2453,10 @@ namespace TacticalAI
                     // Zapfen war bisher nur taub.)
                     zone: null,
                     arrivedRound: gv != null && gv.DeployedRound > 0 ? gv.DeployedRound : (int?)null,
-                    isHeavy: core.IsLargeBase, isSwarm: false));
+                    isHeavy: core.IsLargeBase, isSwarm: false,
+                    // O-A: supporter identity from the catalog card (printed
+                    // command token, DG075/DG078 excluded in FromRecord).
+                    supporter: core.Supporter));
                 var fig = new Tac.Figure
                 {
                     Id = cd.id, GroupId = cd.id, Card = core, Team = "imperial",

@@ -37,6 +37,7 @@ class P {
         PersonasGate.Run();
         TabooLintGate.Run();
         OfficerTextGate.Run();
+        OfficerSupporterGate.Run();
         PatternRowLanguageGate.Run();
         UiCompletenessGate.Run();
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");

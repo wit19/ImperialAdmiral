@@ -285,7 +285,7 @@
     "docAggressive": "Advance (close into combat)",
     "docGuard": "Guard (hold the zone, deny the paths, never be lured out)",
     "docBlocker": "Blocker (hold the chokepoint)",
-    "docHunter": "Hunter (sweep the priority zone)",
+    "docHunter": "Hunter (sweep the priority zone — the priority zone is the area the rebels' current mission objective points at: patrol it, take the paths there, attack heroes working the objective)",
     "docSupport": "Support (keep distance, shoot from cover)",
     "docAmbusher": "Ambush (stay unseen until the first shot)",
     "overlordFallback": "Tactical AI - Overlord: tactical world feed not active yet - planning follows the Reference rules.",

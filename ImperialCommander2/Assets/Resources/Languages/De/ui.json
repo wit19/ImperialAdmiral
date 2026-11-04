@@ -285,7 +285,7 @@
     "docAggressive": "Vorstoß (zum Kampf vorrücken)",
     "docGuard": "Wachschutz (Zone halten, Wege versperren, nie herauslocken)",
     "docBlocker": "Blockierer (Engstelle halten)",
-    "docHunter": "Jäger (Schwerpunktzone abkämmen)",
+    "docHunter": "Jäger (Schwerpunktzone abkämmen — die Schwerpunktzone ist der Bereich, auf den das aktuelle Missionsziel der Rebellen zeigt: dort patrouillieren, Wege nehmen und Helden angreifen, die am Ziel arbeiten)",
     "docSupport": "Support (Distanz halten, aus der Deckung)",
     "docAmbusher": "Hinterhalt (ungesehen bis zum ersten Schuss)",
     "overlordFallback": "Taktische KI - Overlord: taktischer Welt-Feed noch nicht aktiv. Planung erfolgt nach den Referenz-Regeln.",

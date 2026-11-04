@@ -322,6 +322,14 @@ Guard-role figures hold it; blockers cover its approaches. (Do not confuse with 
 figure keyword *Guard*, which pins an individual figure to a printed radius around
 itself — related idea, different mechanism; both are on the cards.)
 
+**Priority zone ("Schwerpunktzone").** The area the rebels' *current* mission
+objective points at — the sector with their main effort. Hunter-doctrine figures
+treat it as their hunting ground: they take their movement paths there and engage
+heroes working the objective first. Unlike the guard zone it is not held — nobody
+stands in it to deny it; it is where the Empire goes hunting. It follows the
+mission's current objective, so it can move when the objective moves. (Shown on
+the doctrine line of the activation pop-up; see also the Guard zone above.)
+
 **Focus (target).** The hero the Imperials concentrate on this round, named on
 every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice follows public criteria (objective gravity,
 wound state, firepower) and a fixed, published tie-break chain (squad row, then

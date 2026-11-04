@@ -80,6 +80,14 @@ namespace TacticalAI.Core
             public long LastShotSeq;             // seq of the crediting GroupDamage event
             public int LastShotRound;            // round of that hit (0 = none)
 
+            // R-B (concept v1.2 §5 B): the Spawn event fell inside an OPEN
+            // hero window - the "this intruder was pulled in by hero
+            // activity" insight (R-C R3 input). Pure projection: the window
+            // state is part of the event stream itself
+            // (HeroActivationStart/HeroActivated), so this reads NO new feed
+            // input; the spawn ROUND already rides DeployedRound.
+            public bool SpawnedInHeroWindow;
+
             /// <summary>Remaining group vitality as exact Rational (M9-F6/A0,
             /// closes M7-F4): the wound dials show ERLITTENER Schaden per
             /// figure — a fresh group reads 0 (Thomas board fact 2026-10-27;
@@ -139,6 +147,30 @@ namespace TacticalAI.Core
             // a position read, never a guess from absence.
             public int Strikes;                // cumulative strikes on the mission-named figure
             public int StrikeRound;            // round of the LAST strike, 0 = never
+
+            // ---- R-B Last-Seen-Ledger (concept v1.2 §5 B) ----
+            // SYMBOLIC presence anchors. A zone is an EVENT-ANCHOR identity,
+            // never a position: "obj:<objective text>" (the hero whose open
+            // window encloses an ObjectiveChange is the actor per the public
+            // M10b/M6s-B6 attribution law), "door:<door GUID>" (a digital
+            // door flip inside the open window), "at:<group id>" (a hit on
+            // that group inside the open window). NO coordinates, NO
+            // distances, NO movement commitment - and the ledger NEVER
+            // writes from absence: a hero with no anchoring event keeps
+            // LastSeenZone null, and an anchor is only ever OVERWRITTEN by
+            // the next anchoring event (latest seq wins).
+            // KIND is a first-class part of the fact: "fact" = the public
+            // attribution law PLACES the actor there (objective, door);
+            // "hypothesis" = a public proximity anchor (a hit means the
+            // shooter was within weapon range of the group - NOT a placed
+            // position). Consumers MUST show/store the kind and MUST NOT
+            // treat a hypothesis like a fact.
+            public const string LedgerKindFact = "fact";
+            public const string LedgerKindHypothesis = "hypothesis";
+            public string LastSeenZone;        // null = no anchor yet (absence writes nothing)
+            public string LastSeenKind;        // LedgerKindFact | LedgerKindHypothesis
+            public long LastSeenSeq;           // seq of the anchoring event (0 = none)
+            public int LastSeenRound;          // round of the anchoring event (0 = none)
         }
 
         public GroupView FindGroup(string id)
@@ -180,6 +212,12 @@ namespace TacticalAI.Core
                     sb.Append("|shot=").Append(g.LastShotHero).Append('|')
                       .Append(g.LastShotSeq.ToString(CultureInfo.InvariantCulture)).Append('|')
                       .Append(g.LastShotRound.ToString(CultureInfo.InvariantCulture));
+                // R-B: the in-window spawn marker appears ONLY where the
+                // Spawn really fell into an open hero window (same
+                // data-existence law: spawns at mission baseline or between
+                // windows keep the exact pre-R-B row).
+                if (g.SpawnedInHeroWindow)
+                    sb.Append("|in_window");
                 sb.Append('\n');
             }
             foreach (var h in Heroes)
@@ -192,8 +230,63 @@ namespace TacticalAI.Core
                 if (h.Strikes > 0)
                     sb.Append('|').Append(h.Strikes).Append('|').Append(h.StrikeRound);
                 sb.Append('\n');
+                // R-B Last-Seen-Ledger: one ledger row per hero that HAS an
+                // anchor, printed as its own line right below the hero row -
+                // the H row itself stays byte-identical to pre-R-B canon
+                // (data-existence law: heroes without an anchor emit no
+                // line, so every vector without ledger facts keeps its
+                // exact pre-R-B canon; hashes ride the EVENTS only and are
+                // untouched by any of this). The KIND is printed always -
+                // a hypothesis must never read like a fact (Thomas:
+                // Konsumenten duerfen hypothesis nie wie fact behandeln).
+                if (!string.IsNullOrEmpty(h.LastSeenZone))
+                    sb.Append("seen=").Append(h.HeroId)
+                      .Append(" zone=").Append(h.LastSeenZone)
+                      .Append(" kind=").Append(h.LastSeenKind)
+                      .Append(" seq=").Append(h.LastSeenSeq.ToString(CultureInfo.InvariantCulture))
+                      .Append(" round=").Append(h.LastSeenRound.ToString(CultureInfo.InvariantCulture))
+                      .Append('\n');
             }
             return sb.ToString();
+        }
+
+        /// <summary>R-B: the Last-Seen-Ledger as HUMAN-READABLE debug text -
+        /// Thomas reads the Player.log as explanation UI, so the ledger's
+        /// kind distinction must survive into the log, not only into the
+        /// machine Canon. One line per hero WITH an anchor (absence prints
+        /// nothing); zones are read out by their anchor kind, hypotheses are
+        /// worded as hypotheses. Deterministic (sorted Heroes), pure.</summary>
+        public string LedgerText()
+        {
+            var sb = new StringBuilder();
+            foreach (var h in Heroes)
+            {
+                if (string.IsNullOrEmpty(h.LastSeenZone)) continue;
+                sb.Append("ledger ").Append(h.Name);
+                if (h.LastSeenKind == HeroView.LedgerKindHypothesis)
+                    sb.Append(" war vermutlich in der Nahe von ").Append(ZoneReadout(h.LastSeenZone));
+                else
+                    sb.Append(" war bei ").Append(ZoneReadout(h.LastSeenZone));
+                sb.Append(" (Runde ").Append(h.LastSeenRound.ToString(CultureInfo.InvariantCulture))
+                  .Append(", seq ").Append(h.LastSeenSeq.ToString(CultureInfo.InvariantCulture))
+                  .Append(", ").Append(h.LastSeenKind).Append(")\n");
+            }
+            foreach (var g in Groups)
+                if (g.SpawnedInHeroWindow)
+                    sb.Append("spawn ").Append(g.Name)
+                      .Append(" fiel in ein offenes Heldenfenster (Runde ")
+                      .Append(g.DeployedRound.ToString(CultureInfo.InvariantCulture)).Append(")\n");
+            return sb.ToString();
+        }
+
+        static string ZoneReadout(string zone)
+        {
+            // Symbolic anchors only - the readout keeps the prefix meaning
+            // visible (objective text / door identity / group identity).
+            if (zone.StartsWith("obj:", StringComparison.Ordinal)) return "Ziel \"" + zone.Substring(4) + "\"";
+            if (zone.StartsWith("door:", StringComparison.Ordinal)) return "Tuer " + zone.Substring(5);
+            if (zone.StartsWith("at:", StringComparison.Ordinal)) return "Gruppe " + zone.Substring(3);
+            return zone;
         }
     }
 
@@ -267,6 +360,44 @@ namespace TacticalAI.Core
                         // provisional credit; logs WITH a window trust the
                         // window (Player-19: open window first).
                         attributionPending = true;
+                        // R-B Last-Seen-Ledger: the OPEN-WINDOW branch of the
+                        // public attribution law anchors the actor at the
+                        // objective itself (zone "obj:<text>", kind FACT -
+                        // the M10b/M6s-B6 law places him there). The legacy
+                        // provisional/retro channel is deliberately NOT
+                        // mirrored into the ledger: its provisional credit
+                        // can still be overwritten, and an anchor written
+                        // from a guess-then-overwrite channel would violate
+                        // the never-from-absence law.
+                        if (heroWindow != null)
+                        {
+                            var actor = Hero(v, heroWindow);
+                            actor.LastSeenZone = "obj:" + v.Objective;
+                            actor.LastSeenKind = FeedWorldView.HeroView.LedgerKindFact;
+                            actor.LastSeenSeq = e.Seq;
+                            actor.LastSeenRound = e.Round;
+                        }
+                        break;
+                    case "DoorOpen":
+                    case "DoorClosed":
+                        // R-A: for the view these flips are audit-trail
+                        // history (they move the hash, nothing else). R-B
+                        // adds ONE lawful projection: a flip INSIDE an open
+                        // hero window is a public presence anchor per the
+                        // same M10b law (whose else could operate the digital
+                        // door while this hero is in turn). Zone
+                        // "door:<GUID>" = the door's identity, kind FACT; a
+                        // flip outside any window anchors nobody - the
+                        // door_feed vectors WITHOUT a hero window keep their
+                        // exact canon.
+                        if (heroWindow != null)
+                        {
+                            var near = Hero(v, heroWindow);
+                            near.LastSeenZone = "door:" + e.Str("door");
+                            near.LastSeenKind = FeedWorldView.HeroView.LedgerKindFact;
+                            near.LastSeenSeq = e.Seq;
+                            near.LastSeenRound = e.Round;
+                        }
                         break;
                     case "RoundLimitChanged":
                         // M8/F5: the mission clock is a posture input (clock ->
@@ -293,6 +424,13 @@ namespace TacticalAI.Core
                                 g.Size = (int)size;
                                 g.Alive = Math.Max(g.Alive, g.Size);
                             }
+                            // R-B: "this intruder was pulled in by hero
+                            // activity" - the window state is already part of
+                            // the event stream, so this needs NO new payload
+                            // key. Once set the marker never unsets (a second
+                            // Spawn-style event cannot revoke the insight).
+                            if (heroWindow != null)
+                                g.SpawnedInHeroWindow = true;
                             break;
                         }
                     case "Death":
@@ -323,6 +461,19 @@ namespace TacticalAI.Core
                                 g.LastShotHero = heroWindow;
                                 g.LastShotSeq = e.Seq;
                                 g.LastShotRound = e.Round;
+                                // R-B Last-Seen-Ledger: the same window fact
+                                // anchors the SHOOTER symbolically at the hit
+                                // group - but as a HYPOTHESIS, never a fact:
+                                // a hit proves weapon-range proximity, not a
+                                // placed position. Kind rides visibly with
+                                // the anchor (Canon + LedgerText); consumers
+                                // must never render it like an objective/door
+                                // fact.
+                                var anchor = Hero(v, heroWindow);
+                                anchor.LastSeenZone = "at:" + g.GroupId;
+                                anchor.LastSeenKind = FeedWorldView.HeroView.LedgerKindHypothesis;
+                                anchor.LastSeenSeq = e.Seq;
+                                anchor.LastSeenRound = e.Round;
                             }
                             // Player-19 strike credit: damage that landed while
                             // a hero's activation window was open, on the figure

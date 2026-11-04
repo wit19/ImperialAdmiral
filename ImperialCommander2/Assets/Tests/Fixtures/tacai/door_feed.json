@@ -133,7 +133,7 @@
     "threat": 0,
     "seq": 7,
     "hash": "9b48483db6baf118e58cf7244dc9323c1acd6ad95e2b2c600164093a3b017717",
-    "canon": "mission=vector|ra_door_interleaved_with_shot\nround=2\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|STORM|STORM|1|0|2|2|1|5|9/10|name=Stormtroopers|shot=Lokaku|5|2\nH|Lokaku|Lokaku|0|0|1|2|0|0\n"
+    "canon": "mission=vector|ra_door_interleaved_with_shot\nround=2\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|STORM|STORM|1|0|2|2|1|5|9/10|name=Stormtroopers|shot=Lokaku|5|2\nH|Lokaku|Lokaku|0|0|1|2|0|0\nseen=Lokaku zone=door:d-x kind=fact seq=6 round=2\n"
    }
   },
   {

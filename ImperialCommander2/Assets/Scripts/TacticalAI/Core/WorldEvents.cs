@@ -65,8 +65,13 @@ namespace TacticalAI.Core
         // at the table never moves that field and stays invisible to the feed
         // - a public fact the App cannot see; never guessed, never inferred
         // from traffic. Door events carry NO name claim beyond the entity's
-        // own name and leave no trace in the Core projection: audit-trail
-        // history for consumers that have a belief/spatial layer.
+        // own name. R-A left them as pure audit-trail history; R-B adds ONE
+        // lawful projection: a flip inside an OPEN hero window anchors the
+        // window hero symbolically at "door:<GUID>" (fact) in the
+        // Last-Seen-Ledger. That anchor is a PROJECTION, not vocabulary -
+        // zones (obj:/door:/at:) are view-side anchor identities, never
+        // payload keys a producer appends, which is why the ledger needed
+        // NO change to Kinds or PayloadKeys below.
         public static readonly HashSet<string> Kinds = new HashSet<string>
         {
             "MissionStart", "Spawn", "Move", "Death", "Removal",

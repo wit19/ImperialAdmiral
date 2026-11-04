@@ -57,7 +57,22 @@ namespace TacticalAiHarness
                     { "canon", view1.Canon() },
                 };
 
-                if (Record) { recorded[name] = got; continue; }
+                if (Record)
+                {
+                    recorded[name] = got;
+                    // Record discipline (R-B): an EXISTING expect block is
+                    // still compared in record runs, so a regression can
+                    // never hide behind a --record invocation (and a record
+                    // run doubles as the drift proof for canon vectors).
+                    if (c.ContainsKey("expect"))
+                    {
+                        var exp0 = Json.AsDict(c["expect"]);
+                        foreach (var k in new[] { "posture", "objective", "objective_actor", "round",
+                                                  "threat", "seq", "hash", "canon" })
+                            Check(name + ".recorded." + k, exp0[k], got[k]);
+                    }
+                    continue;
+                }
 
                 if (!c.ContainsKey("expect"))
                 {

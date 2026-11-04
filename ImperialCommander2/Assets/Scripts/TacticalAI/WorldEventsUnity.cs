@@ -318,6 +318,25 @@ namespace TacticalAI
         // ------------------------------------------------------- group wheels
         void PollGroups(int round)
         {
+            // R-B card point 3 asked whether the Spawn payload can carry the
+            // DEPLOY POINT ("dp") without new inputs. VERDICT: NO - the
+            // honest ceiling is "ist gespawnt (Runde r)" (+ the Core-side
+            // SpawnedInHeroWindow marker). Proof from the shipped deploy
+            // paths: there is NO group->DP ledger to read.
+            // GetActiveDeploymentPoint is a pure CHOOSE function and records
+            // nothing (MapEntityManager.cs:501-534); the ONE recording is
+            // DeploymentManager.lastActiveDPByCard, written ONLY on the
+            // ovrd.Active branch (DeploymentManager.cs:327-332). The routine
+            // flows never write it: starting groups and the
+            // reinforcement/landing/onslaught popups run the ovrd==null
+            // branch (DeployGroupList -> DeploymentManager.cs:376, called
+            // from SagaDeploymentPopup.cs:211), and the DoMultipleDeployment
+            // custom-override list is highlight-only
+            // (DeploymentManager.cs:416-440). Emitting "dp" for the narrow
+            // override flows alone would make a MISSING key ambiguous
+            // ("unreadable flow" vs "no DP") - a guessing surface for every
+            // consumer. NIE RATEN: the key stays out of the vocabulary until
+            // a real deploy-path ledger exists (own card).
             foreach (var cd in DataStore.deployedEnemies)
             {
                 if (cd == null || cd.isDummy) continue;

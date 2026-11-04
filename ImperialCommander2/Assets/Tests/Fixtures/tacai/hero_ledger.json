@@ -1,0 +1,469 @@
+{
+  "_comment": "R-B Last-Seen-Ledger vectors (concept v1.2 §5 B): SYMBOLIC presence anchors on the REAL WorldEventFeed.Append path. Zones are event-anchor identities (obj:<text> / door:<GUID> / at:<group>) - NO coordinates, NO distances, NO movement commitment. KIND is first-class: fact = the public M10b attribution law places the actor there (objective, door flip inside an open window); hypothesis = a hit inside the window proves weapon-range proximity only - consumers must never render it like a fact. Latest anchoring event wins PER HERO; nothing is ever written from absence. expect blocks recorded once via `dotnet run -- <fixtures> --record` and reviewed; the law checks live in SectionsHeroLedger.cs as hand-pinned ground truth.",
+  "cases": [
+    {
+      "name": "rb_hero_at_objective",
+      "comment": "Acceptance (a): ObjectiveChange inside Lokaku's OPEN window -> zone obj:<objective text>, kind fact (public M10b/M6s-B6 attribution places the actor there). Anchor survives the window's close - it is history, not a live-position claim.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Open the door to the command center.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Secure the canteen.",
+        "objective_actor": "Lokaku",
+        "round": 2,
+        "threat": 0,
+        "seq": 4,
+        "hash": "022f611b7cac22b4a1c6e6015e2fb647d91e8e01bcec9695f16d6e5ea3024cc6",
+        "canon": "mission=vector|rb_hero_at_objective\nround=2\nposture=eliminate\nobjective=Secure the canteen.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=4\nH|Lokaku|Lokaku|0|0|1|2|0|0\nseen=Lokaku zone=obj:Secure the canteen. kind=fact seq=3 round=2\n",
+        "ledger_text": "ledger Lokaku war bei Ziel \"Secure the canteen.\" (Runde 2, seq 3, fact)\n",
+        "anchors": "Lokaku|obj:Secure the canteen.|fact|3|2",
+        "spawned_in_window": ""
+      }
+    },
+    {
+      "name": "rb_hero_at_door",
+      "comment": "Acceptance (b): DoorOpen inside the open window -> zone door:<GUID>, kind fact. A flip OUTSIDE any window (seq5) anchors nobody - absence writes nothing.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebel cell.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "DoorOpen",
+          "round": 2,
+          "payload": {
+            "door": "d-hangar-west",
+            "name": "Hangar West"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "DoorClosed",
+          "round": 3,
+          "payload": {
+            "door": "d-hangar-west",
+            "name": "Hangar West"
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Defeat the rebel cell.",
+        "objective_actor": "",
+        "round": 3,
+        "threat": 0,
+        "seq": 5,
+        "hash": "cc91310a74d32e01396c9807fa4cbd2b5ba221ecc4f3d0632d568a3015988e4f",
+        "canon": "mission=vector|rb_hero_at_door\nround=3\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nH|Han|Han|0|0|1|2|0|0\nseen=Han zone=door:d-hangar-west kind=fact seq=3 round=2\n",
+        "ledger_text": "ledger Han war bei Tuer d-hangar-west (Runde 2, seq 3, fact)\n",
+        "anchors": "Han|door:d-hangar-west|fact|3|2",
+        "spawned_in_window": ""
+      }
+    },
+    {
+      "name": "rb_shot_is_hypothesis",
+      "comment": "Acceptance (c): GroupDamage inside the open window anchors the shooter at at:<group> with kind HYPOTHESIS - a hit proves weapon-range proximity, never a placed position. The kind rides in canon AND ledger_text; the objective change AFTER the window closes leaves the anchor untouched (the legacy retro channel is never mirrored into the ledger).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebel cell.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM",
+            "size": 2,
+            "name": "Stormtroopers"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "STORM",
+            "figure": 0,
+            "wheel": 1,
+            "health": 4
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 3,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Secure the canteen.",
+        "objective_actor": "Lokaku",
+        "round": 3,
+        "threat": 0,
+        "seq": 6,
+        "hash": "2a615266c574c69f990ea5a3a470ec230a8bb7c53ab99001835f55eeb7b8460b",
+        "canon": "mission=vector|rb_shot_is_hypothesis\nround=3\nposture=eliminate\nobjective=Secure the canteen.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=6\nG|STORM|STORM|1|0|2|2|1|4|7/8|name=Stormtroopers|shot=Lokaku|4|2\nH|Lokaku|Lokaku|0|0|1|2|0|0\nseen=Lokaku zone=at:STORM kind=hypothesis seq=4 round=2\n",
+        "ledger_text": "ledger Lokaku war vermutlich in der Nahe von Gruppe STORM (Runde 2, seq 4, hypothesis)\n",
+        "anchors": "Lokaku|at:STORM|hypothesis|4|2",
+        "spawned_in_window": ""
+      }
+    },
+    {
+      "name": "rb_spawn_in_window",
+      "comment": "Acceptance (d1): Spawn falls inside the open window -> SpawnedInHeroWindow (the intruder was pulled in by hero activity); the G row grows |in_window ONLY there.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebel cell.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 2,
+          "payload": {
+            "group": "GIVAN",
+            "size": 1,
+            "name": "Grand Inquisitor"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Defeat the rebel cell.",
+        "objective_actor": "",
+        "round": 2,
+        "threat": 0,
+        "seq": 4,
+        "hash": "1eecf0e472f807778e731ed19af10b765f4c21ad1dee53528dd2d45f98702738",
+        "canon": "mission=vector|rb_spawn_in_window\nround=2\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|GIVAN|GIVAN|1|0|1|1|2|0|1|name=Grand Inquisitor|in_window\nH|Han|Han|0|0|1|2|0|0\n",
+        "ledger_text": "spawn GIVAN fiel in ein offenes Heldenfenster (Runde 2)\n",
+        "anchors": "",
+        "spawned_in_window": "GIVAN"
+      }
+    },
+    {
+      "name": "rb_spawn_out_window",
+      "comment": "Acceptance (d2): every Spawn here is outside any window (baseline spawn, then a spawn between windows after the close) -> no marker, G row byte-identical to pre-R-B.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebel cell.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM",
+            "size": 2,
+            "name": "Stormtroopers"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 3,
+          "payload": {
+            "group": "BOSSK",
+            "size": 1,
+            "name": "Boba Fett"
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Defeat the rebel cell.",
+        "objective_actor": "",
+        "round": 3,
+        "threat": 0,
+        "seq": 5,
+        "hash": "5fc104440cd40bd652dc342ecac8a8318eb7b3fb549bc51dfae54612957c3342",
+        "canon": "mission=vector|rb_spawn_out_window\nround=3\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|BOSSK|BOSSK|1|0|1|1|3|0|1|name=Boba Fett\nG|STORM|STORM|1|0|2|2|1|0|1|name=Stormtroopers\nH|Han|Han|0|0|1|2|0|0\n",
+        "ledger_text": "",
+        "anchors": "",
+        "spawned_in_window": ""
+      }
+    },
+    {
+      "name": "rb_last_window_wins",
+      "comment": "Acceptance (e): two anchoring events for the SAME hero in two windows - the LATER seq wins: fact obj:Secure the canteen. (seq3) is overwritten by hypothesis at:STORM (seq5); the shot in window 2 also credits the group row (R-A column stays consistent with the ledger).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebel cell.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM",
+            "size": 2,
+            "name": "Stormtroopers"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the canteen."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 3,
+          "payload": {
+            "group": "STORM",
+            "figure": 0,
+            "wheel": 1,
+            "health": 4
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Secure the canteen.",
+        "objective_actor": "Lokaku",
+        "round": 3,
+        "threat": 0,
+        "seq": 8,
+        "hash": "fdb549c5240be701216228401088af7d98a58033e62846d83d95c673b00ea9a3",
+        "canon": "mission=vector|rb_last_window_wins\nround=3\nposture=eliminate\nobjective=Secure the canteen.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=8\nG|STORM|STORM|1|0|2|2|1|4|7/8|name=Stormtroopers|shot=Lokaku|7|3\nH|Lokaku|Lokaku|0|0|2|3|0|0\nseen=Lokaku zone=at:STORM kind=hypothesis seq=7 round=3\n",
+        "ledger_text": "ledger Lokaku war vermutlich in der Nahe von Gruppe STORM (Runde 3, seq 7, hypothesis)\n",
+        "anchors": "Lokaku|at:STORM|hypothesis|7|3",
+        "spawned_in_window": ""
+      }
+    },
+    {
+      "name": "rb_two_windows_two_heroes",
+      "comment": "Identity separation: Lokaku's window shot anchors LOKAKU (hypothesis at:STORM); Han's later objective change anchors HAN (fact obj:...) and leaves Lokaku's anchor untouched. 'latest wins' is per hero, never global.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebel cell.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "rb",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "STORM",
+            "size": 2,
+            "name": "Stormtroopers"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "STORM",
+            "figure": 0,
+            "wheel": 1,
+            "health": 4
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "Han"
+          }
+        },
+        {
+          "kind": "ObjectiveChange",
+          "round": 3,
+          "payload": {
+            "objective": "Escape to the transports."
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "Han"
+          }
+        }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "objective": "Escape to the transports.",
+        "objective_actor": "Han",
+        "round": 3,
+        "threat": 0,
+        "seq": 8,
+        "hash": "543e6706dc2615d25f16de58bfc3b69bc9cff49ff2da09035440ff29866a25c9",
+        "canon": "mission=vector|rb_two_windows_two_heroes\nround=3\nposture=eliminate\nobjective=Escape to the transports.\nobjective_actor=Han\nthreat=0\nthreatseen=0\nseq=8\nG|STORM|STORM|1|0|2|2|1|4|7/8|name=Stormtroopers|shot=Lokaku|4|2\nH|Han|Han|0|0|1|3|0|0\nseen=Han zone=obj:Escape to the transports. kind=fact seq=7 round=3\nH|Lokaku|Lokaku|0|0|1|2|0|0\nseen=Lokaku zone=at:STORM kind=hypothesis seq=4 round=2\n",
+        "ledger_text": "ledger Han war bei Ziel \"Escape to the transports.\" (Runde 3, seq 7, fact)\nledger Lokaku war vermutlich in der Nahe von Gruppe STORM (Runde 2, seq 4, hypothesis)\n",
+        "anchors": "Han|obj:Escape to the transports.|fact|7|3;Lokaku|at:STORM|hypothesis|4|2",
+        "spawned_in_window": ""
+      }
+    }
+  ]
+}

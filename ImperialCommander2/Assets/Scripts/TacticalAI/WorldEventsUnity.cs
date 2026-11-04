@@ -92,6 +92,9 @@ namespace TacticalAI
         // passive snapshots (diff sources) - keyed by card id / hero name
         readonly Dictionary<string, int[]> _wheels = new Dictionary<string, int[]>();
         readonly HashSet<string> _seenGroups = new HashSet<string>();
+        // Player-22: groups whose first-seen Spawn failed the vocabulary law
+        // - warned ONCE, retried silently every poll (see PollGroups).
+        readonly HashSet<string> _spawnWarned = new HashSet<string>();
         readonly HashSet<string> _heroWounded = new HashSet<string>();
         readonly HashSet<string> _heroDefeated = new HashSet<string>();
         readonly HashSet<string> _heroActivated = new HashSet<string>();
@@ -583,20 +586,43 @@ namespace TacticalAI
                 if (cd == null || cd.isDummy) continue;
                 if (!_seenGroups.Contains(cd.id))
                 {
+                    // Player-22 (Thomas 04.11 EMPIRE2 log): APPEND FIRST,
+                    // mark seen ONLY on success. The vocabulary law throws
+                    // on an unregistered payload key; the old order marked
+                    // the group seen BEFORE Append, so one throw swallowed
+                    // that spawn forever (the Elite officer and the
+                    // Ordnungssoldaten never reached the feed and the strike
+                    // law starved - quiet until the ORD lines went dumb).
+                    // A failing Append now leaves the group unseen: next
+                    // poll retries it, and the throw is quarantined to THIS
+                    // group - the others still get their first-seen event.
+                    try
+                    {
+                        Append("Spawn", round, new Dictionary<string, object>
+                        {
+                            { "group", cd.id },
+                            { "size", (long)Math.Max(1, cd.size) },
+                            // Player-19: the deployment-card display name (the
+                            // same name the table reads). Public; powers the
+                            // designation collision law and the strike law.
+                            { "name", cd.name ?? "" },
+                            // Player-22: scenario-critical defeat wiring (see
+                            // DeploymentCritical) - fact, always explicit.
+                            { "critical", DeploymentCritical(cd.id) },
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!_spawnWarned.Contains(cd.id))
+                        {
+                            _spawnWarned.Add(cd.id);
+                            Debug.LogWarning("WorldEvents::spawn append failed, group stays "
+                                + "unseen for retry: " + ex.Message);
+                        }
+                        continue;   // NOT marked seen - honest retry next poll
+                    }
                     _seenGroups.Add(cd.id);
                     _wheels[cd.id] = (int[])cd.woundTrackerValue.Clone();
-                    Append("Spawn", round, new Dictionary<string, object>
-                    {
-                        { "group", cd.id },
-                        { "size", (long)Math.Max(1, cd.size) },
-                        // Player-19: the deployment-card display name (the
-                        // same name the table reads). Public; powers the
-                        // designation collision law and the strike law.
-                        { "name", cd.name ?? "" },
-                        // Player-22: scenario-critical defeat wiring (see
-                        // DeploymentCritical) - fact, always explicit.
-                        { "critical", DeploymentCritical(cd.id) },
-                    });
                     continue;
                 }
                 int[] prev;

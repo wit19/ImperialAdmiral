@@ -330,7 +330,18 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   (lastActivator closes it; `strikePending` at RoundEnd) in
   `WorldEventsUnity.cs`. Doors enter as GUID events.
 - **Strike = objective work (Player-21-b + -22, Thomas 04.11).** Two laws in
-  `WorldEventVector`. GARRISON, TWO-FACTOR (Player-22, Thomas' objective-
+  `WorldEventVector`. VOCABULARY LAW first (Player-22 incident, Thomas'
+  #1002 EMPIRE2 log): the feed's `Validate` throws on ANY payload key not
+  in `WorldEventFeed.PayloadKeys`, and the old seen-ledger marked a group
+  consumed BEFORE the Append — so the freshly added `critical` key silently
+  killed every garrison Spawn (poll error, spawn lost forever), starved the
+  strike law and Davith stayed focus. Triple fix: `critical` registered in
+  `PayloadKeys`; PollGroups marks seen ONLY after a successful Append and
+  quarantines a failing spawn for honest retry (warn-once); the harness
+  pre-validates every fixture payload through the now-public
+  `WorldEventFeed.Validate` — the Core-only harness had shipped past exactly
+  this class of bug, so fixtures now trip the SAME law the poll loop enforces.
+  GARRISON, TWO-FACTOR (Player-22, Thomas' objective-
   panel screenshot law: "Truppen, die NICHT Missionskritisch sind, würden
   den Missionsmarker auf sich ziehen - dicker Bug"): (1) the Spawn carries
   a `critical` FACT - the emitter reads the group's deployment override

@@ -149,6 +149,15 @@ namespace TacticalAI.Core
             // Talos): a mission text naming an imperial figure must never
             // mark the rebel hero who merely shares the surname.
             "name",
+            // Player-22 (Thomas 04.11): the scenario-critical defeat wiring
+            // on Spawn (deployment-override setTrigger/setEvent, read at
+            // emit time). LESSON PLAYER-22 (EMPIRE2 log, "poll error
+            // (ignored): payload key not public-vocabulary: critical"): a
+            // new payload key that skips THIS registration poisons the
+            // whole event - and the seen-ledger used to swallow the spawn
+            // forever. New kind OR key: register here AND let the harness
+            // validate every fixture payload through Validate().
+            "critical",
             // R-A: the door's GUID string (stable public identity); "name"
             // above is the optional display sugar on door events too.
             "door",
@@ -242,7 +251,12 @@ namespace TacticalAI.Core
             _resyncs++;
         }
 
-        static void Validate(string kind, Dictionary<string, object> payload)
+        // PUBLIC (Player-22 lesson): this is the ONE vocabulary law - the
+        // harness pre-validates every fixture payload through it, so a key
+        // that the in-game feed would reject fails the harness FIRST
+        // (Player-22 shipped past the harness and died in-game: poll error,
+        // spawn swallowed). Producers may call it too; it never mutates.
+        public static void Validate(string kind, Dictionary<string, object> payload)
         {
             if (kind == null || !Kinds.Contains(kind))
                 throw new ArgumentException("WorldEventFeed: unknown event kind " + kind);

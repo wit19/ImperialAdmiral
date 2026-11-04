@@ -32,6 +32,19 @@ namespace TacticalAiHarness
                 var name = Json.AsStr(c["name"]);
                 var events = BuildEvents(Json.AsList(c["events"]));
 
+                // Player-22 vocabulary pre-check (Thomas' EMPIRE2 log: the
+                // in-game feed THROWS on an unregistered payload key and the
+                // poll swallowed the spawn): fixtures must trip the SAME law
+                // in the harness BEFORE a build ships, not in the poll loop.
+                foreach (var e in events)
+                {
+                    try { WorldEventFeed.Validate(e.Kind, e.Payload); }
+                    catch (Exception vx)
+                    {
+                        Check(name + ".vocabulary[" + e.Kind + "]", "public", vx.Message);
+                    }
+                }
+
                 // replay twice: the projection must be a pure function
                 var view1 = WorldEventVector.Project(events, "vector|" + name);
                 var view2 = WorldEventVector.Project(events, "vector|" + name);

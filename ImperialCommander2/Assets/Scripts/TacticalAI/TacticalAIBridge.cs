@@ -1496,6 +1496,43 @@ namespace TacticalAI
             // planner's contract and must keep the legacy random line - a fixed
             // point here would cluster every reinforcement wave (audit FINAL-QA).
             if (card == null) return false;
+
+            // Player-25 M14c-C2 (card t_15ea0fba, fixplan_Player-25_v2 C2):
+            // ranked choice when the mission carries objective anchors - the
+            // mined anchor table re-resolved against the LIVE map (see
+            // MissionDpAnchors). Empty anchor list => the legacy line below
+            // runs VERBATIM (bit-compat, legacy path unchanged).
+            var anchors = MissionDpAnchors();
+            if (anchors.Count > 0)
+            {
+                var cands = new List<Tac.DeployCandidate>();
+                foreach (var x in dps)
+                    cands.Add(new Tac.DeployCandidate
+                    {
+                        Guid = x.GUID.ToString(),
+                        Name = x.name ?? "",
+                        SectionGuid = x.mapSectionOwner.ToString(),
+                        X = x.entityPosition?.X ?? 0f,
+                        Y = x.entityPosition?.Y ?? 0f,
+                    });
+                var pick = Tac.DeploymentAnchors.Choose(cands, anchors,
+                                                        SessionSeed(), CurrentRound());
+                if (pick != null && pick.Anchor != null &&
+                    Guid.TryParse(pick.Candidate.Guid, out var anchorChosen))
+                {
+                    chosen = anchorChosen;
+                    // Language-neutral explanation: anchor GUIDs + the
+                    // measured distance, no names beyond what the old line
+                    // already printed.
+                    Debug.Log($"TacticalAIBridge::DP -> {pick.Candidate.Name} ({card?.name}) " +
+                              $"[deterministic, anchor={pick.Anchor.EntityGuid}/{pick.Anchor.SectionGuid} " +
+                              $"dist={pick.Dist.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}]");
+                    return true;
+                }
+                // unresolvable pick (must not happen): fall through to the
+                // legacy line rather than break the deploy.
+            }
+
             var best = dps
                 // round-varying deterministic pick: seeded by the campaign|mission
                 // key + round (all public/campaign-scoped info), so it is neither
@@ -1507,6 +1544,51 @@ namespace TacticalAI
             chosen = best.GUID;
             Debug.Log($"TacticalAIBridge::DP -> {best.name} ({card?.name}) [deterministic, no RNG]");
             return true;
+        }
+
+        /// <summary>M14c-C2 adapter (card t_15ea0fba): anchor list for the
+        /// CURRENTLY loaded mission. Rows come from the mined header table
+        /// Resources/Data/taktische_mission_critical.json matched on the
+        /// loaded mission's FILE NAME (DataStore.mission.fileName is the
+        /// app's own file id, OrdinalIgnoreCase - never a localized title).
+        /// Position and section are then re-read from the LIVE map entity by
+        /// GUID: ConfigureEntityGroups/ModifyMapEntity can move an entity
+        /// after the table was mined, so the live IMapEntity is truth and no
+        /// cache would stay fresh across it; a row the live map does not
+        /// carry drops out entirely (data-exists: no live object, no
+        /// anchor). Any failure => empty list => the legacy DP line. No
+        /// entity NAME is read anywhere in this path - the anchor choice is
+        /// language-neutral by construction.</summary>
+        static List<Tac.DeployAnchor> MissionDpAnchors()
+        {
+            try
+            {
+                var mission = DataStore.mission;
+                if (mission == null || mission.mapEntities == null)
+                    return new List<Tac.DeployAnchor>();
+                var rows = Tac.DeploymentAnchors.RowsForMission(
+                    TacticalAIAssets.DpAnchorTableRoot, mission.fileName);
+                var list = new List<Tac.DeployAnchor>();
+                if (rows.Count == 0) return list;
+                foreach (var r in rows)
+                {
+                    foreach (var e in mission.mapEntities)
+                    {
+                        if (e == null || !string.Equals(e.GUID.ToString(), r.EntityGuid,
+                                StringComparison.OrdinalIgnoreCase)) continue;
+                        list.Add(new Tac.DeployAnchor
+                        {
+                            EntityGuid = e.GUID.ToString(),
+                            SectionGuid = e.mapSectionOwner.ToString(),
+                            X = e.entityPosition?.X ?? 0f,
+                            Y = e.entityPosition?.Y ?? 0f,
+                        });
+                        break;
+                    }
+                }
+                return list;
+            }
+            catch { return new List<Tac.DeployAnchor>(); }   // never break a deploy
         }
 
         // ---------------------------------------------------------- targeting

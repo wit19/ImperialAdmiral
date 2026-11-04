@@ -29,6 +29,10 @@ namespace TacticalAI
         // loaded lazily through the TacticalAISettings-gated hooks only.
         const string SECTION_TRUST_PATH = "Languages/En/tactical_section_trust";
         const string MISSION_CRITICAL_PATH = "Languages/En/tactical_mission_critical";
+        // M14c P25-C2 (card t_15ea0fba): the DP-anchor table mined by
+        // tools/dp_anchor_mine.py. Same plain-text public data law as the
+        // two tables above; the reader is DeploymentAnchors.RowsForMission.
+        const string DP_ANCHOR_PATH = "Data/taktische_mission_critical";
         const string CAMPAIGN_ITEMS_PATH = "Languages/En/CampaignData/items";
         const string CAMPAIGN_SKILLS_PATH = "Languages/En/CampaignData/skills";
 
@@ -45,6 +49,8 @@ namespace TacticalAI
         static bool _sectionTrustFailed;
         static object _missionCriticalRoot;
         static bool _missionCriticalFailed;
+        static object _dpAnchorRoot;
+        static bool _dpAnchorFailed;
         static object _campaignItemsRoot;
         static object _campaignSkillsRoot;
         static bool _lethalityFailed, _heroProfilesFailed,
@@ -180,6 +186,21 @@ namespace TacticalAI
                 if (_missionCriticalRoot == null && !_missionCriticalFailed)
                     _missionCriticalRoot = LoadJson(MISSION_CRITICAL_PATH, ref _missionCriticalFailed);
                 return _missionCriticalRoot;
+            }
+        }
+
+        /// <summary>M14c P25-C2 (card t_15ea0fba): tacai.dp_anchor/1 - the
+        /// DP deployment-anchor table (mine: tools/dp_anchor_mine.py). Raw
+        /// doc on purpose - DeploymentAnchors.RowsForMission is the ONLY
+        /// reader; missing/unparsable file => null => empty anchor list =>
+        /// the legacy DP line (data-exists law).</summary>
+        public static object DpAnchorTableRoot
+        {
+            get
+            {
+                if (_dpAnchorRoot == null && !_dpAnchorFailed)
+                    _dpAnchorRoot = LoadJson(DP_ANCHOR_PATH, ref _dpAnchorFailed);
+                return _dpAnchorRoot;
             }
         }
 

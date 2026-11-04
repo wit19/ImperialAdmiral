@@ -1,0 +1,456 @@
+{
+ "_meta": {
+  "file": "dp_anchors.json",
+  "law": "M14c P25-C2 (card t_15ea0fba): DP ranked choice with mission-objective anchors. Expect blocks generated INDEPENDENTLY by tools/gen_dp_anchor_fixture.py (Python mirror of the Core law), same discipline as sim-exported vectors; seed-hash tie chain unchanged (TieKey -> name -> guid). Empire11 data pin (informant GUID + section) runs against the SHIPPED table file, zero fixtures, inside the harness."
+ },
+ "rank_cases": [
+  {
+   "name": "A1_section_beats_seed",
+   "note": "(a): anchor section wins even though the seed favors the foreign DP",
+   "seed": 2685821657736338717,
+   "round": 1,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": [
+     [
+      "M.json",
+      "aaaaaaaa-0000-0000-0000-0000000000000001",
+      "10,10",
+      "aaaaaaaa-1111-1111-1111-111111111111"
+     ]
+    ]
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000001",
+     "name": "DP Far in X",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 100,
+     "y": 100
+    },
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000002",
+     "name": "DP Near in Y",
+     "section": "bbbbbbbb-1111-1111-1111-111111111111",
+     "x": 11,
+     "y": 11
+    }
+   ],
+   "expect": {
+    "guid": "11111111-aaaa-0000-0000-0000000000000001",
+    "anchorEntity": "aaaaaaaa-0000-0000-0000-0000000000000001",
+    "anchorSection": "aaaaaaaa-1111-1111-1111-111111111111",
+    "dist": 127.27922061357856,
+    "legacyGuid": "11111111-aaaa-0000-0000-0000000000000002"
+   }
+  },
+  {
+   "name": "B1_nearer_wins_same_section",
+   "note": "(b): intra-section distance beats the seed",
+   "seed": 3851731217793268282,
+   "round": 2,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": [
+     [
+      "M.json",
+      "aaaaaaaa-0000-0000-0000-0000000000000002",
+      "0,0",
+      "aaaaaaaa-1111-1111-1111-111111111111"
+     ]
+    ]
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000003",
+     "name": "DP b",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 3,
+     "y": 4
+    },
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000004",
+     "name": "DP a",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 30,
+     "y": 40
+    }
+   ],
+   "expect": {
+    "guid": "11111111-aaaa-0000-0000-0000000000000003",
+    "anchorEntity": "aaaaaaaa-0000-0000-0000-0000000000000002",
+    "anchorSection": "aaaaaaaa-1111-1111-1111-111111111111",
+    "dist": 5.0,
+    "legacyGuid": "11111111-aaaa-0000-0000-0000000000000004"
+   }
+  },
+  {
+   "name": "C1_dist_tie_seed_decides",
+   "note": "(c): equal distance falls to the seed hash (legacy order)",
+   "seed": 42,
+   "round": 3,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": [
+     [
+      "M.json",
+      "aaaaaaaa-0000-0000-0000-0000000000000003",
+      "10,0",
+      "aaaaaaaa-1111-1111-1111-111111111111"
+     ]
+    ]
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000005",
+     "name": "DP L",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 5,
+     "y": 0
+    },
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000006",
+     "name": "DP R",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 15,
+     "y": 0
+    }
+   ],
+   "expect": {
+    "guid": "11111111-aaaa-0000-0000-0000000000000005",
+    "anchorEntity": "aaaaaaaa-0000-0000-0000-0000000000000003",
+    "anchorSection": "aaaaaaaa-1111-1111-1111-111111111111",
+    "dist": 5.0,
+    "legacyGuid": "11111111-aaaa-0000-0000-0000000000000005"
+   }
+  },
+  {
+   "name": "C2_cross_section_seed_decides",
+   "note": "world distance never compared across sections: seed law stays",
+   "seed": 6537595607789133085,
+   "round": 1,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": [
+     [
+      "M.json",
+      "aaaaaaaa-0000-0000-0000-0000000000000010",
+      "0,0",
+      "aaaaaaaa-1111-1111-1111-111111111111"
+     ],
+     [
+      "M.json",
+      "aaaaaaaa-0000-0000-0000-0000000000000011",
+      "1000,0",
+      "cccccccc-1111-1111-1111-111111111111"
+     ]
+    ]
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000007",
+     "name": "DP C",
+     "section": "cccccccc-1111-1111-1111-111111111111",
+     "x": 1010,
+     "y": 0
+    },
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000008",
+     "name": "DP X",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 300,
+     "y": 0
+    }
+   ],
+   "expect": {
+    "guid": "11111111-aaaa-0000-0000-0000000000000008",
+    "anchorEntity": "aaaaaaaa-0000-0000-0000-0000000000000010",
+    "anchorSection": "aaaaaaaa-1111-1111-1111-111111111111",
+    "dist": 300.0,
+    "legacyGuid": "11111111-aaaa-0000-0000-0000000000000008"
+   }
+  },
+  {
+   "name": "D1_empty_anchors_legacy_bitcompat",
+   "note": "(d): empty anchor list reproduces today's winner exactly",
+   "seed": 5220268323650925115,
+   "round": 5,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": []
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+     "name": "DP Green 1",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 970,
+     "y": 950
+    },
+    {
+     "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+     "name": "DP Green 2",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 1070,
+     "y": 970
+    },
+    {
+     "guid": "64b4dbf2-4e39-4ce7-a5fe-94eed25c16d2",
+     "name": "DP Green 3",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 1010,
+     "y": 1030
+    },
+    {
+     "guid": "2e35c1c1-e257-4195-ae0a-0b94cbd3e374",
+     "name": "DP Green 4",
+     "section": "aaaaaaaa-1111-1111-1111-111111111111",
+     "x": 960,
+     "y": 1070
+    }
+   ],
+   "expect": {
+    "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+    "anchorEntity": null,
+    "anchorSection": null,
+    "dist": null,
+    "legacyGuid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd"
+   }
+  },
+  {
+   "name": "E1_empire11_real_positions",
+   "note": "real Empire 11 geometry: Informant anchor -> nearest active DP wins",
+   "seed": 5220268323650925115,
+   "round": 5,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": [
+     [
+      "M.json",
+      "576c3ba5-801c-42fb-b32f-14109702c8cc",
+      "1080,1080",
+      "11111111-1111-1111-1111-111111111111"
+     ]
+    ]
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+     "name": "DP Green 1",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "x": 970,
+     "y": 950
+    },
+    {
+     "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+     "name": "DP Green 2",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "x": 1070,
+     "y": 970
+    },
+    {
+     "guid": "64b4dbf2-4e39-4ce7-a5fe-94eed25c16d2",
+     "name": "DP Green 3",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "x": 1010,
+     "y": 1030
+    }
+   ],
+   "expect": {
+    "guid": "64b4dbf2-4e39-4ce7-a5fe-94eed25c16d2",
+    "anchorEntity": "576c3ba5-801c-42fb-b32f-14109702c8cc",
+    "anchorSection": "11111111-1111-1111-1111-111111111111",
+    "dist": 86.02325267042627,
+    "legacyGuid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd"
+   }
+  },
+  {
+   "name": "F1_foreign_winner_diag",
+   "note": "no DP in anchor section: legacy chain picks, anchor log = nearest world",
+   "seed": 77,
+   "round": 1,
+   "table": {
+    "columns": [
+     "missionFile",
+     "entityGuid",
+     "entityPosition",
+     "sectionGuid"
+    ],
+    "rows": [
+     [
+      "M.json",
+      "aaaaaaaa-0000-0000-0000-0000000000000020",
+      "10,10",
+      "aaaaaaaa-1111-1111-1111-111111111111"
+     ]
+    ]
+   },
+   "missionFile": "M.json",
+   "cands": [
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000009",
+     "name": "DP Q",
+     "section": "bbbbbbbb-1111-1111-1111-111111111111",
+     "x": 110,
+     "y": 10
+    },
+    {
+     "guid": "11111111-aaaa-0000-0000-0000000000000010",
+     "name": "DP P",
+     "section": "cccccccc-1111-1111-1111-111111111111",
+     "x": 10,
+     "y": 30
+    }
+   ],
+   "expect": {
+    "guid": "11111111-aaaa-0000-0000-0000000000000009",
+    "anchorEntity": "aaaaaaaa-0000-0000-0000-0000000000000020",
+    "anchorSection": "aaaaaaaa-1111-1111-1111-111111111111",
+    "dist": 100.0,
+    "legacyGuid": "11111111-aaaa-0000-0000-0000000000000009"
+   }
+  }
+ ],
+ "table_cases": {
+  "match_law": {
+   "note": "first column = mission JSON file id, OrdinalIgnoreCase; a title never matches",
+   "columns": [
+    "missionFile",
+    "entityGuid",
+    "entityPosition",
+    "sectionGuid",
+    "positionSubtaskIds"
+   ],
+   "rows": [
+    [
+     "EMPIRE11.json",
+     "576c3ba5-801c-42fb-b32f-14109702c8cc",
+     "1080,1080",
+     "11111111-1111-1111-1111-111111111111",
+     "f63855f1-5654-4ede-9fbe-3a13c9c1df2f"
+    ],
+    [
+     "BESPIN1.json",
+     "6141ffd9-130b-4cca-bf14-478f7f0ab944",
+     "1,2",
+     "aaaaaaaa-1111-1111-1111-111111111111",
+     ""
+    ]
+   ],
+   "queries": [
+    {
+     "file": "EMPIRE11.json",
+     "expect": 1
+    },
+    {
+     "file": "empire11.JSON",
+     "expect": 1
+    },
+    {
+     "file": "Empire 11",
+     "expect": 0
+    },
+    {
+     "file": "",
+     "expect": 0
+    }
+   ]
+  },
+  "junk_law": {
+   "note": "ragged/invalid rows do not exist; no position column => no table",
+   "columns": [
+    "missionFile",
+    "entityGuid",
+    "entityPosition",
+    "sectionGuid"
+   ],
+   "rows": [
+    [
+     "M.json",
+     "aaaaaaaa-0000-0000-0000-00000000000000aa",
+     "5,5",
+     "aaaaaaaa-1111-1111-1111-111111111111"
+    ],
+    [
+     "M.json",
+     "shortrow"
+    ],
+    [
+     "M.json",
+     "aaaaaaaa-0000-0000-0000-00000000000000ab",
+     "abc",
+     "aaaaaaaa-1111-1111-1111-111111111111"
+    ],
+    [
+     "M.json",
+     "",
+     "9,9",
+     "aaaaaaaa-1111-1111-1111-111111111111"
+    ]
+   ],
+   "queries": [
+    {
+     "file": "M.json",
+     "expect": 1
+    }
+   ]
+  },
+  "missing_column_law": {
+   "note": "no sectionGuid column => the whole table is unusable (fail-closed)",
+   "columns": [
+    "missionFile",
+    "entityGuid",
+    "entityPosition"
+   ],
+   "rows": [
+    [
+     "M.json",
+     "aaaaaaaa-0000-0000-0000-00000000000000aa",
+     "5,5"
+    ]
+   ],
+   "queries": [
+    {
+     "file": "M.json",
+     "expect": 0
+    }
+   ]
+  }
+ }
+}

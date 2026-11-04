@@ -181,10 +181,54 @@ namespace TacticalAI.Core
             return group != null && _beliefs.TryGetValue(group, out b) ? b : null;
         }
 
+        /// Every group that carries a belief, sorted ordinal (S-D consumer
+        /// accessor, card t_c52dd34b): PlanZones iterates the beliefs it may
+        /// NAME without deciding anything about them.
+        public List<string> BeliefGroups()
+        {
+            var l = new List<string>(_beliefs.Keys);
+            l.Sort(StringComparer.Ordinal);
+            return l;
+        }
+
         public string HeroInSection(string hero)
         {
             string s;
             return hero != null && _heroInSection.TryGetValue(hero, out s) ? s : "";
+        }
+
+        /// Round of that anchor (0 = never anchored). S-D consumer accessor
+        /// (card t_c52dd34b): a hero-ring belief is only carried by anchors
+        /// FRESH in the reading round - an anchor's age is public arithmetic,
+        /// never a hidden dilation (the mask track keeps its own law apart).
+        public int HeroSectionRound(string hero)
+        {
+            int r;
+            return hero != null && _heroInSectionRound.TryGetValue(hero, out r) ? r : 0;
+        }
+
+        /// Every hero that carries a fact anchor, sorted ordinal (S-D
+        /// consumer accessor, card t_c52dd34b): the consumer iterates the
+        /// anchors it can NAME - the space itself never decides anything.
+        public List<string> AnchoredHeroes()
+        {
+            var l = new List<string>(_heroInSection.Keys);
+            l.Sort(StringComparer.Ordinal);
+            return l;
+        }
+
+        // S-D Vergeltung trigger bookkeeping: the LAST round a GroupDamage
+        // fact landed on this group. RECORDED UNGATED (before the Refine
+        // gate) on purpose: being shot at is a public fact, and the Thomas
+        // law says exception keys fire on facts at EVERY skill level - the
+        // Refine gate governs the mask REFINEMENT, never the raw fact.
+        // (0 = no hit ever observed in this projection.)
+        private readonly Dictionary<string, int> _lastHitRound =
+            new Dictionary<string, int>(StringComparer.Ordinal);
+        public int LastHitRound(string group)
+        {
+            int r;
+            return group != null && _lastHitRound.TryGetValue(group, out r) ? r : 0;
         }
 
         // ---- projection ---------------------------------------------------
@@ -422,6 +466,12 @@ namespace TacticalAI.Core
                     var group = S(e, "group");
                     GroupSectionBelief b;
                     if (group.Length == 0 || !_beliefs.TryGetValue(group, out b)) break; // data-exists
+                    // S-D: the raw hit fact is recorded UNGATED (public
+                    // event, feeds the Vergeltung trigger at every rung -
+                    // see LastHitRound). Only the REFINEMENT below is gated.
+                    int seenHit;
+                    if (!_lastHitRound.TryGetValue(group, out seenHit) || e.Round > seenHit)
+                        _lastHitRound[group] = e.Round;
                     // S-C skill curve: the Eichung re-grounding is mask
                     // VERFEINERUNG - low rungs keep the seed-and-dilation
                     // entry reading (Thomas-Gesetz 04.11., no switch).
@@ -788,6 +838,7 @@ namespace TacticalAI.Core
                 s._spawnsByGroup[kv.Key] = r;
             }
             foreach (var kv in _beliefs) s._beliefs[kv.Key] = kv.Value.Clone();
+            foreach (var kv in _lastHitRound) s._lastHitRound[kv.Key] = kv.Value;
             s._speedObs.AddRange(_speedObs);
             s._transits.AddRange(_transits);
             s._opts = _opts.Copy();

@@ -186,6 +186,14 @@ namespace TacticalAI.Core
         // it). The AsDict "reaktion" key appears ONLY where it is true -
         // every pre-R-D canon vector stays byte-identical (record discipline).
         public bool Reaktion;
+        // S-D (concept positionierung v1 §13.4, card t_c52dd34b): the two
+        // section-space reaction keys of THIS activation (Wachzone = hero
+        // factually at the mission-critical object inside the guard's mask;
+        // Vergeltung = the mask-sharpened shooter candidate, only a
+        // suspicion the fact track left open). AsDict keys appear ONLY
+        // where true - every pre-S-D canon row stays byte-identical.
+        public bool Wachzone;
+        public bool Vergeltung;
 
         /// Comparable vector row (harness/NUnit pin), exact string fields.
         /// The strain_druck key appears ONLY on rows where the pressure
@@ -209,6 +217,8 @@ namespace TacticalAI.Core
             if (StrainDruckUnscharf.HasValue && StrainDruckUnscharf.Value > 0)
                 d["strain_druck_unscharf"] = StrainDruckUnscharf.Value.ToString();
             if (Reaktion) d["reaktion"] = true;
+            if (Wachzone) d["wachzone"] = true;
+            if (Vergeltung) d["vergeltung"] = true;
             return d;
         }
     }
@@ -266,13 +276,25 @@ namespace TacticalAI.Core
         /// reactionHero (R-D, concept v1.2 §2.3): the hero carrying the
         /// reaktion key for THIS activation (build it with ReactionHeroFor);
         /// null/empty = key inactive = every pre-R-D vector byte-identical.
+        /// wachzoneHero / vergeltungHero (S-D, concept positionierung v1 §10
+        /// + §13.4, card t_c52dd34b): the two section-space reaction keys of
+        /// THIS activation, resolved by SectionConsumers (Wachzone = the
+        /// hero factually working at the mission-critical object this guard
+        /// masks; Vergeltung = the mask-sharpened shooter candidate, ONLY a
+        /// suspicion the fact track left open). Slot law as pinned on the
+        /// card: Interrupt (reaktion) > Wachzone > Vergeltung, both below
+        /// the human's aim mark. null/empty = keys inactive = every pre-S-D
+        /// vector byte-identical (multiset fairness untouched: keys reorder,
+        /// never re-scope the candidate set).
         public static List<FocusPick> Rank(IEnumerable<FocusCandidate> candidates,
                                                string posture, string counter,
                                                IList<string> defenderDefense = null,
                                                int cardSurcharge = 0,
                                                EngagementEffects engage = null,
                                                Rational? attackerDamageEv = null,
-                                               string reactionHero = null)
+                                               string reactionHero = null,
+                                               string wachzoneHero = null,
+                                               string vergeltungHero = null)
         {
             var list = candidates == null ? new List<FocusCandidate>()
                                            : candidates.ToList();
@@ -296,6 +318,20 @@ namespace TacticalAI.Core
             if (!string.IsNullOrEmpty(reactionHero))
                 foreach (var r in rows)
                     if (r.C.HeroId == reactionHero) r.Reaktion = true;
+
+            // S-D SECTION-SPACE KEYS (concept positionierung v1 §10 + §13.4):
+            // the two reaction keys the section belief resolves for THIS
+            // activation (SectionConsumers.WachzoneDecisionFor /
+            // VergeltungHeroFor build the identities). Same mark-style
+            // per-hero signal as Reaktion - null/empty keeps every row
+            // false, both slots inert, the whole pre-S-D canon runs
+            // byte-identical.
+            if (!string.IsNullOrEmpty(wachzoneHero))
+                foreach (var r in rows)
+                    if (r.C.HeroId == wachzoneHero) r.Wachzone = true;
+            if (!string.IsNullOrEmpty(vergeltungHero))
+                foreach (var r in rows)
+                    if (r.C.HeroId == vergeltungHero) r.Vergeltung = true;
 
             // M10b OBJECTIVE ACTOR: the hero credited with the last
             // objective progress raises his threat by EXACTLY +1 - "die
@@ -381,14 +417,22 @@ namespace TacticalAI.Core
                 StrainPriorRunden = x.Unscharf > 0 && !(x.Druck > 0) ? x.C.RoundsCompleted : (int?)null,
                 StrainPriorDecke = x.Unscharf > 0 && !(x.Druck > 0) ? x.Decke : (int?)null,
                 Reaktion = x.Reaktion,
+                Wachzone = x.Wachzone,
+                Vergeltung = x.Vergeltung,
                 // R-D: "reaktion" rides behind "mark" (the designation stays
                 // king) and pre-empts chip/economy - the lexicographic law the
                 // Compare slot enforces; null-key rows never see the token.
+                // S-D: "wachzone" then "vergeltung" ride directly behind
+                // reaktion - the pinned slot law Interrupt > Wachzone >
+                // Vergeltung (§13.4); both pre-empt chip/economy, both
+                // null-inert for every pre-S-D vector.
                 Basis = x.C.Marked ? "mark"
                         : (x.Reaktion ? "reaktion"
+                        : (x.Wachzone ? "wachzone"
+                        : (x.Vergeltung ? "vergeltung"
                         : (x.Chip != null ? "chip"
                         : (x.Econ != null ? (x.C.Card != null ? "card" : "economy")
-                                          : "proxy"))),
+                                          : "proxy"))))),
             }).ToList();
         }
 
@@ -495,6 +539,11 @@ namespace TacticalAI.Core
             public int? Unscharf;           // M11h fuzzy round-prior stage (see Rank)
             public int? Decke;              // M11h reachable ceiling U behind it
             public bool Reaktion;           // R-D reaktion key (see Rank)
+            // S-D section-space reaction keys (concept positionierung v1
+            // §10+§13.4, card t_c52dd34b): per-hero comparison signals on
+            // the reactionHero pattern (FocusCandidate stays untouched).
+            public bool Wachzone;
+            public bool Vergeltung;
         }
 
         /// Lexicographic compare of two rows, DESC (a before b => -1).
@@ -516,6 +565,21 @@ namespace TacticalAI.Core
             //     counter law. No reactionHero passed -> both rows false,
             //     slot inert, pre-R-D canon byte-identical.
             if (a.Reaktion != b.Reaktion) return a.Reaktion ? -1 : 1;
+            // 1c. S-D WACHZONE (concept positionierung v1 §10: "Wachzonen-
+            //     Schluessel ... Ausnahme-Aktivierung laeuft auf der
+            //     Reihenfolge-Ebene, das Ziel auf der Rank-Ebene"; §13.4
+            //     slot law: Interrupt > Wachzone > Vergeltung): the hero
+            //     factually working at the mission-critical object inside
+            //     the activating guard's mask leads behind the fact-track
+            //     reaktion, ahead of the counter law. Null key => inert.
+            if (a.Wachzone != b.Wachzone) return a.Wachzone ? -1 : 1;
+            // 1d. S-D VERGELTUNG, mask track (concept §10 "C(Schuetze)":
+            //     candidate from argmax(mask ∩ victim ring); the FACT track
+            //     (window attribution, slot 1b) already beat it by standing
+            //     above - and the resolver only ever names ONE unambiguous
+            //     candidate, else the key stays off. Suspicion ranks behind
+            //     fact, never alone above it. Null key => inert.
+            if (a.Vergeltung != b.Vergeltung) return a.Vergeltung ? -1 : 1;
             // 2. counter law (woundAll): sim ChipKey verbatim, higher first.
             //    M10b: an objective actor OUTRANKS the static role doctrine
             //    below - a hero who just did real mission damage is the live

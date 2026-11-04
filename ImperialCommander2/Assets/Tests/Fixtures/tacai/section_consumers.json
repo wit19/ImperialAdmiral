@@ -1,0 +1,1289 @@
+{
+  "_comment": "S-D consumer-layer pins (card t_c52dd34b, concept positionierung v1 8.1/10/12/13): Wachzone exception (held law, seed-from-start, Bedrohung order, IMMER every rung), 3c same-round rule, mask-track Vergeltung (fact > suspicion, ambiguity off, no hit no key), trust-gated proximity feed (zones/ring/contest), posture clamp with the jitter law, the pinned slot law Interrupt > Wachzone > Vergeltung and the NULL LAW pairs. The canon/dump/readout expects were recorded ONCE via --record and reviewed; the laws are hand-pinned in SectionsSectionConsumers.cs. No pre-existing fixture touched: every new Core parameter is null-defaulted.",
+  "cases": [
+    {
+      "name": "sd_wachzone_held",
+      "_comment": "Guard seeded INSIDE the object section (seed counts from the start, concept 10) + hero interaction attributed to that section in round 2 -> Wachzone decision with the duty fact; the Rank key names the hero. Held law: the anchor still sits in the object section at the readout state.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Outer Bay"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_G",
+          "name": "Shield Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "GUARD",
+          "CARD_G",
+          "Shield Guard",
+          "guard",
+          2
+        ]
+      ],
+      "watchProbe": [
+        "GUARD"
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_wachzone_held\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Outer Bay\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-1 section=s-a round=2\n",
+        "readout": "watch.GUARD=LU|Relay Hall|r2|thr5/3|known\nwachHeroFor.GUARD=LU"
+      }
+    },
+    {
+      "name": "sd_wachzone_released",
+      "_comment": "Same stream plus round 3: the hero moves and works OUTER BAY. The fact anchor leaves the object section, so the HELD law releases the duty (state-based, no invented departure).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Outer Bay"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 3,
+          "payload": {
+            "section": "s-b",
+            "entity": "t-2"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_G",
+          "name": "Shield Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "GUARD",
+          "CARD_G",
+          "Shield Guard",
+          "guard",
+          2
+        ]
+      ],
+      "watchProbe": [
+        "GUARD"
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_wachzone_released\nround=3\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=10\nG|GUARD|GUARD|1|0|2|2|1|0|1\nH|LU|LU|0|0|2|3|0|0\nseen=LU zone=sec:s-b kind=fact seq=9 round=3\n",
+        "dump": "round=3 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nedge s-a s-b kind=confirmed\nsec s-b name=Outer Bay\nspeed LU round=2 crossings=0 touched=1\nspeed LU round=3 crossings=1 touched=2\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a,s-b\ndom 1/2\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a,s-b\ndom 1/2\nhero LU section=s-b round=3\ninteract LU t-1 section=s-a round=2\ninteract LU t-2 section=s-b round=3\n",
+        "readout": "watch.GUARD=-\nwachHeroFor.GUARD=-"
+      }
+    },
+    {
+      "name": "sd_wachzone_rung1",
+      "_comment": "Thomas-Gesetz 04.11.: the exception is fairness, not an intelligence bonus -> rung 1 (S1) still runs the WZ push. Without the rail the S1 index law stands (HUNTER is roster-first); the Wachzone guard overrules it on EVERY rung (1 and 4 pinned; at rung 4 the efficiency basis alone would also put HUNTER first). NULL LAW: the identical stream without the belief rail runs the pre-S-D order bit-identical.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Open Yard"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "HUNTER",
+            "size": 2,
+            "section": "s-b"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ],
+        "HUNTER": [
+          "s-b"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_G",
+          "name": "Shield Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        },
+        {
+          "id": "CARD_H",
+          "name": "Scout Hunter",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue",
+            "Blue",
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "HUNTER",
+          "CARD_H",
+          "Scout Hunter",
+          "aggressive",
+          2
+        ],
+        [
+          "GUARD",
+          "CARD_G",
+          "Shield Guard",
+          "guard",
+          2
+        ]
+      ],
+      "select": {
+        "round": 2,
+        "rung": 1,
+        "seed": 24102,
+        "pending": [
+          "HUNTER",
+          "GUARD"
+        ]
+      },
+      "selectNoSpace": {
+        "round": 2,
+        "rung": 1,
+        "seed": 24102,
+        "pending": [
+          "HUNTER",
+          "GUARD"
+        ]
+      },
+      "expect": {
+        "canon": "mission=vector|sd_wachzone_rung1\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|GUARD|GUARD|1|0|2|2|1|0|1\nG|HUNTER|HUNTER|1|0|2|2|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=7 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Open Yard\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup HUNTER alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nhero LU section=s-a round=2\ninteract LU t-1 section=s-a round=2\n",
+        "readout": "select.picks=GUARD,HUNTER\nselect.why1=TACTICAL next r2 -> Shield Guard |WZ:3000|basis:1| ; vor Scout Hunter |Basis:0|basis:0| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselect.why2=TACTICAL next r2 -> Scout Hunter |Basis:0|basis:0| — Geplante Reihenfolge\nselectNoSpace.picks=HUNTER,GUARD\nselectNoSpace.why1=TACTICAL next r2 -> Scout Hunter |Basis:0|basis:0| ; vor Shield Guard |Basis:0|basis:1| — Geplante Reihenfolge\nselectNoSpace.why2=TACTICAL next r2 -> Shield Guard |Basis:0|basis:0| — Geplante Reihenfolge"
+      }
+    },
+    {
+      "name": "sd_wachzone_bedrohung",
+      "_comment": "Bedrohung order among several Wachzone candidates (concept 13.3): same duty fact for three guards over the same object; order by printed damage EV (3 dice > 1 die), the catalog-less import queues LAST inside the class (unknown is never better), and the whole WZ block leads the basis-ranked hunter.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 2,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Open Yard"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARDS",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARDW",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARDX",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "HUNTER",
+            "size": 2,
+            "section": "s-b"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARDS": [
+          "s-a"
+        ],
+        "GUARDW": [
+          "s-a"
+        ],
+        "GUARDX": [
+          "s-a"
+        ],
+        "HUNTER": [
+          "s-b"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_S",
+          "name": "Storm Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue",
+            "Blue",
+            "Blue"
+          ],
+          "isElite": false
+        },
+        {
+          "id": "CARD_W",
+          "name": "Watch Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        },
+        {
+          "id": "CARD_H",
+          "name": "Scout Hunter",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue",
+            "Blue",
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "GUARDX",
+          null,
+          "Import Guard",
+          "guard",
+          2
+        ],
+        [
+          "HUNTER",
+          "CARD_H",
+          "Scout Hunter",
+          "aggressive",
+          2
+        ],
+        [
+          "GUARDW",
+          "CARD_W",
+          "Watch Guard",
+          "guard",
+          2
+        ],
+        [
+          "GUARDS",
+          "CARD_S",
+          "Storm Guard",
+          "guard",
+          2
+        ]
+      ],
+      "select": {
+        "round": 2,
+        "rung": 1,
+        "seed": 99,
+        "pending": [
+          "HUNTER",
+          "GUARDS",
+          "GUARDW",
+          "GUARDX"
+        ]
+      },
+      "selectNoSpace": {
+        "round": 2,
+        "rung": 1,
+        "seed": 99,
+        "pending": [
+          "HUNTER",
+          "GUARDS",
+          "GUARDW",
+          "GUARDX"
+        ]
+      },
+      "selectRung4": {
+        "round": 2,
+        "rung": 4,
+        "seed": 99,
+        "pending": [
+          "HUNTER",
+          "GUARDS",
+          "GUARDW",
+          "GUARDX"
+        ]
+      },
+      "expect": {
+        "canon": "mission=vector|sd_wachzone_bedrohung\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=10\nG|GUARDS|GUARDS|1|0|2|2|1|0|1\nG|GUARDW|GUARDW|1|0|2|2|1|0|1\nG|GUARDX|GUARDX|1|0|2|2|1|0|1\nG|HUNTER|HUNTER|1|0|2|2|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=9 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Open Yard\nspeed LU round=2 crossings=0 touched=1\ngroup GUARDS alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup GUARDW alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup GUARDX alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup HUNTER alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nhero LU section=s-a round=2\ninteract LU t-1 section=s-a round=2\n",
+        "readout": "select.picks=GUARDS,GUARDW,GUARDX,HUNTER\nselect.why1=TACTICAL next r2 -> Storm Guard |WZ:3000|basis:2| ; vor Watch Guard |WZ:3000|basis:1| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselect.why2=TACTICAL next r2 -> Watch Guard |WZ:3000|basis:1| ; vor Import Guard |WZ:3000|basis:2| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselect.why3=TACTICAL next r2 -> Import Guard |WZ:3000|basis:1| ; vor Scout Hunter |Basis:0|basis:0| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselect.why4=TACTICAL next r2 -> Scout Hunter |Basis:0|basis:0| — Geplante Reihenfolge\nselectRung4.picks=GUARDS,GUARDW,GUARDX,HUNTER\nselectRung4.why1=TACTICAL next r2 -> Storm Guard |WZ:3000|basis:0| ; vor Watch Guard |WZ:3000|basis:1| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselectRung4.why2=TACTICAL next r2 -> Watch Guard |WZ:3000|basis:0| ; vor Import Guard |WZ:3000|basis:2| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselectRung4.why3=TACTICAL next r2 -> Import Guard |WZ:3000|basis:1| ; vor Scout Hunter |Basis:0|basis:0| — Wachzone: LU am Missionsobjekt in Relay Hall (Runde 2)\nselectRung4.why4=TACTICAL next r2 -> Scout Hunter |Basis:0|basis:0| — Geplante Reihenfolge\nselectNoSpace.picks=HUNTER,GUARDW,GUARDS,GUARDX\nselectNoSpace.why1=TACTICAL next r2 -> Scout Hunter |Basis:0|basis:0| ; vor Watch Guard |Basis:0|basis:1| — Geplante Reihenfolge\nselectNoSpace.why2=TACTICAL next r2 -> Watch Guard |Basis:0|basis:0| ; vor Storm Guard |Basis:0|basis:1| — Geplante Reihenfolge\nselectNoSpace.why3=TACTICAL next r2 -> Storm Guard |Basis:0|basis:0| ; vor Import Guard |Basis:0|basis:1| — Geplante Reihenfolge\nselectNoSpace.why4=TACTICAL next r2 -> Import Guard |Basis:0|basis:0| — Geplante Reihenfolge"
+      }
+    },
+    {
+      "name": "sd_drei_c_gleich_runde",
+      "_comment": "3c (concept 10): section VAULT activates in round 3, RECRUIT is placed in that same round with its seed belief in that section, and the hero factually enters it in the SAME round -> the fresh unit is re-evaluated BEFORE the plan rest at every rung (S1 and S2 runs pinned; the R3 feed marker is absent - the spawn happened outside any hero window - so only the section-grade 3c fact can fire). The object sits in BRIDGE, NOT in the fresh unit section, so no Wachzone duty masks the effect: the following round (selectRound4) shows the SAME-ROUND law - without a live 3c fact the basis order returns bit-identical.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 3,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Bridge"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 3,
+          "payload": {
+            "section": "s-b",
+            "name": "Vault"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 3,
+          "payload": {
+            "group": "RECRUIT",
+            "size": 1,
+            "section": "s-b"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 3,
+          "payload": {
+            "hero": "JY"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 3,
+          "payload": {
+            "section": "s-b",
+            "entity": "crate-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "JY"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "RECRUIT": [
+          "s-b"
+        ],
+        "HUNTER": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_R",
+          "name": "Fresh Recruit",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        },
+        {
+          "id": "CARD_H",
+          "name": "Scout Hunter",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue",
+            "Blue",
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "HUNTER",
+          "CARD_H",
+          "Scout Hunter",
+          "aggressive",
+          2
+        ],
+        [
+          "RECRUIT",
+          "CARD_R",
+          "Fresh Recruit",
+          "guard",
+          1
+        ]
+      ],
+      "threeNow": 3,
+      "select": {
+        "round": 3,
+        "rung": 1,
+        "seed": 7,
+        "pending": [
+          "HUNTER",
+          "RECRUIT"
+        ]
+      },
+      "select2": {
+        "round": 3,
+        "rung": 2,
+        "seed": 7,
+        "pending": [
+          "HUNTER",
+          "RECRUIT"
+        ]
+      },
+      "selectRound4": {
+        "round": 4,
+        "rung": 2,
+        "seed": 7,
+        "pending": [
+          "HUNTER",
+          "RECRUIT"
+        ]
+      },
+      "expect": {
+        "canon": "mission=vector|sd_drei_c_gleich_runde\nround=3\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|RECRUIT|RECRUIT|1|0|1|1|3|0|1\nH|JY|JY|0|0|1|3|0|0\nseen=JY zone=sec:s-b kind=fact seq=6 round=3\n",
+        "dump": "round=3 speedSectionsPerWindow=1\nsec s-a name=Bridge\nsec s-b name=Vault\nspeed JY round=3 crossings=0 touched=1\ngroup RECRUIT alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=3 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nhero JY section=s-b round=3\ninteract JY crate-1 section=s-b round=3\n",
+        "readout": "3cf.RECRUIT|s-b|JY|r3\n3cnow.3.RECRUIT|s-b|JY|r3\nselect.picks=RECRUIT,HUNTER\nselect.why1=TACTICAL next r3 -> Fresh Recruit |3C:1000|basis:1| ; vor Scout Hunter |Basis:0|basis:0| — 3c: JY drang in die neu aktivierte Sektion Vault ein (Runde 3)\nselect.why2=TACTICAL next r3 -> Scout Hunter |Basis:0|basis:0| — Geplante Reihenfolge\nselect2.picks=RECRUIT,HUNTER\nselect2.why1=TACTICAL next r3 -> Fresh Recruit |3C:1000|basis:1| ; vor Scout Hunter |Basis:0|basis:0| — 3c: JY drang in die neu aktivierte Sektion Vault ein (Runde 3)\nselect2.why2=TACTICAL next r3 -> Scout Hunter |Basis:0|basis:0| — Geplante Reihenfolge\nselectRound4.picks=HUNTER,RECRUIT\nselectRound4.why1=TACTICAL next r4 -> Scout Hunter |Basis:0|basis:0| ; vor Fresh Recruit |Basis:0|basis:1| — Geplante Reihenfolge\nselectRound4.why2=TACTICAL next r4 -> Fresh Recruit |Basis:0|basis:0| — Geplante Reihenfolge"
+      }
+    },
+    {
+      "name": "sd_vergeltung_mask_track",
+      "_comment": "Vergeltung mask track (concept 10 C(Schuetze) + 13.1): the GUARD is shot at THIS round (raw hit fact, ungated) and exactly ONE hero carries a fresh anchor inside the victim ring -> the key names him. If the FACT track already names a shooter (reactionHero) the mask key stays OFF entirely. No belief for the group -> honest null.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 1,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 1,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "GUARD",
+            "figure": 0,
+            "wheel": 2,
+            "health": 5
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "JY"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-2"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "JY"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "vergProbe": [
+        [
+          "GUARD",
+          null
+        ],
+        [
+          "GUARD",
+          "LU"
+        ],
+        [
+          "SCOUT",
+          null
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_vergeltung_mask_track\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=11\nG|GUARD|GUARD|1|0|2|2|1|5|4/5\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=10 round=2\nH|LU|LU|0|0|1|1|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=1\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=1 crossings=0 touched=1\nspeed JY round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=2 src=hit alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero JY section=s-a round=2\nhero LU section=s-a round=1\ninteract LU t-1 section=s-a round=1\ninteract JY t-2 section=s-a round=2\n",
+        "readout": "verg.GUARD.-=JY\nverg.GUARD.LU=-\nverg.SCOUT.-=-\n3cf.GUARD|s-a|LU|r1"
+      }
+    },
+    {
+      "name": "sd_vergeltung_ambiguous",
+      "_comment": "Two heroes fresh in the victim ring: unsicher -> Schluessel bleibt aus. Never a guess.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "GUARD",
+            "figure": 0,
+            "wheel": 2,
+            "health": 5
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "JY"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-2"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "JY"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-3"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "vergProbe": [
+        [
+          "GUARD",
+          null
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_vergeltung_ambiguous\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=11\nG|GUARD|GUARD|1|0|2|2|1|5|4/5\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=7 round=2\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=10 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed JY round=2 crossings=0 touched=1\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=2 src=hit alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero JY section=s-a round=2\nhero LU section=s-a round=2\ninteract JY t-2 section=s-a round=2\ninteract LU t-3 section=s-a round=2\n",
+        "readout": "verg.GUARD.-=-"
+      }
+    },
+    {
+      "name": "sd_vergeltung_no_hit",
+      "_comment": "Fresh heroes in the section but NO hit fact this round: the trigger is the shot, never the presence (concept 10 - nie ein Verdacht allein).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "JY"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-2"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "JY"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "vergProbe": [
+        [
+          "GUARD",
+          null
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_vergeltung_no_hit\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|0|1\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed JY round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero JY section=s-a round=2\ninteract JY t-2 section=s-a round=2\n",
+        "readout": "verg.GUARD.-=-"
+      }
+    },
+    {
+      "name": "sd_zonen_vertrauen",
+      "_comment": "Proximity feed (Baustein 4): with a trust row the SHARP single-candidate belief becomes a zone claim (GUARD=s-a); SCOUT claims the section its SPAWN payload observed (S-C spawn law). ringZones carries only FRESH hero anchors; contestZone needs the object table (zones3 without it stays \"-\", zones4 names the object section); and WITHOUT the trust row the whole feed falls silent (zonesNoTrust - fail-closed at the consumer).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 1,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "SCOUT",
+            "size": 1,
+            "section": "s-b"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-b",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ],
+        "SCOUT": [
+          "s-a",
+          "s-b"
+        ]
+      },
+      "critical": [
+        "s-b"
+      ],
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "zones": true,
+      "expect": {
+        "canon": "mission=vector|sd_zonen_vertrauen\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|GUARD|GUARD|1|0|1|1|1|0|1\nG|SCOUT|SCOUT|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-b kind=fact seq=7 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup SCOUT alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nhero LU section=s-b round=2\ninteract LU t-9 section=s-b round=2\n",
+        "readout": "zones3[zone GUARD=s-a ; zone SCOUT=s-b ; ring s-b ; contest -]\nzones4[zone GUARD=s-a ; zone SCOUT=s-b ; ring s-b ; contest s-b]\nzonesNoTrust[ring s-b ; contest s-b]"
+      }
+    },
+    {
+      "name": "sd_klammer_durchbruch",
+      "_comment": "Posture clamp at the breach: hero factually working the object section -> race postures (eliminate/attrition) clamp to protect; defensive postures are already holding and stay UNTOUCHED. Three identical pulls prove purity (Jitter-Regel).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Outer Bay"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "clampPostures": [
+        "eliminate",
+        "attrition",
+        "protect",
+        "stall"
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_klammer_durchbruch\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Outer Bay\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-1 section=s-a round=2\n",
+        "readout": "clamp.eliminate=protect\nclamp.attrition=protect\nclamp.protect=-\nclamp.stall=-\nclamp.pure=yes"
+      }
+    },
+    {
+      "name": "sd_klammer_ruhe",
+      "_comment": "Quiet mission (no interaction facts): no Durchbruch, no clamp - eliminate and attrition stay themselves (the round-plan posture is only steered by a fact).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "clampPostures": [
+        "eliminate",
+        "attrition"
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_klammer_ruhe\nround=1\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=3\nG|GUARD|GUARD|1|0|2|2|1|0|1\n",
+        "dump": "round=1 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\n",
+        "readout": "clamp.eliminate=-\nclamp.attrition=-\nclamp.pure=yes"
+      }
+    }
+  ]
+}

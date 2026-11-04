@@ -82,20 +82,32 @@ namespace TacticalAI.Core
             public int Ordinal;                     // seq rank among the field
             public string Push = "Basis";
             public string Reason = "Geplante Reihenfolge";
+            // S-D (card t_c52dd34b): Bedrohung key of a Wachzone candidate
+            // (printed damage EV x alive, ThreatKnown=false = no catalog
+            // record - unknown is NEVER better). Only meaningful together
+            // with Push=="WZ"; untouched by every pre-S-D path.
+            public Rational Threat;
+            public bool ThreatKnown;
         }
 
         /// <summary>The basis the overlay ranks on: PlanRound over the
         /// pending KNOWN figures, seeded exactly like the bridge's round.
         /// Exposed for the harness (pattern_stability pins it against a
-        /// direct OrderPlanner.PlanRound call with the same inputs).</summary>
+        /// direct OrderPlanner.PlanRound call with the same inputs).
+        /// S-D (card t_c52dd34b): the two proximity channels ride the
+        /// documented PlanRound parameters - both null-defaulted, so every
+        /// pre-S-D call stays bit-identical; SelectNext fills them from
+        /// SectionConsumers.PlanZones only when a section space is handed.</summary>
         public static OrderPlan BasisPlan(int roundNo, List<GroupFacts> knownFacts,
                                           Dictionary<string, DeploymentCard> catalog,
                                           string posture, SkillProfile skill,
-                                          ulong sessionSeed, string counter)
+                                          ulong sessionSeed, string counter,
+                                          IEnumerable<string> ringZones = null,
+                                          string contestZone = null)
         {
             var rng = new DeterministicRandom(RoundSeed(sessionSeed, roundNo));
             return OrderPlanner.PlanRound(roundNo, knownFacts, catalog, posture,
-                                          skill, rng, roundNo, null, null, counter, null);
+                                          skill, rng, roundNo, ringZones, contestZone, counter, null);
         }
 
         /// <summary>Pick the next group to activate. Returns a member of
@@ -111,7 +123,9 @@ namespace TacticalAI.Core
                                         Dictionary<string, DeploymentCard> catalog,
                                         string posture, int skill, ulong sessionSeed,
                                         FeedWorldView view, string counter,
-                                        out string why)
+                                        out string why,
+                                        SectionSpace sectionSpace = null,
+                                        IList<string> criticalSections = null)
         {
             if (catalog == null)
                 throw new ArgumentException("ReactionOrder.SelectNext: catalog is null");
@@ -151,13 +165,43 @@ namespace TacticalAI.Core
                 else unknownFacts.Add(f);
             }
 
+            // -- S-D section space: exception maps + proximity feed (card
+            //    t_c52dd34b). NULL LAW: no space handed => all three stay
+            //    null and every pre-S-D path runs bit-identical. Wachzone
+            //    and 3c carry NO skill floor (Thomas-Gesetz 04.11.: the
+            //    event-driven exceptions fire on ALL rungs - fact reaction
+            //    is fairness, not an intelligence bonus); the zones inside
+            //    PlanZones are trust-gated (fail-closed without a row).
+            //    GroupFacts.Zone is the documented belief slot Efficiency
+            //    reads - filled ONLY here, ONLY from a trust-gated belief.
+            Dictionary<string, WachzoneDecision> wachMap = null;
+            Dictionary<string, ThreeCFact> threeMap = null;
+            ZoneBelief zones = null;
+            if (sectionSpace != null)
+            {
+                var factList = new List<GroupFacts>(factById.Values);
+                wachMap = SectionConsumers.WachzoneDecisions(
+                    sectionSpace, criticalSections, factList, catalog);
+                threeMap = SectionConsumers.ThreeCPushes(sectionSpace, pending, roundNo);
+                zones = SectionConsumers.PlanZones(sectionSpace, view, prof, criticalSections);
+                if (zones != null)
+                    foreach (var f in factList)
+                        if (f.Zone == null)
+                        {
+                            var z = zones.ZoneOf(f.GroupId);
+                            if (z != null) f.Zone = z;
+                        }
+            }
+
             // -- basis: PlanRound over the known pending figures ---------------
             var planPos = new Dictionary<string, int>(StringComparer.Ordinal);
             string finisherId = null;
             if (knownFacts.Count > 0)
             {
                 var plan = BasisPlan(roundNo, knownFacts, catalog, postureE, prof,
-                                     sessionSeed, counter);
+                                     sessionSeed, counter,
+                                     zones != null ? zones.RingZones : null,
+                                     zones != null ? zones.ContestZone : null);
                 var knownIds = new List<string>();
                 foreach (var f in knownFacts) knownIds.Add(f.GroupId);
                 OrderPlanner.AssertPermutation(plan, knownIds);
@@ -278,6 +322,46 @@ namespace TacticalAI.Core
                     c.Seq = 0; c.SeqKnown = false;
                     c.Reason = "Neue Ankunft in dieser Runde";
                 }
+                // S-D section-space exceptions (card t_c52dd34b, concept
+                // positionierung v1 10+13.3). NO skill floor - IMMER
+                // (Thomas-Gesetz 04.11.). They ride the classes of their
+                // fact family INSTEAD of renumbering Thomas' pinned
+                // collision order (Schutzpflicht > Vergeltung > Eindringling
+                // stays 3>2>1, the class CONSTANTS are untouched law):
+                //  * WZ rides ClassProtect - it is the section-space
+                //    generalization of the guard duty (Baustein 1 IS R2's
+                //    ground: mask overlap replaces the symbolic ledger).
+                //    No event seq is carried (the fact keys on rounds) -
+                //    an R2 with a visible seq therefore stays ahead, and
+                //    several WZ candidates queue by BEDROHUNG (comparator
+                //    branch, concept 13.3 "Bedrohungsordnung").
+                //  * 3C rides ClassIntruder - the section-grounded sibling
+                //    of R3 (activation + intruder SAME round, strictly the
+                //    stronger Eindringling fact); ties with R3 fall to the
+                //    basis position, exactly R3's honest no-seq law.
+                // Only where no R push fired (c.Cls == 0): highest push
+                // shown, no stacking (Thomas 04.11. #4 untouched).
+                if (c.Cls == 0 && sectionSpace != null)
+                {
+                    WachzoneDecision wz;
+                    if (wachMap != null && wachMap.TryGetValue(id, out wz))
+                    {
+                        c.Cls = ClassProtect; c.Push = "WZ";
+                        c.Seq = 0; c.SeqKnown = false;
+                        c.Threat = wz.Threat; c.ThreatKnown = wz.ThreatKnown;
+                        c.Reason = wz.Reason;
+                    }
+                    else
+                    {
+                        ThreeCFact tc;
+                        if (threeMap != null && threeMap.TryGetValue(id, out tc))
+                        {
+                            c.Cls = ClassIntruder; c.Push = "3C";
+                            c.Seq = 0; c.SeqKnown = false;
+                            c.Reason = SectionConsumers.ThreeCReason(sectionSpace, tc);
+                        }
+                    }
+                }
                 cands.Add(c);
             }
 
@@ -299,6 +383,20 @@ namespace TacticalAI.Core
             {
                 int c = b.Cls.CompareTo(a.Cls);
                 if (c != 0) return c;
+                // S-D Bedrohungsordnung (concept 13.3, card t_c52dd34b):
+                // among Wachzone candidates only - higher printed damage EV
+                // first, no-catalog candidates last (unknown is never
+                // better). Pre-S-D vectors carry no "WZ" push, so this
+                // branch is inert there by construction.
+                if (a.Push == "WZ" && b.Push == "WZ")
+                {
+                    if (a.ThreatKnown != b.ThreatKnown) return a.ThreatKnown ? -1 : 1;
+                    if (a.ThreatKnown && b.ThreatKnown)
+                    {
+                        int t = b.Threat.CompareTo(a.Threat);
+                        if (t != 0) return t;
+                    }
+                }
                 c = b.Seq.CompareTo(a.Seq);
                 if (c != 0) return c;
                 return a.PlanPos.CompareTo(b.PlanPos);

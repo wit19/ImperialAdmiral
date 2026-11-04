@@ -178,6 +178,43 @@ namespace TacticalAI.Core
             return CriticalDoorSections(md);
         }
 
+        /// Sections that hold a MISSION-CRITICAL OBJECT for the mission
+        /// (S-D consumer input, card t_c52dd34b): unswapped criticalEntities
+        /// rows whose entityType is a WORKABLE object - Terminal (printed
+        /// console, reason terminal), Token, Crate (objective-event). Door,
+        /// DeploymentPoint and Highlight rows are STRUCTURE, not objects:
+        /// heroes pass through doors, spawn at DPs and Highlights are pure
+        /// markers - none of them can be "worked on", so their sections are
+        /// never mission-critical OBJECT sections (type law, documented).
+        /// runtimeSwapped rows stay excluded (the live feed is truth there).
+        /// Sorted unique by section GUID (the GUID is the section's identity,
+        /// not a coordinate - Loch-Gesetz untouched). No row => empty list:
+        /// consumers read "no critical object known" and stay inert.
+        public static List<string> MissionCriticalSections(object doc, string missionId)
+        {
+            var set = new HashSet<string>(StringComparer.Ordinal);
+            var md = MissionRow(doc, missionId);
+            if (md == null) return new List<string>();
+            object entsRaw;
+            if (!md.TryGetValue("criticalEntities", out entsRaw)) return new List<string>();
+            var ents = entsRaw as List<object>;
+            if (ents == null) return new List<string>();
+            foreach (var e in ents)
+            {
+                var ed = e as Dictionary<string, object>;
+                if (ed == null) continue;
+                if (IsTrue(Json.Get(ed, "runtimeSwapped", null))) continue;
+                var type = Json.AsStr(Json.Get(ed, "entityType", "")) ?? "";
+                if (type != "Terminal" && type != "Token" && type != "Crate") continue;
+                var sec = Json.AsStr(Json.Get(ed, "section", "")) ?? "";
+                if (sec.Length == 0) continue;
+                set.Add(sec);
+            }
+            var l = new List<string>(set);
+            l.Sort(StringComparer.Ordinal);
+            return l;
+        }
+
         // Shared source of both products: entity GUID -> section, doors only,
         // unswapped, authored section non-empty (data-exists).
         static Dictionary<string, string> CriticalDoorSections(Dictionary<string, object> md)

@@ -563,22 +563,14 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   playtest.
   **Deployment anchors (M14c, `Core/DeploymentAnchors.cs` + bridge):**
   mission-objective anchors on the deterministic DP choice — full law in §11.
-  **Hunter text (M14d, ui.json only; M14f sync):** the shipped `apTreeHunter`,
-  the hunter's creed and `ordExplainFokuszone` state the real two-leg doctrine
-  — stage 1 claims ONLY heroes physically inside the focus zone (several zone
-  heroes? the higher threat value, EXPLAIN shows it); with no zone hero within
-  reach the second leg takes the FOCUS TARGET, legitimately outside the zone or
-  on its way there; a hero outside who is not the focus target is ignored. Pure
+  **Hunter text (M14d, ui.json only):** the shipped `apTreeHunter` stage 1,
+  the hunter's creed and `ordExplainFokuszone` now name the hero *moving
+  into* the focus zone as a candidate next to the hero working inside
+  (several candidates -> the higher threat value, EXPLAIN shows it). Pure
   text hop: `FokuszoneHeadFor` is UNCHANGED — the plan-side lock still
-  heads on the hero factually anchored inside (physical-in-zone only, Thomas'
-  explicit decision) — the M14d wording ("or moving into it" in stage 1) went
-  further than the lock and was pulled back; M14f's wording is pinned verbatim
-  in `UiCompletenessGate` (mutation probe: one removed comma in the Merksatz
-  goes gate-RED).
-  Canon: 45370 → 45426 → 45485 → 45486 checks, additions only (M14f adds the
-  LAW-9 vacuity tripwire `law.p25_closer_cases_present`; the S2 expectation now
-  travels as the fixture field `expect_react_s2`, no case-name hardcoding).
-  Three existing
+  heads on the hero factually anchored inside; the widened candidate set is
+  the board-level doctrine the human evaluates from the popup.
+  Canon: 45370 → 45426 → 45485 checks, additions only. Three existing
   canon vectors gain the `|shot=|` column per law (`p19_causal_strike_closer`
   `|shot=Jyn Odan|3|2`, `sd_vergeltung_mask_track` `|shot=JY|8|2`,
   `sd_vergeltung_ambiguous` `|shot=JY|5|2`) — record → review → pin; all
@@ -646,11 +638,10 @@ overlays and movement shackles only, never legality changes**: aggressive
 (shortest attack path), guard (guard-zone clamp until threat), blocker
 (holds the path valley of the heroes' terrain-cost field), hunter
 (from tier 3 the **Fokuszone lock** — target is the hero factually anchored
-in the focus zone, pass-by heroes outside it are ignored (the focus target
-excepted — the popup text's second leg attacks it even outside), retaliation
-outranks the brand; the plan-side pick is unchanged since M14d, and since M14f
-the shipped popup text draws the same line the code always did: zone-lock for
-the attack leg, focus target for the fallback leg — see the Player-25 laws entry; below tier 3 the
+in the focus zone, pass-by heroes outside it are ignored, retaliation
+outranks the brand; the plan-side pick is unchanged since M14d, while the
+shipped popup text additionally names the hero *moving into* the zone as a
+board-level candidate — see the Player-25 laws entry; below tier 3 the
 hunter plays the aggressive rows
 verbatim — popup trees `apTreeHunter*` ride the identical rung gate),
 support (distance ≥ 2

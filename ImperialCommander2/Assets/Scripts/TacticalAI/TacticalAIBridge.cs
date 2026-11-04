@@ -157,6 +157,33 @@ namespace TacticalAI
         /// projection itself is coordinate-free (Loch-Gesetz): EXPLAIN
         /// shows Ereignis + Regel, never a position.</summary>
         public static Tac.SectionSpace LastSectionSpace { get; private set; }
+        // S-D (card t_c52dd34b): the consumer INPUTS follow the exact
+        // per-pull law of the belief itself (same choke point, set/reset
+        // together). LastSdZones is the trust-gated proximity feed for the
+        // OrderPlan rail (null => no bonus, today's plan - fail-closed);
+        // LastCriticalSections is the mined mission-critical OBJECT set
+        // (null/empty => exceptions stay inert, data-exists law).
+        public static Tac.ZoneBelief LastSdZones { get; private set; }
+        public static List<string> LastCriticalSections { get; private set; }
+        // S-D EXPLAIN caches (Baustein 6): the decision layer's reads at
+        // THIS round's computation - rebuilt per EnsureRound/round plan,
+        // never a decision themselves (ExplainFor only RENDERS them).
+        static Dictionary<string, Tac.WachzoneDecision> _sdWatchByGroup;
+        static Dictionary<string, Tac.ThreeCFact> _sdThreeCByGroup;
+        static string _sdClampActive;        // posture clamp in force this round
+        static readonly Dictionary<string, string> _sdVergByGroup =
+            new Dictionary<string, string>();  // group -> suspected shooter hero
+        // S-D EXPLAIN name lookups: group id -> printed group name, taken
+        // from the round facts (BuildGroups output), never re-derived.
+        static Dictionary<string, string> _nameByGroup;
+        static string GroupDisplay(string groupId)
+        {
+            string n;
+            if (_nameByGroup != null && groupId != null
+                && _nameByGroup.TryGetValue(groupId, out n) && !string.IsNullOrEmpty(n))
+                return n;
+            return groupId;
+        }
         static string _roundFocusHero;
         static Tac.FocusPick _roundFocus;
         static int _roundFocusRound = -1;
@@ -210,6 +237,16 @@ namespace TacticalAI
             _lastFeedView = null;
             LastSectionSpace = null;   // S-C: a stale belief never crosses
             // the session boundary either (same law as the feed view).
+            // S-D: the consumer inputs ride the same law - a zone belief,
+            // a critical set or a cached decision of the previous mission
+            // must never anchor a new one.
+            LastSdZones = null;
+            LastCriticalSections = null;
+            _sdWatchByGroup = null;
+            _sdThreeCByGroup = null;
+            _sdClampActive = null;
+            _sdVergByGroup.Clear();
+            _nameByGroup = null;
             _roundFocusHero = null;
             _roundFocus = null;
             _roundFocusRound = -1;
@@ -441,6 +478,32 @@ namespace TacticalAI
                     LastSectionSpace = null;
                     Debug.LogWarning("TacticalAIBridge::section space pull failed (belief skipped): " + e.Message);
                 }
+                // S-D consumer inputs (card t_c52dd34b): same pull, same
+                // mission-key guard, fail-closed degradation. Zones are
+                // trust-gated INSIDE PlanZones (no threshold row => no
+                // zones); the critical set is mined from the shipped
+                // tactical_mission_critical table (no row => empty list,
+                // every section exception stays inert).
+                LastSdZones = null;
+                LastCriticalSections = null;
+                if (LastSectionSpace != null)
+                {
+                    try
+                    {
+                        LastCriticalSections = _feedAdapter.MissionCriticalSectionsNow();
+                        LastSdZones = Tac.SectionConsumers.PlanZones(
+                            LastSectionSpace, v,
+                            Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(
+                                CurrentMissionAiMode())),
+                            LastCriticalSections);
+                    }
+                    catch (Exception e)
+                    {
+                        LastSdZones = null;
+                        Debug.LogWarning("TacticalAIBridge::section zones failed " +
+                                         "(proximity skipped): " + e.Message);
+                    }
+                }
                 return v;
             }
             catch (Exception e)
@@ -528,6 +591,17 @@ namespace TacticalAI
             // dev 21: a mission badge can pin its OWN ladder rung (S1..S5);
             // AUTO/OFF fall back to the global ladder.
             var skill = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
+            // S-D Baustein 5 (card t_c52dd34b): the POSTURE-CLAMP rides the
+            // same resolution point, so every downstream reader of this
+            // variable - ComputeRoundFocus, BuildRiskPositions, the round
+            // plan below and the focus Rank - sees the SAME clamped posture
+            // (Jitter-Regel: pure function of (space, critical, posture);
+            // the same stream re-pulled yields the same answer, quiet rounds
+            // flip zero times). SKILL-GATED here at the consumer: the clamp
+            // refines the posture READING, one of the three refinement
+            // channels SectionSkill owns (S3+; Thomas-Gesetz 04.11. - the
+            // event-driven exceptions themselves stay IMMER).
+            posture = ClampPosture(posture, skill);
             // NOTE(overlord): the ORD optimization goal runs on the PASSIVE
             // world feed (concept v4.0 3.3.1b) - event stream + derived
             // posture + wheel vitality, NEVER manual position entry. With a
@@ -591,6 +665,43 @@ namespace TacticalAI
             }
 
             var rng = new Tac.DeterministicRandom(SessionSeed() ^ (ulong)roundNo * 0x9E3779B97F4A7C15UL);
+            // S-D Baustein 4 (card t_c52dd34b): the proximity feed enters
+            // through the DOCUMENTED belief slot (GroupFacts.Zone) and the
+            // two PlanRound parameters that waited for this feeder since
+            // day one (R-E Geist: the R chain never fed them - PlanRound
+            // callers grep was empty). Trust-gated upstream in PlanZones;
+            // null zones here = today's plan bit-identical.
+            var sdZones = LastSdZones;
+            if (sdZones != null)
+                foreach (var f in facts)
+                    if (f.Zone == null)
+                    {
+                        var z = sdZones.ZoneOf(f.GroupId);
+                        if (z != null) f.Zone = z;
+                    }
+            // S-D EXPLAIN caches (Baustein 6): rebuild the decision-layer
+            // reads for THIS round's plan so ExplainFor renders exactly
+            // what the engine saw, without ever re-deciding anything.
+            _sdWatchByGroup = null;
+            _sdThreeCByGroup = null;
+            if (LastSectionSpace != null)
+            {
+                try
+                {
+                    _sdWatchByGroup = Tac.SectionConsumers.WachzoneDecisions(
+                        LastSectionSpace, LastCriticalSections, facts, _catalog);
+                    var sdIds = new List<string>();
+                    foreach (var f in facts) sdIds.Add(f.GroupId);
+                    _sdThreeCByGroup = Tac.SectionConsumers.ThreeCPushes(
+                        LastSectionSpace, sdIds, roundNo);
+                }
+                catch (Exception e)
+                {
+                    _sdWatchByGroup = null;
+                    _sdThreeCByGroup = null;
+                    Debug.LogWarning("TacticalAIBridge::section decisions cache failed: " + e.Message);
+                }
+            }
             // M12d: the campaign deck's acquired class cards hook into the
             // SAME pipeline (activation efficiency + printed strength). No
             // deck / no firing hook -> null -> bit-identical canon plan.
@@ -600,10 +711,14 @@ namespace TacticalAI
             // costs, doctrine share, guard band, texts). null = the exact
             // bit-identical canon plan the fixtures pin.
             var plan = Tac.OrderPlanner.PlanRound(roundNo, facts, _catalog, posture, skill, rng,
-                                                  roundNo, null, null, MissionCounter(), null);
+                                                  roundNo,
+                                                  LastSdZones != null ? LastSdZones.RingZones : null,
+                                                  LastSdZones != null ? LastSdZones.ContestZone : null,
+                                                  MissionCounter(), null);
             Tac.OrderPlanner.AssertPermutation(plan, facts.Select(f => f.GroupId));
             _slots = plan.Slots;
             var names = facts.ToDictionary(f => f.GroupId, f => f.Name);
+            _nameByGroup = names;   // S-D EXPLAIN name rail (same-round facts)
             _publicLine = plan.PublicLine(names);
             _planRound = roundNo;
 
@@ -691,13 +806,20 @@ namespace TacticalAI
                 var posture = "eliminate";
                 if (view != null && !string.IsNullOrEmpty(view.Posture)) posture = view.Posture;
                 var skill = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
+                // S-D: the SAME clamp law as the round plan (idempotent pure
+                // read - peek and plan never disagree on the posture).
+                posture = ClampPosture(posture, skill);
                 int rung = 1;   // defensive: a null profile keeps the honest S1 basis-only handicap
                 if (skill != null && skill.Level != null && skill.Level.Length == 2 && skill.Level[0] == 'S')
                     rung = skill.Level[1] - '0';
 
                 string why;
                 var pick = Tac.ReactionOrder.SelectNext(roundNo, pending, selFacts, _catalog,
-                    posture, rung, SessionSeed(), view, MissionCounter(), out why);
+                    posture, rung, SessionSeed(), view, MissionCounter(), out why,
+                    // S-D (card t_c52dd34b): the belief rail + the mined
+                    // critical set ride ALONG - null on either side keeps
+                    // every pre-S-D pick path bit-identical (null law).
+                    LastSectionSpace, LastCriticalSections);
                 foreach (var cd in candidates)
                     if (cd != null && cd.id == pick) { next = cd; break; }
                 if (next == null)
@@ -1212,6 +1334,12 @@ namespace TacticalAI
             {
                 case "mark":      return L.ordFocusBasisMark;
                 case "reaktion":  return L.ordFocusBasisReaktion;
+                // S-D (card t_c52dd34b): the two section bases read their
+                // labels from ui.json like every other basis; a language
+                // asset without the keys shows the raw token (TF law:
+                // never a silently wrong label).
+                case "wachzone":  return L.ordFocusBasisWachzone;
+                case "vergeltung": return L.ordFocusBasisVergeltung;
                 case "chip":      return L.ordFocusBasisChip;
                 case "card":      return L.ordFocusBasisConditioned;
                 case "economy":   return L.ordFocusBasisEconomy;
@@ -1326,12 +1454,54 @@ namespace TacticalAI
                         rdRung = rdSkill.Level[1] - '0';
                     var reactionHero = Tac.OverlordFocus.ReactionHeroFor(
                         ordView, cd.id, rdPattern, rdRung);
+                    // S-D (card t_c52dd34b, concept 13.4): the two section
+                    // keys of THIS activation, resolved by the consumer
+                    // layer. Slot law as pinned on the card: Interrupt
+                    // (reaktion) > Wachzone > Vergeltung - the fact track
+                    // (window attribution, reactionHero above) already beat
+                    // the mask track, so VergeltungHeroFor returns null
+                    // whenever the fact names a shooter (FAKT > HYPOTHESE).
+                    // Both keys ride IMMER (exceptions are fairness, no
+                    // skill floor); no belief rail => both null => the
+                    // pre-S-D rank law runs bit-identical.
+                    string wachzoneHero = null, vergeltungHero = null;
+                    var sdSpace = LastSectionSpace;
+                    if (sdSpace != null)
+                    {
+                        try
+                        {
+                            // Honest minimal fact for the Bedrohung read
+                            // (same synthesis law as the peek path's unknown
+                            // candidates): only the catalog EV + alive count
+                            // feed the Wachzone threat value.
+                            var sdFact = new Tac.GroupFacts(cd.id, 0, cd.id, cd.name ?? cd.id,
+                                pattern: rdPattern,
+                                nAlive: Math.Max(1, cd.currentSize),
+                                vitalityFrac: Tac.Rational.One,
+                                zone: null, arrivedRound: null,
+                                isHeavy: false, isSwarm: false,
+                                priorityOne: cd.priority == 1,
+                                supporter: PrintedOfficerSupporter(cd));
+                            wachzoneHero = Tac.SectionConsumers.WachzoneHeroFor(
+                                sdSpace, LastCriticalSections, sdFact, _catalog);
+                            vergeltungHero = Tac.SectionConsumers.VergeltungHeroFor(
+                                ordView, sdSpace, cd.id, reactionHero);
+                        }
+                        catch (Exception e)
+                        {
+                            wachzoneHero = null;
+                            vergeltungHero = null;
+                            Debug.LogWarning("TacticalAIBridge::section focus keys failed " +
+                                             "(canon rank): " + e.Message);
+                        }
+                    }
                     var ranked = Tac.OverlordFocus.Rank(cands,
-                        string.IsNullOrEmpty(ordView.Posture) ? "eliminate" : ordView.Posture,
+                        ClampPosture(string.IsNullOrEmpty(ordView.Posture) ? "eliminate" : ordView.Posture, rdSkill),
                         MissionCounter(),
                         // M11b: threat v2 runs against THIS figure's printed
                         // defense pool (public deployment-card data).
-                        DefenseOf(cd), 0, null, AttackEvOf(cd), reactionHero);
+                        DefenseOf(cd), 0, null, AttackEvOf(cd), reactionHero,
+                        wachzoneHero, vergeltungHero);
                     var dec = ranked[0];
                     _roundFocus = dec;
                     _roundFocusHero = dec.HeroId;
@@ -1350,9 +1520,20 @@ namespace TacticalAI
                         // would print a wrong pronoun for them.
                         if (dec.Basis == "reaktion" && !string.IsNullOrEmpty(L0.ordFocusReaktion))
                             reactionTail = TF(L0.ordFocusReaktion, cd.name ?? cd.id);
+                        // S-D (card t_c52dd34b): the same visibility law for
+                        // the two section bases - the focus line names what
+                        // the AI acts on publicly (a guard at its object, a
+                        // suspected shooter), never internal mechanics.
+                        else if (dec.Basis == "wachzone" && !string.IsNullOrEmpty(L0.ordFocusWachzone))
+                            reactionTail = TF(L0.ordFocusWachzone, cd.name ?? cd.id);
+                        else if (dec.Basis == "vergeltung" && !string.IsNullOrEmpty(L0.ordFocusVergeltung))
+                            reactionTail = TF(L0.ordFocusVergeltung, cd.name ?? cd.id);
+                        if (vergeltungHero != null) _sdVergByGroup[cd.id] = vergeltungHero;
                         why = BuildOverlordWhy(L0, dec, heroName);
                         Debug.Log("TacticalAIBridge::target " + cd.id + " -> " + dec.HeroId +
-                                  " basis=" + dec.Basis + " reaction=" + (reactionHero ?? "-"));
+                                  " basis=" + dec.Basis + " reaction=" + (reactionHero ?? "-") +
+                                  " wachzone=" + (wachzoneHero ?? "-") +
+                                  " vergeltung=" + (vergeltungHero ?? "-"));
                         return true;
                     }
                 }
@@ -1767,6 +1948,50 @@ namespace TacticalAI
 
         // ------------------------------------------------------------- explain
 
+        // S-D (card t_c52dd34b): the posture clamp's ONE consumer. A pure
+        // read of (LastSectionSpace, critical set, posture) - the same
+        // inputs always give the same answer (Jitter-Regel: quiet rounds
+        // provably flip zero times, section_consumers.json pins it). No
+        // belief, no critical object known, clamp below the S3 refinement
+        // rung or posture already defensive => posture UNCHANGED. The
+        // clamp NEVER writes back into the feed - it only steers this
+        // computation's decisions (the feed's derived posture stays the
+        // public fact the log printed).
+        static string ClampPosture(string posture, Tac.SkillProfile skill)
+        {
+            var space = LastSectionSpace;
+            if (space == null || string.IsNullOrEmpty(posture)) return posture;
+            if (!Tac.SectionSkill.PostureClampBasisEnabled(skill)) return posture;
+            string clamped;
+            try
+            {
+                clamped = Tac.SectionConsumers.PostureClamp(space, LastCriticalSections, posture);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::posture clamp failed (posture kept): " + e.Message);
+                return posture;
+            }
+            if (clamped == null || clamped == posture) { _sdClampActive = null; return posture; }
+            _sdClampActive = clamped;
+            Debug.Log("TacticalAIBridge::posture clamp: " + posture + " -> " + clamped +
+                      " [Missionsobjekt unter Arbeit - Wehrhaltung]");
+            return clamped;
+        }
+
+        // Player-facing hero display name off the public feed view
+        // (loose ends law: never print an internal id into a UI line; the
+        // id stays in the log lines).
+        static string HeroDisplay(string heroId)
+        {
+            var v = _lastFeedView;
+            if (v != null && heroId != null)
+                foreach (var h in v.Heroes)
+                    if (h != null && h.HeroId == heroId)
+                        return string.IsNullOrEmpty(h.Name) ? heroId : h.Name;
+            return heroId;
+        }
+
         static string ExplainFor(string groupId, ActivationPlanData plan)
         {
             if (TacticalAISettings.ExplainLevel == "none") return null;
@@ -1877,6 +2102,49 @@ namespace TacticalAI
                 // (no hardcoded game text on the player surface, ui.json law).
                 // Personas (M4): the class-card announce block is GONE -
                 // personas own this display slot now (plan.PersonaLine).
+                // S-D (card t_c52dd34b): the section-space EXPLAIN chain -
+                // Ereignis -> Entscheidung for every decision layer the
+                // belief rail steered for THIS activation. Rendered from
+                // the round caches only (EnsureRound rebuilt them from the
+                // same deterministic reads the plan used), ui.json-owned
+                // wording (ui.json law), Loch-Gesetz-clean: the lines name
+                // figures, the object and the section's authored NAME -
+                // never a coordinate or a section number.
+                if (UIx != null)
+                {
+                    string sdLine = null;
+                    if (_sdWatchByGroup != null)
+                    {
+                        Tac.WachzoneDecision wz;
+                        if (_sdWatchByGroup.TryGetValue(groupId, out wz)
+                            && !string.IsNullOrEmpty(UIx.ordExplainWachzone))
+                            sdLine = TF(UIx.ordExplainWachzone,
+                                HeroDisplay(wz.Hero), wz.SectionName,
+                                GroupDisplay(groupId));
+                    }
+                    if (sdLine == null && _sdThreeCByGroup != null)
+                    {
+                        Tac.ThreeCFact tc;
+                        if (_sdThreeCByGroup.TryGetValue(groupId, out tc)
+                            && !string.IsNullOrEmpty(UIx.ordExplainThreeC))
+                            sdLine = TF(UIx.ordExplainThreeC,
+                                HeroDisplay(tc.Hero),
+                                LastSectionSpace != null
+                                    ? (LastSectionSpace.Graph.SectionName(tc.Section) ?? tc.Section)
+                                    : tc.Section,
+                                GroupDisplay(groupId));
+                    }
+                    string verg;
+                    if (sdLine == null && _sdVergByGroup.TryGetValue(groupId, out verg)
+                        && !string.IsNullOrEmpty(UIx.ordExplainVergeltung))
+                        sdLine = TF(UIx.ordExplainVergeltung,
+                            GroupDisplay(groupId), HeroDisplay(verg));
+                    if (sdLine != null)
+                        line = (line == null ? "" : line + "\n") + sdLine;
+                    if (!string.IsNullOrEmpty(_sdClampActive)
+                        && !string.IsNullOrEmpty(UIx.ordExplainClamp))
+                        line = (line == null ? "" : line + "\n") + TF(UIx.ordExplainClamp);
+                }
                 // request 3: never ship a lone header row.
                 if (line != null && Lh != null && line == Lh.ordExplainHead) return null;
                 return line;

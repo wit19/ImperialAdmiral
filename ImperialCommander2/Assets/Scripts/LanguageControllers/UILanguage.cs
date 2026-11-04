@@ -65,6 +65,10 @@ public class UITacticalAI
 	// activated figure's name. Pronoun-free wording is deliberate (the
 	// 21-hero roster carries female heroes).
 	public string ordFocusReaktion;
+	// S-D (card t_c52dd34b, concept positionierung v1 13.4): the same
+	// tail-clause law for the two section bases; {0} = the activated
+	// figure's name, pronoun-free like the reaktion tail above.
+	public string ordFocusWachzone, ordFocusVergeltung;
 	// M6 overlord explain parts (public threat economy + aim marks + risk).
 	// M13c (Thomas 30.10): ordRoundFocus + focusNoChance REMOVED from the
 	// focus-target WHY line (the "all groups converge...; no chance" tail).
@@ -164,6 +168,9 @@ public class UITacticalAI
 	// R-D: basis label when the reaktion key decided the focus (EXPLAIN
 	// disclosure line "Grundlage: ...").
 	public string ordFocusBasisReaktion;
+	// S-D (card t_c52dd34b): the two section-space basis labels (EXPLAIN
+	// "Grundlage:" disclosure), same vocabulary slot as reaktion.
+	public string ordFocusBasisWachzone, ordFocusBasisVergeltung;
 	// Punkt 2 (Thomas 01.11.): doctrine phase disclosure - one-shot QM at
 	// the defend->hunt flip and the EXPLAIN line naming both phases.
 	public string ordPhaseShiftQM, ordPhaseExplain, ordPhaseDefend, ordPhaseHunt;
@@ -171,6 +178,12 @@ public class UITacticalAI
 	// Thomas 02.11 (popup declutter): EXPLAIN section header + the focus
 	// target reasoning line that moved out of the action area.
 	public string ordExplainHead, ordExplainFocusWhy;
+	// S-D (card t_c52dd34b): the section-space EXPLAIN chain lines
+	// (Ereignis -> Entscheidung). Wachzone {0}=hero {1}=section {2}=group;
+	// ThreeC {0}=hero {1}=section {2}=group; Vergeltung {0}=group {1}=hero;
+	// Clamp carries no argument. All figure-/object-naming (Loch-Gesetz:
+	// never a coordinate, never a section number).
+	public string ordExplainWachzone, ordExplainThreeC, ordExplainVergeltung, ordExplainClamp;
 	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
 	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }

@@ -258,6 +258,33 @@ namespace TacticalAI
             return bar < 0 ? null : key.Substring(bar + 1);
         }
 
+        // S-D (card t_c52dd34b): mission-critical OBJECT sections for the
+        // CURRENT mission, mined from the shipped tactical_mission_critical
+        // table through the SAME miner SectionTrust already owns (type law
+        // Terminal/Token/Crate, unswapped, authored section - see
+        // SectionTrust.MissionCriticalSections). Cached per mission key:
+        // the table is static shipped data, the mission key is the row
+        // identity. ANY failure => empty list = consumers inert (data-exists
+        // law: no object known, no Wachzone, no clamp).
+        List<string> _critSectionsCache;
+        string _critSectionsKey;
+        public List<string> MissionCriticalSectionsNow()
+        {
+            try
+            {
+                var key = Feed != null ? Feed.MissionKey : null;
+                if (string.IsNullOrEmpty(key)) return new List<string>();
+                if (_critSectionsCache != null && _critSectionsKey == key)
+                    return _critSectionsCache;
+                var l = Tac.SectionTrust.MissionCriticalSections(
+                    TacticalAIAssets.MissionCriticalRoot, MissionIdFromKey(key));
+                _critSectionsCache = l;
+                _critSectionsKey = key;
+                return l;
+            }
+            catch { return new List<string>(); }
+        }
+
         // DP-marker seeds (S-A check 1 outcome: candidate set). Identity
         // law: group keys are the SAME cd.id strings PollGroups Spawns with.
         static Dictionary<string, string[]> BuildDeploySeeds()

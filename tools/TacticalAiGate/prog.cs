@@ -41,6 +41,7 @@ class P {
         PatternRowLanguageGate.Run();
         MissionCriticalGate.Run();
         SectionTrustGate.Run();
+        SectionTextGate.Run();
         UiCompletenessGate.Run();
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }

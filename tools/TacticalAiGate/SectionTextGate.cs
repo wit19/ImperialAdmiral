@@ -44,6 +44,12 @@ public static class SectionTextGate
         { "ordFocusVergeltung",      new[] { 0 } },
         { "ordFocusBasisWachzone",   new int[0] },
         { "ordFocusBasisVergeltung", new int[0] },
+        // S-E (card t_9dd56737): supporter mask-trust arity contract, taken
+        // from the Bridge TF call sites (TrySelectTarget tail + ExplainFor).
+        { "ordFocusMaskenvertrauen",        new[] { 0 } },
+        { "ordFocusBasisMaskenvertrauen",   new int[0] },
+        { "ordExplainSupportMaske",         new[] { 0, 1 } },
+        { "ordExplainSupportHalten",        new[] { 0 } },
     };
 
     public static void Run()

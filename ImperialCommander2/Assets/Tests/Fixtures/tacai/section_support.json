@@ -1,0 +1,1052 @@
+{
+  "meta": {
+    "file": "section_support.json",
+    "schema": "tacai.section_support/1",
+    "generated": "hand-authored events (S-E, card t_9dd56737)",
+    "note": "SUPPORTER-MASKEN-VERTRAUEN consumer (concept positionierung v1 5/6 + D4 + Ziel-Matrix Z6 'Offizier supportet statt zu raten'). The belief rail steers the supporter's TARGET CHOICE: trusted own section + exactly one FRESH hero anchor = strike ('Feuer in die richtige Sektion statt Bedrohungs-Schaetzung'); diffuse belief, sub-threshold belief, or anchor ambiguity = support (the decision names NO target - never a guessed one); the channel is null (canon runs bit-identical) below the mask-Verfeinerung-Rung (SectionSkill table S3/S4/S5), without the trust table, without a seeded belief, and whenever a FACT key (reaktion/wachzone/vergeltung) is in play - FAKT SCHLAEGT MASKE. Expect blocks recorded ONCE via --record and reviewed line by line; the laws are hand-pinned. NO pre-existing fixture touched (addition-only canon law)."
+  },
+  "cases": [
+    {
+      "name": "se_strike_kohaerent",
+      "_comment": "Z6 strike end: supporter OFF seeded at s-a only (dominance 1.0 >= 2/3 trust row), hero LU factually anchored in s-a THIS round, no fact keys -> the trusted mask points: strike LU, the section named is the dominant section (target inside the mask - section-coherent).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S3"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_strike_kohaerent\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|OFF|OFF|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\n",
+        "readout": "sup.OFF.S3=strike|LU|s-a|r2"
+      }
+    },
+    {
+      "name": "se_support_diffus",
+      "_comment": "Z6 support end: OFF belief spread over three sections (uniform 1/3 < 2/3 = diffuse, no claim) while LU is anchored at s-a anyway. The supporter does NOT point at a maybe: support, no target, no section named.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-c",
+            "name": "Vault"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a",
+          "s-b",
+          "s-c"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S3"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_support_diffus\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|OFF|OFF|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=7 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nsec s-c name=Vault\nspeed LU round=2 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-b:fact,s-c:fact\ncands s-a,s-b,s-c\ndom 1/3\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\n",
+        "readout": "sup.OFF.S3=support|-|-|r2"
+      }
+    },
+    {
+      "name": "se_support_halb_diffus",
+      "_comment": "The sub-threshold step of the same law: belief split 1/2 : 1/2 over s-a and s-b - uniform 1/2 < 2/3 = not trusted = diffuse. Zuerst die Schwelle der Daten-Tabelle, dann der Glaube: support, no claim, even though s-a would be the argmax if argmax sufficed.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a",
+          "s-b"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S3"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_support_halb_diffus\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|OFF|OFF|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-b:fact\ncands s-a,s-b\ndom 1/2\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\n",
+        "readout": "sup.OFF.S3=support|-|-|r2"
+      }
+    },
+    {
+      "name": "se_zwei_anker",
+      "_comment": "Trusted mask (s-a dominance 1.0), but TWO heroes anchored in s-a this round: the mask names the section, the ambiguity names no target - support INSIDE the known section (never a coin flip between LU and JB).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "JB"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "JB"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S3"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_zwei_anker\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=10\nG|OFF|OFF|1|0|1|1|1|0|1\nH|JB|JB|0|0|1|2|0|0\nseen=JB zone=sec:s-a kind=fact seq=9 round=2\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\nspeed JB round=2 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero JB section=s-a round=2\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\ninteract JB t-9 section=s-a round=2\n",
+        "readout": "sup.OFF.S3=support|-|s-a|r2"
+      }
+    },
+    {
+      "name": "se_anker_veraltet",
+      "_comment": "Trusted mask s-a, LU anchored there in round 1, read in round 2: the fresh-anchor law (a stale anchor is belief-age, not a hero position) -> zero fresh anchors -> support. The section is still named (the mask is trusted), the target is not.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 1,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 1,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 2,
+          "payload": {
+            "section": "s-c",
+            "name": "Vault"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S3"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_anker_veraltet\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|OFF|OFF|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|1|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=1\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nsec s-c name=Vault\nspeed LU round=1 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=1\ninteract LU t-9 section=s-a round=1\n",
+        "readout": "sup.OFF.S3=support|-|s-a|r2"
+      }
+    },
+    {
+      "name": "se_fakt_schlaegt_maske",
+      "_comment": "The exact strike stream - but each probe carries ONE fact key (E1 reaktion / Wachzone / Vergeltung suspicion). While any fact key is in play the mask channel is SILENT (null): E1..E4 are facts, FAKT SCHLAEGT MASKE. null = the consumer never speaks, the fact track alone decides (Z6 law).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S3",
+          "LU",
+          null,
+          null,
+          "reaktion"
+        ],
+        [
+          "OFF",
+          "S3",
+          null,
+          "LU",
+          null,
+          "wach"
+        ],
+        [
+          "OFF",
+          "S3",
+          null,
+          null,
+          "LU",
+          "verg"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_fakt_schlaegt_maske\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|OFF|OFF|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\n",
+        "readout": "sup.OFF.S3.reaktion=null\nsup.OFF.S3.wach=null\nsup.OFF.S3.verg=null"
+      }
+    },
+    {
+      "name": "se_maske_null",
+      "_comment": "MASKE NULL = heutiger Kanon (Pin! 'lageblind' ist der Referenzfall): NEUL has no belief at all (never seeded, never spawned); OBSL spawned but was NEVER observed (no deploy seed, no section payload) - alive but belief-less. Both probes: null. The channel silent = today's popup bit-identical (the rank null-pair law runs harness-side per case).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OBSL",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {},
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "NEUL",
+          "S3"
+        ],
+        [
+          "OBSL",
+          "S3"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_maske_null\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|OBSL|OBSL|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=5 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nspeed LU round=2 crossings=0 touched=1\ngroup OBSL alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\ncands -\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\n",
+        "readout": "sup.NEUL.S3=null\nsup.OBSL.S3=null"
+      }
+    },
+    {
+      "name": "se_skill_kurve",
+      "_comment": "The exact strike stream probed across the whole skill ladder: S1/S2 (reference rungs) and the profile-free reference path stay NULL - consumer silent, today's popup bit-identical. S3/S4/S5 (the mask-Verfeinerung-Rung, SectionSkill data table, kein Schalter) strike. The channel exists ONLY where the table opens it (Thomas-Gesetz 04.11.: ist es drin, wird es benutzt - auf seiner Rung).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-9"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "OFF": [
+          "s-a"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "OFF",
+          "S1"
+        ],
+        [
+          "OFF",
+          "S2"
+        ],
+        [
+          "OFF",
+          null
+        ],
+        [
+          "OFF",
+          "S3"
+        ],
+        [
+          "OFF",
+          "S4"
+        ],
+        [
+          "OFF",
+          "S5"
+        ]
+      ],
+      "expect": {
+        "canon": "mission=vector|se_skill_kurve\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|OFF|OFF|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\ngroup OFF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-9 section=s-a round=2\n",
+        "readout": "sup.OFF.S1=null\nsup.OFF.S2=null\nsup.OFF.-=null\nsup.OFF.S3=strike|LU|s-a|r2\nsup.OFF.S4=strike|LU|s-a|r2\nsup.OFF.S5=strike|LU|s-a|r2"
+      }
+    },
+    {
+      "name": "se_z6_kurve",
+      "_comment": "Z6-Monotonie (numerisch, beide Raender + Zwischenschritt), ein Stream, neun Supporter, drei frische Anker (LU=s-a, JB=s-b, TK=s-c, Runde 2): D1..D3 belief diffus (1/3 - support statt Ziel-Raten, 3/3), M1..M3 gemischte Lage (M1 tight s-a -> strike, M2 1/2 unter der Schwelle -> support, M3 diffus -> support = 2/3), E1..E3 enge Masken mit je einem frischen Anker (strike,strike,strike = 0/3). Support-Anteil faellt streng mit der Masken-Klarheit - 'Support bei diffus, Zupacken bei enger Maske' (D4) als Messung, nicht als Behauptung.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SE1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Relay Hall"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Catwalk"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-c",
+            "name": "Vault"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "D1",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "D2",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "D3",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "M1",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "M2",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "M3",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "E1",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "E2",
+            "size": 1
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "E3",
+            "size": 1
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "JB"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-b",
+            "entity": "t-2"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "JB"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "TK"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-c",
+            "entity": "t-3"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "TK"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "D1": [
+          "s-a",
+          "s-b",
+          "s-c"
+        ],
+        "D2": [
+          "s-a",
+          "s-b",
+          "s-c"
+        ],
+        "D3": [
+          "s-a",
+          "s-b",
+          "s-c"
+        ],
+        "M1": [
+          "s-a"
+        ],
+        "M2": [
+          "s-a",
+          "s-c"
+        ],
+        "M3": [
+          "s-a",
+          "s-b",
+          "s-c"
+        ],
+        "E1": [
+          "s-a"
+        ],
+        "E2": [
+          "s-b"
+        ],
+        "E3": [
+          "s-c"
+        ]
+      },
+      "trust": {
+        "rows": [
+          {
+            "id": "std",
+            "num": 2,
+            "den": 3
+          }
+        ]
+      },
+      "probes": [
+        [
+          "D1",
+          "S3"
+        ],
+        [
+          "D2",
+          "S3"
+        ],
+        [
+          "D3",
+          "S3"
+        ],
+        [
+          "M1",
+          "S3"
+        ],
+        [
+          "M2",
+          "S3"
+        ],
+        [
+          "M3",
+          "S3"
+        ],
+        [
+          "E1",
+          "S3"
+        ],
+        [
+          "E2",
+          "S3"
+        ],
+        [
+          "E3",
+          "S3"
+        ]
+      ],
+      "sharePrefixes": [
+        "D",
+        "M",
+        "E"
+      ],
+      "expect": {
+        "canon": "mission=vector|se_z6_kurve\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=22\nG|D1|D1|1|0|1|1|1|0|1\nG|D2|D2|1|0|1|1|1|0|1\nG|D3|D3|1|0|1|1|1|0|1\nG|E1|E1|1|0|1|1|1|0|1\nG|E2|E2|1|0|1|1|1|0|1\nG|E3|E3|1|0|1|1|1|0|1\nG|M1|M1|1|0|1|1|1|0|1\nG|M2|M2|1|0|1|1|1|0|1\nG|M3|M3|1|0|1|1|1|0|1\nH|JB|JB|0|0|1|2|0|0\nseen=JB zone=sec:s-b kind=fact seq=18 round=2\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=15 round=2\nH|TK|TK|0|0|1|2|0|0\nseen=TK zone=sec:s-c kind=fact seq=21 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nsec s-c name=Vault\nspeed LU round=2 crossings=0 touched=1\nspeed JB round=2 crossings=0 touched=1\nspeed TK round=2 crossings=0 touched=1\ngroup D1 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-b:fact,s-c:fact\ncands s-a,s-b,s-c\ndom 1/3\ngroup D2 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-b:fact,s-c:fact\ncands s-a,s-b,s-c\ndom 1/3\ngroup D3 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-b:fact,s-c:fact\ncands s-a,s-b,s-c\ndom 1/3\ngroup E1 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup E2 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\ngroup E3 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-c:fact\ncands s-c\ndom 1\ngroup M1 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup M2 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-c:fact\ncands s-a,s-c\ndom 1/2\ngroup M3 alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-b:fact,s-c:fact\ncands s-a,s-b,s-c\ndom 1/3\nhero JB section=s-b round=2\nhero LU section=s-a round=2\nhero TK section=s-c round=2\ninteract LU t-1 section=s-a round=2\ninteract JB t-2 section=s-b round=2\ninteract TK t-3 section=s-c round=2\n",
+        "readout": "sup.D1.S3=support|-|-|r2\nsup.D2.S3=support|-|-|r2\nsup.D3.S3=support|-|-|r2\nsup.M1.S3=strike|LU|s-a|r2\nsup.M2.S3=support|-|-|r2\nsup.M3.S3=support|-|-|r2\nsup.E1.S3=strike|LU|s-a|r2\nsup.E2.S3=strike|JB|s-b|r2\nsup.E3.S3=strike|TK|s-c|r2\nshare.D=3/3\nshare.M=2/3\nshare.E=0/3"
+      }
+    }
+  ]
+}

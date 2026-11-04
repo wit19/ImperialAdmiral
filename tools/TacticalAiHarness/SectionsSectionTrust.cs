@@ -104,11 +104,11 @@ namespace TacticalAiHarness
                 bool want = level == "S3" || level == "S4" || level == "S5";
                 Check("law.skill_" + level + "_refine", want, SectionSkill.MaskRefinementEnabled(prof));
                 Check("law.skill_" + level + "_clamp", want, SectionSkill.PostureClampBasisEnabled(prof));
-                Check("law.skill_" + level + "_nav", want, SectionSkill.SupportNavigationEnabled(prof));
+                Check("law.skill_" + level + "_nav", want, SectionSkill.SupporterMaskTrustEnabled(prof));
             }
             Check("law.no_profile_refine_off", false, SectionSkill.MaskRefinementEnabled(null));
             Check("law.no_profile_clamp_off", false, SectionSkill.PostureClampBasisEnabled(null));
-            Check("law.no_profile_nav_off", false, SectionSkill.SupportNavigationEnabled(null));
+            Check("law.no_profile_nav_off", false, SectionSkill.SupporterMaskTrustEnabled(null));
 
             // ---- 2) TRUST TABLE: fail-closed without data; rational rows;
             // first valid skill match, default fallback; invalid rows absent;

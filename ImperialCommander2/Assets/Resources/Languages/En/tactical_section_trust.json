@@ -3,14 +3,14 @@
     "file": "tactical_section_trust.json",
     "schema": "tacai.section_trust/1",
     "generated": "hand-authored (S-C, card t_865d5997)",
-    "note": "PUBLIC reviewable tuning data - same fairness standing as tactical_pattern_weights.json (concept section 2: plain text, never hidden modifiers). The mask-trust threshold of concept positionierung v1 section 10: a section mask is TRUSTED (its consumer keys may fire - pursuit/posture-clamp basis and support navigation, themselves skill-gated by the Thomas-Gesetz 04.11. curve in SectionSkill) only when the dominant section's weight >= num/den AND the mask did not degrade to the union. Below threshold or diffuse = key OFF = today's canon (fallback ladder 10, step 1: no behavior change, no new penalty). Rows are read in order, first usable match wins (skill = exact rung 'S1'..'S5'; a row without skill is the default). num/den are positive integers with num <= den (full-integer Rational path, no doubles); an unusable row does not exist. No table, no row, broken file = key OFF (fail-closed, data-exists). Zielwert 2/3 is Review IV's provisional target - the SectionTrustGate pins it; moving it is a concept+gate+data decision in one commit, never a silent code default."
+    "note": "PUBLIC reviewable tuning data - same fairness standing as tactical_pattern_weights.json (concept section 2: plain text, never hidden modifiers). The mask-trust threshold of concept positionierung v1 section 10: a section mask is TRUSTED (its consumer keys may fire - pursuit/posture-clamp basis and supporter mask trust, themselves skill-gated by the Thomas-Gesetz 04.11. curve in SectionSkill) only when the dominant section's weight >= num/den AND the mask did not degrade to the union. Below threshold or diffuse = key OFF = today's canon (fallback ladder 10, step 1: no behavior change, no new penalty). Rows are read in order, first usable match wins (skill = exact rung 'S1'..'S5'; a row without skill is the default). num/den are positive integers with num <= den (full-integer Rational path, no doubles); an unusable row does not exist. No table, no row, broken file = key OFF (fail-closed, data-exists). Zielwert 2/3 is Review IV's provisional target - the SectionTrustGate pins it; moving it is a concept+gate+data decision in one commit, never a silent code default."
   },
   "rows": [
     {
       "id": "trust-default",
       "num": 2,
       "den": 3,
-      "note": "Zielwert 2/3 (concept 10, Review IV vorlaeufig): only a mask narrowed to ONE candidate (dominance 1) clears 2/3; two candidates (1/2) stay untrusted. Deliberately strict - trust is earned by the Eichung, not assumed."
+      "note": "Zielwert 2/3 (concept 10, Review IV vorlaeufig): only a mask narrowed to ONE candidate (dominance 1) clears 2/3; two candidates (1/2) stay untrusted. Deliberately strict - trust is earned by the Eichung, not assumed. The Eichung itself runs in SectionTrustGate and the section fixtures against RECORDED fixture reality (audit channel, harness-side, per law); the live app has no ground-truth group-section feed, so no per-mission runtime calibration is wired nor promised (S-E, card t_9dd56737, QA F2)."
     }
   ]
 }

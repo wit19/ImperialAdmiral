@@ -4,7 +4,7 @@
 //      sane rationals (1 <= num <= den), ids unique, exactly ONE default
 //      row, and the default is the concept-10 Zielwert 2/3 (moving it is a
 //      concept+gate+data decision in one commit - this line goes red first).
-//   2. The skill curve (Thomas-Gesetz 04.11.): refinement/clamp/nav open at
+//   2. The skill curve (Thomas-Gesetz 04.11.): refinement/clamp/mask-trust open at
 //      S3+ only; the exception classes fire on a COARSE projection too
 //      (Fakt-Reaktion ist Fairness) - run live, not read from a table.
 //   3. tactical_mission_critical mining: DoorOwnersOf and MissionDoorEdges
@@ -101,22 +101,22 @@ public static class SectionTrustGate
     {
         Ok(!SectionSkill.MaskRefinementEnabled(null) &&
            !SectionSkill.PostureClampBasisEnabled(null) &&
-           !SectionSkill.SupportNavigationEnabled(null),
+           !SectionSkill.SupporterMaskTrustEnabled(null),
            "no profile (reference path) = every gated channel off (chain-entry state)");
         bool lowOff = true, highOn = true;
         foreach (var level in new[] { "S1", "S2" })
         {
             var p = SkillProfile.For(level);
             if (SectionSkill.MaskRefinementEnabled(p) || SectionSkill.PostureClampBasisEnabled(p)
-                || SectionSkill.SupportNavigationEnabled(p)) lowOff = false;
+                || SectionSkill.SupporterMaskTrustEnabled(p)) lowOff = false;
         }
         foreach (var level in new[] { "S3", "S4", "S5" })
         {
             var p = SkillProfile.For(level);
             if (!SectionSkill.MaskRefinementEnabled(p) || !SectionSkill.PostureClampBasisEnabled(p)
-                || !SectionSkill.SupportNavigationEnabled(p)) highOn = false;
+                || !SectionSkill.SupporterMaskTrustEnabled(p)) highOn = false;
         }
-        Ok(lowOff, "S1/S2: refinement, posture-clamp basis and support navigation all OFF");
+        Ok(lowOff, "S1/S2: refinement, posture-clamp basis and supporter mask trust all OFF");
         Ok(highOn, "S3/S4/S5: all three intelligence channels ON");
 
         // Exceptions fire at EVERY rung: a Wachzone scenario through the

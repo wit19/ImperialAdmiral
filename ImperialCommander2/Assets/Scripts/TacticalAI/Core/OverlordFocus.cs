@@ -194,6 +194,12 @@ namespace TacticalAI.Core
         // where true - every pre-S-D canon row stays byte-identical.
         public bool Wachzone;
         public bool Vergeltung;
+        // S-E (concept positionierung v1 Z6/D4, card t_9dd56737): the
+        // supporter's mask-trust key of THIS activation - the hero factually
+        // anchored in the supporter's trust-gated own section ("Feuer in die
+        // richtige Sektion"). AsDict key appears ONLY where true - every
+        // pre-S-E canon row stays byte-identical.
+        public bool Maskenvertrauen;
 
         /// Comparable vector row (harness/NUnit pin), exact string fields.
         /// The strain_druck key appears ONLY on rows where the pressure
@@ -219,6 +225,7 @@ namespace TacticalAI.Core
             if (Reaktion) d["reaktion"] = true;
             if (Wachzone) d["wachzone"] = true;
             if (Vergeltung) d["vergeltung"] = true;
+            if (Maskenvertrauen) d["maskenvertrauen"] = true;
             return d;
         }
     }
@@ -286,6 +293,16 @@ namespace TacticalAI.Core
         /// the human's aim mark. null/empty = keys inactive = every pre-S-D
         /// vector byte-identical (multiset fairness untouched: keys reorder,
         /// never re-scope the candidate set).
+        /// supporterTrustHero (S-E, concept positionierung v1 Z6/D4 + Ziel-
+        /// Matrix, card t_9dd56737): the supporter's mask-trust key - the
+        /// hero factually anchored in the SUPPORTER group's trust-gated own
+        /// section (SectionConsumers.SupporterTargetFor builds the identity;
+        /// the channel speaks on the mask-VERFEINERUNG rung only). Slot 1e:
+        /// the mask track rides behind the pinned fact-track law
+        /// Interrupt > Wachzone > Vergeltung (that trio stays verbatim) and
+        /// ahead of the economy - "Feuer in die richtige Sektion statt
+        /// Bedrohungs-Schaetzung". null/empty = key inert, every pre-S-E
+        /// vector byte-identical.
         public static List<FocusPick> Rank(IEnumerable<FocusCandidate> candidates,
                                                string posture, string counter,
                                                IList<string> defenderDefense = null,
@@ -294,7 +311,8 @@ namespace TacticalAI.Core
                                                Rational? attackerDamageEv = null,
                                                string reactionHero = null,
                                                string wachzoneHero = null,
-                                               string vergeltungHero = null)
+                                               string vergeltungHero = null,
+                                               string supporterTrustHero = null)
         {
             var list = candidates == null ? new List<FocusCandidate>()
                                            : candidates.ToList();
@@ -332,6 +350,12 @@ namespace TacticalAI.Core
             if (!string.IsNullOrEmpty(vergeltungHero))
                 foreach (var r in rows)
                     if (r.C.HeroId == vergeltungHero) r.Vergeltung = true;
+            // S-E SUPPORTER-MASKEN-VERTRAUEN key (Z6): same mark-style law -
+            // null/empty keeps every row false, the slot stays inert, the
+            // whole pre-S-E canon runs byte-identical.
+            if (!string.IsNullOrEmpty(supporterTrustHero))
+                foreach (var r in rows)
+                    if (r.C.HeroId == supporterTrustHero) r.Maskenvertrauen = true;
 
             // M10b OBJECTIVE ACTOR: the hero credited with the last
             // objective progress raises his threat by EXACTLY +1 - "die
@@ -419,6 +443,7 @@ namespace TacticalAI.Core
                 Reaktion = x.Reaktion,
                 Wachzone = x.Wachzone,
                 Vergeltung = x.Vergeltung,
+                Maskenvertrauen = x.Maskenvertrauen,
                 // R-D: "reaktion" rides behind "mark" (the designation stays
                 // king) and pre-empts chip/economy - the lexicographic law the
                 // Compare slot enforces; null-key rows never see the token.
@@ -426,13 +451,18 @@ namespace TacticalAI.Core
                 // reaktion - the pinned slot law Interrupt > Wachzone >
                 // Vergeltung (§13.4); both pre-empt chip/economy, both
                 // null-inert for every pre-S-D vector.
+                // S-E: "maskenvertrauen" rides behind the whole pinned trio
+                // (the mask track never outranks a fact read, Z6 law) and
+                // ahead of chip/economy - the supporter's "Feuer in die
+                // richtige Sektion". Null-inert for every pre-S-E vector.
                 Basis = x.C.Marked ? "mark"
                         : (x.Reaktion ? "reaktion"
                         : (x.Wachzone ? "wachzone"
                         : (x.Vergeltung ? "vergeltung"
+                        : (x.Maskenvertrauen ? "maskenvertrauen"
                         : (x.Chip != null ? "chip"
                         : (x.Econ != null ? (x.C.Card != null ? "card" : "economy")
-                                          : "proxy"))))),
+                                          : "proxy")))))),
             }).ToList();
         }
 
@@ -544,6 +574,9 @@ namespace TacticalAI.Core
             // the reactionHero pattern (FocusCandidate stays untouched).
             public bool Wachzone;
             public bool Vergeltung;
+            // S-E supporter mask-trust key (Z6, card t_9dd56737): same
+            // pattern - the hero in the supporter's trusted own section.
+            public bool Maskenvertrauen;
         }
 
         /// Lexicographic compare of two rows, DESC (a before b => -1).
@@ -580,6 +613,15 @@ namespace TacticalAI.Core
             //     candidate, else the key stays off. Suspicion ranks behind
             //     fact, never alone above it. Null key => inert.
             if (a.Vergeltung != b.Vergeltung) return a.Vergeltung ? -1 : 1;
+            // 1e. S-E SUPPORTER-MASKEN-VERTRAUEN (Z6, card t_9dd56737): the
+            //     supporter fires into his trust-gated own section - the hero
+            //     factually anchored there leads the mask track. It rides
+            //     behind the whole pinned trio (reaktion > wachzone >
+            //     vergeltung stays verbatim, this key never enters it) and
+            //     ahead of the Bedrohungs-Schaetzung (chip/economy), exactly
+            //     the concept's "Feuer in die richtige Sektion statt
+            //     Bedrohungs-Schaetzung". Null key => inert.
+            if (a.Maskenvertrauen != b.Maskenvertrauen) return a.Maskenvertrauen ? -1 : 1;
             // 2. counter law (woundAll): sim ChipKey verbatim, higher first.
             //    M10b: an objective actor OUTRANKS the static role doctrine
             //    below - a hero who just did real mission damage is the live

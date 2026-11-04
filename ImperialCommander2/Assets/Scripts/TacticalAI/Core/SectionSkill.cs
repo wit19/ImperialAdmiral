@@ -5,7 +5,7 @@
 //   Die EREIGNISGETRIEBENEN AUSNAHMEN (Wachzone, Vergeltung, 3c) greifen
 //   auf ALLEN Skill-Stufen - Fakt-Reaktion ist Fairness, kein
 //   Intelligenz-Bonus. Skill-gated sind ausschliesslich:
-//   Masken-VERFEINERUNG, Posture-Clamps und Support-Navigation.
+//   Masken-VERFEINERUNG, Posture-Clamps und Supporter-Masken-VERTRAUEN.
 //
 // So this file gates EXACTLY the three intelligence channels and nothing
 // else. Low rungs (S1, S2 - the reference ladder) and the absence of a
@@ -50,8 +50,14 @@ namespace TacticalAI.Core
         /// classifier's section basis): S3+ only.
         public static bool PostureClampBasisEnabled(SkillProfile profile) { return High(profile); }
 
-        /// Support-Navigation (mask-informed support target choice): S3+
-        /// only.
-        public static bool SupportNavigationEnabled(SkillProfile profile) { return High(profile); }
+        /// Supporter-MASKEN-VERTRAUEN (Z6, concept positionierung v1 5/6 +
+        /// Ziel-Matrix: mask trust in the SUPPORTER TARGET CHOICE - fire into
+        /// the trusted own section instead of threat-guessing; diffuse belief
+        /// = hold/support, never a guessed target): S3+ only. Consumed by
+        /// SectionConsumers.SupporterTargetFor (S-E, card t_9dd56737) -
+        /// formerly the dead support-NAVIGATION hook (S-QA B1:
+        /// semantic-false design, zero call-sites; renamed to its real
+        /// meaning and given its consumer).
+        public static bool SupporterMaskTrustEnabled(SkillProfile profile) { return High(profile); }
     }
 }

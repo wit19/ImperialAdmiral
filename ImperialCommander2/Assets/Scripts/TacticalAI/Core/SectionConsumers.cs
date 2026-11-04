@@ -19,13 +19,17 @@
 // THE EXCEPTIONS FIRE AT EVERY RUNG (Thomas-Gesetz 04.11., PLAN head):
 // "Die EREIGNISGETRIEBENEN AUSNAHMEN (Wachzone, Vergeltung, 3c) greifen auf
 // ALLEN Skill-Stufen - Fakt-Reaktion ist Fairness, kein Intelligenz-Bonus."
-// Nothing in this file consults SectionSkill. The three skill-gated
-// channels (Masken-VERFEINERUNG, Posture-Clamp, Support-Navigation) are
+// Baustein 1-5 consult no SectionSkill. The three skill-gated
+// channels (Masken-VERFEINERUNG, Posture-Clamp, Supporter-Masken-Vertrauen) are
 // gated WHERE THEY ARE CONSUMED: the Posture-Clamp gate sits in the bridge
 // (SectionSkill.PostureClampBasisEnabled) because the clamp's BASIS is a
 // refinement of the posture reading; the clamp law itself lives here,
 // ungated, so a coarse projection can be clamped once the consumer opens
-// the channel (S-C SectionSkill header law).
+// the channel (S-C SectionSkill header law). The Baustein 6 SUPPORTER-
+// MASKEN-VERTRAUEN gate is the documented exception INSIDE the entry point:
+// its verdict is itself the aggression decision (strike vs. support), so
+// the rung decides whether the decision exists at all - a low rung may not
+// even hear a "support" verdict (S1/S2 = canon, byte-identical).
 //
 // Loch-Gesetz: every string this file produces names FIGURES, OBJECTS and
 // app-authored section NAMES - never a coordinate, never a section number.
@@ -87,6 +91,33 @@ namespace TacticalAI.Core
             sb.Add("ring " + (RingZones.Count == 0 ? "-" : string.Join(",", RingZones.ToArray())) + "\n");
             sb.Add("contest " + (ContestZone ?? "-") + "\n");
             return string.Join("", sb.ToArray());
+        }
+    }
+
+    /// The S-E supporter-target decision (Baustein 6, card t_9dd56737,
+    /// concept positionierung v1 5/6 + D4 + Ziel-Matrix Z6 "Offizier
+    /// supportet statt zu raten"): what the SUPPORTER's target choice says
+    /// given its mask trust. Mode "strike" = fire into the trusted own
+    /// section (the hero factually anchored there); Mode "support" = hold
+    /// and support - NO target is named, never a guessed one. A null
+    /// decision (returned by the entry point itself) = the channel is
+    /// inert: canon runs bit-identical.
+    public sealed class SupporterTrustDecision
+    {
+        public const string ModeStrike = "strike";
+        public const string ModeSupport = "support";
+
+        public string Mode;
+        public string Hero;                 // strike only: hero in the dominant section
+        public string Section;              // dominant section id, null when belief diffuse
+        public string SectionName;          // app-authored name, "" = unknown
+        public int Round;
+        public string Reason;               // names-only EXPLAIN fragment (coord-free)
+
+        /// Deterministic vector row (harness pin): "ST|mode|hero|section|round".
+        public string Dump()
+        {
+            return "ST|" + Mode + "|" + (Hero ?? "-") + "|" + (Section ?? "-") + "|r" + Round;
         }
     }
 
@@ -411,6 +442,121 @@ namespace TacticalAI.Core
             foreach (var f in space.ThreeCFacts())
                 if (f.Round == space.Round) return ClampTarget;
             return null;
+        }
+
+        // ---- Baustein 6: SUPPORTER-MASKEN-VERTRAUEN (S-E, Z6) --------------
+        // Concept positionierung v1 5/6 (OB-Zeile: "Supporter-Zielwahl
+        // profitiert von der Maske (Feuer in die richtige Sektion statt
+        // Bedrohungs-Schaetzung)"), 10 (MASKEN-VERTRAUEN -> Aggressivitaet:
+        // enge Maske erlaubt Verfolgen, diffuse Maske -> halten/Support)
+        // and the Ziel-Matrix Z6 ("Offizier supportet statt zu raten",
+        // Support-Anteil bei diffuser Maske > bei enger Maske).
+        //
+        // The mask here is the SUPPORTER GROUP's own belief (Eigen-Glaube,
+        // S-B/S-C: the per-figure masks track the group's OWN position).
+        // The dominant section = the group's trust-gated zone read - the
+        // EXACT S-D Baustein 4 law (SectionConsumers.PlanZones: threshold
+        // row + SectionTrust.Trusted + uniform candidate set == one section
+        // + figures agree), reused, no parallel law. "Dominante Sektion
+        // >= Schwelle" is that read; anything weaker (diffuse candidates,
+        // split figures, degraded union, no threshold row) is diffuse.
+        //
+        // THE LAW (card t_9dd56737, laws a-d):
+        //  * SKILL GATE: the channel lives on the mask-VERFEINERUNG rung
+        //    only - SectionSkill.SupporterMaskTrustEnabled (the renamed
+        //    former dead hook, Datentabelle, kein Schalter). The gate is
+        //    INSIDE the entry point on purpose: a "support" verdict spoken
+        //    at a low rung would itself be an intelligence bonus (S1/S2
+        //    must not change a byte of today's popup), so the rung decides
+        //    whether the decision EXISTS at all (concept 13.4: "Skill-
+        //    Stufen entscheiden, welcher Key ab wann feuert"). The bridge
+        //    consumer passes the mission profile; S1/S2/no-profile reach
+        //    this function and get null = canon.
+        //  * FAKT SCHLAEGT MASKE: if the fact track already named a target
+        //    (reactionHero = shot at me this round; wachzoneHero = hero
+        //    factually at the mission-critical object; vergeltungHero =
+        //    the mask-track shooter read already fired) the mask-trust
+        //    track stays silent: null. Emergency stages are the same fact
+        //    class - the caller only consults this channel while the O-C
+        //    cascade reads None (bridge law, documented at the call site).
+        //  * MASKE NULL: no space, no belief, belief never seeded, wiped
+        //    group, no threshold row -> null = today's canon bit-identical
+        //    (pinned; "lageblind" is the reference case, not the error).
+        //  * DOMINANTE SEKTION: exactly one living hero with a FACT anchor
+        //    DATED AT THE READING ROUND (fresh law, same arithmetic as the
+        //    ringZones feed) inside the dominant section -> "strike" that
+        //    hero: Feuer in die richtige Sektion. Zero or several ->
+        //    "support": unsicher wird nicht erraten (the Vergeltung
+        //    unique-or-off law verbatim). The section claim comes from the
+        //    mask, the hero comes from a fact - naming a hero the mask
+        //    alone would have to guess is not what the channel may do.
+        //  * DIFFUSE MASK: "support" - der Offizier supportet, statt zu
+        //    raten (Z6). This is a DECISION, disclosed with its why-line;
+        //    it is never a silent key that could rot dead.
+        public static SupporterTrustDecision SupporterTargetFor(
+            SectionSpace space, FeedWorldView view, SkillProfile profile,
+            string supporterGroup, string reactionHero,
+            string wachzoneHero, string vergeltungHero)
+        {
+            if (!SectionSkill.SupporterMaskTrustEnabled(profile)) return null;
+            if (!string.IsNullOrEmpty(reactionHero) || !string.IsNullOrEmpty(wachzoneHero)
+                || !string.IsNullOrEmpty(vergeltungHero)) return null;   // FAKT > MASKE
+            if (space == null || view == null || string.IsNullOrEmpty(supporterGroup))
+                return null;
+            var b = space.BeliefOf(supporterGroup);
+            if (b == null || b.Alive <= 0) return null;                  // MASKE NULL
+            bool seeded = false;
+            foreach (var idx in b.FigureIndexes())
+            {
+                var m = b.MaskOf(idx);
+                if (m != null && m.HasObservation) { seeded = true; break; }
+            }
+            if (!seeded) return null;                                    // MASKE NULL
+            Rational threshold;
+            if (!SectionTrust.TryThresholdFor(profile, out threshold))
+                return null;                                    // no data -> fail-closed
+
+            var dec = new SupporterTrustDecision { Round = space.Round };
+            var zones = PlanZones(space, view, profile);        // the pinned S-D zone law
+            var zone = zones != null ? zones.ZoneOf(supporterGroup) : null;
+            if (zone == null)
+            {
+                dec.Mode = SupporterTrustDecision.ModeSupport;  // diffuse belief: no claim
+                dec.Reason = "support: die eigene Lage ist ueber zu viele Sektionen " +
+                             "verstreut (Runde " + space.Round + ")";
+                return dec;
+            }
+            dec.Section = zone;
+            var name = space.Graph.SectionName(zone);
+            dec.SectionName = string.IsNullOrEmpty(name) ? zone : name;
+            string found = null;
+            int freshInside = 0;
+            foreach (var h in view.Heroes)
+            {
+                if (h == null || h.Defeated) continue;
+                var anchor = space.HeroInSection(h.HeroId);
+                if (!string.Equals(anchor, zone, StringComparison.Ordinal)) continue;
+                if (space.HeroSectionRound(h.HeroId) != space.Round) continue; // fresh only
+                freshInside++;
+                found = h.HeroId;
+            }
+            if (freshInside == 1)
+            {
+                dec.Mode = SupporterTrustDecision.ModeStrike;
+                dec.Hero = found;
+                dec.Reason = "strike: " + found + " steht faktisch in " + dec.SectionName +
+                             " (Runde " + space.Round + ") - Feuer in die eigene Sektion";
+            }
+            else
+            {
+                dec.Mode = SupporterTrustDecision.ModeSupport;
+                dec.Reason = "support: " + (freshInside == 0
+                    ? "kein frischer Helden-Anker in " + dec.SectionName
+                    : freshInside + " frische Helden-Anker in " + dec.SectionName +
+                      ", keines ist sicher das Ziel")
+                    + " (Runde " + space.Round + ")";
+            }
+            return dec;
         }
     }
 }

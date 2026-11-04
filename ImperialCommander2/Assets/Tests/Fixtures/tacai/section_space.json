@@ -1,0 +1,1018 @@
+{
+ "_comment": "S-B section-space fixture (synthetic hand-pinned missions - these are the harness' own test worlds, not shipped data). Hand-pinned like door_feed/section_feed: expect blocks were recorded ONCE via --record and reviewed line by line (record discipline); the Grundgesetz / disjunctive / grade / speed-floor laws that ARE ground truth are hand-pinned directly in SectionsSectionSpace.cs, never recorded. Sections here are named s-* on purpose: real GUIDs ride the shipped missions, the module only ever sees the feed strings.",
+ "cases": [
+  {
+   "name": "ss_ledger_sec_anchor",
+   "_comment": "S-B item 2: EntityInteract WITH section inside the open window => seen= sec:<guid> kind=fact (seq of the interact). Same event shape as S-A's sa_inert_inside_hero_window, whose re-pinned expect shows the identical upgrade.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "name": "Royal Guards"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GUARD",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 2,
+     "payload": {
+      "section": "s-array",
+      "name": "Array Room"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-array",
+      "name": "Comms Array",
+      "section": "s-array",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-array name=Array Room\nspeed LEIA round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\ncands -\nfig 1\ncands -\nhero LEIA section=s-array round=2\ninteract LEIA t-array section=s-array round=2\n",
+    "canon": "mission=vector|ss_ledger_sec_anchor\nround=2\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|5|4/5|name=Royal Guards|shot=LEIA|4|2\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=sec:s-array kind=fact seq=6 round=2\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_ledger_no_anchor_cases",
+   "_comment": "data-exists (no section payload) AND never-from-absence (no open window): both EntityInteracts anchor nobody; the canon carries no seen= line.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-x",
+      "name": "Loose Panel"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 3,
+     "payload": {
+      "entity": "t-y",
+      "name": "Side Console",
+      "section": "s-hall",
+      "active": true
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=3 speedSectionsPerWindow=1\nsec s-hall\nspeed LEIA round=2 crossings=0 touched=0\n",
+    "canon": "mission=vector|ss_ledger_no_anchor_cases\nround=3\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nH|LEIA|LEIA|0|0|1|2|0|0\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_graph_crossing_and_door",
+   "_comment": "crossing law + door edge: two sections back-to-back in ONE window = confirmed edge; the door event inside the window between them adds the door identity and state=open (from the DoorOpen history). speed crossings=1 touched=2.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-console",
+      "name": "Nav Console",
+      "section": "s-bridge",
+      "active": true
+     }
+    },
+    {
+     "kind": "DoorOpen",
+     "round": 2,
+     "payload": {
+      "door": "d-west",
+      "name": "West Door"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-power",
+      "name": "Power Coupling",
+      "section": "s-engine",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-bridge\nedge s-bridge s-engine kind=confirmed doors=d-west state=open\nsec s-engine\nspeed LEIA round=2 crossings=1 touched=2\nhero LEIA section=s-engine round=2\ninteract LEIA t-console section=s-bridge round=2\ninteract LEIA t-power section=s-engine round=2\n",
+    "canon": "mission=vector|ss_graph_crossing_and_door\nround=2\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=sec:s-engine kind=fact seq=5 round=2\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_graph_door_data_closed",
+   "_comment": "supply-side mined door edge (S-C feeds the tactical_mission_critical hypotheses the same way); DoorClosed rides the history: state=closed, kind stays door - the Grundgesetz law checks show it is never a blockade.",
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-9"
+    ]
+   ],
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-a",
+      "name": "Hall A"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-b",
+      "name": "Hall B"
+     }
+    },
+    {
+     "kind": "DoorClosed",
+     "round": 1,
+     "payload": {
+      "door": "d-9",
+      "name": "Sealed Gate"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a name=Hall A\nedge s-a s-b kind=door doors=d-9 state=closed\nsec s-b name=Hall B\n",
+    "canon": "mission=vector|ss_graph_door_data_closed\nround=1\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_mask_seed_growth",
+   "_comment": "item 3+4: exact deploy seed (S-A result) at round 1; at round 3 with speed floor 1 the mask covers ball(s-a,2) = {s-a,s-b,s-c}, uniform 1/3 weights, dom 1/3 - full-integer path.",
+   "deploySeeds": {
+    "GUARD": [
+     "s-a"
+    ]
+   },
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-1"
+    ],
+    [
+     "s-b",
+     "s-c",
+     "d-2"
+    ]
+   ],
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "name": "Royal Guards"
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 2
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 3
+    }
+   ],
+   "expect": {
+    "dump": "round=3 speedSectionsPerWindow=1\nsec s-a\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b\nedge s-b s-c kind=door doors=d-2 state=unknown\nsec s-c\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a,s-b,s-c\ndom 1/3\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a,s-b,s-c\ndom 1/3\n",
+    "canon": "mission=vector|ss_mask_seed_growth\nround=3\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|GUARD|GUARD|1|0|2|2|1|0|1|name=Royal Guards\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_mask_candidates_uniform",
+   "_comment": "S-A result degraded shape: only candidates known => the belief is the CANDIDATE SET (concept 5.6: never a lie of precision, never a random pick). dom 1/2.",
+   "deploySeeds": {
+    "GUARD": [
+     "s-a",
+     "s-c"
+    ]
+   },
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-1"
+    ],
+    [
+     "s-b",
+     "s-c",
+     "d-2"
+    ]
+   ],
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "name": "Royal Guards"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b\nedge s-b s-c kind=door doors=d-2 state=unknown\nsec s-c\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact,s-c:fact\ncands s-a,s-c\ndom 1/2\nfig 1\nobs round=1 src=deploy alts=s-a:fact,s-c:fact\ncands s-a,s-c\ndom 1/2\n",
+    "canon": "mission=vector|ss_mask_candidates_uniform\nround=1\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=2\nG|GUARD|GUARD|1|0|2|2|1|0|1|name=Royal Guards\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_mask_hit_reground",
+   "_comment": "item 5 (named victim branch): the dial hit at round 2 re-grounds figure 0 onto its candidate region {s-a,s-b} as a FACT observation; growth from the hit round continues the belief (two observations, intersection semantics - see dump).",
+   "deploySeeds": {
+    "GUARD": [
+     "s-a"
+    ]
+   },
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-1"
+    ],
+    [
+     "s-b",
+     "s-c",
+     "d-2"
+    ]
+   ],
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 1,
+      "name": "Royal Guard"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GUARD",
+      "figure": 0,
+      "wheel": 3,
+      "health": 6
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 3
+    }
+   ],
+   "expect": {
+    "dump": "round=3 speedSectionsPerWindow=1\nsec s-a\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b\nedge s-b s-c kind=door doors=d-2 state=unknown\nsec s-c\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=2 src=hit alts=s-a:fact,s-b:fact\ncands s-a,s-b,s-c\ndom 1/3\n",
+    "canon": "mission=vector|ss_mask_hit_reground\nround=3\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|GUARD|GUARD|1|0|1|1|1|6|1/2|name=Royal Guard\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_speed_multi_crossing",
+   "_comment": "item 4: crossings are OBSERVED from the S-A events, never intended - speed 2 after this window; the fresh seed at round 2 sits exact (t=0), the speed shows on the dump line.",
+   "deploySeeds": {
+    "STORM": [
+     "s-a"
+    ]
+   },
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 1,
+     "payload": {
+      "entity": "t-1",
+      "section": "s-a",
+      "active": true
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 1,
+     "payload": {
+      "entity": "t-2",
+      "section": "s-b",
+      "active": true
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 1,
+     "payload": {
+      "entity": "t-3",
+      "section": "s-c",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 2
+    },
+    {
+     "kind": "Spawn",
+     "round": 2,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=2\nsec s-a\nedge s-a s-b kind=confirmed\nsec s-b\nedge s-b s-c kind=confirmed\nsec s-c\nspeed LEIA round=1 crossings=2 touched=3\ngroup STORM alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=2 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=2 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LEIA section=s-c round=1\ninteract LEIA t-1 section=s-a round=1\ninteract LEIA t-2 section=s-b round=1\ninteract LEIA t-3 section=s-c round=1\n",
+    "canon": "mission=vector|ss_speed_multi_crossing\nround=2\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|STORM|STORM|1|0|2|2|2|0|1|name=Stormtroopers\nH|LEIA|LEIA|0|0|1|1|0|0\nseen=LEIA zone=sec:s-c kind=fact seq=5 round=1\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_disjunctive_anon_vs_named",
+   "_comment": "item 5: figure 0 re-grounds alone (src=hit); the figure -1 hit is a group DISJUNCTIVE (every figure carries src=hit-group, NO figure is named); Death drops alive 3->2 with fallen=1 while every mask STAYS.",
+   "deploySeeds": {
+    "STORM": [
+     "s-a"
+    ]
+   },
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 3,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "figure": -1,
+      "wheel": 4,
+      "health": 5
+     }
+    },
+    {
+     "kind": "Death",
+     "round": 1,
+     "payload": {
+      "group": "STORM"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a\ngroup STORM alive=2 fallen=1 anonVictim=yes woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit alts=s-a:fact\nobs round=1 src=hit-group alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit-group alts=s-a:fact\ncands s-a\ndom 1\nfig 2\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit-group alts=s-a:fact\ncands s-a\ndom 1\n",
+    "canon": "mission=vector|ss_disjunctive_anon_vs_named\nround=1\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|STORM|STORM|1|0|2|3|1|5|3/5|name=Stormtroopers\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_wounded_group_disjunctive",
+   "_comment": "item 5 + concept 0' b: HeroWounded inside the open imperial window (P-A law: last ActivationStart, closed by ActivationEnd) adds ONE hypothesis observation per figure; the second HeroWounded after the window is closed attributes nothing (never from absence).",
+   "deploySeeds": {
+    "GUARD": [
+     "s-a"
+    ]
+   },
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "name": "Royal Guards"
+     }
+    },
+    {
+     "kind": "ActivationStart",
+     "round": 1,
+     "payload": {
+      "group": "GUARD"
+     }
+    },
+    {
+     "kind": "HeroWounded",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "ActivationEnd",
+     "round": 1,
+     "payload": {
+      "group": "GUARD"
+     }
+    },
+    {
+     "kind": "HeroWounded",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=yes\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=wounded-group alts=s-a:hypothesis\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=wounded-group alts=s-a:hypothesis\ncands s-a\ndom 1\n",
+    "canon": "mission=vector|ss_wounded_group_disjunctive\nround=1\nposture=protect\nobjective=Escort the device to the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|GUARD|GUARD|1|0|2|2|1|0|1|name=Royal Guards\nH|LEIA|LEIA|1|0|0|0|0|0\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_palpatine_wachzone",
+   "_comment": "PFLICHT case (concept 5.3 + 10): positive fact 'hero interacted in the critical object's section' + guard mask overlap => exactly one Wachzone fact (LEIA|s-vault|GUARD|2). GUARD seed is EXACTLY the vault section (its mask covers it at the fact round). STORM carries no seed and must never fire. split=5: incremental replay equals one-shot.",
+   "deploySeeds": {
+    "GUARD": [
+     "s-vault"
+    ]
+   },
+   "critical": [
+    "s-vault"
+   ],
+   "guards": [
+    "GUARD",
+    "STORM"
+   ],
+   "split": 5,
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Protect the Emperor's relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 8,
+      "mission": "SB2",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "name": "Royal Guards"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 2,
+     "payload": {
+      "section": "s-vault",
+      "name": "Relay Vault"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-relay",
+      "name": "Relay Console",
+      "section": "s-vault",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-vault name=Relay Vault\nspeed LEIA round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-vault:fact\ncands s-vault\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-vault:fact\ncands s-vault\ndom 1\ngroup STORM alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\ncands -\nfig 1\ncands -\nhero LEIA section=s-vault round=2\ninteract LEIA t-relay section=s-vault round=2\n",
+    "canon": "mission=vector|ss_palpatine_wachzone\nround=2\nposture=protect\nobjective=Protect the Emperor's relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|0|1|name=Royal Guards\nG|STORM|STORM|1|0|2|2|1|0|1|name=Stormtroopers\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=sec:s-vault kind=fact seq=6 round=2\n",
+    "wachzone": [
+     "LEIA|s-vault|GUARD|2"
+    ],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_palpatine_guard_far",
+   "_comment": "control for 11: same hero fact, but the guard's belief at the fact round is ball(s-entrance,1) = {s-entrance} - the recorded graph carries NO route entrance->vault, so no overlap and no duty fact. The missing edge is unknown-PERMEABLE (Grundgesetz): the guard could still come, and it could not - the mask states absence of evidence, never evidence of absence. Neither direction may an ordering be built on this state.",
+   "deploySeeds": {
+    "GUARD": [
+     "s-entrance"
+    ]
+   },
+   "critical": [
+    "s-vault"
+   ],
+   "guards": [
+    "GUARD"
+   ],
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Protect the Emperor's relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 8,
+      "mission": "SB2",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "name": "Royal Guards"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 2,
+     "payload": {
+      "section": "s-vault",
+      "name": "Relay Vault"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-relay",
+      "name": "Relay Console",
+      "section": "s-vault",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-entrance\nsec s-vault name=Relay Vault\nspeed LEIA round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-entrance:fact\ncands s-entrance\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-entrance:fact\ncands s-entrance\ndom 1\nhero LEIA section=s-vault round=2\ninteract LEIA t-relay section=s-vault round=2\n",
+    "canon": "mission=vector|ss_palpatine_guard_far\nround=2\nposture=protect\nobjective=Protect the Emperor's relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|GUARD|GUARD|1|0|2|2|1|0|1|name=Royal Guards\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=sec:s-vault kind=fact seq=5 round=2\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_3c_same_round",
+   "_comment": "PFLICHT case (concept 10 3c): the Spawn carries its OWN section payload (the S-C wiring path); hero interacted in s-canyon that same round = Eindringling fact; all three legs in round 3 => REINF|s-canyon|LEIA|3.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the canyon until the convoy passes.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 7,
+      "mission": "SB3",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 3,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 3,
+     "payload": {
+      "section": "s-canyon",
+      "name": "Canyon"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 3,
+     "payload": {
+      "entity": "t-gate",
+      "name": "Canyon Gate",
+      "section": "s-canyon",
+      "active": true
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 3,
+     "payload": {
+      "group": "REINF",
+      "size": 1,
+      "section": "s-canyon",
+      "name": "Scouts"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=3 speedSectionsPerWindow=1\nsec s-canyon name=Canyon\nspeed LEIA round=3 crossings=0 touched=1\ngroup REINF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=3 src=deploy alts=s-canyon:fact\ncands s-canyon\ndom 1\nhero LEIA section=s-canyon round=3\ninteract LEIA t-gate section=s-canyon round=3\n",
+    "canon": "mission=vector|ss_3c_same_round\nround=3\nposture=protect\nobjective=Hold the canyon until the convoy passes.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|REINF|REINF|1|0|1|1|3|0|1|name=Scouts|in_window\nH|LEIA|LEIA|0|0|1|3|0|0\nseen=LEIA zone=sec:s-canyon kind=fact seq=4 round=3\n",
+    "wachzone": [],
+    "threec": [
+     "REINF|s-canyon|LEIA|3"
+    ]
+   }
+  },
+  {
+   "name": "ss_3c_control_rounds_differ",
+   "_comment": "control for 13: the fresh spawn arrives in round 4 while the section activated in round 3 - the 3c round-coincidence law says: no fact, no reordering. Second control: the hero fact (Han, round 4) lands in s-mesa, not the new section.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the canyon until the convoy passes.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 7,
+      "mission": "SB3",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 3,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 3,
+     "payload": {
+      "section": "s-canyon",
+      "name": "Canyon"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 3,
+     "payload": {
+      "entity": "t-gate",
+      "name": "Canyon Gate",
+      "section": "s-canyon",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 4,
+     "payload": {
+      "hero": "HAN"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 4,
+     "payload": {
+      "group": "REINF",
+      "size": 1,
+      "section": "s-canyon",
+      "name": "Scouts"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 4,
+     "payload": {
+      "entity": "t-cr8",
+      "name": "Crate",
+      "section": "s-mesa",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 4,
+     "payload": {
+      "hero": "HAN"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=4 speedSectionsPerWindow=1\nsec s-canyon name=Canyon\nsec s-mesa\nspeed LEIA round=3 crossings=0 touched=1\nspeed HAN round=4 crossings=0 touched=1\ngroup REINF alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=4 src=deploy alts=s-canyon:fact\ncands s-canyon\ndom 1\nhero HAN section=s-mesa round=4\nhero LEIA section=s-canyon round=3\ninteract LEIA t-gate section=s-canyon round=3\ninteract HAN t-cr8 section=s-mesa round=4\n",
+    "canon": "mission=vector|ss_3c_control_rounds_differ\nround=4\nposture=protect\nobjective=Hold the canyon until the convoy passes.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=9\nG|REINF|REINF|1|0|1|1|4|0|1|name=Scouts|in_window\nH|HAN|HAN|0|0|1|4|0|0\nseen=HAN zone=sec:s-mesa kind=fact seq=8 round=4\nH|LEIA|LEIA|0|0|1|3|0|0\nseen=LEIA zone=sec:s-canyon kind=fact seq=4 round=3\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_no_new_kinds_bitidentical",
+   "_comment": "card law 'vector without new events bit-identical': an old-kind stream carries NO 'sec' substring in canon or dump - the section space simply does not exist without the S-A facts.",
+   "forbid": "sec",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the device to the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB1",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "ObjectiveChange",
+     "round": 2,
+     "payload": {
+      "objective": "Reach the comms array."
+     }
+    },
+    {
+     "kind": "ActivationStart",
+     "round": 2,
+     "payload": {
+      "group": "STORM"
+     }
+    },
+    {
+     "kind": "HeroWounded",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "ActivationEnd",
+     "round": 2,
+     "payload": {
+      "group": "STORM"
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 3
+    }
+   ],
+   "expect": {
+    "dump": "round=3 speedSectionsPerWindow=1\ngroup STORM alive=2 fallen=0 anonVictim=no woundedDisjunctive=yes\nfig 0\ncands -\nfig 1\ncands -\n",
+    "canon": "mission=vector|ss_no_new_kinds_bitidentical\nround=3\nposture=protect\nobjective=Reach the comms array.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|STORM|STORM|1|0|2|2|1|0|1|name=Stormtroopers\nH|LEIA|LEIA|1|0|0|0|0|0\n",
+    "wachzone": [],
+    "threec": []
+   }
+  }
+ ]
+}

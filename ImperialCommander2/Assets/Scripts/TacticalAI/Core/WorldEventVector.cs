@@ -154,7 +154,13 @@ namespace TacticalAI.Core
             // window encloses an ObjectiveChange is the actor per the public
             // M10b/M6s-B6 attribution law), "door:<door GUID>" (a digital
             // door flip inside the open window), "at:<group id>" (a hit on
-            // that group inside the open window). NO coordinates, NO
+            // that group inside the open window), and since S-B "sec:<section
+            // GUID>" (an EntityInteract WITH a section payload inside the
+            // open window places the hero in the entity's own section - the
+            // section-granular anchor of concept 8.1 L1', kind FACT: the
+            // interaction is public proof the hero was there. An interact
+            // WITHOUT a section payload anchors nobody - data-exists).
+            // NO coordinates, NO
             // distances, NO movement commitment - and the ledger NEVER
             // writes from absence: a hero with no anchoring event keeps
             // LastSeenZone null, and an anchor is only ever OVERWRITTEN by
@@ -286,6 +292,7 @@ namespace TacticalAI.Core
             if (zone.StartsWith("obj:", StringComparison.Ordinal)) return "Ziel \"" + zone.Substring(4) + "\"";
             if (zone.StartsWith("door:", StringComparison.Ordinal)) return "Tuer " + zone.Substring(5);
             if (zone.StartsWith("at:", StringComparison.Ordinal)) return "Gruppe " + zone.Substring(3);
+            if (zone.StartsWith("sec:", StringComparison.Ordinal)) return "Sektion " + zone.Substring(4);
             return zone;
         }
     }
@@ -399,6 +406,32 @@ namespace TacticalAI.Core
                             near.LastSeenRound = e.Round;
                         }
                         break;
+                    case "EntityInteract":
+                        // S-B SecLedger (card t_30ba9943 item 2): the S-A feed
+                        // carries the entity's OWN mapSectionOwner. An
+                        // interaction inside an open hero window is a FACT
+                        // anchor of the hero at that section ("sec:"), the
+                        // same M10b attribution law as the door flip. A
+                        // SectionActivated is NOT a hero fact (sections
+                        // activate through mission events, not through the
+                        // hero) and anchors nobody; an EntityInteract without
+                        // a section payload anchors nobody (data-exists); a
+                        // flip outside any window anchors nobody (never from
+                        // absence). Vectors without these kinds keep their
+                        // exact pre-S-B canon - the rows exist only where the
+                        // facts exist.
+                        {
+                            var sec = e.Str("section");
+                            if (heroWindow != null && !string.IsNullOrEmpty(sec))
+                            {
+                                var at = Hero(v, heroWindow);
+                                at.LastSeenZone = "sec:" + sec;
+                                at.LastSeenKind = FeedWorldView.HeroView.LedgerKindFact;
+                                at.LastSeenSeq = e.Seq;
+                                at.LastSeenRound = e.Round;
+                            }
+                            break;
+                        }
                     case "RoundLimitChanged":
                         // M8/F5: the mission clock is a posture input (clock ->
                         // stall unless protect wins). Re-wire = re-derive with

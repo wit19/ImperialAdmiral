@@ -139,7 +139,7 @@
     }
    ],
    "expect": {
-    "canon": "mission=vector|sa_inert_inside_hero_window\nround=2\nposture=protect\nobjective=Escort to the comms array.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|STORM|STORM|1|0|2|2|1|5|4/5|name=Stormtroopers|shot=LEIA|4|2\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=at:STORM kind=hypothesis seq=4 round=2\n",
+    "canon": "mission=vector|sa_inert_inside_hero_window\nround=2\nposture=protect\nobjective=Escort to the comms array.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|STORM|STORM|1|0|2|2|1|5|4/5|name=Stormtroopers|shot=LEIA|4|2\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=sec:s-array-room kind=fact seq=6 round=2\n",
     "hash": "08c2ff6245387294321f963a780eaf94eabb9bc17a53518324df10154bd49087",
     "objective": "Escort to the comms array.",
     "objective_actor": "",
@@ -147,7 +147,8 @@
     "round": 2,
     "seq": 8,
     "threat": 0
-   }
+   },
+   "_comment": "S-A pinned this vector to show the new kinds changed NO posture/objective/round/threat - those four INERT laws still hold (sec.inert_* checks). S-B re-pin (card t_30ba9943, SecLedger): an EntityInteract WITH a section payload inside the open hero window now writes the sec: FACT anchor - seen= moved from the GroupDamage at:STORM hypothesis (seq 4) to sec:s-array-room fact (seq 6, the interact). The FACT replaces the inference exactly as S-A's own comment announced for the consumer hop. Hash over the events is unchanged - only the projection gained a row where a fact exists."
   },
   {
    "name": "sa_player_selection_join",

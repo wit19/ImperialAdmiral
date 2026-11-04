@@ -1,11 +1,19 @@
 # Tactical AI — The Fair Imperial AI
 
 **Tactical AI** turns the Imperial side of Imperial Commander from a random
-automation into a *deterministic, rule-following opponent* — the kind of AI you know
-from modern board games like Gloomhaven: fixed, printed priorities decide who
-activates, whom the Imperials target and how they move. No "who activates next"
-spinner, no drawn instruction cards, no hidden dice behind a screen — and every rule
-is visible, so you can learn it, predict it, and argue with your opponent.
+automation into a *deterministic, rule-following opponent*. The printed game's own
+activation law carries over: every Imperial figure acts every round — the plan is
+always a permutation, never a selection. What changes is the ORDER and the choices
+inside it: a deterministic activation plan built from the figures' printed values
+and the mission posture replaces the legacy "who activates next" spinner, and
+printed rules decide whom the Imperials target and how they move. No drawn
+instruction cards, no hidden dice behind a screen — and every rule is visible, so
+you can learn it, predict it, and argue with your opponent.
+(The behaviour *patterns* — guard, blocker, hunter, support, ambusher — follow the
+monster-logic tradition of games like Gloomhaven. The activation *mechanism*
+deliberately does not: Gloomhaven draws a random initiative card each round to
+decide which monsters activate; here every figure activates, in a planned,
+reproducible order.)
 
 This page documents the mode as it is actually implemented. Every section names the
 code or data file behind the claim, so anything here can be checked. The deep
@@ -60,8 +68,10 @@ Three words were the whole brief behind this mode:
   only where the printed game has chance: your dice. The AI has no dice of its own —
   and no rubber-banding, ever.
 
-The design method comes from the printed game's own logic: Gloomhaven-style
-priorities. Instead of "the computer outthinks you", you get *rules you can learn*.
+The design method comes from the printed games' own logic: Imperial Assault's
+activation law (every figure acts) combined with simple, printed behaviour rules in
+the spirit of Gloomhaven's monster logic. Instead of "the computer outthinks you",
+you get *rules you can learn*.
 A human Imperial player racing your options with these rules is beatable — and
 beating them feels earned, because nothing was hidden.
 
@@ -308,8 +318,9 @@ itself — related idea, different mechanism; both are on the cards.)
 
 **Focus (target).** The hero the Imperials concentrate on this round, named on
 every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice follows public criteria (objective gravity,
-wound state, firepower) and the Gloomhaven-style tie-break cascade when several
-heroes are equally good.
+wound state, firepower) and a fixed, published tie-break chain (squad row, then
+hero id) when several heroes are equally good — deterministic down to the last
+tie, and nothing from another game's rulebook decides your target.
 
 **Threat budget.** The mission's printed resource for Imperial activations and
 reinforcements. Difficulty decides how *wisely* it is spent (burst vs. held

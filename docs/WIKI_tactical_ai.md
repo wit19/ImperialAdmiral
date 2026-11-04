@@ -629,3 +629,56 @@ All of it is deterministic keys in the existing ranking: at the lowest skill
 levels the behaviour is bit-for-bit the pre-November canon (golden vectors
 pin this). No new switches exist — the skill level alone decides how much of
 the reactive brain is used.
+
+---
+
+<a name="section-space"></a>
+## The section space (November 2026)
+
+The Imperials now also think in **sections of the board**. Every figure that
+enters the game belongs to a section of the map, and the AI keeps a
+belief — built only from public events — about which sections heroes are in.
+What players feel, with the file behind each claim:
+
+- **Mission-critical work goes first.** When a unit is working at a
+  mission-critical object (the mission's deployment-objective data,
+  `tactical_mission_critical.json`), it activates early in the round and the
+  focus line reads "— X guards the mission-critical object"
+  (`SectionConsumers.cs`, popup key `ordExplainWachzone`). This fires at
+  **every skill level** — reacting to facts is fairness, not an
+  intelligence bonus.
+- **Retaliation.** A unit that got shot at this round makes the suspected
+  shooter (attributed from public activation windows, same mechanism as the
+  reactive layer) its priority target: "moves against the suspected
+  shooter" (`ordExplainVergeltung`). Every skill level.
+- **Fresh intrusions react first.** When a section activates with a hero
+  already inside, the units placed there push immediately ("X pushed into
+  the newly activated section — Y reacts first", `ordExplainThreeC`).
+  Every skill level. When several exceptions compete, the order is fixed:
+  reaction before guard duty before retaliation (`SectionConsumers.cs`,
+  pinned by `section_consumers.json`).
+- **The planner gets a map sense.** Its proximity bonus (see
+  "Activation planning, in depth" in the mechanics doc) is now fed by the
+  belief zones (`PlanZones`, `SectionConsumers.cs`) instead of standing
+  empty as it did since day one.
+- **Supporters stop guessing** at the higher levels (S3+). If the belief in
+  a supporter's own section is trustworthy, it takes aim at the hero
+  reported there ("— X aims into its own section", `ordExplainSupportMaske`).
+  If the picture is diffuse, it **holds its section and names no target**
+  ("holds its own section instead of guessing a target",
+  `ordExplainSupportHalten`) — a supporter never fires at a guess. What
+  counts as trustworthy is public reviewable data
+  (`tactical_section_trust.json`, default 2/3), and a diffuse belief
+  changes nothing at all: same behaviour, no new penalty (`SectionSkill.cs`).
+- **Guard over chase** at S3+: while a hero works a mission-critical
+  object, the posture clamp switches the units from hunting heroes to
+  guarding the objective (`ordExplainClamp`).
+- **Nothing ever knows your coordinates.** The belief is section-granular:
+  names, objects, time windows. A section log line containing a coordinate
+  is a machine-checked bug (coord-free law, `section_trust.json`).
+
+Honest edges: the data says which section a deploy point is in, not which
+group occupies it — the belief seeds a *candidate set*, never an
+accusation; section labels are app-authored names, not printed rules text;
+and at S1/S2 the belief carries raw facts only, so behaviour there is
+bit-for-bit the pre-section canon (pinned by fixtures).

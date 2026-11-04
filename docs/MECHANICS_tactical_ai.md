@@ -405,10 +405,11 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
 
 ---
 
-## Section-space module (chain in progress — 2026-11-04, NOT player-visible yet)
+## Section-space module (chain S-A..S-E — 2026-11-04, player-visible)
 
-Positioning layer per `CONCEPT_positionierung_v1.md` (work dir). Landed in
-this range, worker-committed, pending controller QA + push:
+Positioning layer per `CONCEPT_positionierung_v1.md` (work dir). Landed as
+S-A..S-E; the closing QA re-run on the full chain is in progress at the time
+of writing (findings so far: L1/L2 PASS, Z1–Z5 PASS, Z6 resolved by S-E):
 
 - **S-A (20c283a).** Feed producers, state-diff pattern like doors
   (`WorldEventsUnity.cs`): `SectionActivated` (hook at
@@ -428,10 +429,32 @@ this range, worker-committed, pending controller QA + push:
   rules run at ALL skill levels (fact-reaction is fairness, not an
   intelligence bonus), mask refinement / posture clamps / support
   navigation gate by skill; calibration rail (audit channel only).
-- **Pending, NOT shipped:** consumers (S-D: guard-zone exception order,
-  C(shooter) retaliation key, new-section priority, ringZones feed,
-  posture clamp) and S-QA. Until then the module changes no player-
-  visible behaviour; canon vectors stay byte-identical (pinned).
+- **S-D (cef788b + 0b9e7f6).** Consumer layer `SectionConsumers.cs`:
+  guard-zone exception order (mission-critical object works first),
+  C(shooter) retaliation key, 3c fresh-intrusion push priority,
+  `PlanZones` feeds the planner's ringZones/contestZone, posture clamp
+  (S3+, gated at the consumer). The **null law**: every entry point takes
+  an absent belief/fact and returns the INERT answer — fallback ladder
+  concept §10, "key OFF = today's canon", machine-pinned
+  (`section_consumers.json`, inert pair: same stream, space null ->
+  today's pick). Event-driven exceptions (Wachzone, Vergeltung, 3c) fire
+  at ALL skill levels; ordering reaction > guard > retaliation
+  (`law.slot_basis`).
+- **S-E (4d4852e + 3463c41).** Z6 consumer: supporter MASK TRUST
+  (`SupporterTargetFor`) — trusted own section with exactly one fresh hero
+  anchor = strike behind the pinned fact-chain (focus slot 1e), diffuse /
+  below-threshold / ambiguous = support with NO named target; the bridge
+  only consults it at emergency stage None (fact beats mask, no second
+  cascade). Dead S-D-era hook `SupportNavigationEnabled` renamed to
+  `SupporterMaskTrustEnabled` and given its real consumer (zero dead keys
+  remain, grep-pinned). `section_support.json` (9 cases, 92 checks) pins
+  Z6 monotonicity numerically (support share 3/3 diffuse > 2/3 medium >
+  0/3 tight) and the F3 zone order-flips decision-side (S2 and S4). 4 new
+  player keys x 11 languages. F2 resolved as wording fix: calibration
+  runs audit-channel against fixture reality, no live-rail promise.
+- **Canon through the whole chain:** 45174 -> 45266 checks, additions
+  only, no existing fixture touched; every new behaviour fires only on a
+  present fact or a trusted belief, never on absence.
 
 ---
 
@@ -465,9 +488,10 @@ information only:
 2. **Public posture** — mission doctrine state (public per M2a.1).
 3. **AppView-sanctioned beliefs** — zone bands (ring zones, contested
    zone). Zone granularity only; hero coordinates never enter a plan.
-   *App status: the parameters exist (`ringZones`, `contestZone`) but the
-   app currently passes null — S-D will feed them; until then the
-   proximity term is inert (S-A..S-C status note above).*
+   *App status: fed since S-D — `SectionConsumers.PlanZones` derives the
+   bands from the section belief (objective section + overlaps); the
+   decision-side order flips are pinned for S2 and S4 in
+   `section_support.json`.*
 4. **Instruktions-Ledger** — the App as command authority owns the groups'
    own Soll-Positions (own orders are own knowledge, 3.3.3 Nr. 2b).
 
@@ -502,7 +526,7 @@ Two distinct printed economies, both in ThreatEconomy.cs:
 - **Printed strength as the planner's currency**: the strength-efficiency
   matrix multiplies printed damage EV x remaining vitality (attrition) x
   posture-fit of the pattern x proximity of known rebels (the zone bands
-  of point 3 above — inert in-app until S-D).
+  of point 3 above — fed by `PlanZones` since S-D).
 
 ### From matrix to order: hard slots and laws
 

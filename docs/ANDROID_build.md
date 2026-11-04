@@ -75,13 +75,33 @@ and imported characters in one go.
 
 ## 5. Release signing
 
-Player Settings → *Publishing Settings*: keystore `user.keystore` (the
-original builder kept it at
-`C:/Users/afval/Documents/Software_Development/Unity/ImperialCommander2/WORK/BUILD/`).
-Passwords are never in the repository — enter keystore password, key alias
-and key password locally. Keep using the same keystore across releases:
-the signing key, not the id, defines who may update an installed app.
-Unsigned/debug builds are fine for testing, not for distribution.
+The original afval-era keystore is gone; the `.tacai` test line is signed
+with a freshly generated key (created 2026-11-04, PKCS12, alias `ic2tacai`,
+RSA-2048/SHA-256, valid to 2054-03-22, certificate fingerprint
+`1E:F5:94:45:24:69:38:63:8E:37:C4:76:82:C9:3A:33:12:78:67:D8:77:BC:44:C1:CA:5B:91:98:92:05:E2:E0`).
+
+Wiring (committed): `ProjectSettings.asset` references `user.keystore`
+(resolved relative to the `ProjectSettings/` folder) with alias `ic2tacai`.
+The keystore file itself is **git-ignored** (`*.keystore`, `*.pass`): the
+private key must never enter the repository.
+
+- File location per machine: drop the keystore file as
+  `<repo>/ImperialCommander2/ProjectSettings/user.keystore`.
+  Master copy on the build box: `~/work/ia-ai/keys/ic2-tacai.keystore`
+  (+ `ic2-tacai-keystore.pass` with the password, mode 600). **Copy both to
+  a second medium immediately** (NAS backup): a lost signing key means no
+  further updates for installed test apps, and a leaked one means anyone
+  can ship "official" updates to them.
+- Unity asks for the keystore and alias password once per machine under
+  *Player Settings → Publishing Settings* and stores them locally
+  encrypted; the command-line route takes
+  `-keystorePassword <p> -keyaliasPassword <p>` as build parameters.
+- From now on the same keystore signs every release of this line: the
+  signing key, not the app id, decides who may update an installed app.
+- GlowPuff's store key for the base id is untouched by all this — if an
+  official release ever happens under the base id, that key (and only
+  that key) signs it.
+- Unsigned/debug builds are fine for testing, not for distribution.
 
 ## 6. IL2CPP / AAB / Google Play — the honest status
 

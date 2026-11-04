@@ -250,8 +250,8 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/afval/Documents/Software_Development/Unity/ImperialCommander2/WORK/BUILD/user.keystore
-  AndroidKeyaliasName: ic2
+  AndroidKeystoreName: user.keystore
+  AndroidKeyaliasName: ic2tacai
   AndroidBuildApkPerCpuArchitecture: 1
   AndroidTVCompatibility: 0
   AndroidIsGame: 1

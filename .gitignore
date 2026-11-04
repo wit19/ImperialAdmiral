@@ -80,3 +80,9 @@ __pycache__/
 # build artifacts of the dotnet QA tools
 **/bin/
 **/obj/
+
+# signing material - NEVER commit (master copy: ~/work/ia-ai/keys/)
+*.keystore
+*.keystore.meta
+*.jks
+*.pass

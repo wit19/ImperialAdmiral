@@ -326,21 +326,40 @@ namespace TacticalAiHarness
             // stays blind exactly like the R1 floor, and the discipline
             // vector (hit after the last activation) stays mute at every
             // rung - Tisch-Disziplin on the consumer side.
+            // M14f (QA M2): the S2 expectation is NO LONGER hardcoded by case
+            // name here. Each p25_* case carries its own optional field
+            // "expect_react_s2" ('' = must stay silent, a name = that hero
+            // drives the R1 push). Two silent-failure modes die: renaming the
+            // prefix used to retire this law in silence (no check, no red) -
+            // the count tripwire below fails at zero instead; and every new
+            // firing p25_* case used to need another hardcoded exception -
+            // it now just declares its expectation in the fixture. A p25_*
+            // case WITHOUT the field fails loudly (never a silent '' default).
+            int p25Cases = 0;
             foreach (var rawL9 in cases)
             {
                 var cc = Json.AsDict(rawL9);
                 if (!cc.ContainsKey("name")) continue;
                 if (!Json.AsStr(cc["name"]).StartsWith("p25_", StringComparison.Ordinal)) continue;
                 var c9 = Json.AsDict(cc);
+                var n9 = Json.AsStr(c9["name"]);
+                p25Cases++;
+                if (!c9.ContainsKey("expect_react_s2"))
+                {
+                    Check(n9 + ".law.p25_case_declares_expect_react_s2", "field present", "absent");
+                    continue;
+                }
                 var f9 = new WorldEventFeed("law");
                 AppendFeedEvents(f9, c9["events"]);
                 var v9 = WorldEventVector.Project(f9.Events, "law", f9.Hash());
                 var key2 = OverlordFocus.ReactionHeroFor(v9, "ALPHA", "aggressive", 2) ?? "";
                 var key1 = OverlordFocus.ReactionHeroFor(v9, "ALPHA", "aggressive", 1) ?? "";
-                Check("law.p25_closer_key_s2." + Json.AsStr(c9["name"]),
-                      Json.AsStr(c9["name"]) == "p25_closer_r1_fires" ? "Jyn Odan" : "", key2);
-                Check("law.p25_closer_key_s1_blind." + Json.AsStr(c9["name"]), "", key1);
+                Check("law.p25_closer_key_s2." + n9, Json.AsStr(c9["expect_react_s2"]), key2);
+                Check("law.p25_closer_key_s1_blind." + n9, "", key1);
             }
+            // Vacuity tripwire (M14f): zero matching cases = the loop ran no
+            // iteration and LAW-9 would be silently gone - loud RED instead.
+            Check("law.p25_closer_cases_present", true, p25Cases >= 1);
         }
 
         // ---- helpers ---------------------------------------------------------

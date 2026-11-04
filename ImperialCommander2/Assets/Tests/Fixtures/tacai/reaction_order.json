@@ -1490,6 +1490,7 @@
     },
     {
       "name": "p25_closer_r1_fires",
+      "expect_react_s2": "Jyn Odan",
       "comment": "Player-25-B consumption pin on the REAL vector path: the closer-attributed windowless shot (GroupDamage r3 + HeroActivated Jyn Odan r3, no HeroActivationStart anywhere) feeds the R1 Vergeltung push - ALPHA activates with the reaktion basis key (S2 rung, ReactionHeroFor gate). BRAVO (never shot) stays on plain basis. expect via --record, reviewed: the WHY line names Jyn Odan as the shooter.",
       "round": 3,
       "skill": 2,
@@ -1582,6 +1583,7 @@
     },
     {
       "name": "p25_late_hit_no_r1",
+      "expect_react_s2": "",
       "comment": "Player-25-B TISCH-DISZIPLIN on the consumer side: the hit lands after the LAST activation of the round and RoundEnd follows - no closer in the round, LastShotHero stays empty, ALPHA carries NO reaktion basis. Both groups pick on plain basis.",
       "round": 3,
       "skill": 2,

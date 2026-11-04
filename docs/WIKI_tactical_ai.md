@@ -354,10 +354,11 @@ itself — related idea, different mechanism; both are on the cards.)
 **Focus zone ("Fokuszone").** The area the rebels' *current* mission
 objective points at — the sector with their main effort. Hunter-doctrine figures
 treat it as their hunting ground: from tier 3 up they lock onto the hero who is
-factually working inside it **or who is moving into it** — several candidates
+factually working inside it; a hero outside the zone is attacked **only when he
+is the focus target** (the target the Overlord's focus currently names) — several zone heroes
 competing? the one with the higher threat value takes it (EXPLAIN names him) —
-take their movement paths there, and let heroes outside the zone *and not headed
-into it* lie — even when one stands right on their path (the *hunter's
+take their movement paths there, and let heroes outside the zone *who are not
+the focus target* lie — even when one stands right on their path (the *hunter's
 creed*; whoever attacks the hunter may still reap one shot back that round, but
 nobody is pursued for it). Below tier 3 the hunter behaves like the old
 Vorstoß — the lock is an earned discipline, not a printed constant. Unlike the
@@ -424,7 +425,7 @@ labels as shipped):
 | **Vorstoß** (aggressive) | "Vorstoß (zum Kampf vorrücken)" | Press toward the fight; the workhorse of hunt missions | 1.5 / 0.8 / 0.7 / 1.1 |
 | **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective (heavily tilted by the defend modifier) | 0.6 / 1.4 / 1.5 / 1.0 |
 | **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers (the dice rows favour large bases) | 0.8 / 1.5 / 1.3 / 0.9 |
-| **Jäger** (hunter) | "Jäger (Fokuszone abkämmen — …)" | Sweep the focus zone; from tier 3 the Fokuszone lock: attack the hero working inside the zone OR moving into it (several candidates? the higher threat value), ignore heroes outside it who are not headed into it, move toward the zone (pop-up label carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
+| **Jäger** (hunter) | "Jäger (Fokuszone abkämmen — …)" | Sweep the focus zone; from tier 3 the Fokuszone lock: attack a hero working inside the zone (several zone heroes? the higher threat value); if none is within reach the hunter goes for the FOCUS TARGET — even outside the zone or on its way there; heroes outside who are not the focus target are ignored, move toward the zone (pop-up label carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
 | **Support** | "Support (Distanz halten, aus der Deckung)" | Keep distance, fire from cover | 0.9 / 1.0 / 1.3 / 1.0 |
 | **Hinterhalt** (ambusher) | "Hinterhalt (ungesehen bis zum ersten Schuss)" | Deny the point until a target enters range | 1.1 / 1.1 / 0.9 / 1.3 |
 
@@ -451,13 +452,15 @@ Two honest notes from the shipped code:
 - **Hunter vs. Vorstoß:** below tier 3 they deliberately share one tree (same
   board behaviour, the honest S1/S2 brawler); from tier 3 the hunter plays its
   own pop-up tree and the **Fokuszone lock** (`SectionConsumers.FokuszoneHeadFor`):
-  target = a hero factually anchored in the focus zone **or moving into it**
-  (the shipped M14d doctrine text names both candidates; several competing?
-  the higher threat value takes it, EXPLAIN shows him), the ignoring covers
-  only heroes outside the zone who are not headed into it, retaliation
+  target = a hero factually anchored in the focus zone
+  (the shipped M14f doctrine text states exactly this; several zone heroes?
+  the higher threat value takes it, EXPLAIN shows him); with no zone hero
+  within reach the tree's second leg takes the FOCUS TARGET — legitimately
+  outside the zone or on its way there. The ignoring covers
+  only heroes outside the zone who are not the focus target; retaliation
   outranks the lock (fact beats brand). The plan-side head pick itself is
-  unchanged: it still pins the head on the hero factually anchored *inside*.
-  The old
+  unchanged: physical inside the zone only — the lock itself never follows a
+  marching hero. The old
   planner-side target override (`Core/Patterns.TargetOverride`) stays exactly
   what it always was — a sim-level preference.
 

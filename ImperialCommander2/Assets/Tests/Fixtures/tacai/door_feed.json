@@ -1,0 +1,195 @@
+{
+ "_comment": "R-A door-event vectors: pins the DoorOpen/DoorClosed vocabulary on the REAL WorldEventFeed.Append path (fail-loud kind/key validation - SectionsD-style direct WorldEvent construction would bypass it). expect blocks recorded once via `dotnet run -- <fixtures> --record` and reviewed. Reviewed canon shows the law: door events move the history hash but leave NO trace in the projected view (audit-trail facts, no estimation). Polling dedup ('exactly one event per observed state flip') lives in the adapter (WorldEventsUnity.PollDoors, snapshot diff like the damage dials) and is NOT reproducible in Core - the event lists below are what a flipped door produces, one per flip.",
+ "cases": [
+  {
+   "name": "ra_door_events_roundtrip",
+   "comment": "Open -> close -> open a second door: one DoorOpen/DoorClosed pair per flip (adapter snapshot dedup law), replay bit-identical, projected canon free of door traces.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Open the door to the command center.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "ra",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "DoorOpen",
+     "round": 2,
+     "payload": {
+      "door": "d-hangar-west",
+      "name": "Hangar West"
+     }
+    },
+    {
+     "kind": "DoorClosed",
+     "round": 3,
+     "payload": {
+      "door": "d-hangar-west",
+      "name": "Hangar West"
+     }
+    },
+    {
+     "kind": "DoorOpen",
+     "round": 4,
+     "payload": {
+      "door": "d-canteen"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Open the door to the command center.",
+    "objective_actor": "",
+    "round": 4,
+    "threat": 0,
+    "seq": 5,
+    "hash": "969314c7610ac5ae5f4c0f62105785bd5f609121835d52f5a7b1ecdb6317e59e",
+    "canon": "mission=vector|ra_door_events_roundtrip\nround=4\nposture=stall\nobjective=Open the door to the command center.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|STORM|STORM|1|0|2|2|1|0|1|name=Stormtroopers\n"
+   }
+  },
+  {
+   "name": "ra_door_interleaved_with_shot",
+   "comment": "Door events interleaved INSIDE a hero window carrying a GroupDamage: the shot attribution column is unaffected by door traffic, and door events leave no canon trace even mid-window.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat the rebel cell.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "ra",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "DoorOpen",
+     "round": 2,
+     "payload": {
+      "door": "d-x",
+      "name": "Canteen Door"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "STORM",
+      "figure": 1,
+      "wheel": 1,
+      "health": 5
+     }
+    },
+    {
+     "kind": "DoorClosed",
+     "round": 2,
+     "payload": {
+      "door": "d-x",
+      "name": "Canteen Door"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "eliminate",
+    "objective": "Defeat the rebel cell.",
+    "objective_actor": "",
+    "round": 2,
+    "threat": 0,
+    "seq": 7,
+    "hash": "9b48483db6baf118e58cf7244dc9323c1acd6ad95e2b2c600164093a3b017717",
+    "canon": "mission=vector|ra_door_interleaved_with_shot\nround=2\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|STORM|STORM|1|0|2|2|1|5|9/10|name=Stormtroopers|shot=Lokaku|5|2\nH|Lokaku|Lokaku|0|0|1|2|0|0\n"
+   }
+  },
+  {
+   "name": "ra_door_resync_relog",
+   "comment": "Resync shape: the adapter's full re-log states every digital door AS IT IS with resync:true (same full-current-state law as the GroupDamage dial re-log); the vocabulary accepts it and the re-log replays bit-identically.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Open the door to the command center.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "ra",
+      "missionType": "Story",
+      "resync": true
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers",
+      "resync": true
+     }
+    },
+    {
+     "kind": "DoorOpen",
+     "round": 4,
+     "payload": {
+      "door": "d-hangar-west",
+      "name": "Hangar West",
+      "resync": true
+     }
+    },
+    {
+     "kind": "DoorClosed",
+     "round": 4,
+     "payload": {
+      "door": "d-canteen",
+      "resync": true
+     }
+    }
+   ],
+   "expect": {
+    "posture": "stall",
+    "objective": "Open the door to the command center.",
+    "objective_actor": "",
+    "round": 4,
+    "threat": 0,
+    "seq": 4,
+    "hash": "8685411ca2e73663562a44a20536a457632d02f08c71d07de94f729fc1588d62",
+    "canon": "mission=vector|ra_door_resync_relog\nround=4\nposture=stall\nobjective=Open the door to the command center.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|STORM|STORM|1|0|2|2|1|0|1|name=Stormtroopers\n"
+   }
+  }
+ ]
+}

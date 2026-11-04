@@ -15,6 +15,19 @@
 //   * gameVars.currentThreat      -> ThreatSpend
 //   * gameVars.currentObjective   -> ObjectiveChange
 //   * missionProperties           -> MissionStart (posture input, 3.3.1b #4)
+//   * DataStore.mission.mapEntities (Door.doorOpen, Door.cs:18)
+//                                 -> DoorOpen/DoorClosed (R-A: the DIGITAL
+//                                    door state, flipped only by app/event
+//                                    plumbing - ModifyMapEntity ->
+//                                    MapEntityManager.ModifyEntityCoroutine
+//                                    -> DoorPrefab.ModifyEntity. A door
+//                                    opened physically at the table never
+//                                    moves the field and stays invisible;
+//                                    never guessed. The mapEntities list is
+//                                    the SAME object list the prefabs were
+//                                    instantiated from (SagaController.cs:461
+//                                    -> InstantiateEntities), so the data
+//                                    read needs no scene traversal.)
 //
 // Reset at (session-)mission start; a seq anomaly (restored session: the
 // mission logger list shrinks below our drain index) triggers RESYNC = a
@@ -53,6 +66,12 @@ namespace TacticalAI
         // M6s-B7: heroes whose end-of-turn checkbox flip is already in the
         // mission log (name#round) - the HUD flag poll must not double-count.
         readonly HashSet<string> _heroLoggedActivated = new HashSet<string>();
+        // R-A: digital door state snapshot (door GUID -> last polled
+        // doorOpen). Polling dedup = snapshot diff, the exact law of the
+        // damage dials: one event per OBSERVED state change, never per frame
+        // the state stays flipped, never for flips we did not witness (a
+        // door first seen mid-mission is baselined without an event).
+        readonly Dictionary<string, bool> _doors = new Dictionary<string, bool>();
 
         // M8/F5 mission-clock watch: the authored/runtime roundLimit only
         // EXIST if the player's roundLimitToggle setting lets the app show
@@ -165,6 +184,10 @@ namespace TacticalAI
             // causal sequence shot -> close (strike credit depends on it).
             PollGroups(round);
 
+            // R-A: digital door flips (snapshot diff, one event per observed
+            // change). Independent of the shot->close causal ordering above.
+            PollDoors(round);
+
             // threat + objective (public HUD state)
             long threat = gv.currentThreat;
             if (threat != _threat)
@@ -203,6 +226,7 @@ namespace TacticalAI
             _heroDefeated.Clear();
             _heroActivated.Clear();
             _heroLoggedActivated.Clear();
+            _doors.Clear();
 
             var sd = DataStore.sagaSessionData;
             var mp = TryMissionProperties();
@@ -235,6 +259,10 @@ namespace TacticalAI
                 _wheels[cd.id] = (int[])cd.woundTrackerValue.Clone();
                 _seenGroups.Add(cd.id);
             }
+            // R-A: same law for the digital door states (a door authored
+            // open at mission start is baseline, not an event).
+            foreach (var d in MissionDoors())
+                _doors[d.GUID.ToString()] = d.doorOpen;
             Debug.Log("WorldEvents::session " + key + " mission=" + mission
                       + " objective=\"" + objective + "\"");
         }
@@ -335,6 +363,51 @@ namespace TacticalAI
             }
         }
 
+        // ---------------------------------------------------------- door state
+        // R-A: poll the DIGITAL door state. The list DataStore.mission
+        // .mapEntities is the very object list the door prefabs wrap
+        // (SagaController.cs:461 -> InstantiateEntities), so Door.doorOpen
+        // read here is the same field DoorPrefab.ModifyEntity flips
+        // (DoorPrefab.cs:108-120 via MapEntityManager.ModifyEntityCoroutine)
+        // - no scene traversal, works for hidden sections too. Dedup law =
+        // snapshot diff (one event per observed change). Honest boundary:
+        // a PHYSICALLY opened table door never moves this field and stays
+        // invisible to the feed; we never infer it from figure traffic.
+        void PollDoors(int round)
+        {
+            foreach (var d in MissionDoors())
+            {
+                string id = d.GUID.ToString();
+                bool prev;
+                if (!_doors.TryGetValue(id, out prev))
+                {
+                    // first sight mid-mission: baseline WITHOUT an event -
+                    // we did not witness the flip, so we claim nothing.
+                    _doors[id] = d.doorOpen;
+                    continue;
+                }
+                if (d.doorOpen == prev) continue;
+                _doors[id] = d.doorOpen;
+                Append(d.doorOpen ? "DoorOpen" : "DoorClosed", round,
+                       new Dictionary<string, object>
+                       {
+                           { "door", id },
+                           { "name", d.name ?? "" },
+                       });
+            }
+        }
+
+        static System.Collections.Generic.IEnumerable<Saga.Door> MissionDoors()
+        {
+            var ents = DataStore.mission != null ? DataStore.mission.mapEntities : null;
+            if (ents == null) yield break;
+            foreach (var me in ents)
+            {
+                var d = me as Saga.Door;
+                if (d != null) yield return d;
+            }
+        }
+
         // -------------------------------------------------------- hero markers
         void PollHeroes(int round)
         {
@@ -419,6 +492,20 @@ namespace TacticalAI
                         { "health", (long)cd.health },
                         { "resync", true },
                     }));
+            }
+            // R-A: the re-log states every digital door as it IS (full
+            // current-state re-log, same law as the dials above) and
+            // re-bases the snapshot diff on it.
+            foreach (var d in MissionDoors())
+            {
+                log.Add(Mk(seq++, d.doorOpen ? "DoorOpen" : "DoorClosed", round,
+                           new Dictionary<string, object>
+                           {
+                               { "door", d.GUID.ToString() },
+                               { "name", d.name ?? "" },
+                               { "resync", true },
+                           }));
+                _doors[d.GUID.ToString()] = d.doorOpen;
             }
             foreach (var h in _heroWounded) log.Add(Mk(seq++, "HeroWounded", round, P("hero", h)));
             foreach (var h in _heroDefeated) log.Add(Mk(seq++, "HeroDefeated", round, P("hero", h)));

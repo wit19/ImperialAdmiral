@@ -65,6 +65,21 @@ namespace TacticalAI.Core
             public int FiguresSeen;              // distinct figure indices in wheel events
             public readonly Dictionary<int, long> Wheels = new Dictionary<int, long>();
 
+            // R-A (concept v1.2 §5): WHO shot this group - pure projection of
+            // the public activation window over the damage facts. The damage
+            // dials are MANUAL (HPTracker.cs:37 - a human turns the wheel;
+            // the GroupDamage payload never carries a shooter), so the hero
+            // whose activation window ENCLOSES the hit is the only publicly
+            // causal attribution available (M10b attribution law, mirror
+            // image of the objective credit). Last hit wins: a later hit in
+            // a (different) window overwrites. Fields are NEVER guessed from
+            // absence: a hit between windows leaves the previous attribution
+            // untouched, and a group never shot inside an open window stays
+            // unset (no "it was the last hero anyway").
+            public string LastShotHero;          // null = never shot within an open window
+            public long LastShotSeq;             // seq of the crediting GroupDamage event
+            public int LastShotRound;            // round of that hit (0 = none)
+
             /// <summary>Remaining group vitality as exact Rational (M9-F6/A0,
             /// closes M7-F4): the wound dials show ERLITTENER Schaden per
             /// figure — a fresh group reads 0 (Thomas board fact 2026-10-27;
@@ -156,6 +171,15 @@ namespace TacticalAI.Core
                 // byte-identical, every old vector keeps its hash).
                 if (!string.IsNullOrEmpty(g.DisplayName))
                     sb.Append("|name=").Append(g.DisplayName);
+                // R-A: the shooter column appears ONLY where a hit landed
+                // inside an open hero window (record discipline: vectors
+                // without that fact keep their exact canon and hash; where
+                // the fact exists the column MUST show - data-existence law,
+                // M6s-B6 pattern).
+                if (!string.IsNullOrEmpty(g.LastShotHero))
+                    sb.Append("|shot=").Append(g.LastShotHero).Append('|')
+                      .Append(g.LastShotSeq.ToString(CultureInfo.InvariantCulture)).Append('|')
+                      .Append(g.LastShotRound.ToString(CultureInfo.InvariantCulture));
                 sb.Append('\n');
             }
             foreach (var h in Heroes)
@@ -287,6 +311,19 @@ namespace TacticalAI.Core
                             g.Health = (int)e.Long("health");
                             g.Wheels[fig] = e.Long("wheel");
                             g.FiguresSeen = Math.Max(g.FiguresSeen, fig + 1);
+                            // R-A shooter attribution (see GroupView fields):
+                            // the hit landed while a hero's activation window
+                            // was open -> that hero shot. Last hit wins; a hit
+                            // between windows changes nothing (never guessed
+                            // from absence). Independent of the strike law
+                            // below, which additionally requires the objective
+                            // to NAME the hit figure.
+                            if (heroWindow != null)
+                            {
+                                g.LastShotHero = heroWindow;
+                                g.LastShotSeq = e.Seq;
+                                g.LastShotRound = e.Round;
+                            }
                             // Player-19 strike credit: damage that landed while
                             // a hero's activation window was open, on the figure
                             // the CURRENT objective text names ("Besiegt Ivan

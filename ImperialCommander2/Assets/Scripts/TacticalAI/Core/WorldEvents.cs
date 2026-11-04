@@ -57,6 +57,16 @@ namespace TacticalAI.Core
         // (concept 3.3.1b items 1-2, open point 3) - no producer yet, by
         // design: inventing movement from beliefs would violate the
         // no-estimation rule.
+        // R-A (concept v1.2 §5): the DOOR is a live producer since R-A - the
+        // adapter polls the digital door state (Door.doorOpen, Door.cs:18),
+        // which flips ONLY through app/event plumbing (mission event
+        // ModifyMapEntity -> MapEntityManager.ModifyEntityCoroutine ->
+        // DoorPrefab.ModifyEntity). HONEST BOUNDARY: a door opened PHYSICALLY
+        // at the table never moves that field and stays invisible to the feed
+        // - a public fact the App cannot see; never guessed, never inferred
+        // from traffic. Door events carry NO name claim beyond the entity's
+        // own name and leave no trace in the Core projection: audit-trail
+        // history for consumers that have a belief/spatial layer.
         public static readonly HashSet<string> Kinds = new HashSet<string>
         {
             "MissionStart", "Spawn", "Move", "Death", "Removal",
@@ -70,6 +80,9 @@ namespace TacticalAI.Core
             "HeroActivationStart",
             "HeroActivated", "HeroWounded", "HeroDefeated",
             "GroupDamage", "RoundEnd",
+            // R-A: digital door flips, one event per observed state change
+            // (adapter-side snapshot dedup, same law as the damage dials).
+            "DoorOpen", "DoorClosed",
             // M8/F5: mission clock re-wired at runtime (ModifyRndLimit event
             // or the roundLimitToggle flip) - public table info, the feed
             // gate re-derives posture from it.
@@ -89,6 +102,9 @@ namespace TacticalAI.Core
             // Talos): a mission text naming an imperial figure must never
             // mark the rebel hero who merely shares the surname.
             "name",
+            // R-A: the door's GUID string (stable public identity); "name"
+            // above is the optional display sugar on door events too.
+            "door",
         };
 
         // Minimal per-kind shape guard (typos fail loud, not silently).
@@ -111,6 +127,9 @@ namespace TacticalAI.Core
             { "HeroWounded",      new[] { "hero" } },
             { "HeroDefeated",     new[] { "hero" } },
             { "GroupDamage",      new[] { "group", "figure", "wheel", "health" } },
+            // R-A: identity is required; the display name is optional.
+            { "DoorOpen",         new[] { "door" } },
+            { "DoorClosed",       new[] { "door" } },
             { "RoundEnd",         new string[0] },
             { "RoundLimitChanged", new[] { "roundLimit" } },
         };

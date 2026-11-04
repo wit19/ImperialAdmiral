@@ -1118,7 +1118,7 @@
     "threat": 0,
     "seq": 6,
     "hash": "1870e04238ac483fd2bee225d13ecbffd3710380d07be99254c22356c48538e3",
-    "canon": "mission=vector|p19_window_strike_credit\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=6\nG|GIVAN|GIVAN|1|0|1|1|2|5|3/5|name=Ivan Talos\nH|Lokaku|Lokaku|0|0|1|2|0|0|1|2\n"
+    "canon": "mission=vector|p19_window_strike_credit\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Lokaku\nthreat=0\nthreatseen=0\nseq=6\nG|GIVAN|GIVAN|1|0|1|1|2|5|3/5|name=Ivan Talos|shot=Lokaku|5|2\nH|Lokaku|Lokaku|0|0|1|2|0|0|1|2\n"
    }
   },
   {
@@ -1230,6 +1230,229 @@
     "seq": 5,
     "hash": "1faadf03b40ded139a1d36a80b9d3e1488c108bf6eea983a4a87c3dd065205a3",
     "canon": "mission=vector|p19_strike_expires_round_end\nround=3\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos\nH|Jyn Odan|Jyn Odan|0|0|1|3|0|0\n"
+   }
+  },
+  {
+   "name": "ra_shot_credit",
+   "comment": "R-A shooter attribution: a GroupDamage that lands while a hero's activation window is open credits that hero ON THE GROUP ROW (|shot=hero|seq|round tail). The objective here does NOT name the group - the shot law stands alone, independent of the Player-19 strike law (expect: no H-row strikes tail). Ground truth: the damage dials are manual (HPTracker.cs), the payload never names a shooter; the open activation window is the only public-causal channel (M10b attribution law, mirror image).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat the rebel cell.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "ra",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "STORM",
+      "figure": 0,
+      "wheel": 1,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "eliminate",
+    "objective": "Defeat the rebel cell.",
+    "objective_actor": "",
+    "round": 2,
+    "threat": 0,
+    "seq": 5,
+    "hash": "91f9364e2ee619c795e968031ec4526b44a4d1aa38c9dab9c5b1b1a5a4180ce3",
+    "canon": "mission=vector|ra_shot_credit\nround=2\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|STORM|STORM|1|0|2|2|1|5|9/10|name=Stormtroopers|shot=Lokaku|4|2\nH|Lokaku|Lokaku|0|0|1|2|0|0\n"
+   }
+  },
+  {
+   "name": "ra_shot_without_window",
+   "comment": "No-window, no claim (R-A): damage OUTSIDE any activation window leaves the shot columns unset - canon carries NO |shot= tail. A window opened AFTER the damage must not retroactively credit it, and a hit between windows never overwrites an earlier attribution (there is none here either). Never guess the shooter from absence.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat the rebel cell.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "ra",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "STORM",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 3,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "eliminate",
+    "objective": "Defeat the rebel cell.",
+    "objective_actor": "",
+    "round": 3,
+    "threat": 0,
+    "seq": 5,
+    "hash": "d6ed0338efb0f43c8fcb99f6fa2ec907ecb26e572b21774441e36b3b197bd6e3",
+    "canon": "mission=vector|ra_shot_without_window\nround=3\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|STORM|STORM|1|0|2|2|1|5|4/5|name=Stormtroopers\nH|Lokaku|Lokaku|0|0|1|3|0|0\n"
+   }
+  },
+  {
+   "name": "ra_shot_window_switch_overwrite",
+   "comment": "Last hit wins PER GROUP (R-A): SCOUT is hit in Lokaku's window and again in Verena Talos' window -> its shot shows VERENA with the LATER seq/round (overwrite); HEAVY was hit only in Lokaku's window -> its attribution PERSISTS through and after Verena's window (an untouched column is never cleared and never re-guessed).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat the rebel cell.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "ra",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "SCOUT",
+      "size": 1,
+      "name": "Scout Troopers"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "HEAVY",
+      "size": 2,
+      "name": "Heavy Troopers"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "SCOUT",
+      "figure": 0,
+      "wheel": 1,
+      "health": 5
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "HEAVY",
+      "figure": 0,
+      "wheel": 1,
+      "health": 6
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Lokaku"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 3,
+     "payload": {
+      "hero": "Verena Talos"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 3,
+     "payload": {
+      "group": "SCOUT",
+      "figure": 0,
+      "wheel": 3,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "Verena Talos"
+     }
+    }
+   ],
+   "expect": {
+    "posture": "eliminate",
+    "objective": "Defeat the rebel cell.",
+    "objective_actor": "",
+    "round": 3,
+    "threat": 0,
+    "seq": 10,
+    "hash": "5456bdc9ae8ead36aaec80d28e4344a4e89534938fa78a794183f268c15e2a75",
+    "canon": "mission=vector|ra_shot_window_switch_overwrite\nround=3\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=10\nG|HEAVY|HEAVY|1|0|2|2|1|6|11/12|name=Heavy Troopers|shot=Lokaku|6|2\nG|SCOUT|SCOUT|1|0|1|1|1|5|2/5|name=Scout Troopers|shot=Verena Talos|9|3\nH|Lokaku|Lokaku|0|0|1|2|0|0\nH|Verena Talos|Verena Talos|0|0|1|3|0|0\n"
    }
   }
  ]

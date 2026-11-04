@@ -410,8 +410,10 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
 ## Section-space module (chain S-A..S-E — 2026-11-04, player-visible)
 
 Positioning layer per `CONCEPT_positionierung_v1.md` (work dir). Landed as
-S-A..S-E; the closing QA re-run on the full chain is in progress at the time
-of writing (findings so far: L1/L2 PASS, Z1–Z5 PASS, Z6 resolved by S-E):
+S-A..S-E; closing QA (fresh-worktree re-run on the full chain) closed PASS:
+L1/L2, Z1–Z6, law audit and language gates all green, canon proof
+44788 + 478 additions = 45266 with zero existing-fixture touches
+(`findings_sektionsraum_qa_2026-11-04.md`, local QA record):
 
 - **S-A (20c283a).** Feed producers, state-diff pattern like doors
   (`WorldEventsUnity.cs`): `SectionActivated` (hook at

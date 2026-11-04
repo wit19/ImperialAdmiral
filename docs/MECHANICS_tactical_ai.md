@@ -59,16 +59,13 @@ flowchart LR
     OP[OrderPlanner / ReferencePlanner]
     TL[ThreatLedger]
     SK[SkillProfile S1..S5]
-    DS[ImperialDecks / AgendaCards /\nImperialCardEffects]
   end
   SE --> BR
   SC --> BR
   ME --> BR
   EH --> BR
-  CM --> DS
   BR --> WF
   BR --> OP
-  BR --> DS
   WE --> WF
   UI --> SET
   OP --> SK
@@ -278,60 +275,7 @@ chosen deterministically from the plan among the mission's legal deployment poin
 printed optional-deployment rule is honored for eligible cards. Deployment remains
 public: the human could have made the same choice with the same information.
 
-## 12. Campaign economies: Imperial class deck + agenda market
-
-Both exist ONLY while the mode is on; legacy saves never gain the fields (additive
-serialization, `state.imperialDeck == null` ⇒ no AI-owned economy present).
-
-### Imperial class deck
-
-- **Scope:** the 12 era-1 Imperial class decks, 109 cards, digitized 1:1 from the
-  physical card templates (names, XP costs, printed effects) into
-  `tactical_imperial_decks.json`; every card carries a classification row
-  (`tactical_imperial_card_effects.json`).
-- **Deck choice at campaign start:** deterministic scoring of the 12 decks against the
-  campaign's villain family mix, hero count and agenda signals, plus seeded jitter;
-  locked with the campaign. Only decks whose content box is in the player's activated
-  collection compete (the decks' source boxes are digitization provenance — Core,
-  Twin Shadows, Return to Hoth, Bespin Gambit, Jabba's Realm, Heart of the Empire,
-  Tyrants of Lothal — 3 decks are Core-box and always eligible).
-- **Income:** there is no hidden formula. The app's mission files book hero XP at ~279
-  mission-end outcome anchors; the mode books Imperial XP **at exactly those same
-  anchors** (mirrored hook) plus a fixed per-stage stipend. What the mission doesn't
-  pay out to heroes, the Empire doesn't get.
-- **Purchases:** **RETIRED for the shipped release** (Thomas, personas decision): the
-  deterministic scorer and upgrade-stage design below is implemented and gate-tested
-  in Core, but no Upgrade Stage runs and no IMPERIUM panel exists in the app —
-  `MissionEventHandler` logs "imperial XP retired with the persona system, skipped"
-  at the CM6/CM7 anchors. Historic design text kept for the day this ships.
-- **Effects:** the classification table maps each card to either an executable effect
-  (activation efficiency, group attachments following the printed attachment lifecycle,
-  stat lines from the card itself) or an announced-only effect (the panel prints it, the
-  human plays it). No card can silently invent engine behavior.
-
-### Agenda market
-
-- **Scope:** 42 agenda sets, 126 cards (`tactical_agenda_cards.json`).
-- **Market mechanics follow the printed rules:** six sets locked per campaign (seed),
-  four cards drawn face-down per upgrade stage, Influence buys, unsold cards return
-  unseen to their decks; "Kept Secret" is respected — secret text never appears on the
-  rebel side of the UI before the card's own resolution requires it.
-- Purchases: same deterministic scorer pattern — **retired for the shipped release**
-  (same persona decision); `AgendaPublicLedger()` / `AgendaImperialAuditView()` remain
-  the public-vs-audit split for whenever the market ships.
-
-```mermaid
-flowchart LR
-  A[mission ends] --> B[mirrored XP anchors\n+ stipend -> Imperial XP/Influence]
-  B --> C[Imperial Upgrade Stage\nseed + stage number]
-  C --> D[class deck:\nbest affordable card?\nbuy / save XP]
-  C --> E[agenda market:\n4 face-up cards\nbuy / keep influence]
-  D --> F[IMPERIUM panel:\npurchase log lines]
-  E --> F
-  F --> G[next mission:\neffects applied or announced]
-```
-
-## 13. Integration hooks (the complete touch list)
+## 12. Integration hooks (the complete touch list)
 
 Every place the app was touched, all guarded so OFF = legacy verbatim:
 
@@ -347,7 +291,7 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
 | Campaign load/save | `SagaCampaign` | unchanged in release — Imperial deck/agenda state models exist but are not persisted/wired |
 | Campaign UI | badge chips + persona display | no IMPERIUM panel in this release |
 
-## 14. Fairness invariants (each one has a test)
+## 13. Fairness invariants (each one has a test)
 
 1. Master switch OFF ⇒ byte-identical legacy behavior (no hook executes).
 2. Hidden bonus-effect rolls cannot fire in a tactical mission.
@@ -355,20 +299,19 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
 4. Event feed has no vocabulary for hidden information; unknown keys rejected.
 5. The skill RNG is a side stream; legacy shuffle/dice RNG untouched.
 6. Agendas' secret text never renders before resolution requires it.
-7. Imperial XP only at anchors where the mission pays hero XP.
-8. Same seed + level ⇒ identical plan hash (`WorldEventFeed.HashOf`, log hash).
+7. Same seed + level ⇒ identical plan hash (`WorldEventFeed.HashOf`, log hash).
 
-## 15. Verification (reproducible by anyone)
+## 14. Verification (reproducible by anyone)
 
 - **Parity harness** (`tools/TacticalAiHarness`, plain dotnet console): replays
   machine-generated golden vectors exported from a Python reference model the C# core was
-  ported from; full run **36,974 checks / 0 fails**. Two ~250k-line vectors are not
+  ported from; full run **45,266 checks / 0 fails** (count after the section-space chain closed 2026-11-04; 44,788 pre-chain + 478 additive section checks). Two ~250k-line vectors are not
   shipped in this PR (the harness SKIPs them; they regenerate on request).
 - **NUnit**: 45 tests in `Assets/Tests/TacticalAI/Editor/` (fairness invariants above,
   settings/badge cycling, hook isolation, vector mirrors).
 - Run locally: `dotnet run --project tools/TacticalAiHarness -- ImperialCommander2/Assets/Tests/Fixtures/tacai`
 
-## 16. Known limits (honest list)
+## 15. Known limits (honest list)
 
 - No point-position world model and no LoS model — by design (§1); the human resolves
   sight lines at the board.

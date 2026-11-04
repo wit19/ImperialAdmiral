@@ -78,8 +78,12 @@ namespace TacticalAI.Core
             return outl;
         }
 
-        static int HeroGap(World world, ICollection<Cell> cells, Figure fig,
-                           Func<Figure, List<Figure>> heroesKnown)
+        // O-B: public - the O-B supporter laws pin their advance metric to
+        // EXACTLY this measure (concept Bewegungsgesetz 4 refinement 04.11.:
+        // "Distanzmass = dasselbe wie die support-Distanz-Regel"). Signature
+        // widening only; behaviour untouched.
+        public static int HeroGap(World world, ICollection<Cell> cells, Figure fig,
+                                  Func<Figure, List<Figure>> heroesKnown)
         {
             var heroes = KnownHeroes(world, fig, heroesKnown);
             if (heroes.Count == 0) return 1 << 30;

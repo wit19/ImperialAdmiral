@@ -184,7 +184,9 @@ namespace TacticalAI.Core
 
         public static ActivationPlan PlanActivation(World world, Figure fig,
                                                     bool vitalityTiebreak = true,
-                                                    bool allowDoorInteract = true)
+                                                    bool allowDoorInteract = true,
+                                                    OfficerEmergency emergency = OfficerEmergency.None,
+                                                    bool orderRangeNeeded = false)
         {
             int mp = fig.Card.Speed;
             var plan = new ActivationPlan(fig.Id, null, mp);
@@ -205,10 +207,25 @@ namespace TacticalAI.Core
             bool noMoveAttack = CardKeywords.ActiveFor(
                 world, fig.Card.Id, CardKeywords.NoMoveAndAttack);
 
+            // O-B supporter codex (concept offizier_supporter 2 Schicht C,
+            // Thomas-Gesetz 04.11.): a supporter-flagged group never pushes
+            // toward a hero while it can hold or withdraw; the group leash
+            // keeps it near its nearest ally while on the support pattern.
+            // Both laws are pure candidate REMOVALS (fairness law) and stay
+            // fully INERT for every non-supporter card, every emergency
+            // (E1..E4 self-combat) and for the order-receiver exception.
+            // emergency/orderRangeNeeded are explicit injections (O-A
+            // discipline): the popup/live adapter computes them, the harness
+            // hands them in directly (officer_support.json).
+            bool supportBarred = OfficerSupportMovement.AdvanceBarred(
+                fig, emergency, orderRangeNeeded);
+            bool advanceSuppressed = false;
+
             // -- 1. attack from current position if legal (GH: attack if able)
             if (ExecOk(world, fig, target, SpaceLegality.FigureCells(fig)))
             {
-                if (!noMoveAttack && TryEngagedRetreat(world, fig, target, mp, plan, null, 0))
+                if (!noMoveAttack && TryEngagedRetreat(world, fig, target, mp, plan, null, 0,
+                                                       supportBarred))
                     return plan;
                 plan.Actions.Add(new PlannedAction("attack",
                     new Dictionary<string, object> { { "target_id", target.Id } },
@@ -221,10 +238,20 @@ namespace TacticalAI.Core
             var best = BestAttackState(world, fig, target, mp);
             var res = best.Res;
             bool? avoided = best.Avoided;
+            // O-B: the attack cell is an ADVANCE candidate when its end state
+            // closes the nearest-hero gap (or, on the support pattern, breaks
+            // the group leash) - for a barred supporter the candidate is
+            // removed and the planner falls through to hold/withdraw options.
+            if (supportBarred && res != null && res.States.Count > 0 &&
+                OfficerSupportMovement.BlockedEnd(world, fig,
+                    res.States[res.States.Count - 1].Item1,
+                    res.States[res.States.Count - 1].Item2, emergency, orderRangeNeeded))
+            { res = null; advanceSuppressed = true; }
             if (res != null && res.Cost > 0 && !noMoveAttack)
             {
                 if (fig.Card.AttackType == "Ranged" && EngagedRebels(world, fig).Count > 0)
-                    if (TryEngagedRetreat(world, fig, target, mp, plan, res.States, res.Cost))
+                    if (TryEngagedRetreat(world, fig, target, mp, plan, res.States, res.Cost,
+                                          supportBarred))
                         return plan;
                 var states = new List<(Cell, int)> { (fig.Anchor, fig.Orientation) };
                 states.AddRange(res.States);
@@ -240,9 +267,15 @@ namespace TacticalAI.Core
                 plan.Actions.Add(new PlannedAction("attack",
                     new Dictionary<string, object> { { "target_id", target.Id } },
                     why: "attack " + target.Id + " after repositioning"));
-                string note = avoided == true ? " (hazard fields avoided)"
+                string note2 = avoided == true ? " (hazard fields avoided)"
                     : (avoided == false ? " (all shortest paths cross hazards - unavoidable)" : "");
-                plan.Why = "move-then-attack. focus: " + focus.Why + note;
+                plan.Why = "move-then-attack. focus: " + focus.Why + note2;
+                // O-B order exception: the move stands because the receiver of
+                // this officer's own order needs the range - his job, not a
+                // push (public-safe why-line, Thomas-Gesetz 04.11.).
+                if (orderRangeNeeded && fig.Card != null && fig.Card.Supporter)
+                    plan.Why += " || order codex: the move serves the order receiver's " +
+                                "command range - his job, not a push";
                 return plan;
             }
 
@@ -260,6 +293,15 @@ namespace TacticalAI.Core
 
             // -- 4. unreachable: spend up to MP along the focus path
             var step = ApproachAction(world, fig, target, mp, focus);
+            // O-B: the approach (path prefix AND hill-climb) is an advance by
+            // definition - a barred supporter loses the candidate; what stays
+            // is holding (the stand-by below) or the withdrawal branches.
+            if (supportBarred && step != null &&
+                step.Params["states"] is List<(Cell, int)> stepStates && stepStates.Count > 0 &&
+                OfficerSupportMovement.BlockedEnd(world, fig,
+                    stepStates[stepStates.Count - 1].Item1,
+                    stepStates[stepStates.Count - 1].Item2, emergency, orderRangeNeeded))
+            { step = null; advanceSuppressed = true; }
             if (step != null)
             {
                 plan.Actions.Add(step);
@@ -270,6 +312,15 @@ namespace TacticalAI.Core
                       + "standstill next activation. focus: " + focus.Why
                     : "cannot attack this activation -> advance toward focus " +
                       "(no movement beyond Speed). focus: " + focus.Why;
+                if (orderRangeNeeded && fig.Card != null && fig.Card.Supporter)
+                    plan.Why += " || order codex: the move serves the order receiver's " +
+                                "command range - his job, not a push";
+            }
+            else if (advanceSuppressed)
+            {
+                plan.Why = "support codex: advance candidates removed - a supporter holds " +
+                           "or withdraws, never pushes toward " + target.Id + "; stand by. " +
+                           "focus: " + focus.Why;
             }
             else
             {
@@ -410,11 +461,37 @@ namespace TacticalAI.Core
         /// (further from engagers, can still attack focus target, cheaper move).
         static bool TryEngagedRetreat(World world, Figure fig, Figure target, int mp,
                                       ActivationPlan plan, List<(Cell, int)> fallbackStates,
-                                      int fallbackMp = 0)
+                                      int fallbackMp = 0, bool supportBarred = false)
         {
             var engagers = EngagedRebels(world, fig);
             if (engagers.Count == 0 || fig.Card.AttackType != "Ranged") return false;
             var states = world.Graph.Exhaust(fig, fig.Anchor, fig.Orientation, mp, null, "move");
+            // O-B: a withdrawal is a LEGAL supporter move (the codex removes
+            // advances, never retreats) - but the candidate set still runs
+            // through the composed laws: a "retreat" closing in on some other
+            // hero is an advance, and the group leash applies with its
+            // Leere-Set-Gesetz (the leash never produces "kein Zug" - if it
+            // would empty the set, the retreat happens anyway). For the
+            // support pattern the base legality is its OWN distance rule
+            // first (Patterns.cs: keep >=2 from heroes) - a standstill that
+            // violates it is not a legal candidate, which is exactly the
+            // brief's case (e): hero adjacent, only withdrawal legal.
+            if (supportBarred)
+            {
+                var baseSet = states;
+                if (fig.Pattern == "support")
+                {
+                    var shackle = Patterns.MoveShackle(world, fig);
+                    if (shackle != null)
+                    {
+                        baseSet = new Dictionary<(Cell, int), int>();
+                        foreach (var kv in states)
+                            if (shackle(kv.Key)) baseSet[kv.Key] = kv.Value;
+                    }
+                }
+                states = OfficerSupportMovement.Narrow(world, fig, baseSet,
+                    OfficerEmergency.None, false).Kept;
+            }
             int curMin = int.MaxValue;
             foreach (var e in engagers)
                 curMin = Math.Min(curMin, FocusResolver.CountSpaces(world.Board,

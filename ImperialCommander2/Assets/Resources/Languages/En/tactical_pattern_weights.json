@@ -152,7 +152,32 @@
    ]
   },
   {
-   "nameMatch": "Imperial Officer|General Sorin|Kayn Somos",
+   "nameMatch": "Imperial Officer",
+   "weights": {
+    "support": 55,
+    "guard": 25,
+    "blocker": 10,
+    "hunter": 10
+   },
+   "ids": [
+    "DG004",
+    "DG005"
+   ]
+  },
+  {
+   "nameMatch": "Imperial Officer",
+   "weights": {
+    "support": 55,
+    "guard": 20,
+    "blocker": 10,
+    "hunter": 15
+   },
+   "ids": [
+    "DG006"
+   ]
+  },
+  {
+   "nameMatch": "General Sorin|Kayn Somos",
    "weights": {
     "aggressive": 45,
     "guard": 35,
@@ -160,9 +185,6 @@
     "hunter": 5
    },
    "ids": [
-    "DG004",
-    "DG005",
-    "DG006",
     "DG075",
     "DG078"
    ]

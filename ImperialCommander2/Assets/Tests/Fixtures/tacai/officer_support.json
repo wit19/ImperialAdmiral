@@ -1,0 +1,1226 @@
+{
+ "_comment": "O-B supporter-movement law vectors (card t_59289f80, concept offizier_supporter 2 Schicht C + Bewegungsgesetz 4 refinement, Thomas-Gesetz 04.11.). Scenarios mirror the five brief cases: n_hold (a) Helden naehern sich, Truppe haelt - officer lateral/cover, Anker-Distanz waechst nie; n_follow (b) Truppe zieht sich zurueck - the officer may follow (kein Raum-Kleber); n_leash/n_leash_e1 (c) Leine biesst, E1 hebt sie auf; n_lane (e) Helden angrenzend, nur Rueckzug legal - Leere-Set, Leine wird zurueckgenommen, Rueckzug passiert trotzdem; n_solo (d) einzige imperiale Figur - Leine inaktiv. n_neutral pins the NON-supporter twin bit-identical to pre-O-B (laws inert). Officer cards ride the bridge keyword lane (OfficerOrder/OfficerExecOrder = TacticalAIBridge.ToRecord), printed stats byte-exact from CardData (DG004 speed 4 health 3 Ranged Blue/Yellow). Expect blocks were recorded once and reviewed case by case; the hand-pinned LAWS are in SectionsOfficerSupport.cs. Units_core.json and every pre-O-B fixture stay untouched.",
+ "boards": [
+  {
+   "schema": "tacai.board/1",
+   "name": "sup_field",
+   "width": 8,
+   "height": 5,
+   "flags": {
+    "interior": [],
+    "difficult": [],
+    "blocking": [],
+    "impassable": []
+   },
+   "edges": {
+    "wall": [],
+    "blocking": [],
+    "impassable": []
+   },
+   "doors": [],
+   "hazards": [],
+   "deployment_points": [],
+   "objectives": []
+  },
+  {
+   "schema": "tacai.board/1",
+   "name": "sup_lane",
+   "width": 9,
+   "height": 1,
+   "flags": {
+    "interior": [],
+    "difficult": [],
+    "blocking": [],
+    "impassable": [
+     [
+      6,
+      0
+     ]
+    ]
+   },
+   "edges": {
+    "wall": [],
+    "blocking": [],
+    "impassable": []
+   },
+   "doors": [],
+   "hazards": [],
+   "deployment_points": [],
+   "objectives": []
+  },
+  {
+   "schema": "tacai.board/1",
+   "name": "sup_wide",
+   "width": 12,
+   "height": 5,
+   "flags": {
+    "interior": [],
+    "difficult": [],
+    "blocking": [],
+    "impassable": []
+   },
+   "edges": {
+    "wall": [],
+    "blocking": [],
+    "impassable": []
+   },
+   "doors": [],
+   "hazards": [],
+   "deployment_points": [],
+   "objectives": []
+  },
+  {
+   "_note": "wall column between x=5 and x=6 with ONE gap at row 4, plus LOS/move barricades at (3,4) and (4,3): the hero at (9,2) is only attackable from the gap cell (5,4) itself - reaching ANY attack option closes the hero gap 7->4, a pure Vorstoss the codex must remove. Pre-O-B (E1/E4/order/neutral): move-then-attack through the gap.",
+   "schema": "tacai.board/1",
+   "name": "sup_wall",
+   "width": 12,
+   "height": 5,
+   "flags": {
+    "interior": [],
+    "difficult": [],
+    "blocking": [
+     [
+      3,
+      4
+     ],
+     [
+      4,
+      3
+     ]
+    ],
+    "impassable": []
+   },
+   "edges": {
+    "wall": [
+     [
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ]
+     ],
+     [
+      [
+       5,
+       1
+      ],
+      [
+       6,
+       1
+      ]
+     ],
+     [
+      [
+       5,
+       2
+      ],
+      [
+       6,
+       2
+      ]
+     ],
+     [
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       3
+      ]
+     ]
+    ],
+    "blocking": [],
+    "impassable": []
+   },
+   "doors": [],
+   "hazards": [],
+   "deployment_points": [],
+   "objectives": []
+  }
+ ],
+ "cards": {
+  "source": "IC2 CardData/enemies.json printed values + bridge OfficerOrder keyword lane",
+  "cards": [
+   {
+    "id": "DG004",
+    "name": "Imperial Officer",
+    "subname": "",
+    "miniSize": "Small1x1",
+    "speed": 4,
+    "health": 3,
+    "attackType": "Ranged",
+    "attacks": [
+     "Blue",
+     "Yellow"
+    ],
+    "keywords": [
+     "OfficerOrder"
+    ]
+   },
+   {
+    "id": "DG006",
+    "name": "Imperial Officer (Elite)",
+    "subname": "",
+    "miniSize": "Small1x1",
+    "speed": 4,
+    "health": 5,
+    "attackType": "Ranged",
+    "attacks": [
+     "Blue",
+     "Yellow"
+    ],
+    "keywords": [
+     "OfficerExecOrder"
+    ],
+    "isElite": true
+   }
+  ]
+ },
+ "scenarios": {
+  "sup_hold": {
+   "board": "sup_field",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      4,
+      2
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "T1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      2,
+      2
+     ],
+     "pattern": "guard"
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      6,
+      2
+     ]
+    }
+   ]
+  },
+  "sup_follow": {
+   "board": "sup_field",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      3,
+      2
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "T1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      0,
+      1
+     ],
+     "pattern": "guard"
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      7,
+      4
+     ]
+    }
+   ]
+  },
+  "sup_leash": {
+   "board": "sup_field",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      4,
+      2
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "T1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      5,
+      4
+     ],
+     "pattern": "guard"
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      0,
+      2
+     ]
+    }
+   ]
+  },
+  "sup_solo": {
+   "board": "sup_field",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      4,
+      2
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      7,
+      2
+     ]
+    }
+   ]
+  },
+  "sup_lane": {
+   "board": "sup_lane",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      4,
+      0
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "T1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      7,
+      0
+     ],
+     "pattern": "guard"
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      5,
+      0
+     ]
+    }
+   ]
+  },
+  "sup_wide": {
+   "board": "sup_wide",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      2,
+      2
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "T1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      0,
+      2
+     ],
+     "pattern": "guard"
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      11,
+      4
+     ]
+    }
+   ]
+  },
+  "sup_wall": {
+   "_comment": "hero sealed behind the wall column: no attack, no reachable attack cell - the pre-O-B plan is a hill-climb approach (a Vorstoss), which is what the codex must remove.",
+   "board": "sup_wall",
+   "figures": [
+    {
+     "id": "O1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      2,
+      2
+     ],
+     "pattern": "support",
+     "vitality": 3
+    },
+    {
+     "id": "T1",
+     "card": "DG001",
+     "team": "imperial",
+     "at": [
+      0,
+      2
+     ],
+     "pattern": "guard"
+    },
+    {
+     "id": "H1",
+     "card": "DG050",
+     "team": "rebel",
+     "at": [
+      9,
+      2
+     ]
+    }
+   ]
+  }
+ },
+ "cases": [
+  {
+   "name": "n_hold",
+   "comment": "(a) hero at gap 2, troops hold: eastward states are advances (removed), west toward the anchor stays; Anker-Distanz waechst nie.",
+   "scenario": "sup_hold",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "advance_law": true,
+    "cur_anchor_gap": 2,
+    "cur_hero_gap": 2,
+    "kept": [
+     "0,0,0,4",
+     "0,1,0,4",
+     "0,2,0,4",
+     "0,3,0,4",
+     "0,4,0,4",
+     "1,0,0,3",
+     "1,1,0,3",
+     "1,2,0,3",
+     "1,3,0,3",
+     "1,4,0,3",
+     "2,0,0,2",
+     "2,1,0,2",
+     "2,3,0,2",
+     "2,4,0,2",
+     "3,0,0,2",
+     "3,1,0,1",
+     "3,2,0,1",
+     "3,3,0,1",
+     "3,4,0,2",
+     "4,0,0,2",
+     "4,1,0,1",
+     "4,2,0,0",
+     "4,3,0,1",
+     "4,4,0,2"
+    ],
+    "leash_law": true,
+    "leash_restored": false,
+    "removed_advance": 0,
+    "removed_leash": 6,
+    "shackle_dropped": 8
+   }
+  },
+  {
+   "name": "n_follow",
+   "comment": "(b) troops retreated to (0,1): following states (anchor gap SHRINKS, away from the hero) survive - kein Raum-Kleber.",
+   "scenario": "sup_follow",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "advance_law": true,
+    "cur_anchor_gap": 3,
+    "cur_hero_gap": 4,
+    "kept": [
+     "0,0,0,3",
+     "0,2,0,3",
+     "0,3,0,3",
+     "0,4,0,3",
+     "1,0,0,2",
+     "1,1,0,2",
+     "1,2,0,2",
+     "1,3,0,2",
+     "1,4,0,2",
+     "2,0,0,2",
+     "2,1,0,1",
+     "2,2,0,1",
+     "2,3,0,1",
+     "2,4,0,2",
+     "3,0,0,2",
+     "3,1,0,1",
+     "3,2,0,0",
+     "3,3,0,1",
+     "3,4,0,2"
+    ],
+    "leash_law": true,
+    "leash_restored": false,
+    "removed_advance": 12,
+    "removed_leash": 4,
+    "shackle_dropped": 3
+   }
+  },
+  {
+   "name": "n_leash",
+   "comment": "(c) pre-emergency: leash bites - states beyond anchor gap 2 removed.",
+   "scenario": "sup_leash",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "advance_law": true,
+    "cur_anchor_gap": 2,
+    "cur_hero_gap": 4,
+    "kept": [
+     "4,2,0,0",
+     "4,3,0,1",
+     "4,4,0,2",
+     "5,2,0,1",
+     "5,3,0,1",
+     "6,2,0,2",
+     "6,3,0,2",
+     "6,4,0,2",
+     "7,2,0,3",
+     "7,3,0,3",
+     "7,4,0,3"
+    ],
+    "leash_law": true,
+    "leash_restored": false,
+    "removed_advance": 14,
+    "removed_leash": 8,
+    "shackle_dropped": 5
+   }
+  },
+  {
+   "name": "n_leash_e1",
+   "comment": "(c) E1 unter Feuer: Notfall hebt die Leine auf - the leashed states survive again (self-combat).",
+   "scenario": "sup_leash",
+   "fig": "O1",
+   "card_override": "DG004",
+   "emergency": "E1",
+   "expect": {
+    "advance_law": false,
+    "cur_anchor_gap": -1,
+    "cur_hero_gap": 0,
+    "kept": [
+     "0,0,0,4",
+     "0,4,0,4",
+     "1,0,0,3",
+     "1,4,0,3",
+     "2,0,0,2",
+     "2,1,0,2",
+     "2,2,0,2",
+     "2,3,0,2",
+     "2,4,0,2",
+     "3,0,0,2",
+     "3,1,0,1",
+     "3,2,0,1",
+     "3,3,0,1",
+     "3,4,0,2",
+     "4,0,0,2",
+     "4,1,0,1",
+     "4,2,0,0",
+     "4,3,0,1",
+     "4,4,0,2",
+     "5,0,0,2",
+     "5,1,0,1",
+     "5,2,0,1",
+     "5,3,0,1",
+     "6,0,0,2",
+     "6,1,0,2",
+     "6,2,0,2",
+     "6,3,0,2",
+     "6,4,0,2",
+     "7,0,0,3",
+     "7,1,0,3",
+     "7,2,0,3",
+     "7,3,0,3",
+     "7,4,0,3"
+    ],
+    "leash_law": false,
+    "leash_restored": false,
+    "removed_advance": 0,
+    "removed_leash": 0,
+    "shackle_dropped": 5
+   }
+  },
+  {
+   "name": "n_lane",
+   "comment": "(e) hero adjacent, only west withdrawal legal; withdrawal exceeds the anchor gap -> Leere-Set-Gesetz: leash undone, Rueckzug passiert trotzdem.",
+   "scenario": "sup_lane",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "advance_law": true,
+    "cur_anchor_gap": 3,
+    "cur_hero_gap": 1,
+    "kept": [
+     "0,0,0,4",
+     "1,0,0,3",
+     "2,0,0,2",
+     "3,0,0,1"
+    ],
+    "leash_law": true,
+    "leash_restored": true,
+    "removed_advance": 0,
+    "removed_leash": 4,
+    "shackle_dropped": 1
+   }
+  },
+  {
+   "name": "n_solo",
+   "comment": "(d) only imperial figure: kein Anker = leash inactive (cur_anchor_gap -1), advance law still bars pushes toward the lone known hero.",
+   "scenario": "sup_solo",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "advance_law": true,
+    "cur_anchor_gap": -1,
+    "cur_hero_gap": 3,
+    "kept": [
+     "0,0,0,4",
+     "0,1,0,4",
+     "0,2,0,4",
+     "0,3,0,4",
+     "0,4,0,4",
+     "1,0,0,3",
+     "1,1,0,3",
+     "1,2,0,3",
+     "1,3,0,3",
+     "1,4,0,3",
+     "2,0,0,2",
+     "2,1,0,2",
+     "2,2,0,2",
+     "2,3,0,2",
+     "2,4,0,2",
+     "3,0,0,2",
+     "3,1,0,1",
+     "3,2,0,1",
+     "3,3,0,1",
+     "3,4,0,2",
+     "4,0,0,2",
+     "4,1,0,1",
+     "4,2,0,0",
+     "4,3,0,1",
+     "4,4,0,2"
+    ],
+    "leash_law": false,
+    "leash_restored": false,
+    "removed_advance": 9,
+    "removed_leash": 0,
+    "shackle_dropped": 5
+   }
+  },
+  {
+   "name": "n_wide_support",
+   "comment": "support roll outcome on open field: officer may shuffle sideways/toward anchor, never close the hero gap (9).",
+   "scenario": "sup_wide",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "advance_law": true,
+    "cur_anchor_gap": 2,
+    "cur_hero_gap": 9,
+    "kept": [
+     "0,0,0,2",
+     "0,1,0,2",
+     "0,3,0,2",
+     "0,4,0,2",
+     "1,0,0,2",
+     "1,1,0,1",
+     "1,2,0,1",
+     "1,3,0,1",
+     "1,4,0,2",
+     "2,0,0,2",
+     "2,1,0,1",
+     "2,2,0,0",
+     "2,3,0,1",
+     "2,4,0,2"
+    ],
+    "leash_law": true,
+    "leash_restored": false,
+    "removed_advance": 20,
+    "removed_leash": 0,
+    "shackle_dropped": 0
+   }
+  },
+  {
+   "name": "n_neutral",
+   "comment": "non-supporter twin on the same board: laws fully INERT - bit-identity of the pre-O-B candidate set.",
+   "scenario": "sup_hold",
+   "fig": "T1",
+   "card_override": null,
+   "expect": {
+    "advance_law": false,
+    "cur_anchor_gap": -1,
+    "cur_hero_gap": 0,
+    "kept": [],
+    "leash_law": false,
+    "leash_restored": false,
+    "removed_advance": 0,
+    "removed_leash": 0,
+    "shackle_dropped": 33
+   }
+  },
+  {
+   "name": "p_hold_attack",
+   "comment": "planner: a supporter keeps attack from standstill (hold and shoot is not a push).",
+   "kind": "plan",
+   "scenario": "sup_hold",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1: in range and LOS from current position"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 2,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 2,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": false,
+    "mp_budget": 4,
+    "mp_planned": 0,
+    "why": "attack now. focus: can attack H1 from current position (0 MP)"
+   }
+  },
+  {
+   "name": "p_suppress",
+   "comment": "planner: sealed hero, the pre-O-B plan was a hill-climb approach; the barred supporter stands by with the support-codex why (hold, never push).",
+   "kind": "plan",
+   "scenario": "sup_wall",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "actions": [],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 11,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 11,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": false,
+    "has_move": false,
+    "mp_budget": 4,
+    "mp_planned": 0,
+    "why": "support codex: advance candidates removed - a supporter holds or withdraws, never pushes toward H1; stand by. focus: can attack H1 from current position (0 MP)"
+   }
+  },
+  {
+   "name": "p_suppress_e1",
+   "comment": "planner twin under E1: self-combat restored - the approach runs (O-A cascade, no why line).",
+   "kind": "plan",
+   "scenario": "sup_wall",
+   "fig": "O1",
+   "card_override": "DG004",
+   "emergency": "E1",
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "hazards_avoided": null,
+       "mp": 3,
+       "states": [
+        [
+         [
+          2,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          3,
+          1
+         ],
+         0
+        ],
+        [
+         [
+          4,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          5,
+          3
+         ],
+         0
+        ]
+       ]
+      },
+      "type": "move",
+      "why": "move 3 MP to legal attack position against H1"
+     },
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1 after repositioning"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 11,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 11,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": true,
+    "mp_budget": 4,
+    "mp_planned": 3,
+    "why": "move-then-attack. focus: can attack H1 from current position (0 MP)"
+   }
+  },
+  {
+   "name": "p_suppress_e4",
+   "comment": "planner twin under E4 (last group): same restoration via the roster stage.",
+   "kind": "plan",
+   "scenario": "sup_wall",
+   "fig": "O1",
+   "card_override": "DG004",
+   "emergency": "E4",
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "hazards_avoided": null,
+       "mp": 3,
+       "states": [
+        [
+         [
+          2,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          3,
+          1
+         ],
+         0
+        ],
+        [
+         [
+          4,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          5,
+          3
+         ],
+         0
+        ]
+       ]
+      },
+      "type": "move",
+      "why": "move 3 MP to legal attack position against H1"
+     },
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1 after repositioning"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 11,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 11,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": true,
+    "mp_budget": 4,
+    "mp_planned": 3,
+    "why": "move-then-attack. focus: can attack H1 from current position (0 MP)"
+   }
+  },
+  {
+   "name": "p_order",
+   "comment": "order-receiver exception: the move stands and the public-safe why-line names the order range (his job, not a push).",
+   "kind": "plan",
+   "scenario": "sup_wall",
+   "fig": "O1",
+   "card_override": "DG004",
+   "order_range": 1,
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "hazards_avoided": null,
+       "mp": 3,
+       "states": [
+        [
+         [
+          2,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          3,
+          1
+         ],
+         0
+        ],
+        [
+         [
+          4,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          5,
+          3
+         ],
+         0
+        ]
+       ]
+      },
+      "type": "move",
+      "why": "move 3 MP to legal attack position against H1"
+     },
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1 after repositioning"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 11,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 11,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": true,
+    "mp_budget": 4,
+    "mp_planned": 3,
+    "why": "move-then-attack. focus: can attack H1 from current position (0 MP) || order codex: the move serves the order receiver's command range - his job, not a push"
+   }
+  },
+  {
+   "name": "p_retreat_lane",
+   "comment": "(e) planner level: engaged on the lane, every retreat exceeds the anchor gap - the leash must never produce 'kein Zug': the withdrawal happens.",
+   "kind": "plan",
+   "scenario": "sup_lane",
+   "fig": "O1",
+   "card_override": "DG004",
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "hazards_avoided": null,
+       "mp": 4,
+       "purpose": "break_engagement",
+       "states": [
+        [
+         [
+          4,
+          0
+         ],
+         0
+        ],
+        [
+         [
+          3,
+          0
+         ],
+         0
+        ],
+        [
+         [
+          2,
+          0
+         ],
+         0
+        ],
+        [
+         [
+          1,
+          0
+         ],
+         0
+        ],
+        [
+         [
+          0,
+          0
+         ],
+         0
+        ]
+       ]
+      },
+      "type": "move",
+      "why": "ranged figure engaged by H1: back away 4 MP (gap 1->5) while keeping attack"
+     },
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1 after backing away"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 1,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 1,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": true,
+    "mp_budget": 4,
+    "mp_planned": 4,
+    "why": "break engagement then attack.  focus: can attack H1 from current position (0 MP)"
+   }
+  },
+  {
+   "name": "p_neutral",
+   "comment": "non-supporter twin of p_suppress: pre-O-B hill-climb approach unchanged (same sealed-hero board).",
+   "kind": "plan",
+   "scenario": "sup_wall",
+   "fig": "O1",
+   "card_override": null,
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "hazards_avoided": null,
+       "mp": 3,
+       "states": [
+        [
+         [
+          2,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          3,
+          1
+         ],
+         0
+        ],
+        [
+         [
+          4,
+          2
+         ],
+         0
+        ],
+        [
+         [
+          5,
+          3
+         ],
+         0
+        ]
+       ]
+      },
+      "type": "move",
+      "why": "move 3 MP to legal attack position against H1"
+     },
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1 after repositioning"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 11,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 11,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": true,
+    "mp_budget": 4,
+    "mp_planned": 3,
+    "why": "move-then-attack. focus: can attack H1 from current position (0 MP)"
+   }
+  },
+  {
+   "name": "p_elite_hold_attack",
+   "comment": "DG006 elite card: same identity law (Executive Order token = supporter) - attack from standstill kept.",
+   "kind": "plan",
+   "scenario": "sup_hold",
+   "fig": "O1",
+   "card_override": "DG006",
+   "expect": {
+    "actions": [
+     {
+      "params": {
+       "target_id": "H1"
+      },
+      "type": "attack",
+      "why": "attack H1: in range and LOS from current position"
+     }
+    ],
+    "fig": "O1",
+    "focus": {
+     "count_dist": 2,
+     "focus_cost_mp": 0,
+     "target": "H1",
+     "tiebreak_trace": [
+      {
+       "dist": 2,
+       "id": "H1",
+       "mp": 0,
+       "order": 2,
+       "vitality": 5,
+       "weight": 0
+      }
+     ],
+     "why": "can attack H1 from current position (0 MP)"
+    },
+    "has_attack": true,
+    "has_move": false,
+    "mp_budget": 4,
+    "mp_planned": 0,
+    "why": "attack now. focus: can attack H1 from current position (0 MP)"
+   }
+  }
+ ]
+}

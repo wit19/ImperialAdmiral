@@ -1,5 +1,6 @@
 {
- "row_count": 23,
+ "_comment": "O-B row split (card t_59289f80, Thomas-Gesetz 04.11.: Offiziere wuerfen keine Vorstoss-Doktrin mehr): the single officer row {DG004,DG005,DG006,DG075,DG078 | aggressive 45/guard 35/blocker 15/hunter 5} became THREE id rows - DG004+DG005 support 55/guard 25/blocker 10/hunter 10, DG006 support 55/guard 20/blocker 10/hunter 15, DG075+DG078 (field commanders, id-pinned, weights BYTE-IDENTICAL to the old row). The officers lose aggressive entirely (O-C emergency codex covers self-defense); DG075/DG078 keep their exact old distribution. postureModifiers is the SHARED default row set: Effective() adds the posture delta additively onto any row, support has no modifier entry and passes through untouched - the defend case below proves the inheritance arithmetic. Old DG004 hunt was {aggressive 45, guard 35, blocker 15, hunter 5}; old defend {aggressive 20, guard 55, blocker 30} (hunter clamped to 0). All new expect blocks are hand-computed from the row weights + the pinned defend modifier row (no rolls, no --record needed); every PRE-O-B case row is byte-identical (git diff proof in the commit).",
+ "row_count": 25,
  "posture_mod_defend": {
   "aggressive": -25,
   "guard": 20,
@@ -78,6 +79,71 @@
     "aggressive": 30,
     "guard": 25
    }
+  },
+  {
+   "id": "DG004",
+   "posture": "hunt",
+   "comment": "O-B: officer row split - old {aggressive 45, guard 35, blocker 15, hunter 5}, new support-led row, aggressive GONE (Vorstoessperre-Gesetz 04.11.).",
+   "expect": {
+    "support": 55,
+    "guard": 25,
+    "blocker": 10,
+    "hunter": 10
+   }
+  },
+  {
+   "id": "DG004",
+   "posture": "defend",
+   "comment": "O-B: shared postureModifiers inherit onto the NEW row additively - raw 55/45/25/0 sums 125 -> 44/36/20 percent (card-pinned law); hunter 10-10 clamps to 0 and drops, aggressive was never set and cannot open from a negative delta.",
+   "expect": {
+    "support": 55,
+    "guard": 45,
+    "blocker": 25
+   }
+  },
+  {
+   "id": "DG005",
+   "posture": "hunt",
+   "comment": "O-B: second officer card shares the DG004 row (same printed regular-officer tier).",
+   "expect": {
+    "support": 55,
+    "guard": 25,
+    "blocker": 10,
+    "hunter": 10
+   }
+  },
+  {
+   "id": "DG006",
+   "posture": "hunt",
+   "comment": "O-B: elite officer row - support 55 like the regulars, 15 points shifted from guard to hunter (elite hunts wounded gaps, still never pushes).",
+   "expect": {
+    "support": 55,
+    "guard": 20,
+    "blocker": 10,
+    "hunter": 15
+   }
+  },
+  {
+   "id": "DG006",
+   "posture": "defend",
+   "comment": "O-B: elite defend - hunter 15-10=5 STAYS (unlike the regular row where it clamps out).",
+   "expect": {
+    "support": 55,
+    "guard": 40,
+    "blocker": 25,
+    "hunter": 5
+   }
+  },
+  {
+   "id": "DG075",
+   "posture": "hunt",
+   "comment": "O-B REST row: field commander Kayn Somos keeps the old officer distribution BYTE-IDENTICALLY (aggressive stays legal - he is a Feldherr, not a supporter).",
+   "expect": {
+    "aggressive": 45,
+    "guard": 35,
+    "blocker": 15,
+    "hunter": 5
+   }
   }
  ],
  "reach_cases": [
@@ -98,6 +164,37 @@
     "aggressive",
     "guard",
     "blocker"
+   ]
+  },
+  {
+   "id": "DG004",
+   "posture": "hunt",
+   "comment": "O-B reach: support is REACHABLE for officers now (it was weight-0/unset on the old row); aggressive is not - no posture makes it return.",
+   "patterns": [
+    "support",
+    "guard",
+    "blocker",
+    "hunter"
+   ]
+  },
+  {
+   "id": "DG004",
+   "posture": "defend",
+   "patterns": [
+    "support",
+    "guard",
+    "blocker"
+   ]
+  },
+  {
+   "id": "DG006",
+   "posture": "hunt",
+   "comment": "O-B reach: elite officer keeps hunter reachable on defend (5>0) - listed here as hunt; defend set differs only by hunter (see effective_cases).",
+   "patterns": [
+    "support",
+    "guard",
+    "blocker",
+    "hunter"
    ]
   }
  ]

@@ -20,6 +20,10 @@
 //   3. Core round-trip: a record with the token keyword is a Supporter;
 //      the same record under the ids DG075/DG078 is NOT (id wall, keyed
 //      never by names); a tokenless record is NOT.
+//   4. O-B (card t_59289f80): the SHIPPED tactical_pattern_weights.json
+//      must keep the Vorstoss-Sperre law - a supporter id never reaches
+//      aggressive under any posture, keeps support >= 55, and the
+//      field-commander rest row keeps its exact pre-O-B distribution.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -151,6 +155,42 @@ public static class OfficerSupporterGate
         // The exception set itself is the law the bridge helper mirrors.
         Eq("DG075,DG078", string.Join(",", new SortedSet<string>(DeploymentCard.FieldCommanderExceptions, StringComparer.Ordinal)),
            "field-commander exception set is exactly the two named-villain ids");
+
+        // 4. O-B Vorstoss-Sperre on the SHIPPED pattern-weight table (card
+        //    t_59289f80, Thomas-Gesetz 04.11.: "Offiziere wuerfen keine
+        //    Vorstoss-Doktrin mehr"). A supporter id must NEVER reach
+        //    aggressive under ANY shipped posture, and must always keep the
+        //    support-led row (support >= 55 raw). The field commanders keep
+        //    their exact pre-O-B distribution (aggressive stays legal for
+        //    the Feldherren - rest row byte-identical law).
+        PatternWeights.PrimeDoc(Json.AsDict(ParseLenientRaw(
+            Path.Combine(App, "Assets/Resources/Languages/En/tactical_pattern_weights.json"))));
+        var table = PatternWeights.Load();
+        var postures = new List<string> { "" };
+        foreach (var k in table.PostureMods.Keys) postures.Add(k);
+        foreach (var oid in new[] { "DG004", "DG005", "DG006" })
+            foreach (var posture in postures)
+            {
+                var dist = table.Effective(table.WeightsFor(oid, ""), posture);
+                Eq(false, dist.ContainsKey("aggressive"),
+                   "O-B Vorstoss-Sperre: " + oid + " cannot roll aggressive (posture '" + posture + "')");
+                Eq(true, dist.ContainsKey("support") && dist["support"] >= 55,
+                   "O-B support-led row: " + oid + " keeps support >= 55 (posture '" + posture + "')");
+            }
+        foreach (var fid in new[] { "DG075", "DG078" })
+        {
+            var raw = table.Effective(table.WeightsFor(fid, ""), "");
+            Eq(true, raw.ContainsKey("aggressive") && raw["aggressive"] == 45
+                && raw.TryGetValue("guard", out var g75) && g75 == 35
+                && raw.TryGetValue("blocker", out var b75) && b75 == 15
+                && raw.TryGetValue("hunter", out var h75) && h75 == 5,
+               "O-B rest row: field commander " + fid + " keeps the pre-O-B officer distribution");
+            var def = table.Effective(table.WeightsFor(fid, ""), "defend");
+            Eq(true, def.TryGetValue("aggressive", out var aDef) && aDef == 20,
+               "O-B rest row: " + fid + " defend = the old 45-25 (aggressive still legal for Feldherren)");
+            Eq(false, def.ContainsKey("support"),
+               "O-B: field commanders stay off the support row (no support weight for " + fid + ")");
+        }
 
         foreach (var o in offenders) Console.WriteLine("FAIL " + o);
         fails += offenders.Count;

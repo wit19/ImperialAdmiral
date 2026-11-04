@@ -859,7 +859,7 @@
         ]
       ],
       "expect": {
-        "canon": "mission=vector|sd_vergeltung_mask_track\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=11\nG|GUARD|GUARD|1|0|2|2|1|5|4/5\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=10 round=2\nH|LU|LU|0|0|1|1|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=1\n",
+        "canon": "mission=vector|sd_vergeltung_mask_track\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=11\nG|GUARD|GUARD|1|0|2|2|1|5|4/5|shot=JY|8|2\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=10 round=2\nH|LU|LU|0|0|1|1|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=1\n",
         "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=1 crossings=0 touched=1\nspeed JY round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=2 src=hit alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero JY section=s-a round=2\nhero LU section=s-a round=1\ninteract LU t-1 section=s-a round=1\ninteract JY t-2 section=s-a round=2\n",
         "readout": "verg.GUARD.-=JY\nverg.GUARD.LU=-\nverg.SCOUT.-=-\n3cf.GUARD|s-a|LU|r1"
       }
@@ -970,7 +970,7 @@
         ]
       ],
       "expect": {
-        "canon": "mission=vector|sd_vergeltung_ambiguous\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=11\nG|GUARD|GUARD|1|0|2|2|1|5|4/5\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=7 round=2\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=10 round=2\n",
+        "canon": "mission=vector|sd_vergeltung_ambiguous\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=11\nG|GUARD|GUARD|1|0|2|2|1|5|4/5|shot=JY|5|2\nH|JY|JY|0|0|1|2|0|0\nseen=JY zone=sec:s-a kind=fact seq=7 round=2\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=10 round=2\n",
         "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed JY round=2 crossings=0 touched=1\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=2 src=hit alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero JY section=s-a round=2\nhero LU section=s-a round=2\ninteract JY t-2 section=s-a round=2\ninteract LU t-3 section=s-a round=2\n",
         "readout": "verg.GUARD.-=-"
       }

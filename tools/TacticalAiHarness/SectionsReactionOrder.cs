@@ -316,6 +316,31 @@ namespace TacticalAiHarness
             var winSeg = w8.Split(new[] { " ; vor " }, StringSplitOptions.None)[0];
             Check("law.multipush_shows_r2", true, winSeg.Contains("|R2:"));
             Check("law.multipush_no_r1_row", false, winSeg.Contains("|R1:"));
+
+            // LAW 9 - Player-25-B (card t_4fd126ad, fixplan v2 B): the
+            // closer-attributed windowless shot must wake the S2 Vergeltung
+            // line THROUGH THE REAL VECTOR PATH (no synthetic view): the two
+            // p25 fixtures are read back by name (never duplicated
+            // literals), so one vector pins bug and rule together. The
+            // closer names the shooter at S2 (ReactionHeroFor gate), S1
+            // stays blind exactly like the R1 floor, and the discipline
+            // vector (hit after the last activation) stays mute at every
+            // rung - Tisch-Disziplin on the consumer side.
+            foreach (var rawL9 in cases)
+            {
+                var cc = Json.AsDict(rawL9);
+                if (!cc.ContainsKey("name")) continue;
+                if (!Json.AsStr(cc["name"]).StartsWith("p25_", StringComparison.Ordinal)) continue;
+                var c9 = Json.AsDict(cc);
+                var f9 = new WorldEventFeed("law");
+                AppendFeedEvents(f9, c9["events"]);
+                var v9 = WorldEventVector.Project(f9.Events, "law", f9.Hash());
+                var key2 = OverlordFocus.ReactionHeroFor(v9, "ALPHA", "aggressive", 2) ?? "";
+                var key1 = OverlordFocus.ReactionHeroFor(v9, "ALPHA", "aggressive", 1) ?? "";
+                Check("law.p25_closer_key_s2." + Json.AsStr(c9["name"]),
+                      Json.AsStr(c9["name"]) == "p25_closer_r1_fires" ? "Jyn Odan" : "", key2);
+                Check("law.p25_closer_key_s1_blind." + Json.AsStr(c9["name"]), "", key1);
+            }
         }
 
         // ---- helpers ---------------------------------------------------------

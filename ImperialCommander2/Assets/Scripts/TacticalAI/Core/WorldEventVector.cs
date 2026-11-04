@@ -370,6 +370,26 @@ namespace TacticalAI.Core
             // or the blocker that made it happen. Expires at RoundEnd: a
             // damage older than the round is history, not causation.
             bool strikePending = false;
+            // Player-25-B (card t_4fd126ad, fixplan_Player-25_v2 B): the
+            // CLOSER channel for shot attribution - ALL groups, no window
+            // event required. group -> {hit seq, hit round}. The runtime
+            // NEVER emits HeroActivationStart (Thomas 04.11, explicit), so
+            // the window path stays dead in play and LastShotHero never
+            // sets: the whole Vergeltung rail (R1 push, S2 rule, officer
+            // E1) sleeps (Player-25 log, Dreistrom). This is the strike
+            // channel's already-live law (M6s-B7, r5 objActor=Jyn Odan)
+            // lifted from the objective-named group to every group: "the
+            // hero whose turn CLOSES NEXT was the shooter". Hitgewinn per
+            // group: the FIRST windowless hit of the round wins; groups are
+            // independent. The window path keeps VORRANG: when a Start did
+            // count (a later in-window hit set LastShotHero with a higher
+            // seq), the pending closer never overwrites it. TISCH-DISZIPLIN
+            // (table discipline, same law as the strike channel): damage
+            // must be marked BEFORE the end of the turn - a hit that lands
+            // after the LAST HeroActivated of the round finds no closer and
+            // credits NOBODY (RoundEnd deletes the pending: history !=
+            // causation, exactly like strikePending).
+            var shotPending = new Dictionary<string, long[]>();
             // Player-21-b/-22 single arming question for the strike channel:
             // does damage on THIS group count as working the CURRENT
             // objective? Canon branch: the objective text NAMES the figure
@@ -591,6 +611,16 @@ namespace TacticalAI.Core
                             {
                                 strikePending = true;   // credits the closer
                             }
+                            // Player-25-B closer channel (see the shotPending
+                            // declaration for the law): a windowless hit arms
+                            // the pending credit for THIS group. First hit of
+                            // the round wins (Hitgewinn); a re-arm after a
+                            // resolved credit is legal - the new shot needs
+                            // its own closer, else RoundEnd buries it
+                            // (Tisch-Disziplin). The window path above is
+                            // untouched and keeps Vorrang (seq guard below).
+                            if (heroWindow == null && !shotPending.ContainsKey(g.GroupId))
+                                shotPending[g.GroupId] = new[] { (long)e.Seq, (long)e.Round };
                             break;
                         }
                     case "HeroWounded":
@@ -649,6 +679,37 @@ namespace TacticalAI.Core
                                 v.ObjectiveActorRound = e.Round;
                                 strikePending = false;
                             }
+                            // Player-25-B closer channel resolves HERE: THIS
+                            // hero's turn closed in the SAME round as the
+                            // windowless hit, so by the strike law the closer
+                            // is the shooter. Entries from another round stay
+                            // pending until RoundEnd buries them (history !=
+                            // causation). Vorrang of the window path is a
+                            // seq guard: a newer in-window attribution on the
+                            // same group (higher LastShotSeq) already named
+                            // the shooter - the older pending credit must not
+                            // overwrite it. No ledger anchor is written (the
+                            // closer is a turn-order hypothesis, weaker than
+                            // the window fact - same reading the strike
+                            // closer gets).
+                            if (shotPending.Count > 0)
+                            {
+                                List<string> settled = null;
+                                foreach (var kv in shotPending)
+                                {
+                                    if (kv.Value[1] != e.Round) continue;
+                                    var gg = Group(v, kv.Key);
+                                    if (!string.IsNullOrEmpty(gg.LastShotHero)
+                                        && gg.LastShotSeq > kv.Value[0]) continue;
+                                    gg.LastShotHero = e.Str("hero");
+                                    gg.LastShotSeq = kv.Value[0];
+                                    gg.LastShotRound = (int)kv.Value[1];
+                                    if (settled == null) settled = new List<string>();
+                                    settled.Add(kv.Key);
+                                }
+                                if (settled != null)
+                                    foreach (var key in settled) shotPending.Remove(key);
+                            }
                             break;
                         }
                     case "HeroActivationStart":
@@ -678,6 +739,11 @@ namespace TacticalAI.Core
                         // damage from the finished round is history, not the
                         // next closer's causation.
                         strikePending = false;
+                        // Player-25-B: same law for the closer channel - an
+                        // unresolved windowless hit had no closer in its own
+                        // round (Tisch-Disziplin: damage must be marked
+                        // before turn end), so it credits nobody.
+                        shotPending.Clear();
                         break;
                     // ActivationStart/End, Move, TileChange,
                     // RoundEnd: recorded history for the audit trail and for

@@ -1487,6 +1487,195 @@
           "U1"
         ]
       }
+    },
+    {
+      "name": "p25_closer_r1_fires",
+      "comment": "Player-25-B consumption pin on the REAL vector path: the closer-attributed windowless shot (GroupDamage r3 + HeroActivated Jyn Odan r3, no HeroActivationStart anywhere) feeds the R1 Vergeltung push - ALPHA activates with the reaktion basis key (S2 rung, ReactionHeroFor gate). BRAVO (never shot) stays on plain basis. expect via --record, reviewed: the WHY line names Jyn Odan as the shooter.",
+      "round": 3,
+      "skill": 2,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebels.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "p25b",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "ALPHA",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "BRAVO",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 3,
+          "payload": {
+            "group": "ALPHA",
+            "figure": 0,
+            "wheel": 1,
+            "health": 4
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "Jyn Odan"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "ALPHA",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "BRAVO",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "ALPHA",
+        "BRAVO"
+      ],
+      "expect": {
+        "basis": {
+          "miss": "",
+          "order": [
+            "ALPHA",
+            "BRAVO"
+          ]
+        },
+        "pick": "ALPHA",
+        "why": "TACTICAL next r3 -> Stormtrooper |R1:2000(seq 4)|basis:0| ; vor Stormtrooper |Basis:0|basis:1| — Reaktion auf Beschuss durch Jyn Odan"
+      }
+    },
+    {
+      "name": "p25_late_hit_no_r1",
+      "comment": "Player-25-B TISCH-DISZIPLIN on the consumer side: the hit lands after the LAST activation of the round and RoundEnd follows - no closer in the round, LastShotHero stays empty, ALPHA carries NO reaktion basis. Both groups pick on plain basis.",
+      "round": 3,
+      "skill": 2,
+      "seed": 4711,
+      "posture": "eliminate",
+      "counter": null,
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Defeat the rebels.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "p25b",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "ALPHA",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "BRAVO",
+            "size": 2,
+            "name": "Stormtrooper"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 3,
+          "payload": {
+            "hero": "Jyn Odan"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 3,
+          "payload": {
+            "group": "ALPHA",
+            "figure": 0,
+            "wheel": 1,
+            "health": 4
+          }
+        },
+        {
+          "kind": "RoundEnd",
+          "round": 3,
+          "payload": {}
+        }
+      ],
+      "groups": [
+        {
+          "id": "ALPHA",
+          "card": "DG001",
+          "index": 0,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        },
+        {
+          "id": "BRAVO",
+          "card": "DG001",
+          "index": 1,
+          "name": "Stormtrooper",
+          "pattern": "aggressive",
+          "n_alive": 2,
+          "vitality": "1"
+        }
+      ],
+      "pending": [
+        "ALPHA",
+        "BRAVO"
+      ],
+      "expect": {
+        "basis": {
+          "miss": "",
+          "order": [
+            "ALPHA",
+            "BRAVO"
+          ]
+        },
+        "pick": "ALPHA",
+        "why": "TACTICAL next r3 -> Stormtrooper |Basis:0|basis:0| ; vor Stormtrooper |Basis:0|basis:1| — Geplante Reihenfolge"
+      }
     }
   ]
 }

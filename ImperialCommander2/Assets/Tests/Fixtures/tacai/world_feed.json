@@ -1171,7 +1171,7 @@
     "threat": 0,
     "seq": 4,
     "hash": "ebdd1d5467628996640536d3710be18ef84fe5f6dea5c501727fa7d8bf31af44",
-    "canon": "mission=vector|p19_causal_strike_closer\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Jyn Odan\nthreat=0\nthreatseen=0\nseq=4\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0|1|2\n"
+    "canon": "mission=vector|p19_causal_strike_closer\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Jyn Odan\nthreat=0\nthreatseen=0\nseq=4\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos|shot=Jyn Odan|3|2\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0|1|2\n"
    }
   },
   {
@@ -1672,6 +1672,289 @@
     "posture": "stall",
     "round": 2,
     "seq": 8,
+    "threat": 0
+   }
+  },
+  {
+   "name": "p25_closer_windowless_all_groups",
+   "comment": "Player-25-B (card t_4fd126ad, fixplan v2 B): the Vergeltung fix on the vector. NO HeroActivationStart in the stream (the runtime never emits it): windowless hits arm the shotPending closer channel for ALL groups, the hero whose turn CLOSES NEXT in the same round is the shooter (the strike channel's live law for every group). Hitgewinn: ALPHA's second hit (seq 5) does NOT displace the first - shot seq stays 4. Groups independent: BRAVO credits from its own hit (seq 6). The later Han Solo closure changes nothing (pending already resolved, no re-arm). The marker does NOT move: a closer credit is not a strike (the objective never names these groups).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the line.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "p25b",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "ALPHA",
+      "size": 2,
+      "name": "Stormtrooper"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "BRAVO",
+      "size": 1,
+      "name": "Officer"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "ALPHA",
+      "figure": 0,
+      "wheel": 1,
+      "health": 4
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "ALPHA",
+      "figure": 1,
+      "wheel": 2,
+      "health": 3
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "BRAVO",
+      "figure": 0,
+      "wheel": 1,
+      "health": 3
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Han Solo"
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 2,
+     "payload": {}
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p25_closer_windowless_all_groups\nround=2\nposture=protect\nobjective=Hold the line.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=9\nG|ALPHA|ALPHA|1|0|2|2|1|3|1/2|name=Stormtrooper|shot=Jyn Odan|4|2\nG|BRAVO|BRAVO|1|0|1|1|1|3|2/3|name=Officer|shot=Jyn Odan|6|2\nH|Han Solo|Han Solo|0|0|1|2|0|0\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0\n",
+    "hash": "b351b5f6250f2465366113324fdbcab21008d205e0514470eeee28a1f36a07d5",
+    "objective": "Hold the line.",
+    "objective_actor": "",
+    "posture": "protect",
+    "round": 2,
+    "seq": 9,
+    "threat": 0
+   }
+  },
+  {
+   "name": "p25_window_vorrang",
+   "comment": "Player-25-B: both channels coexist and the WINDOW path keeps Vorrang. The windowless hit (seq 3) arms shotPending; Vader's window then opens and a LATER hit (seq 5) is attributed by the untouched window path (shot=Vader|5|2 + the R-B 'at:ALPHA' hypothesis anchor - byte-identical to the pre-P25 law). When Vader's window closes (seq 6) the older pending credit must NOT overwrite the newer window attribution (LastShotSeq guard).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the line.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "p25b",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "ALPHA",
+      "size": 2,
+      "name": "Stormtrooper"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "ALPHA",
+      "figure": 0,
+      "wheel": 1,
+      "health": 4
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Vader"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "ALPHA",
+      "figure": 1,
+      "wheel": 2,
+      "health": 3
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Vader"
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 2,
+     "payload": {}
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p25_window_vorrang\nround=2\nposture=protect\nobjective=Hold the line.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|ALPHA|ALPHA|1|0|2|2|1|3|1/2|name=Stormtrooper|shot=Vader|5|2\nH|Vader|Vader|0|0|1|2|0|0\nseen=Vader zone=at:ALPHA kind=hypothesis seq=5 round=2\n",
+    "hash": "13cb334611b1960cf24c3da55ce707d39d60778c6ef92872ad3356d5e3cd161f",
+    "objective": "Hold the line.",
+    "objective_actor": "",
+    "posture": "protect",
+    "round": 2,
+    "seq": 7,
+    "threat": 0
+   }
+  },
+  {
+   "name": "p25_discipline_late_hit",
+   "comment": "Player-25-B TISCH-DISZIPLIN (table discipline, same law the strike channel lives by): damage must be marked BEFORE the end of the turn. The hit lands AFTER the last HeroActivated of round 2 - no closer follows inside the round, so RoundEnd deletes the pending (history != causation) and Han Solo's round-3 activation credits NOTHING. Canon carries NO shot column; R1/S2/officer-E1 stay blind (loud, by law). World-feed twin of p19_strike_expires_round_end for the ALL-groups channel.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the line.",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "p25b",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "ALPHA",
+      "size": 2,
+      "name": "Stormtrooper"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Jyn Odan"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "ALPHA",
+      "figure": 0,
+      "wheel": 1,
+      "health": 4
+     }
+    },
+    {
+     "kind": "RoundEnd",
+     "round": 2,
+     "payload": {}
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "Han Solo"
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p25_discipline_late_hit\nround=3\nposture=protect\nobjective=Hold the line.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|ALPHA|ALPHA|1|0|2|2|1|4|7/8|name=Stormtrooper\nH|Han Solo|Han Solo|0|0|1|3|0|0\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0\n",
+    "hash": "2e8160b46189e40e6071b4e126b422badf3de0d0476bbe70adaf766118921270",
+    "objective": "Hold the line.",
+    "objective_actor": "",
+    "posture": "protect",
+    "round": 3,
+    "seq": 6,
+    "threat": 0
+   }
+  },
+  {
+   "name": "p25_session_start_resync",
+   "comment": "Player-25-B SessionStart stream (WorldEventsUnity F2): a board that is already populated at feed start restates its troops as Spawn {resync:true} - the SAME payload law the re-log uses (group/size/name/critical/resync). Pins that the new start stream passes the vocabulary gate and projects to plain deployment facts (name + crit columns): no strike, no marker, no shot - visibility for Wachzone/mask/Explain without inventing causation.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Defeat the rebels.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p25b",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "DG015",
+      "size": 3,
+      "name": "Trandosha Squad",
+      "critical": false,
+      "resync": true
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "DG047",
+      "size": 2,
+      "name": "Order Troopers",
+      "critical": false,
+      "resync": true
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p25_session_start_resync\nround=1\nposture=stall\nobjective=Defeat the rebels.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=3\nG|DG015|DG015|1|0|3|3|1|0|1|name=Trandosha Squad|crit=0\nG|DG047|DG047|1|0|2|2|1|0|1|name=Order Troopers|crit=0\n",
+    "hash": "51e5e3ba7039937cfc83a5ef941de5b9dd43cba98355047c52e72cd0fab1c2db",
+    "objective": "Defeat the rebels.",
+    "objective_actor": "",
+    "posture": "stall",
+    "round": 1,
+    "seq": 3,
     "threat": 0
    }
   }

@@ -461,13 +461,45 @@ namespace TacticalAI
             _objective = objective;   // MissionStart is the objective baseline;
                                       // ObjectiveChange only fires on real change.
 
-            // baseline the wheels WITHOUT emitting events (state at feed
-            // start is not a delta), and remember what is on the board.
+            // Player-25-B (F2, card t_4fd126ad): already-deployed troops are
+            // restated as Spawn {resync:true} - the SAME mechanism the
+            // re-log uses (see Resync). "State at feed start is not a delta"
+            // still holds: these are resync FACTS, not claimed events; the
+            // dials stay baseline (no GroupDamage restatement here). Without
+            // this, a start roster (DG015/DG047 in the Player-25 log) never
+            // appears in the feed and stays invisible to Wachzone, mask and
+            // group Explain. Mid-mission resumes hit the same path with a
+            // populated board - exactly what the re-log restates too, and
+            // the Spawn projection is idempotent (Deployed/round-first-wins).
+            // Player-22 law applies verbatim: APPEND FIRST, mark seen ONLY on
+            // success - a throwing Append leaves the group unseen, and the
+            // next poll's first-seen path retries it (never swallow a spawn).
             foreach (var cd in DataStore.deployedEnemies)
             {
                 if (cd == null || cd.isDummy) continue;
-                _wheels[cd.id] = (int[])cd.woundTrackerValue.Clone();
+                try
+                {
+                    Append("Spawn", _round, new Dictionary<string, object>
+                    {
+                        { "group", cd.id },
+                        { "size", (long)Math.Max(1, cd.size) },
+                        { "name", cd.name ?? "" },
+                        { "critical", DeploymentCritical(cd.id) },
+                        { "resync", true },
+                    });
+                }
+                catch (Exception ex)
+                {
+                    if (!_spawnWarned.Contains(cd.id))
+                    {
+                        _spawnWarned.Add(cd.id);
+                        Debug.LogWarning("WorldEvents::session spawn append failed, "
+                            + "group stays unseen for retry: " + ex.Message);
+                    }
+                    continue;   // NOT marked seen - honest retry next poll
+                }
                 _seenGroups.Add(cd.id);
+                _wheels[cd.id] = (int[])cd.woundTrackerValue.Clone();
             }
             // R-A: same law for the digital door states (a door authored
             // open at mission start is baseline, not an event).

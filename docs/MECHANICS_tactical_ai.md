@@ -432,3 +432,130 @@ this range, worker-committed, pending controller QA + push:
   C(shooter) retaliation key, new-section priority, ringZones feed,
   posture clamp) and S-QA. Until then the module changes no player-
   visible behaviour; canon vectors stay byte-identical (pinned).
+
+---
+
+## Activation planning, in depth (Noldorion question, 2026-11-04)
+
+Source of truth: `OrderPlan.cs` (port of sim/order_plan.py, concept 3.4.1),
+`Patterns.cs` (concept 3.5), `SkillProfile.cs`, `ThreatEconomy.cs`,
+`ReactionOrder.cs`. Everything below is stated code behaviour with file
+anchors — no design wishes.
+
+### The contract
+
+`OrderPlanner.PlanRound(roundNo, groups, cards, posture, skill, rng, ...)`
+(OrderPlan.cs:308) computes the round's activation order as a **pure
+function**: no wall-clock, no private RNG instance — the caller-injected
+skill rng is the only randomness, seeded per round via
+`sessionSeed ^ round * GOLDEN` (the same formula the legacy dice used, so a
+recomputation reproduces identical draws; ReactionOrder.cs header,
+SectionsReactionOrder.cs:150 pins it). The result must satisfy
+`AssertPermutation` (OrderPlan.cs:464): every living group appears exactly
+once in the plan — enforced at runtime and exercised by the harness
+(SectionsB.cs:396).
+
+### Inputs the planner may legally know
+
+`GroupFacts` (OrderPlan.cs header + class docs) carries four kinds of
+information only:
+
+1. **Printed strength** — DeploymentCard dice/HP/speed/size (cards are
+   public data).
+2. **Public posture** — mission doctrine state (public per M2a.1).
+3. **AppView-sanctioned beliefs** — zone bands (ring zones, contested
+   zone). Zone granularity only; hero coordinates never enter a plan.
+   *App status: the parameters exist (`ringZones`, `contestZone`) but the
+   app currently passes null — S-D will feed them; until then the
+   proximity term is inert (S-A..S-C status note above).*
+4. **Instruktions-Ledger** — the App as command authority owns the groups'
+   own Soll-Positions (own orders are own knowledge, 3.3.3 Nr. 2b).
+
+### Posture and patterns (the "posture" half of the wiki line)
+
+Posture is derived per round from public feed state, not chosen secretly:
+the bridge's doctrine phase rule (defend → hunt phase flip,
+TacticalAIBridge.cs "Punkt-2") feeds `ClassifyPattern`, which assigns each
+card a pattern and discloses the roll in the EXPLAIN / Debug channel as
+`pattern|drawPct|dist` tokens (bridge `_patternRoll`) — "what did the AI
+draw" is auditable. Patterns (Patterns.cs, concept 3.5) are **tiebreak
+overlays and movement shackles only, never legality changes**: aggressive
+(shortest attack path), guard (guard-zone clamp until threat), blocker
+(holds the path valley of the heroes' terrain-cost field), hunter
+(prioritises the hero working an objective token), support (distance ≥ 2
+from heroes, keeps its most wounded ally in LOS), ambusher (inert until a
+hero is inside AMBUSH_RADIUS).
+
+### Printed threat budget (the "threat budget" half)
+
+Two distinct printed economies, both in ThreatEconomy.cs:
+
+- **Mission threat budget / reinforcements** (`ThreatLedger`): income per
+  round scales with living Imperials (`ProjectIncome(aliveImperials)` /
+  `Tick`). Reserve groups carry the card's printed cost (cost reductions
+  only via printed Imperial card effects, `EffectiveCost`). Release is
+  deterministic: cheapest affordable first, ties by group id; a saving rule
+  (`balance - cost >= save_rounds * projected income`) holds money for
+  later waves; an anti-stall rule forces the cheapest affordable group
+  after long idling. The ledger is private data — its entries never reach
+  the public log (ThreatEconomy.cs header).
+- **Printed strength as the planner's currency**: the strength-efficiency
+  matrix multiplies printed damage EV x remaining vitality (attrition) x
+  posture-fit of the pattern x proximity of known rebels (the zone bands
+  of point 3 above — inert in-app until S-D).
+
+### From matrix to order: hard slots and laws
+
+On top of the efficiency order, four named synergy chains move pairs
+(OrderPlan.cs:241): `buff_before_receiver`,
+`blocker_before_attached_attack`, `deploy_before_intercept`,
+`finisher_last` (highest damage potential activates last; with the
+woundAll VictoryCounter law, fresh damage stays last regardless,
+OrderPlan.cs:306). The tempo law weights heavies/swarms (OrderPlan.cs:262,
+286). Every deviation is logged per slot: `OrderSlot.Why` is a
+public-safe German reason string carried in the order record
+(OrderPlan.cs:108, 127).
+
+### Skill binding S1-S5 (quality, not hidden luck)
+
+Per OrderPlan.cs header and SkillProfile.cs: S1 = chance-free but
+plan-less index order (old-app level); S2 = efficiency order, chains off;
+S3 = chains + rough efficiency with seeded missers; S4 = full efficiency +
+finisher-last, rare missers; S5 = full chain optimisation, no missers,
+tempo law at full weight. Missers are implemented as a seeded draw against
+`SkillProfile.MissRate` (OrderPlan.cs:417) and annotated in the plan
+(`MissNote`, surfaced as "miss" in the order record). Skill levels share
+one rng stream — no separate luck pot.
+
+### Liveness: the order is re-planned every click
+
+R-C (Thomas' 04.11 decision, ReactionOrder.cs): at EVERY press of
+"activate Imperials" the order is re-scored from the REMAINING figures —
+basis = `PlanRound` over exactly the pending list (App:
+`GetNonExhaustedGroups()` per click), plus a reaction-push overlay from the
+public event ledger. The round-seed formula is reused VERBATIM, so
+mid-round recomputations roll the same seeded misses as the round start
+(SectionsReactionOrder.cs:150). Determinism law pinned: same pending set +
+same seed + same event stream -> identical pick AND identical account
+(:130). The permutation invariant of the walk is checked as
+`walk_multiset` (:95). No interruption, no skipping: every pending figure
+stays pickable until it acted.
+
+### Precise attribution of the fairness pins
+
+The **id-multiset-equal-across-skill-levels** pin belongs to TARGET
+selection (OverlordFocus.Rank; harness skill-21/22 fixtures) — the planner
+side is pinned by `AssertPermutation` (runtime) and the RC walk multiset
+check. Both sides share the principle (skill changes quality of choice,
+never who is choosable), but the tests are different — keep the
+attribution straight.
+
+### Concept-level layering (where each piece sits)
+
+legality (never touched by planning) -> pattern overlay (public roll,
+shackles only) -> strength-efficiency matrix (printed value x belief x
+posture fit) -> synergy chains and laws (named, why-logged) -> skill
+binding (draw budget + miss rate) -> per-click re-plan over the remaining
+pool (RC). Each layer is separately testable; each layer's inputs are
+public, App-sanctioned, or the group's own orders.
+

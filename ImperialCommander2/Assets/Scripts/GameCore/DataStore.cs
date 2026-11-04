@@ -14,10 +14,12 @@ public static class DataStore
 	// after '#'. Git tags forbid spaces, so the tag is "v.2.2.16#1001" while
 	// the release TITLE may show "v.2.2.16 #1001". NEW RHYTHM (Thomas 04.11):
 	// EVERY push to main bumps the counter by one - the title screen number is
-	// how we see which build is current. Tag + release move WITH the push in
-	// the same step (tag from main, same tag as release title), or the title
-	// icon goes orange: the counter and the latest tag must stay married.
-	public static readonly string appVersion = "v.2.2.16#1007";
+	// how we see which build is current. The TAG moves WITH the push in the
+	// same step (tag from main), or the title icon goes orange: the counter
+	// and the latest tag must stay married - the check reads the TAG, not a
+	// release page. A GitHub RELEASE is only ever created when Thomas says
+	// so (04.11, after an auto-created #1007 release was deleted).
+	public static readonly string appVersion = "v.2.2.16#1008";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

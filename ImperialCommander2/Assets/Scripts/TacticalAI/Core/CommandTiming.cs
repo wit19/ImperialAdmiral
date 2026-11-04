@@ -27,9 +27,13 @@ namespace TacticalAI.Core
     //      attack-pattern groups whose zone carries a fresh same-round
     //      hero anchor compete first - the table commander orders the
     //      troop in contact, where the interrupt pays. Nobody engaged ->
-    //      the living attack-pattern group with the highest
-    //      PrintedEvTotal x VitalityFrac (the finisher key; lower Index
-    //      breaks ties) whose card is known (unknown EV = never chosen).
+    //      the strongest of the known cards wins (lower Index breaks
+    //      ties; unknown EV = never chosen). SINGLE-FIGURE PAYLOAD (law
+    //      review 2, Thomas 04.11): a command is given to ONE named
+    //      figure - the ordered stormtrooper attacks with ITS dice, not
+    //      with the whole group's pool - so the ranking key is the card's
+    //      PRINTED PER-FIGURE attack EV x VitalityFrac, never the group
+    //      sum (WithEv.PrintedEvTotal would overrate crowds).
     //    engaged (a hero carries a FRESH same-round fact anchor inside the
     //      receiver's zone) -> the supporter acts AFTER the receiver:
     //      the troop activates (moves, shoots), the interrupt pays the
@@ -150,7 +154,7 @@ namespace TacticalAI.Core
                 DeploymentCard t;
                 if (!ReceiverCandidate(r, supporter, cards, out t)) continue;
                 if (!HeroInZone(space, view, r.Zone, roundNo)) continue;
-                var k = OrderPlanner.WithEv(r, t).PrintedEvTotal * r.VitalityFrac;
+                var k = FigurePayloadKey(r, t);
                 if (best == null || k > bestKey ||
                     (k == bestKey && r.Index < best.Index))
                 { best = r; bestKey = k; }
@@ -162,7 +166,7 @@ namespace TacticalAI.Core
             {
                 DeploymentCard t;
                 if (!ReceiverCandidate(r, supporter, cards, out t)) continue;
-                var k = OrderPlanner.WithEv(r, t).PrintedEvTotal * r.VitalityFrac;
+                var k = FigurePayloadKey(r, t);
                 if (best == null || k > bestKey ||
                     (k == bestKey && r.Index < best.Index))
                 { best = r; bestKey = k; }
@@ -182,6 +186,19 @@ namespace TacticalAI.Core
             if (r.CardId == null || !cards.TryGetValue(r.CardId, out card) || card == null)
                 return false;
             return true;
+        }
+
+        /// The payload yardstick (Player-24 review 2, Thomas 04.11): a
+        /// command is given to ONE named figure, never to a group or type -
+        /// the ordered stormtrooper attacks with ITS dice, not with the
+        /// four-figure group's pool. So the receiver key is the PRINTED
+        /// PER-FIGURE attack EV (Dice.PrintedEv of the card - WithEv's
+        /// PrintedEvTotal is the group sum and would overrate crowds),
+        /// weighed by VitalityFrac (a running-on-fumes group is a bad bet
+        /// for the ordered figure). Never multiply by NAlive here.
+        static Rational FigurePayloadKey(GroupFacts r, DeploymentCard card)
+        {
+            return Dice.PrintedEv(card) * r.VitalityFrac;
         }
 
         /// A hero with a FRESH (this-round) fact anchor inside the zone.

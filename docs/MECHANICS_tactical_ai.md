@@ -491,10 +491,20 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   whose zone carries a fresh same-round hero anchor compete first
   (`engaged_first_over_global_ev`), the global strongest is the
   no-contact fallback (all pre-review vectors untouched — record diff
-  verified additions-only). Same review: the decision now also prints per
+  verified additions-only). **Review 2 (same day, Thomas):** a command is
+  given to ONE named figure, never to a group — the ordered stormtrooper
+  attacks with ITS dice. Receiver ranking therefore switched from
+  WithEv.PrintedEvTotal (GROUP sum, overrates crowds) to the card's
+  PRINTED PER-FIGURE attack EV x VitalityFrac (`FigurePayloadKey`);
+  `command_pays_one_figure` pins the deliberate flip (4-figure squad vs
+  1-figure squad of the same card: per-figure EV ties, lower Index wins —
+  the old key would have picked the crowd). Every pre-review vector runs
+  n_alive=1, so all of them are untouched by the key change.
+  Same review: the decision now also prints per
   activation in the Player log (`TacticalAIBridge::timing DGxxx:` + the
   public-safe why line; silent where the law never spoke).
-  Canon: 45312 → 45365 checks, additions only.
+  Canon: 45312 → 45370 checks, additions only + the two law flips pinned
+  in `engaged_first_over_global_ev` / `command_pays_one_figure`.
 - **Canon through the whole chain:** 45174 -> 45312 checks. Additions
   only, with ONE deliberate law-flip exception: `p19_causal_strike_closer`
   flips its expected objective_actor from empty to Jyn Odan because the

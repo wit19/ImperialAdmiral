@@ -324,7 +324,10 @@ leads and the command's move leg extends the troop's reach this round. The chose
 receiver is the troop *in contact* whenever the app has seen a hero next to one of
 them this round (playtest law after Player-24: the commander orders the troops he
 sees fighting — the globally strongest troop only gets the order when nobody is
-engaged). The named
+engaged). The plan ranks by the SINGLE FIGURE you would actually order: the
+ordered figure attacks with its own dice — a four-figure squad does not attack
+with four dice under one command — so a crowd of weak figures no longer outscores
+one strong card. The named
 receiver and the reason ride on the officer's order card ("Befehlszeitpunkt …"),
 and the card keeps reminding you: the command only reaches figures within 2
 spaces — that check stays yours at the table. Since #1007 the decision is also

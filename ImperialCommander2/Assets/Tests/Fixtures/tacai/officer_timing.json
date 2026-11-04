@@ -663,6 +663,87 @@
      "why": "Befehlszeitpunkt: im Bereich von Sturmtruppe steht ein frischer Helden-Anker - erst rückt die Truppe ein und schießt, dann zahlt der Vollstreckungsbefehl den zweiten Angriff. || Befehlsring am Tisch prüfen: der Befehl erreicht nur Figuren in 2 Feldern."
     }
    }
+  },
+  {
+   "name": "command_pays_one_figure",
+   "comment": "Law review 2 (Thomas 04.11): the command goes to ONE named figure, never to the group - a four-figure stormtrooper squad does NOT attack with four dice under a Vollstreckungsbefehl. The OLD group-sum key (PrintedEvTotal x Vitality = 4x) would have picked the crowd TR4; the per-figure key sees identical single-dice payload and the lower Index decides TR1. Deliberate law flip pinned here.",
+   "round": 2,
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the canteen.",
+      "priorityTarget": "",
+      "roundLimit": 6,
+      "mission": "timing"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-canteen",
+      "name": "Kantine"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "Jek"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-kasse",
+      "section": "s-canteen"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "Jek"
+     }
+    }
+   ],
+   "groups": [
+    {
+     "id": "OF",
+     "card": "DG006",
+     "name": "Elite-Offizier",
+     "pattern": "support",
+     "supporter": 1,
+     "zone": "s-canteen"
+    },
+    {
+     "id": "TR1",
+     "card": "DG021",
+     "name": "Sturmtruppe-1",
+     "pattern": "aggressive",
+     "zone": "s-canteen"
+    },
+    {
+     "id": "TR4",
+     "card": "DG021",
+     "name": "Sturmtruppe-4",
+     "pattern": "aggressive",
+     "zone": "s-canteen",
+     "n_alive": 4
+    }
+   ],
+   "expect": {
+    "OF": {
+     "present": 1,
+     "receiver": "TR1",
+     "before": 0,
+     "ring": 1,
+     "why": "Befehlszeitpunkt: im Bereich von Sturmtruppe-1 steht ein frischer Helden-Anker - erst rückt die Truppe ein und schießt, dann zahlt der Vollstreckungsbefehl den zweiten Angriff. || Befehlsring: beide in Kantine."
+    }
+   }
   }
  ],
  "plan_cases": [

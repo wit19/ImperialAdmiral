@@ -88,6 +88,36 @@ namespace TacticalAI.Core
             // R-A: digital door flips, one event per observed state change
             // (adapter-side snapshot dedup, same law as the damage dials).
             "DoorOpen", "DoorClosed",
+            // S-A (concept positionierung v1 §5.1/§8.1, card t_00fda230):
+            // SectionActivated - a map section became publicly visible
+            // (TileManager.ActivateMapSection is the single choke that flips
+            // MapSection.isActive; the feed diffs the LIVE state through the
+            // app's own IsMapSectionActive accessor, so it also reads the
+            // post-restore copy). Deactivation is snapshot-tracked but
+            // carries NO kind yet: the concept consumes activation only, and
+            // a re-activation after a removal re-emits honestly. One kind on
+            // purpose - a wall is never modeled (Grundgesetz): a section the
+            // feed has no event for stays through-pass, never "closed".
+            "SectionActivated",
+            // S-A §5.1/§5.2: EntityInteract - a Token/Terminal/Crate entity
+            // flipped its digital entityProperties.isActive (the ModifyEntity
+            // plumbing lane, MissionEventHandler's "Open Crate"-class events;
+            // the same flip law R-A proved for doorOpen). BOTH directions
+            // ride this one kind - direction is data ("active"), the fact is
+            // "something touched this entity". Doors are deliberately NOT
+            // this kind (doorOpen has its own R-A pair; DoorPrefab normalizes
+            // door isActive to true at init); DeploymentPoint/Highlight/Tile
+            // isActive is validity/visibility plumbing, not interaction.
+            // A2 law (measured 04.11.): terminals that never flip simply
+            // produce no events - degradation, section anchors keep running.
+            "EntityInteract",
+            // S-A §5.4 join channel: the PlayerSelection mission-logger line
+            // (PromptBox button/cancel, the same logger M8/F1 already drains)
+            // enters the feed as a typed event so consumers can JOIN it with
+            // the isActive/door diff by seq/round adjacency ("the player
+            // clicked X right as the entity flag moved"). App-authored
+            // button text is a legal anchor name (Loch-Gesetz: no coords).
+            "PlayerSelection",
             // M8/F5: mission clock re-wired at runtime (ModifyRndLimit event
             // or the roundLimitToggle flip) - public table info, the feed
             // gate re-derives posture from it.
@@ -110,6 +140,14 @@ namespace TacticalAI.Core
             // R-A: the door's GUID string (stable public identity); "name"
             // above is the optional display sugar on door events too.
             "door",
+            // S-A: the entity's GUID string (EntityInteract identity) and
+            // the section's GUID string (SectionActivated identity; on
+            // EntityInteract the optional anchor read live from the entity's
+            // OWN mapSectionOwner field - fact from the data model,
+            // swap-corrected, never estimated). "active": the post-flip
+            // isActive state on EntityInteract (direction is data, not kind).
+            // Loch-Gesetz holds: GUIDs and app names, never coordinates.
+            "entity", "section", "active",
         };
 
         // Minimal per-kind shape guard (typos fail loud, not silently).
@@ -135,6 +173,13 @@ namespace TacticalAI.Core
             // R-A: identity is required; the display name is optional.
             { "DoorOpen",         new[] { "door" } },
             { "DoorClosed",       new[] { "door" } },
+            // S-A: identities required; name/section/active are optional
+            // sugar or facts-of-the-moment (a section name may be empty in
+            // authoring; section on EntityInteract is only appended when the
+            // entity's own mapSectionOwner is set - data-existence law).
+            { "SectionActivated", new[] { "section" } },
+            { "EntityInteract",   new[] { "entity" } },
+            { "PlayerSelection",  new[] { "name" } },
             { "RoundEnd",         new string[0] },
             { "RoundLimitChanged", new[] { "roundLimit" } },
         };

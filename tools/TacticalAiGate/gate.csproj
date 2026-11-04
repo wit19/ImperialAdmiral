@@ -21,6 +21,7 @@
     <Compile Include="OfficerTextGate.cs" />
     <Compile Include="OfficerSupporterGate.cs" />
     <Compile Include="PatternRowLanguageGate.cs" />
+    <Compile Include="MissionCriticalGate.cs" />
     <Compile Include="UiCompletenessGate.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\ImperialDeckState.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\AgendaState.cs" />

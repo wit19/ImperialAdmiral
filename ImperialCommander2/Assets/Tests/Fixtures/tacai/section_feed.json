@@ -1,0 +1,206 @@
+{
+ "_comment": "S-A section/entity/join event vectors (card t_00fda230): pins the SectionActivated / EntityInteract / PlayerSelection vocabulary on the REAL WorldEventFeed.Append path (fail-loud kind/key validation, same discipline as door_feed.json for R-A). expect blocks recorded once via `dotnet run -- <fixtures> --record` and reviewed. Reviewed canon shows the S-A law: the new kinds move the history hash but leave NO trace in the projected view (WorldEventVector.Project has no case for them - audit-trail facts; S-B/S-D add consumers later). The adapter-side polling dedup (snapshot diff through the live accessors TileManager.IsMapSectionActive / MapEntityManager.GetEntity, first-sight resync claims, restore-copy correctness) lives in WorldEventsUnity.PollSections/PollEntities and is NOT reproducible in Core - the event lists below are what one observed flip produces, one per flip.",
+ "cases": [
+  {
+   "name": "sa_section_interact_roundtrip",
+   "comment": "Section reveals, then a terminal flips active inside the visible section: one SectionActivated per reveal, one EntityInteract per flip (direction rides the 'active' payload key, section anchor = the entity's own mapSectionOwner GUID). Replay bit-identical; projected canon free of section/interact traces.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Activate the comms terminal.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "sa",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 2,
+     "payload": {
+      "section": "s-comms-catwalk",
+      "name": "Section 2 - Comms"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 3,
+     "payload": {
+      "entity": "t-comms-console",
+      "name": "Comms Terminal",
+      "section": "s-comms-catwalk",
+      "active": true
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 4,
+     "payload": {
+      "entity": "tok-supply-cache",
+      "name": "Supply Cache",
+      "active": false
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|sa_section_interact_roundtrip\nround=4\nposture=stall\nobjective=Activate the comms terminal.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|STORM|STORM|1|0|2|2|1|0|1|name=Stormtroopers\n",
+    "hash": "c80a7dba171c5578110d85bd04645bcdeab3906a953a2cb74b0017ae47e3a8cd",
+    "objective": "Activate the comms terminal.",
+    "objective_actor": "",
+    "posture": "stall",
+    "round": 4,
+    "seq": 5,
+    "threat": 0
+   }
+  },
+  {
+   "name": "sa_inert_inside_hero_window",
+   "comment": "Section/interact events interleaved INSIDE a hero window carrying a GroupDamage: the shot attribution column is unaffected by section/interact traffic, and the new kinds leave no canon trace even mid-window (S-A neutrality law - same proof shape as ra_door_interleaved_with_shot).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort to the comms array.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "sa",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 2,
+      "name": "Stormtroopers"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "STORM",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 2,
+     "payload": {
+      "section": "s-array-room",
+      "name": "Array Room"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-array",
+      "name": "Comms Array",
+      "section": "s-array-room",
+      "active": true
+     }
+    },
+    {
+     "kind": "ActivationEnd",
+     "round": 2,
+     "payload": {
+      "group": "STORM"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|sa_inert_inside_hero_window\nround=2\nposture=protect\nobjective=Escort to the comms array.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|STORM|STORM|1|0|2|2|1|5|4/5|name=Stormtroopers|shot=LEIA|4|2\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=at:STORM kind=hypothesis seq=4 round=2\n",
+    "hash": "08c2ff6245387294321f963a780eaf94eabb9bc17a53518324df10154bd49087",
+    "objective": "Escort to the comms array.",
+    "objective_actor": "",
+    "posture": "protect",
+    "round": 2,
+    "seq": 8,
+    "threat": 0
+   }
+  },
+  {
+   "name": "sa_player_selection_join",
+   "comment": "The concept 5.4 join SHAPE inside one stream: PlayerSelection (button text as name) directly followed by the EntityInteract it caused (seq adjacency, same round). The join itself is consumer-side; S-A pins that both rows exist in the typed feed and that the selection text moves the hash without any projected trace.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Open the vault.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "sa",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "BESCAR",
+      "size": 1,
+      "name": "Bescar"
+     }
+    },
+    {
+     "kind": "PlayerSelection",
+     "round": 3,
+     "payload": {
+      "name": "{A} Open"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 3,
+     "payload": {
+      "entity": "c-vault-crate",
+      "name": "Vault Crate",
+      "section": "s-vault",
+      "active": false
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|sa_player_selection_join\nround=3\nposture=stall\nobjective=Open the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|BESCAR|BESCAR|1|0|1|1|1|0|1|name=Bescar\n",
+    "hash": "b59671dc48edeb5c969723cd8ae66f41240d66f62da510a24b256ea0eeb60b6f",
+    "objective": "Open the vault.",
+    "objective_actor": "",
+    "posture": "stall",
+    "round": 3,
+    "seq": 4,
+    "threat": 0
+   }
+  }
+ ]
+}

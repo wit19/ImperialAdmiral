@@ -28,6 +28,38 @@
 //                                    instantiated from (SagaController.cs:461
 //                                    -> InstantiateEntities), so the data
 //                                    read needs no scene traversal.)
+//   * TileManager.IsMapSectionActive (S-A: section visibility, MapSection
+//                                    .isActive flipped ONLY at
+//                                    TileManager.ActivateMapSection /
+//                                    DeactivateMapSection - the single
+//                                    choke; the mission-event body that
+//                                    carries mm.mapSection runs exactly
+//                                    this lane, MissionEventHandler
+//                                    MapManagement branch)
+//                                    -> SectionActivated {section GUID,
+//                                    name, round}; deactivation is
+//                                    snapshot-tracked WITHOUT a kind (the
+//                                    concept consumes activation only; a
+//                                    re-activation re-emits honestly).
+//   * entityProperties.isActive on Token/Terminal/Crate entities (S-A: the
+//                                    same ModifyEntity plumbing lane R-A
+//                                    proved for doors) -> EntityInteract
+//                                    {entity GUID, name, section?, active,
+//                                    round} - both directions, direction
+//                                    is data. Doors keep their own R-A
+//                                    pair; DP/Highlight/Tile isActive is
+//                                    plumbing, not interaction. Live reads
+//                                    go through MapEntityManager.GetEntity
+//                                    so the poll follows the post-restore
+//                                    object copies too (restore instantiates
+//                                    from the SAVE list, SagaController
+//                                    ContinueGame -> RestoreState).
+//   * missionLogger PlayerSelection lines (PromptBox button/cancel,
+//                                    PromptBox.cs:80/:95) -> PlayerSelection
+//                                    {name} - the S-A 5.4 join channel:
+//                                    consumer-side seq/round adjacency
+//                                    between "the player chose X" and the
+//                                    isActive/door flip it caused.
 //
 // Reset at (session-)mission start; a seq anomaly (restored session: the
 // mission logger list shrinks below our drain index) triggers RESYNC = a
@@ -72,6 +104,21 @@ namespace TacticalAI
         // the state stays flipped, never for flips we did not witness (a
         // door first seen mid-mission is baselined without an event).
         readonly Dictionary<string, bool> _doors = new Dictionary<string, bool>();
+        // S-A: section visibility snapshot (section GUID -> last OBSERVED
+        // live isActive via TileManager.IsMapSectionActive - the accessor
+        // the game itself answers from, so it stays correct after a save
+        // restore rebinds TileManager to the save-state copies). The
+        // snapshot tracks BOTH directions; only false->true carries the
+        // SectionActivated kind. Same polling dedup law as the dials.
+        readonly Dictionary<string, bool> _sections = new Dictionary<string, bool>();
+        // S-A: interactable entity flags (Token/Terminal/Crate GUID -> last
+        // observed live entityProperties.isActive, read through
+        // MapEntityManager.GetEntity - the manager's list holds the very
+        // objects the prefabs mutate, on the fresh AND the restore path).
+        readonly Dictionary<string, bool> _entities = new Dictionary<string, bool>();
+        // scene-bound controller ref; a destroyed one compares == null and
+        // is re-found on the next poll (scene reload / save-restore).
+        Saga.SagaController _ctrlCache;
 
         // M8/F5 mission-clock watch: the authored/runtime roundLimit only
         // EXIST if the player's roundLimitToggle setting lets the app show
@@ -188,6 +235,12 @@ namespace TacticalAI
             // change). Independent of the shot->close causal ordering above.
             PollDoors(round);
 
+            // S-A: section visibility + interactable entity flags (same
+            // snapshot-dedup law as the doors; audit-trail facts, no causal
+            // ordering obligation against the shot->close pair).
+            PollSections(round);
+            PollEntities(round);
+
             // threat + objective (public HUD state)
             long threat = gv.currentThreat;
             if (threat != _threat)
@@ -227,6 +280,14 @@ namespace TacticalAI
             _heroActivated.Clear();
             _heroLoggedActivated.Clear();
             _doors.Clear();
+            // S-A: section/entity snapshots reset per session; their FIRST
+            // readable poll claims the initial visible/hidden state as
+            // resync facts (see PollSections/PollEntities) - the tile and
+            // entity managers are not guaranteed to be populated yet at
+            // this very moment, so no baseline is taken here.
+            _sections.Clear();
+            _entities.Clear();
+            _ctrlCache = null;
 
             var sd = DataStore.sagaSessionData;
             var mp = TryMissionProperties();
@@ -310,6 +371,19 @@ namespace TacticalAI
                         if (!IsHeroName(name)) Append("ActivationStart", r, P("group", IdForName(name)));
                         else if (_heroLoggedActivated.Add(name + "#" + r))
                             Append("HeroActivated", r, P("hero", name));
+                        break;
+                    case Saga.MissionLogType.PlayerSelection:
+                        // S-A (concept 5.4): the prompt-button choice the
+                        // player made (PromptBox.cs:95 button / :80 cancel)
+                        // joins the stream as a typed fact. The projection
+                        // stays inert (audit trail + hash); the JOIN is
+                        // consumer-side seq/round adjacency to the
+                        // EntityInteract/DoorOpen flips the choice caused.
+                        // MissionLogText.ExtractRawName returns the value-
+                        // colour span = the raw button text (the Player-
+                        // Selection format is label-span + value-span, same
+                        // law as GroupActivation).
+                        Append("PlayerSelection", r, P("name", name));
                         break;
                 }
             }
@@ -427,6 +501,143 @@ namespace TacticalAI
             }
         }
 
+        // ------------------------------------------------ S-A section state
+        // S-A (card t_00fda230): section visibility is polled through the
+        // app's OWN accessor TileManager.IsMapSectionActive - the live list
+        // it answers from is DataStore.mission.mapSections on the fresh path
+        // and the RESTORED copy after save/restore (SagaController
+        // ContinueGame -> tileManager.RestoreState rebinds the list;
+        // DataStore.mission is re-read from the mission file and would read
+        // dead there). GUID/name identity stays the mission file's catalog.
+        // Loch-Gesetz: the payload carries the section GUID + the app's own
+        // section name - never tiles, never cell coordinates.
+        void PollSections(int round)
+        {
+            var tm = TileManagerOrNull();
+            if (tm == null || !tm.tilesLoaded) return;   // not readable yet:
+            var secs = DataStore.mission != null ? DataStore.mission.mapSections : null;
+            // never baseline on an empty/partial view (door law applies:
+            // first sight is only trusted once the manager answers).
+            if (secs == null) return;
+            foreach (var s in secs)
+            {
+                if (s == null) continue;
+                string id = s.GUID.ToString();
+                bool live = tm.IsMapSectionActive(s.GUID);
+                bool prev;
+                if (!_sections.TryGetValue(id, out prev))
+                {
+                    // first sight: baseline. An ALREADY visible section is
+                    // claimed as current-state fact (resync:true) - the feed
+                    // started after the activation and S-B needs the initial
+                    // visible inventory deterministically.
+                    _sections[id] = live;
+                    if (live)
+                        Append("SectionActivated", round, new Dictionary<string, object>
+                        {
+                            { "section", id },
+                            { "name", s.name ?? "" },
+                            { "resync", true },
+                        });
+                    continue;
+                }
+                if (live == prev) continue;
+                _sections[id] = live;
+                // Deactivation: snapshot updated, NO kind (concept consumes
+                // activation only; a later re-activation re-emits honestly).
+                if (!live) continue;
+                Append("SectionActivated", round, new Dictionary<string, object>
+                {
+                    { "section", id },
+                    { "name", s.name ?? "" },
+                });
+            }
+        }
+
+        // ------------------------------------------------- S-A entity flags
+        // S-A: Token/Terminal/Crate entityProperties.isActive diff. Live
+        // reads through MapEntityManager.GetEntity (the manager's list holds
+        // the objects the prefabs mutate on BOTH paths - fresh and restore);
+        // the mission file's list is the identity catalog only. entity
+        // .entityProperties is replaced wholesale by ModifyEntity(props)
+        // (TerminalPrefab.cs ModifyEntity), so the read goes through the
+        // entity object EVERY poll, never a cached props reference.
+        void PollEntities(int round)
+        {
+            var mem = EntityManagerOrNull();
+            var ents = DataStore.mission != null ? DataStore.mission.mapEntities : null;
+            if (mem == null || ents == null) return;
+            foreach (var me in ents)
+            {
+                if (me == null) continue;
+                // Interactable set is the concept's 5.1 list minus the door
+                // (its own R-A kind; DoorPrefab normalizes isActive=true at
+                // init). DP/Highlight/Tile isActive = validity/visibility
+                // plumbing - feeding it would be a false "interaction".
+                if (me.entityType != Saga.EntityType.Token
+                    && me.entityType != Saga.EntityType.Terminal
+                    && me.entityType != Saga.EntityType.Crate) continue;
+                string id = me.GUID.ToString();
+                var live = mem.GetEntity(me.GUID) ?? me;
+                bool cur = live.entityProperties != null && live.entityProperties.isActive;
+                bool prev;
+                if (!_entities.TryGetValue(id, out prev))
+                {
+                    // first sight: baseline. The ctor default for isActive
+                    // is TRUE, so a deviating hidden entity is a current-
+                    // state fact worth claiming (resync:true); entities in
+                    // their default state stay silent (not ~30 no-op events).
+                    _entities[id] = cur;
+                    if (!cur)
+                        Append("EntityInteract", round, EntityPayload(id, live, cur, true));
+                    continue;
+                }
+                if (cur == prev) continue;
+                _entities[id] = cur;
+                Append("EntityInteract", round, EntityPayload(id, live, cur, false));
+            }
+        }
+
+        static Dictionary<string, object> EntityPayload(string id, Saga.IMapEntity e,
+                                                        bool active, bool resync)
+        {
+            var p = new Dictionary<string, object>
+            {
+                { "entity", id },
+                { "name", e.name ?? "" },
+                { "active", active },
+            };
+            // Data-existence law: the section anchor rides ONLY when the
+            // entity's OWN mapSectionOwner is set - a fact of the data
+            // model (swap-corrected live object), never an estimate.
+            try { if (e.mapSectionOwner != Guid.Empty) p["section"] = e.mapSectionOwner.ToString(); }
+            catch { }
+            if (resync) p["resync"] = true;
+            return p;
+        }
+
+        Saga.SagaController Ctrl()
+        {
+            try
+            {
+                if (_ctrlCache == null) _ctrlCache = FindObjectOfType<Saga.SagaController>();
+                return _ctrlCache;
+            }
+            catch { return null; }
+        }
+
+        Saga.TileManager TileManagerOrNull()
+        {
+            var c = Ctrl();
+            return c != null ? c.tileManager : null;
+        }
+
+        Saga.MapEntityManager EntityManagerOrNull()
+        {
+            var c = Ctrl();
+            return c != null ? c.mapEntityManager : null;
+        }
+
         // -------------------------------------------------------- hero markers
         void PollHeroes(int round)
         {
@@ -526,6 +737,43 @@ namespace TacticalAI
                            }));
                 _doors[d.GUID.ToString()] = d.doorOpen;
             }
+            // S-A: sections and interactable flags re-log from the SAME live
+            // accessors the polls use (full-current-state law, no guessing):
+            // every visible section as SectionActivated, every entity that
+            // deviates from the default-active state as EntityInteract
+            // {active:false}. Snapshots re-base on the live values.
+            var tmS = TileManagerOrNull();
+            var secsS = DataStore.mission != null ? DataStore.mission.mapSections : null;
+            if (tmS != null && tmS.tilesLoaded && secsS != null)
+                foreach (var s in secsS)
+                {
+                    if (s == null) continue;
+                    bool sLive = tmS.IsMapSectionActive(s.GUID);
+                    if (sLive)
+                        log.Add(Mk(seq++, "SectionActivated", round, new Dictionary<string, object>
+                        {
+                            { "section", s.GUID.ToString() },
+                            { "name", s.name ?? "" },
+                            { "resync", true },
+                        }));
+                    _sections[s.GUID.ToString()] = sLive;
+                }
+            var memS = EntityManagerOrNull();
+            var entsS = DataStore.mission != null ? DataStore.mission.mapEntities : null;
+            if (memS != null && entsS != null)
+                foreach (var me in entsS)
+                {
+                    if (me == null) continue;
+                    if (me.entityType != Saga.EntityType.Token
+                        && me.entityType != Saga.EntityType.Terminal
+                        && me.entityType != Saga.EntityType.Crate) continue;
+                    var live = memS.GetEntity(me.GUID) ?? me;
+                    bool cur = live.entityProperties != null && live.entityProperties.isActive;
+                    if (!cur)
+                        log.Add(Mk(seq++, "EntityInteract", round,
+                                   EntityPayload(me.GUID.ToString(), live, false, true)));
+                    _entities[me.GUID.ToString()] = cur;
+                }
             foreach (var h in _heroWounded) log.Add(Mk(seq++, "HeroWounded", round, P("hero", h)));
             foreach (var h in _heroDefeated) log.Add(Mk(seq++, "HeroDefeated", round, P("hero", h)));
             log.Add(Mk(seq++, "ThreatSpend", round, P("balance", (long)(sd?.gameVars?.currentThreat ?? 0))));

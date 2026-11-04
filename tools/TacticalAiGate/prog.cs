@@ -39,6 +39,7 @@ class P {
         OfficerTextGate.Run();
         OfficerSupporterGate.Run();
         PatternRowLanguageGate.Run();
+        MissionCriticalGate.Run();
         UiCompletenessGate.Run();
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }

@@ -35,15 +35,15 @@ public class UITacticalAI
 	// decision trees ({0} = printed speed), apEnd = loop-trap marker. TMP
 	// tags are language-owned (ui.json law); solo/numbered labelling and the
 	// doctrineTreeLead/"Grundregel" removals of M13a/M13c stay in force.
-	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd, apCustomHeader;
+	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeHunter, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd, apCustomHeader;
 	// Thomas 02.11: command trees for cards that PRINT a command ability on
 	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
 	// rolled "guard" still commands, so every pattern keeps its own action
 	// wording AND the Order branch). Plain "Order" -> apTreeOfficer<Pattern>,
 	// elite "Executive Order" -> apTreeOfficerElite<Pattern>; a missing elite
 	// row falls back to the plain officer row, then to the pattern tree.
-	public string apTreeOfficerAggressive, apTreeOfficerGuard, apTreeOfficerBlocker, apTreeOfficerSupport, apTreeOfficerAmbush;
-	public string apTreeOfficerEliteAggressive, apTreeOfficerEliteGuard, apTreeOfficerEliteBlocker, apTreeOfficerEliteSupport, apTreeOfficerEliteAmbush;
+	public string apTreeOfficerAggressive, apTreeOfficerGuard, apTreeOfficerBlocker, apTreeOfficerHunter, apTreeOfficerSupport, apTreeOfficerAmbush;
+	public string apTreeOfficerEliteAggressive, apTreeOfficerEliteGuard, apTreeOfficerEliteBlocker, apTreeOfficerEliteHunter, apTreeOfficerEliteSupport, apTreeOfficerEliteAmbush;
 	// O-C (Thomas 04.11., card t_a2d88c50): supporter-codex ersatzzweig - shown
 	// ONLY for printed-order cards WITHOUT a proven emergency (skill >= S2;
 	// decision in Core OfficerDoctrine.TreeKindFor). Keep = give the Order,
@@ -53,8 +53,8 @@ public class UITacticalAI
 	// tree via FirstNonEmpty (stale language asset = old behaviour, never a
 	// blank popup).
 	public string apTreeOfficerNotfall;
-	public string apTreeOfficerKeepAggressive, apTreeOfficerKeepGuard, apTreeOfficerKeepBlocker, apTreeOfficerKeepSupport, apTreeOfficerKeepAmbush;
-	public string apTreeOfficerEliteKeepAggressive, apTreeOfficerEliteKeepGuard, apTreeOfficerEliteKeepBlocker, apTreeOfficerEliteKeepSupport, apTreeOfficerEliteKeepAmbush;
+	public string apTreeOfficerKeepAggressive, apTreeOfficerKeepGuard, apTreeOfficerKeepBlocker, apTreeOfficerKeepHunter, apTreeOfficerKeepSupport, apTreeOfficerKeepAmbush;
+	public string apTreeOfficerEliteKeepAggressive, apTreeOfficerEliteKeepGuard, apTreeOfficerEliteKeepBlocker, apTreeOfficerEliteKeepHunter, apTreeOfficerEliteKeepSupport, apTreeOfficerEliteKeepAmbush;
 	public string overlordFallback;
 	// M13c (Thomas 30.10): shuffleNote DELETED ("(afterwards: shuffle this
 	// group's deck)" does not exist in this app's flow - honest removal).
@@ -68,7 +68,7 @@ public class UITacticalAI
 	// S-D (card t_c52dd34b, concept positionierung v1 13.4): the same
 	// tail-clause law for the two section bases; {0} = the activated
 	// figure's name, pronoun-free like the reaktion tail above.
-	public string ordFocusWachzone, ordFocusVergeltung;
+	public string ordFocusWachzone, ordFocusVergeltung, ordFocusFokuszone;
 	// S-E (card t_9dd56737, concept positionierung v1 Z6/D4): the supporter's
 	// mask-trust focus tail ({0} = activated figure's name, pronoun-free),
 	// its basis label, and the two EXPLAIN why-lines (strike: {0} group +
@@ -190,7 +190,7 @@ public class UITacticalAI
 	// ThreeC {0}=hero {1}=section {2}=group; Vergeltung {0}=group {1}=hero;
 	// Clamp carries no argument. All figure-/object-naming (Loch-Gesetz:
 	// never a coordinate, never a section number).
-	public string ordExplainWachzone, ordExplainThreeC, ordExplainVergeltung, ordExplainClamp;
+	public string ordExplainWachzone, ordExplainThreeC, ordExplainVergeltung, ordExplainClamp, ordExplainFokuszone;
 	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
 	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }

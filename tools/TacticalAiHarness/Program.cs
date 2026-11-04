@@ -154,6 +154,7 @@ namespace TacticalAiHarness
             Run("section_space.json", SecSectionSpace);
             Run("section_trust.json", SecSectionTrust);
             Run("section_consumers.json", SecSectionConsumers);
+            Run("section_consumers.json", SecFokuszone);
             Run("section_support.json", SecSectionSupport);
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +

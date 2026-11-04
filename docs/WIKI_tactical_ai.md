@@ -322,13 +322,18 @@ Guard-role figures hold it; blockers cover its approaches. (Do not confuse with 
 figure keyword *Guard*, which pins an individual figure to a printed radius around
 itself — related idea, different mechanism; both are on the cards.)
 
-**Priority zone ("Schwerpunktzone").** The area the rebels' *current* mission
+**Focus zone ("Fokuszone").** The area the rebels' *current* mission
 objective points at — the sector with their main effort. Hunter-doctrine figures
-treat it as their hunting ground: they take their movement paths there and engage
-heroes working the objective first. Unlike the guard zone it is not held — nobody
-stands in it to deny it; it is where the Empire goes hunting. It follows the
-mission's current objective, so it can move when the objective moves. (Shown on
-the doctrine line of the activation pop-up; see also the Guard zone above.)
+treat it as their hunting ground: from tier 3 up they lock onto the hero who is
+factually working inside it, take their movement paths there, and let heroes
+outside the zone lie — even when one stands right on their path (the *hunter's
+creed*; whoever attacks the hunter may still reap one shot back that round, but
+nobody is pursued for it). Below tier 3 the hunter behaves like the old
+Vorstoß — the lock is an earned discipline, not a printed constant. Unlike the
+guard zone the focus zone is not held — nobody stands in it to deny it; it is
+where the Empire goes hunting. It follows the mission's current objective, so it
+can move when the objective moves. (Shown on the doctrine line of the activation
+pop-up; see also the Guard zone above.)
 
 **Focus (target).** The hero the Imperials concentrate on this round, named on
 every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice follows public criteria (objective gravity,
@@ -388,7 +393,7 @@ labels as shipped):
 | **Vorstoß** (aggressive) | "Vorstoß (zum Kampf vorrücken)" | Press toward the fight; the workhorse of hunt missions | 1.5 / 0.8 / 0.7 / 1.1 |
 | **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective (heavily tilted by the defend modifier) | 0.6 / 1.4 / 1.5 / 1.0 |
 | **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers (the dice rows favour large bases) | 0.8 / 1.5 / 1.3 / 0.9 |
-| **Jäger** (hunter) | "Jäger (Schwerpunktzone abkämmen — …)" | Sweep the zone of main effort; the dice rows favour fast melee hunters; intercept heroes working the objective (the pop-up label now carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
+| **Jäger** (hunter) | "Jäger (Fokuszone abkämmen — …)" | Sweep the focus zone; from tier 3 the Fokuszone lock: attack the hero working inside the zone, ignore pass-by heroes outside it, move toward the zone (pop-up label carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
 | **Support** | "Support (Distanz halten, aus der Deckung)" | Keep distance, fire from cover | 0.9 / 1.0 / 1.3 / 1.0 |
 | **Hinterhalt** (ambusher) | "Hinterhalt (ungesehen bis zum ersten Schuss)" | Deny the point until a target enters range | 1.1 / 1.1 / 0.9 / 1.3 |
 
@@ -412,11 +417,13 @@ Two honest notes from the shipped code:
 - The **ambusher** is implemented (tree + planner weights) but currently unassigned:
   no shipped figure prints an Ambush keyword, so `ClassifyPattern` never hands it
   out. It is ready for custom cards that do.
-- **Hunter vs. Vorstoß:** on the *pop-up* they deliberately share one tree (same
-  board behaviour); they differ *in the planner* — different posture-fit weights
-  (hunter tops the **deny** posture) and the hunter's target override: it prefers
-  heroes actively working the objective over whoever is nearest
-  (`Core/Patterns.TargetOverride`). Same instructions, different strategic instinct.
+- **Hunter vs. Vorstoß:** below tier 3 they deliberately share one tree (same
+  board behaviour, the honest S1/S2 brawler); from tier 3 the hunter plays its
+  own pop-up tree and the **Fokuszone lock** (`SectionConsumers.FokuszoneHeadFor`):
+  target = the hero factually anchored in the focus zone, pass-by heroes outside
+  it are ignored, retaliation outranks the lock (fact beats brand). The old
+  planner-side target override (`Core/Patterns.TargetOverride`) stays exactly
+  what it always was — a sim-level preference.
 
 ---
 

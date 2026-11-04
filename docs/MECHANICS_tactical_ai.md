@@ -399,6 +399,25 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   0/3 tight) and the F3 zone order-flips decision-side (S2 and S4). 4 new
   player keys x 11 languages. F2 resolved as wording fix: calibration
   runs audit-channel against fixture reality, no live-rail promise.
+- **Player-20-B (Thomas 04.11, "Go").** Focus-zone lock
+  `SectionConsumers.FokuszoneHeadFor` (Baustein 7): the hunter brand — S3+
+  gate INSIDE the entry point; zone = the critical sections the Wachzone key
+  already consumes (never a guess); the first canon-rank hero factually
+  anchored inside takes the head (no new ranking, permutation law intact);
+  null law pair everywhere else. The bridge consumes it only while ALL fact
+  keys are silent (reaktion/wachzone/vergeltung beat the brand — the shot
+  back stays a fact, not a chase). Popup tree family `apTreeHunter` +
+  officer/elite/keep variants (DE/EN, stale-asset fallback to the aggressive
+  rows) rides the SAME rung via `SkillRungNow()`, so plan and popup cannot
+  diverge; disclosed on the focus line (`ordFocusFokuszone`) and the EXPLAIN
+  line (`ordExplainFokuszone`), Debug channel `fokuszone`. 7 hand-pinned
+  laws (`fokuszone.*` checks) over the real feed path. Companion law from
+  the same playtest: `buff_before_receiver` EXEMPTS support groups whose
+  printed command is the plain +2-movement order
+  (`GroupFacts.MovementBuffOnly`, bridge fills it from the printed ability
+  law) — that buff never earns the head of the order; the executive command
+  and plain support keep the chain slot (`order_plan.player20.*`). Canon:
+  45266 → 45276 checks, additions only, no existing fixture touched.
 - **Canon through the whole chain:** 45174 -> 45266 checks, additions
   only, no existing fixture touched; every new behaviour fires only on a
   present fact or a trusted belief, never on absence.
@@ -463,7 +482,11 @@ draw" is auditable. Patterns (Patterns.cs, concept 3.5) are **tiebreak
 overlays and movement shackles only, never legality changes**: aggressive
 (shortest attack path), guard (guard-zone clamp until threat), blocker
 (holds the path valley of the heroes' terrain-cost field), hunter
-(prioritises the hero working an objective token), support (distance ≥ 2
+(from tier 3 the **Fokuszone lock** — target is the hero factually anchored
+in the focus zone, pass-by heroes outside it are ignored, retaliation
+outranks the brand; below tier 3 the hunter plays the aggressive rows
+verbatim — popup trees `apTreeHunter*` ride the identical rung gate),
+support (distance ≥ 2
 from heroes, keeps its most wounded ally in LOS), ambusher (inert until a
 hero is inside AMBUSH_RADIUS).
 

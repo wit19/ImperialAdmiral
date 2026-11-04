@@ -1250,6 +1250,11 @@ namespace TacticalAI
         {
             if (!plan.HasTarget)
                 return FirstNonEmpty(L.apTreeNoTarget, L.apTreeAggressive);
+            // Player-20-B FOKUSZONE gate (Thomas 04.11): the hunter plays its
+            // own tree ONLY from S3 up - below that the Vorstoß rows stay
+            // verbatim (mirrors the Core FokuszoneHeadFor rung gate, so the
+            // popup never promises what the planner does not do).
+            bool fzHunter = SkillRungNow() >= 3;
             if (plan.Officer)
             {
                 string off = null, offElite = null, offKeep = null, offKeepElite = null;
@@ -1263,8 +1268,15 @@ namespace TacticalAI
                                       offKeep = L.apTreeOfficerKeepSupport;  offKeepElite = L.apTreeOfficerEliteKeepSupport;  break;
                     case "ambusher": off = L.apTreeOfficerAmbush;   offElite = L.apTreeOfficerEliteAmbush;
                                       offKeep = L.apTreeOfficerKeepAmbush;   offKeepElite = L.apTreeOfficerEliteKeepAmbush;   break;
-                    // hunter shares the aggressive officer row (mirrors the
-                    // plain pattern trees, where hunter = aggressive).
+                    case "hunter":
+                        if (fzHunter)
+                        {
+                            off = L.apTreeOfficerHunter; offElite = L.apTreeOfficerEliteHunter;
+                            offKeep = L.apTreeOfficerKeepHunter; offKeepElite = L.apTreeOfficerEliteKeepHunter; break;
+                        }
+                        goto default;   // S1/S2: the old shared aggressive row
+                    // hunter below S3 shares the aggressive officer row
+                    // (mirrors the plain pattern trees, where hunter = aggressive).
                     default:         off = L.apTreeOfficerAggressive; offElite = L.apTreeOfficerEliteAggressive;
                                       offKeep = L.apTreeOfficerKeepAggressive; offKeepElite = L.apTreeOfficerEliteKeepAggressive; break;
                 }
@@ -1291,8 +1303,33 @@ namespace TacticalAI
                 case "blocker":  return FirstNonEmpty(L.apTreeBlocker,  L.apTreeAggressive);
                 case "support":  return FirstNonEmpty(L.apTreeSupport,  L.apTreeAggressive);
                 case "ambusher": return FirstNonEmpty(L.apTreeAmbush,   L.apTreeAggressive);
+                case "hunter":
+                    // Player-20-B FOKUSZONE tree, S3+ only (same gate as the
+                    // officer switch and the Core entry point). A stale
+                    // language asset degrades to the aggressive row, never a
+                    // blank popup.
+                    return SkillRungNow() >= 3
+                        ? FirstNonEmpty(L.apTreeHunter, L.apTreeAggressive)
+                        : L.apTreeAggressive;
                 default:         return L.apTreeAggressive;
             }
+        }
+
+        /// Player-20-B: S-level -> rung (S1..S5 -> 1..5; null/unknown -> the
+        /// honest S1 blind floor). Shared by the reaktion floor, the
+        /// FOKUSZONE target lock and the FOKUSZONE popup gate, so plan and
+        /// popup can never disagree about the tier.
+        static int SkillRungOf(Tac.SkillProfile p)
+        {
+            if (p != null && p.Level != null && p.Level.Length == 2 &&
+                p.Level[0] == 'S' && p.Level[1] >= '1' && p.Level[1] <= '9')
+                return p.Level[1] - '0';
+            return 1;
+        }
+        static int SkillRungNow()
+        {
+            return SkillRungOf(Tac.SkillProfile.For(
+                TacticalAISettings.EffectiveSkill(CurrentMissionAiMode())));
         }
 
         static string FirstNonEmpty(params string[] vals)
@@ -1485,9 +1522,7 @@ namespace TacticalAI
                     string rdPattern = null;
                     if (_patternByCard != null) _patternByCard.TryGetValue(cd.id, out rdPattern);
                     var rdSkill = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
-                    int rdRung = 1;   // defensive: a null profile keeps the honest S1 blind floor
-                    if (rdSkill != null && rdSkill.Level != null && rdSkill.Level.Length == 2 && rdSkill.Level[0] == 'S')
-                        rdRung = rdSkill.Level[1] - '0';
+                    int rdRung = SkillRungOf(rdSkill);   // null profile -> honest S1 blind floor
                     var reactionHero = Tac.OverlordFocus.ReactionHeroFor(
                         ordView, cd.id, rdPattern, rdRung);
                     // S-D (card t_c52dd34b, concept 13.4): the two section
@@ -1635,9 +1670,43 @@ namespace TacticalAI
                                       " round=" + sdSupport.Round);
                             return true;
                         }
-                        why = BuildOverlordWhy(L0, dec, heroName);
-                        Debug.Log("TacticalAIBridge::target " + cd.id + " -> " + dec.HeroId +
-                                  " basis=" + dec.Basis + " reaction=" + (reactionHero ?? "-") +
+                        // Player-20-B law FOKUSZONE (Thomas 04.11, concept
+                        // hunt-richtlinie B): the hunter brand. Only while NO
+                        // fact key speaks (reaktion/wachzone/vergeltung all
+                        // silent - FAKT SCHLAEGT MARKE, the retaliation shot
+                        // back stays intact) and only for the hunter pattern,
+                        // the lock names the canon-rank hero that is FACTUALLY
+                        // anchored in the focus zone (= the critical sections
+                        // the Wachzone key already consumes). S3+ gate lives
+                        // INSIDE the Core entry point; S1/S2 read null and the
+                        // popup stays byte-identical. Head already in zone or
+                        // nobody in zone => no change at all (canon stands).
+                        string fokuszoneHero = null;
+                        if (rdPattern == "hunter" && sdSpace != null &&
+                            reactionHero == null && wachzoneHero == null &&
+                            vergeltungHero == null)
+                        {
+                            var fzRanked = new List<string>();
+                            foreach (var r in ranked) fzRanked.Add(r.HeroId);
+                            var fz = Tac.SectionConsumers.FokuszoneHeadFor(
+                                sdSpace, LastCriticalSections, fzRanked, rdRung);
+                            if (fz != null && fz != dec.HeroId) fokuszoneHero = fz;
+                        }
+                        if (fokuszoneHero != null)
+                        {
+                            heroName = fokuszoneHero;
+                            reactionTail = TF(L0.ordFocusFokuszone, cd.name ?? cd.id);
+                            why = TF(L0.ordExplainFokuszone, fokuszoneHero,
+                                     cd.name ?? cd.id);
+                            Debug.Log("TacticalAIBridge::fokuszone " + cd.id +
+                                      " -> " + fokuszoneHero +
+                                      " basis=fokuszone round=" + ordView.Round);
+                        }
+                        else why = BuildOverlordWhy(L0, dec, heroName);
+                        Debug.Log("TacticalAIBridge::target " + cd.id + " -> " +
+                                  (fokuszoneHero != null ? fokuszoneHero : dec.HeroId) +
+                                  " basis=" + (fokuszoneHero != null ? "fokuszone" : dec.Basis) +
+                                  " reaction=" + (reactionHero ?? "-") +
                                   " wachzone=" + (wachzoneHero ?? "-") +
                                   " vergeltung=" + (vergeltungHero ?? "-") +
                                   " masktrust=" + (supporterTrustHero ?? "-"));

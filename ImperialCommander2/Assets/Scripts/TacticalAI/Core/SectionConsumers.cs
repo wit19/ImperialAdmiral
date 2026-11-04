@@ -444,6 +444,50 @@ namespace TacticalAI.Core
             return null;
         }
 
+        // ---- Baustein 7: FOKUSZONE (Player-20-B, Thomas 04.11) -------------
+        // The hunter brand (concept hunt-richtlinie B, "Go" 04.11): a hunter
+        // goes after the hero WORKING INSIDE THE FOCUS ZONE - the focus zone
+        // being the section(s) of the mission-critical object, the SAME fact
+        // the Wachzone key consumes (criticalSections), never a guess.
+        // Laws, in order:
+        //  * SKILL GATE INSIDE THE ENTRY POINT (S3+, like the mask-trust
+        //    channel's rung): S1/S2 read null and the popup stays
+        //    bit-identical reference behaviour - the sloppy brawler stays
+        //    the S1/S2 hunter.
+        //  * FACTS ONLY: a hero counts when HeroInSection (latest fact
+        //    anchor) lands inside a critical section. No critical section,
+        //    no anchored hero -> null = canon rank law byte-identical.
+        //  * NO NEW RANKING: the canon-rank order is scanned and the FIRST
+        //    hero inside the zone takes the head - between several workers
+        //    the unchanged threat ranking decides. Nothing is filtered,
+        //    nobody is invented (permutation law).
+        //  * HEAD ALREADY IN ZONE: the helper returns the head itself; the
+        //    consumer treats "override == head" as no change (canon stands,
+        //    no tail, no extra line).
+        //  * PASS-BY LAW (consumer side): while the lock names a hero, the
+        //    hunter attacks THAT hero; a hero outside the zone who merely
+        //    stands on the path is not picked as target. Retaliation stays
+        //    untouched: the reaction/vergeltung fact keys outrank this
+        //    channel entirely (the caller only consults it while all fact
+        //    keys are silent), so shooting the hunter hands its shot back.
+        public static string FokuszoneHeadFor(SectionSpace space,
+            IEnumerable<string> criticalSections, IList<string> rankedHeroes,
+            int rung)
+        {
+            if (rung < 3) return null;
+            if (space == null || rankedHeroes == null || rankedHeroes.Count == 0)
+                return null;
+            var crit = new HashSet<string>(criticalSections ?? new string[0],
+                                           StringComparer.Ordinal);
+            if (crit.Count == 0) return null;
+            foreach (var hero in rankedHeroes)
+            {
+                var sec = space.HeroInSection(hero);
+                if (sec != null && crit.Contains(sec)) return hero;
+            }
+            return null;
+        }
+
         // ---- Baustein 6: SUPPORTER-MASKEN-VERTRAUEN (S-E, Z6) --------------
         // Concept positionierung v1 5/6 (OB-Zeile: "Supporter-Zielwahl
         // profitiert von der Maske (Feuer in die richtige Sektion statt

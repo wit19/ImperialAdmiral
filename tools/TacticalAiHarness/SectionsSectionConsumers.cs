@@ -477,5 +477,71 @@ namespace TacticalAiHarness
             foreach (var p in ps) l.Add(p.Basis);
             return string.Join(",", l.ToArray());
         }
+
+        // Player-20-B FOKUSZONE (Thomas 04.11 "Go", concept hunt-richtlinie B):
+        // hand-pinned laws over the REAL section machinery - no new fixture
+        // file, the sd_wachzone_held case data (hero LU factually anchored in
+        // the critical section s-a) is rebuilt through the same feed path.
+        static void SecFokuszone()
+        {
+            var v = LoadJson("section_consumers.json");
+            Dictionary<string, object> c = null;
+            foreach (var raw in Json.AsList(v["cases"]))
+            {
+                var d = Json.AsDict(raw);
+                if (Json.AsStr(d["name"]) == "sd_wachzone_held") c = d;
+            }
+            if (c == null) { Fail("section_consumers.json", "fokuszone: case sd_wachzone_held missing"); return; }
+
+            var feed = new WorldEventFeed("vector|sd_wachzone_held");
+            foreach (var eraw in Json.AsList(c["events"]))
+            {
+                var e = Json.AsDict(eraw);
+                var payload = e.ContainsKey("payload")
+                    ? new Dictionary<string, object>(Json.AsDict(e["payload"]))
+                    : new Dictionary<string, object>();
+                feed.Append(Json.AsStr(e["kind"]), (int)Json.AsLong(e["round"]), payload);
+            }
+            var view = WorldEventVector.Project(feed.Events, "vector|sd_wachzone_held", feed.Hash());
+            SectionTrust.Clear();
+            if (c.ContainsKey("trust")) SectionTrust.PrimeDoc(c["trust"]);
+            var space = SectionSpace.Project(feed.Events, null,
+                ReadSeeds(c), ReadEdges(c), new SectionOptions { Refine = true });
+            var crit = new List<string>();
+            if (c.ContainsKey("critical"))
+                foreach (var s in Json.AsList(c["critical"])) crit.Add(Json.AsStr(s));
+
+            // ground-truth sanity: the fixture really anchors LU in s-a
+            Check("fokuszone.anchor_law", "s-a", space.HeroInSection("LU"));
+
+            // law 1 (skill gate): below rung 3 the channel does not exist -
+            // S1/S2 canon byte-identical.
+            Check("fokuszone.gate_rung2", null,
+                  SectionConsumers.FokuszoneHeadFor(space, crit,
+                      new List<string> { "X", "LU" }, 2));
+            // law 2 (zone beats pass-by): the canon-rank hero OUTSIDE the zone
+            // loses to the anchored worker inside.
+            Check("fokuszone.zone_wins", "LU",
+                  SectionConsumers.FokuszoneHeadFor(space, crit,
+                      new List<string> { "X", "LU" }, 3));
+            // law 3 (no double signal): head already inside the zone -> the
+            // helper returns the head itself; the consumer treats it as
+            // "no change" (canon stands, no tail).
+            Check("fokuszone.head_stands", "LU",
+                  SectionConsumers.FokuszoneHeadFor(space, crit,
+                      new List<string> { "LU", "X" }, 5));
+            // law 4 (facts only): nobody anchored in the zone -> null = canon.
+            Check("fokuszone.nobody_in_zone", null,
+                  SectionConsumers.FokuszoneHeadFor(space, crit,
+                      new List<string> { "X", "Y" }, 5));
+            // law 5 (facts only): no critical section -> null = canon.
+            Check("fokuszone.no_zone", null,
+                  SectionConsumers.FokuszoneHeadFor(space, new List<string>(),
+                      new List<string> { "LU", "X" }, 5));
+            // law 6 (no space / no belief rail): null = canon.
+            Check("fokuszone.no_space", null,
+                  SectionConsumers.FokuszoneHeadFor(null, crit,
+                      new List<string> { "LU" }, 5));
+        }
     }
 }

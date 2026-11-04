@@ -44,6 +44,17 @@ public class UITacticalAI
 	// row falls back to the plain officer row, then to the pattern tree.
 	public string apTreeOfficerAggressive, apTreeOfficerGuard, apTreeOfficerBlocker, apTreeOfficerSupport, apTreeOfficerAmbush;
 	public string apTreeOfficerEliteAggressive, apTreeOfficerEliteGuard, apTreeOfficerEliteBlocker, apTreeOfficerEliteSupport, apTreeOfficerEliteAmbush;
+	// O-C (Thomas 04.11., card t_a2d88c50): supporter-codex ersatzzweig - shown
+	// ONLY for printed-order cards WITHOUT a proven emergency (skill >= S2;
+	// decision in Core OfficerDoctrine.TreeKindFor). Keep = give the Order,
+	// group leash, no self-initiated attack. apTreeOfficerNotfall wraps the
+	// PROVEN OfficerEmergency reason ({0} = Core why-line) as the tree-head
+	// line for the Emergency variant. Missing rows degrade to the old officer
+	// tree via FirstNonEmpty (stale language asset = old behaviour, never a
+	// blank popup).
+	public string apTreeOfficerNotfall;
+	public string apTreeOfficerKeepAggressive, apTreeOfficerKeepGuard, apTreeOfficerKeepBlocker, apTreeOfficerKeepSupport, apTreeOfficerKeepAmbush;
+	public string apTreeOfficerEliteKeepAggressive, apTreeOfficerEliteKeepGuard, apTreeOfficerEliteKeepBlocker, apTreeOfficerEliteKeepSupport, apTreeOfficerEliteKeepAmbush;
 	public string overlordFallback;
 	// M13c (Thomas 30.10): shuffleNote DELETED ("(afterwards: shuffle this
 	// group's deck)" does not exist in this app's flow - honest removal).

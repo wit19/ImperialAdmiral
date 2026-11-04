@@ -96,6 +96,24 @@ public static class OfficerTextGate
             foreach (var k in EliteKeys)
                 CheckTree(flat, tag, de, k, false);
 
+            // O-C (card t_a2d88c50): the supporter keep ersatzzweig. Regular
+            // keep trees ride the SAME regular-tree laws (one move-only order
+            // branch, headers, keywords) PLUS the keep laws; elite keep trees
+            // drop the Angriff receiver branch (emergency privilege) so they
+            // run their own shape check; apTreeOfficerNotfall wraps the
+            // proven OfficerEmergency why-line for the popup tree head.
+            foreach (var k in RegularKeys)
+            {
+                var kk = KeepOf(k);
+                CheckTree(flat, tag, de, kk, true);
+                string kv;
+                if (flat.TryGetValue(kk, out kv) && !string.IsNullOrEmpty(kv))
+                    CheckKeepLaws(tag + "/" + kk, de, kv);
+            }
+            foreach (var k in EliteKeys)
+                CheckEliteKeepTree(flat, tag, de, KeepOf(k), k);
+            CheckNotfallKey(flat, tag, de);
+
             // shared note rendered in every officer popup (bug5 subject law)
             string lane;
             flat.TryGetValue("ordAbilitiesLane", out lane);
@@ -207,7 +225,14 @@ public static class OfficerTextGate
             }
         }
         if (!treeOk) return;
+        CheckSharedLaws(name, de, key, v, regular);
+    }
 
+    // Shared bug-law tail of CheckTree - law subset that guards EVERY officer
+    // popup tree shipped under uiTacticalAI: the ten legacy trees AND the O-C
+    // supporter keep trees (card t_a2d88c50).
+    static void CheckSharedLaws(string name, bool de, string key, string v, bool regular)
+    {
         // shared bug laws over every line
         Ok(v.IndexOf("Spieler") < 0 && v.ToLowerInvariant().IndexOf("player") < 0,
            name + " no player/Spieler subject (bug5)");
@@ -232,7 +257,7 @@ public static class OfficerTextGate
         Ok(guard == def, name + " guard-zone definition placement (bug3)");
         if (def)
         {
-            var first = lines[0];
+            var first = v.Split('\n')[0];
             Ok(!first.Contains("Felder") && first.IndexOf(" Feld ") < 0 &&
                first.ToLowerInvariant().IndexOf("spaces") < 0,
                name + " guard-zone definition is data-free (bug3)");
@@ -255,5 +280,96 @@ public static class OfficerTextGate
             Ok(v.Contains(ExecChoiceEn),
                name + " EN elite names the printed Executive Order");
         }
+    }
+
+    // ---- O-C supporter keep trees (card t_a2d88c50) -----------------------
+    // apTreeOfficer<Pattern> -> apTreeOfficerKeep<Pattern>, elite pair stays
+    // adjacent (apTreeOfficerElite<Pattern> -> apTreeOfficerEliteKeep<Pattern>).
+    static string KeepOf(string legacyKey)
+    {
+        return legacyKey.StartsWith("apTreeOfficerElite")
+            ? legacyKey.Replace("apTreeOfficerElite", "apTreeOfficerEliteKeep")
+            : legacyKey.Replace("apTreeOfficer", "apTreeOfficerKeep");
+    }
+
+    // Laws that ONLY the supporter ersatzzweig carries (both regular and
+    // elite keep trees): the frame, the E conditions as table text, the
+    // removal of every self-combat instruction, and the GRUPPEN-LEINE clause
+    // in the exact words of the O-B engine law (Baum says never "drift weg",
+    // the engine never pulls farther from the anchor without an emergency -
+    // the O-B check cases are explainable from the tree).
+    static void CheckKeepLaws(string name, bool de, string v)
+    {
+        Ok(v.Contains(de ? "Kein Notfall? \u2192" : "No emergency? \u2192"),
+           name + " keep frame branch present (O-C)");
+        Ok(v.Contains(de ? "er steht unter Feuer" : "he is under fire") &&
+           v.Contains(de ? "ein Held steht direkt an ihm" : "a hero stands directly beside him") &&
+           v.Contains(de ? "letzte lebende imperiale Gruppe" : "last surviving Imperial group"),
+           name + " names the emergency conditions as table text (O-C)");
+        string[] banned = de
+            ? new[] { "\u2192 selbst angreifen", "\u2192 es angreifen", "\u2192 ihn angreifen",
+                      "Fokusziel angreifen" }
+            : new[] { "\u2192 attack it", "\u2192 attack yourself", "attack the focus target" };
+        foreach (var b in banned)
+            Ok(v.IndexOf(b) < 0, name + " keep tree carries no self-attack: " + b);
+        var core = de
+            ? "nie weiter vom n\u00e4chsten imperialen Verb\u00fcndeten weg als er gerade entfernt ist"
+            : "farther from your nearest Imperial ally than it is right now";
+        int n = 0, i = 0;
+        while ((i = v.IndexOf(core, i)) >= 0) { n++; i += core.Length; }
+        Ok(n == 3, name + " group leash on the keep branch AND both movement tails (" + n + "/3)");
+    }
+
+    // The elite keep tree drops the Angriff receiver branch entirely (M6n's
+    // Bewegung ODER Angriff question is an emergency privilege) and rewrites
+    // the exec question to movement-only - so it runs its own shape check
+    // instead of the legacy elite C1 law.
+    static void CheckEliteKeepTree(Dictionary<string, string> flat, string tag, bool de,
+                                   string key, string legacyKey)
+    {
+        string v, legacy;
+        flat.TryGetValue(key, out v);
+        flat.TryGetValue(legacyKey, out legacy);
+        var name = tag + "/" + key;
+        Ok(!string.IsNullOrEmpty(v), name + " present");
+        if (string.IsNullOrEmpty(v)) return;
+        int choices = 0, moves = 0, attacks = 0;
+        string choice = null, mv = null;
+        foreach (var ln in v.Split('\n'))
+        {
+            if (ln.Contains(de ? ExecChoiceDe : ExecChoiceEn)) { choices++; choice = ln; }
+            if (ln.Contains(de ? MvBranchDe : MvBranchEn)) { moves++; mv = ln; }
+            if (ln.Contains(de ? AtkBranchDe : AtkBranchEn)) attacks++;
+        }
+        Ok(choices == 1 && moves == 1 && attacks == 0,
+           name + " exec question + Bewegung answer, NO Angriff branch (" +
+           choices + "/" + moves + "/" + attacks + ")");
+        if (choices != 1 || moves != 1 || attacks != 0) return;
+        Ok(choice.Contains(de ? "nur Bewegung, nie ein Angriff" : "movement only, never an attack") &&
+           choice.Contains(de ? "verbrauch" : "spends"),
+           name + " exec question without an emergency: movement only + AP cost (O-C)");
+        string legacyMv = null;
+        foreach (var ln in (legacy ?? "").Split('\n'))
+            if (ln.Contains(de ? MvBranchDe : MvBranchEn)) legacyMv = ln;
+        Ok(legacyMv != null && mv == legacyMv,
+           name + " Bewegung answer byte-identical to the legacy tree (O-C)");
+        CheckKeepLaws(name, de, v);
+        CheckSharedLaws(name, de, key, v, false);
+    }
+
+    // The why-line wrapper for a PROVEN emergency (EmergencyFor result). It
+    // rides the tree head, EXPLAIN-independent - the color opener keeps it out
+    // of the popup's colon-prefix bold whitelist by design.
+    static void CheckNotfallKey(Dictionary<string, string> flat, string tag, bool de)
+    {
+        string v;
+        flat.TryGetValue("apTreeOfficerNotfall", out v);
+        var name = tag + "/apTreeOfficerNotfall";
+        Ok(!string.IsNullOrEmpty(v), name + " present");
+        if (string.IsNullOrEmpty(v)) return;
+        Ok(v.StartsWith("<color"), name + " opens with a color tag (bold-whitelist law)");
+        Ok(v.Replace("{0}", "").IndexOf('{') < 0, name + " only the {0} placeholder");
+        Ok(v.Contains(de ? "Selbstverteidigung ist erlaubt." : "Self-defense is allowed."),
+           name + " names the self-defense permission");
     }
 }

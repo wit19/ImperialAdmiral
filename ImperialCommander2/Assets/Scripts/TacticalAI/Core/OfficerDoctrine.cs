@@ -67,6 +67,30 @@ namespace TacticalAI.Core
             new OfficerEmergencyResult(OfficerEmergency.None, "");
     }
 
+    /// O-C (card t_a2d88c50, Thomas-Gesetz 04.11.): which activation-tree
+    /// variant an OFFICER popup shows. Only consulted when the bridge already
+    /// detected a printed command ability (the Officer flag) - the ui.json
+    /// key mapping is the bridge's job, the DECISION is pinned here.
+    public enum OfficerTreeKind
+    {
+        /// apTreeOfficer&lt;Pattern&gt; exactly as before: field-commander
+        /// exceptions (id wall DG075/DG078), non-supporter cards, and S1 -
+        /// the codex only speaks from S2 up, the beginner mistake stays
+        /// honestly disclosed like the other S1 handicaps.
+        Legacy,
+        /// supporter + a PROVEN emergency (E1..E4): the same tree as Legacy
+        /// (doctrine-correct self-combat is allowed) plus the why-line at
+        /// the tree head naming the proven reason (ui.json
+        /// apTreeOfficerNotfall wraps OfficerEmergencyResult.Why).
+        Emergency,
+        /// supporter + skill >= S2 + no proven emergency: the ersatzzweig
+        /// (apTreeOfficerKeep&lt;Pattern&gt; / apTreeOfficerEliteKeep&lt;Pattern&gt;)
+        /// - give the Order, group leash, no self-initiated attack. E2 (a
+        /// hero stands right next to the figure) is TABLE knowledge the app
+        /// cannot see: the keep text hands that exception to the human.
+        Keep,
+    }
+
     public static class OfficerDoctrine
     {
         /// Codex skill floor (Thomas 04.11.): ab S2. S1 keeps the old path
@@ -168,6 +192,25 @@ namespace TacticalAI.Core
                     "Er ist die letzte lebende imperiale Gruppe.");
 
             return OfficerEmergencyResult.None;
+        }
+
+        // ---- O-C popup tree variant (card t_a2d88c50) ----------------------
+        /// The pure tree-selection decision behind the popup (see
+        /// OfficerTreeKind). Skill gate: the codex branch only speaks from
+        /// S2 up (MinSkill - the SAME constant as EmergencyFor, so an S1
+        /// result can never disagree with the tree shown). supporter is the
+        /// identity bit from EmergencyFor's source (GroupFacts.Supporter <-
+        /// DeploymentCard.Supporter, printed-token law + id wall); a
+        /// non-supporter (troop, DG075/DG078) keeps the pre-O-C tree
+        /// byte-identically. The bridge maps the kind onto the ui.json keys.
+        public static OfficerTreeKind TreeKindFor(int skill, bool supporter,
+                                                  OfficerEmergency emergency)
+        {
+            if (skill < MinSkill) return OfficerTreeKind.Legacy;
+            if (!supporter) return OfficerTreeKind.Legacy;
+            return emergency == OfficerEmergency.None
+                ? OfficerTreeKind.Keep
+                : OfficerTreeKind.Emergency;
         }
 
         // Printed ranged capability from the catalog (public card fact).

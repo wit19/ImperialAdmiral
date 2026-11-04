@@ -1,0 +1,790 @@
+{
+  "_comment": "O-C supporter-branch vectors (card t_a2d88c50, Thomas-Gesetz 04.11.): OfficerDoctrine.TreeKindFor selects the popup tree variant behind the EmergencyFor cascade the bridge runs on the REAL feed path. EVERY expect block is HAND-PINNED (the law IS the expectation - Legacy for non-supporters/DG075 id wall/S1 gate, Keep for supporter+S2+proven-none, Emergency for supporter+proven E1/E4; the why strings are byte-identical to the O-A pins od_e1_under_fire/od_e4_last_group so the popup why-line wraps exactly the O-A-pinned reasons). No --record twin exists for this file. Card records are the shipped printed stats copied from officer_doctrine.json. The pure skill x supporter x emergency MATRIX is hand-pinned as a law loop in SectionsOfficerTree.cs. Tree TEXT byte-identity of the old ten trees is gate-verified (OfficerTextGate over shipped ui.json, 11 languages); this fixture pins the SELECTION, the gate pins the SHIPPED TEXT.",
+  "cards": [
+    {
+      "id": "DG004",
+      "name": "Imperial Officer",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "DG006",
+      "name": "Imperial Officer (Elite)",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 5,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": true,
+      "keywords": [
+        "OfficerExecOrder"
+      ]
+    },
+    {
+      "id": "DG075",
+      "name": "Kayn Somos",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 12,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Blue",
+        "Green"
+      ],
+      "isElite": true,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    },
+    {
+      "id": "DG021",
+      "name": "Tusken Raider",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Melee",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false
+    },
+    {
+      "id": "DG009",
+      "name": "Royal Guard",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Melee",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false
+    },
+    {
+      "id": "CUSTOM_FAN",
+      "name": "Fan Officer Import",
+      "miniSize": "Small1x1",
+      "speed": 4,
+      "health": 3,
+      "attackType": "Ranged",
+      "attacks": [
+        "Blue",
+        "Yellow"
+      ],
+      "isElite": false,
+      "keywords": [
+        "OfficerOrder"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "otc_quiet_supporter",
+      "comment": "Supporter (printed Order token) at S2, nothing in the feed proves an emergency -> TreeKindFor says Keep: the ersatzzweig replaces the self-combat branch (no 'unter Feuer' history, three groups live).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Keep"
+      }
+    },
+    {
+      "name": "otc_e1_under_fire",
+      "comment": "E1 proven (R-A attributed GroupDamage inside the live round) -> Emergency: the popup keeps the OLD doctrine tree (self-combat allowed) and the apTreeOfficerNotfall why-line names the shooter. Why string byte-identical to the O-A pin (od_e1_under_fire).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "E1",
+        "why": "Er steht unter Feuer (Lokaku).",
+        "kind": "Emergency"
+      }
+    },
+    {
+      "name": "otc_s1_gate_quiet",
+      "comment": "Skill gate (Thomas 04.11.): the codex branch only speaks from S2. S1 + supporter + quiet -> Legacy: S1 keeps the OLD tree line, the beginner mistake stays honestly disclosed like the other S1 handicaps.",
+      "skill": 1,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Legacy"
+      }
+    },
+    {
+      "name": "otc_s1_gate_e1_stays_old",
+      "comment": "Defense-in-depth pin: even with E1 events in the feed, S1 EmergencyFor is None (O-A S1-silence) and TreeKindFor gates on MinSkill independently - the tree AND the why-line stay the old path at S1.",
+      "skill": 1,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG004",
+          "name": "Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Legacy"
+      }
+    },
+    {
+      "name": "otc_id_wall_somos_legacy",
+      "comment": "Field-commander id wall: DG075 prints the token but DeploymentCard.FieldCommanderExceptions excludes the id -> not a supporter -> Legacy tree BYTE-IDENTICAL to pre-O-C, even while under fire (EmergencyFor self-blocks on !Supporter).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 1,
+            "name": "Kayn Somos"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG075",
+          "name": "Kayn Somos",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Legacy"
+      }
+    },
+    {
+      "name": "otc_import_token_keep",
+      "comment": "Import card carrying the printed Order token inherits the supporter identity (keyword-driven, never name-driven - O-A law): import + S2 + quiet -> Keep ersatzzweig.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Fan Officer"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "CUSTOM_FAN",
+          "name": "Fan Officer",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Keep"
+      }
+    },
+    {
+      "name": "otc_e4_last_group_elite",
+      "comment": "E4 proven (only one living imperial group) for the ELITE officer (Executive Order): Emergency -> the old elite tree runs (its Bewegung ODER Angriff receiver branches stay legal) plus the why-line. Why byte-identical to the O-A pin (od_e4_last_group).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer (Elite)"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG006",
+          "name": "Officer (Elite)",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 0
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 0
+        }
+      ],
+      "expect": {
+        "stage": "E4",
+        "why": "Er ist die letzte lebende imperiale Gruppe.",
+        "kind": "Emergency"
+      }
+    },
+    {
+      "name": "otc_plain_trooper_legacy",
+      "comment": "Tokenless troop (DG021): never a supporter -> Legacy even under fire. The O-C branch cannot touch non-officer popups (belt gate plan.Officer filters earlier; TreeKindFor independently says Legacy).",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Tusken Raider"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Lokaku"
+          }
+        },
+        {
+          "kind": "GroupDamage",
+          "round": 2,
+          "payload": {
+            "group": "OFF",
+            "figure": 0,
+            "wheel": 1,
+            "health": 2
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG021",
+          "name": "Tusken Raider",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Legacy"
+      }
+    },
+    {
+      "name": "otc_elite_quiet_keep",
+      "comment": "Elite officer, S2, quiet: Keep. The DG006-Bewegungsast then says Vollstreckungsbefehl = movement ONLY (no recipient attack) and the keep law bars the self-attack - the M6n Bewegung ODER Angriff branch is an emergency privilege.",
+      "skill": 2,
+      "self": "OFF",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Kill the rebel leaders.",
+            "priorityTarget": "Rebel",
+            "roundLimit": -1,
+            "mission": "oc",
+            "missionType": "Story"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "OFF",
+            "size": 2,
+            "name": "Officer (Elite)"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "TUSK",
+            "size": 2,
+            "name": "Tusken"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GRD",
+            "size": 2,
+            "name": "Royal Guard"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "OFF",
+          "card": "DG006",
+          "name": "Officer (Elite)",
+          "n_alive": 1
+        },
+        {
+          "id": "TUSK",
+          "card": "DG021",
+          "name": "Tusken",
+          "n_alive": 1
+        },
+        {
+          "id": "GRD",
+          "card": "DG009",
+          "name": "Royal Guard",
+          "n_alive": 1
+        }
+      ],
+      "expect": {
+        "stage": "None",
+        "why": "",
+        "kind": "Keep"
+      }
+    }
+  ]
+}

@@ -76,6 +76,14 @@ namespace TacticalAI
         //   "OfficerExecOrder" -> apTreeOfficerElite<Pattern>  (DG006)
         public bool Officer;
         public bool OfficerElite;
+        // O-C (Thomas 04.11., card t_a2d88c50): supporter-codex tree variant,
+        // decided by OfficerDoctrine.TreeKindFor. OfficerKeep = show the
+        // apTreeOfficerKeep<Pattern> ersatzzweig (supporter, S2+, no PROVEN
+        // emergency). EmergencyWhy = pre-rendered apTreeOfficerNotfall line
+        // naming a proven emergency (null = no line). Both default off: non-
+        // officers, DG075/DG078 and S1 keep the byte-identical old tree.
+        public bool OfficerKeep;
+        public string EmergencyWhy;
         // Personas (M3): "Persona - Rang - aktive Boni" line for this
         // group's activation popup (PersonaState.DescribeLine); null when no
         // persona plays. Pure display - changes no plan number.
@@ -781,6 +789,41 @@ namespace TacticalAI
             // catalog record - see the block synthesis above.)
             plan.Pattern = _patternByCard != null && _patternByCard.TryGetValue(cd.id, out var pat)
                            && !string.IsNullOrEmpty(pat) ? pat : "aggressive";
+            // O-C (card t_a2d88c50): supporter-codex tree variant + emergency
+            // why-line, decided by the pure OfficerDoctrine.TreeKindFor. The
+            // machine proves what the FEED shows (E1 under fire, E4 last
+            // group; E3 stays silent without a designated threat hero, E2
+            // "a hero stands right next to him" is TABLE knowledge the keep
+            // branch hands to the human reader). Null roster/threat inputs
+            // fail-closed to None - a missing signal can never fabricate the
+            // Emergency variant (same injection discipline as O-A/O-B).
+            plan.OfficerKeep = false;
+            plan.EmergencyWhy = null;
+            if (plan.Officer)
+            {
+                var ocs = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
+                int ocr = 1;   // defensive: a null profile keeps the honest S1 basis
+                if (ocs != null && ocs.Level != null && ocs.Level.Length == 2 && ocs.Level[0] == 'S')
+                    ocr = ocs.Level[1] - '0';
+                List<Tac.GroupFacts> ocRoster; List<Tac.Figure> ocFigures;
+                BuildGroups(out ocRoster, out ocFigures, _lastFeedView);
+                Tac.GroupFacts ocSelf = null;
+                foreach (var gf in ocRoster)
+                    if (gf.GroupId == cd.id) { ocSelf = gf; break; }
+                bool sup = ocSelf != null && ocSelf.Supporter;
+                var em = Tac.OfficerDoctrine.EmergencyFor(ocr, _lastFeedView,
+                    ocSelf, ocRoster, null, _catalog, false);
+                var kind = Tac.OfficerDoctrine.TreeKindFor(ocr, sup, em.Stage);
+                if (kind == Tac.OfficerTreeKind.Keep) plan.OfficerKeep = true;
+                else if (kind == Tac.OfficerTreeKind.Emergency)
+                {
+                    // a missing/malformed key never ships raw braces to the
+                    // player - the tree itself stays correct either way.
+                    var ocWhy = UIx != null ? TF(UIx.apTreeOfficerNotfall, em.Why) : null;
+                    if (!string.IsNullOrEmpty(ocWhy) && ocWhy.IndexOf('{') < 0)
+                        plan.EmergencyWhy = ocWhy;
+                }
+            }
             // M6p (Thomas 02.11): the doctrine moved OUT of the gated explain
             // block into this permanent line - the popup prints it directly
             // after the focus-target line, always visible (EXPLAIN level is
@@ -959,6 +1002,12 @@ namespace TacticalAI
                 : TF(L.apHead, 2, plan.Assault ? 2 : 1);
             if (!string.IsNullOrEmpty(head)) outp.Add(head);
             if (!string.IsNullOrEmpty(L.apRule)) outp.Add(L.apRule);
+            // O-C (card t_a2d88c50): the why-line for a PROVEN emergency rides
+            // the TREE itself at its head - visible independent of the EXPLAIN
+            // level, like the focus line (law of 02.11: the explain cell is no
+            // definition carrier; the definition belongs in the tree - M6s-B5
+            // lesson). Only set when TreeKindFor said Emergency.
+            if (!string.IsNullOrEmpty(plan.EmergencyWhy)) outp.Add(plan.EmergencyWhy);
             var tree = TreeFor(L, plan);
             var speed = (cd != null ? cd.speed : 0)
                 .ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -1025,19 +1074,31 @@ namespace TacticalAI
                 return FirstNonEmpty(L.apTreeNoTarget, L.apTreeAggressive);
             if (plan.Officer)
             {
-                string off = null, offElite = null;
+                string off = null, offElite = null, offKeep = null, offKeepElite = null;
                 switch (plan.Pattern ?? "aggressive")
                 {
-                    case "guard":    off = L.apTreeOfficerGuard;    offElite = L.apTreeOfficerEliteGuard;    break;
-                    case "blocker":  off = L.apTreeOfficerBlocker;  offElite = L.apTreeOfficerEliteBlocker;  break;
-                    case "support":  off = L.apTreeOfficerSupport;  offElite = L.apTreeOfficerEliteSupport;  break;
-                    case "ambusher": off = L.apTreeOfficerAmbush;   offElite = L.apTreeOfficerEliteAmbush;   break;
+                    case "guard":    off = L.apTreeOfficerGuard;    offElite = L.apTreeOfficerEliteGuard;
+                                      offKeep = L.apTreeOfficerKeepGuard;    offKeepElite = L.apTreeOfficerEliteKeepGuard;    break;
+                    case "blocker":  off = L.apTreeOfficerBlocker;  offElite = L.apTreeOfficerEliteBlocker;
+                                      offKeep = L.apTreeOfficerKeepBlocker;  offKeepElite = L.apTreeOfficerEliteKeepBlocker;  break;
+                    case "support":  off = L.apTreeOfficerSupport;  offElite = L.apTreeOfficerEliteSupport;
+                                      offKeep = L.apTreeOfficerKeepSupport;  offKeepElite = L.apTreeOfficerEliteKeepSupport;  break;
+                    case "ambusher": off = L.apTreeOfficerAmbush;   offElite = L.apTreeOfficerEliteAmbush;
+                                      offKeep = L.apTreeOfficerKeepAmbush;   offKeepElite = L.apTreeOfficerEliteKeepAmbush;   break;
                     // hunter shares the aggressive officer row (mirrors the
                     // plain pattern trees, where hunter = aggressive).
-                    default:         off = L.apTreeOfficerAggressive; offElite = L.apTreeOfficerEliteAggressive; break;
+                    default:         off = L.apTreeOfficerAggressive; offElite = L.apTreeOfficerEliteAggressive;
+                                      offKeep = L.apTreeOfficerKeepAggressive; offKeepElite = L.apTreeOfficerEliteKeepAggressive; break;
                 }
+                // O-C (card t_a2d88c50): supporter without a proven emergency
+                // rides the Keep ersatzzweig; a missing keep row (stale
+                // language asset) degrades through the SAME FirstNonEmpty
+                // chain - old officer row, then pattern tree.
                 if (plan.OfficerElite)
-                    return FirstNonEmpty(offElite, off, PatternTree(L, plan));
+                    return FirstNonEmpty(plan.OfficerKeep ? offKeepElite : null,
+                                         offElite, off, PatternTree(L, plan));
+                if (plan.OfficerKeep)
+                    return FirstNonEmpty(offKeep, off, PatternTree(L, plan));
                 return FirstNonEmpty(off, PatternTree(L, plan));
             }
             return PatternTree(L, plan);

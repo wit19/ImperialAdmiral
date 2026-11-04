@@ -175,11 +175,12 @@ the deal in tactical mode: ticking a hero's activation checkbox is the one publi
 signal that says *"this hero's turn is over now"*, and the tactical AI reads the
 mission log exactly like the table reads it — events written *before* your flip
 belong to that hero (the figure who opened the door gets the door; the hero who
-shot the named target gets the strike credit). If you flip the box at the *start*
-of a turn instead, the AI credits the events to the wrong hero — and it will look
-"very dumb", because the AI only knows what the log says. The flips also appear
-as regular lines in the in-game mission log panel (same kind of line the imperial
-activation pop-ups have always written there).
+shot the objective's troops gets the strike credit *and* becomes the one the plan
+focuses on — the marker follows the fighting, not the errands). If you flip the box
+at the *start* of a turn instead, the AI credits the events to the wrong hero — and
+it will look "very dumb", because the AI only knows what the log says. The flips
+also appear as regular lines in the in-game mission log panel (same kind of line
+the imperial activation pop-ups have always written there).
 
 Mission-authored figures — the special ones a scenario spawns for you (a named
 villain like Ivan Talos, custom bosses, mission troopers) — are planned

@@ -329,6 +329,18 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   the shooter is resolved against the open hero-activation window
   (lastActivator closes it; `strikePending` at RoundEnd) in
   `WorldEventsUnity.cs`. Doors enter as GUID events.
+- **Strike = objective work (Player-21-b, Thomas 04.11).** Two laws in
+  `WorldEventVector`. GARRISON: a hero's in-window damage on a group the
+  mission Spawned DURING the current objective (spawn round >= change round,
+  only after a change) MOVES `ObjectiveActor` onto the shooter — EMPIRE2's
+  "Sucht im Diner nach dem Duros." never names the garrison, but fighting it
+  IS the phase's objective work. CLOSED-WINDOW CREDITS: the closer who
+  finishes a `strikePending` window also takes the marker. The door-opener
+  Davith case: no attack = no marker (he lost it to CT-1701 who shot the
+  phase troops). BEFORE the first ObjectiveChange the garrison channel is
+  closed (initial vectors byte-identical). `engages` = named-hero canon
+  branch OR garrison branch; pinned `p21_garrison_strike_window` +
+  `p21_prechange_spawn_inert`.
 - **Ledger (RB, b893b58).** `WorldEventVector.cs` stores `obj:` /
   `door-GUID:` / `at:` facts with `fact|hypothesis` grading — symbolic
   last-seen anchors; the projection stays coordinate-free outside the hole.

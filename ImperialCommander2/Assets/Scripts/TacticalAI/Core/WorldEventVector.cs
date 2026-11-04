@@ -32,6 +32,17 @@ namespace TacticalAI.Core
         // who struck the mission-named figure; the credit ROUND breaks the
         // tie - the most recent engagement leads.
         public int ObjectiveActorRound;
+        // Player-21-b (Thomas 04.11, "Da stimmt dann etwas nicht"): when a
+        // mission's CURRENT phase is fought through freshly spawned troops
+        // (Garrison: officer (Elite) + Ordnungssoldaten), engaging THEM is
+        // objective work - even though the objective text ("Sucht im Diner
+        // nach dem Duros.") never names them. Facts only: the Spawn ROUND of
+        // the group, the round of the last ObjectiveChange, and the damage
+        // event's activation window - no text parsing, no positions. Before
+        // the first ObjectiveChange this channel is CLOSED (initial-phase
+        // vectors stay byte-identical; only the named-figure law applies).
+        public bool ObjectiveChanged;
+        public int ObjectiveSinceRound = 1;
         // M8/F5: MissionStart clock inputs, kept so a runtime RoundLimitChanged
         // can re-derive the posture exactly like a fresh MissionStart would.
         // (Canon text unchanged - posture, not its inputs, is the decision.)
@@ -339,6 +350,18 @@ namespace TacticalAI.Core
             // or the blocker that made it happen. Expires at RoundEnd: a
             // damage older than the round is history, not causation.
             bool strikePending = false;
+            // Player-21-b single arming question for the strike channel:
+            // does damage on THIS group count as working the CURRENT
+            // objective? Canon branch: the objective text NAMES the figure
+            // (Player-19 law, e.g. "Besiegt Ivan Talos."). Garrison branch:
+            // the Spawn put the group out during the current objective's
+            // round (only after a change) - the phase's own troops, fought
+            // where the mission text never names them.
+            Func<FeedWorldView.GroupView, bool> engages = g =>
+                (!string.IsNullOrEmpty(v.Objective) && !string.IsNullOrEmpty(g.DisplayName)
+                    && NamesHero(v.Objective, g.DisplayName))
+                || (v.ObjectiveChanged && g.DeployedRound > 0
+                    && g.DeployedRound >= v.ObjectiveSinceRound);
             foreach (var e in events)
             {
                 if (e.Round > v.Round) v.Round = e.Round;
@@ -352,10 +375,14 @@ namespace TacticalAI.Core
                                                   e.Str("priorityTarget"),
                                                   e.Long("roundLimit", -1));
                         ApplyDesignation(v, v.Objective, e.Round);   // initial public designation
+                        v.ObjectiveChanged = false;
+                        v.ObjectiveSinceRound = e.Round;   // Player-21-b: phase clock
                         break;
                     case "ObjectiveChange":
                         v.Objective = e.Str("objective") ?? v.Objective;
                         ApplyDesignation(v, v.Objective, e.Round);
+                        v.ObjectiveChanged = true;             // Player-21-b: from here on
+                        v.ObjectiveSinceRound = e.Round;       // fresh spawns = the phase's garrison
                         // Player-19: terminal credit - open window first,
                         // else the hero who acted just before the change.
                         v.ObjectiveActor = heroWindow ?? lastActivator ?? "";
@@ -514,17 +541,21 @@ namespace TacticalAI.Core
                             // Talos." + a group displaying that name). Public
                             // activation order is the attribution channel - the
                             // M10b law, mirror image. Never a position read.
-                            if (heroWindow != null && !string.IsNullOrEmpty(g.DisplayName)
-                                && !string.IsNullOrEmpty(v.Objective)
-                                && NamesHero(v.Objective, g.DisplayName))
+                            if (heroWindow != null && engages(g))
                             {
                                 var striker = Hero(v, heroWindow);
                                 striker.Strikes++;
                                 striker.StrikeRound = e.Round;
+                                // Player-21-b: a landed strike MOVED the
+                                // marker - the hero fighting the phase's
+                                // troops works the objective, so the marker
+                                // follows the work (Thomas: "Wieso war Davith
+                                // durch sein Türöffnen noch der
+                                // Missionszielmarker?").
+                                v.ObjectiveActor = heroWindow;
+                                v.ObjectiveActorRound = e.Round;
                             }
-                            else if (heroWindow == null && !string.IsNullOrEmpty(g.DisplayName)
-                                && !string.IsNullOrEmpty(v.Objective)
-                                && NamesHero(v.Objective, g.DisplayName))
+                            else if (heroWindow == null && engages(g))
                             {
                                 strikePending = true;   // credits the closer
                             }
@@ -580,6 +611,10 @@ namespace TacticalAI.Core
                                 var s = Hero(v, e.Str("hero"));
                                 s.Strikes++;
                                 s.StrikeRound = e.Round;
+                                // Player-21-b: same marker move for the
+                                // closed-window attribution (the flip law).
+                                v.ObjectiveActor = e.Str("hero");
+                                v.ObjectiveActorRound = e.Round;
                                 strikePending = false;
                             }
                             break;

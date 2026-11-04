@@ -8,14 +8,16 @@ using UnityEngine;
 
 public static class DataStore
 {
-	// FORK VERSION LAW (Thomas 03.11): TitleController.CheckVersion compares
-	// the LATEST RELEASE TAG of our fork (wit19) against THIS string. Format:
-	// upstream number + our build counter after '#'. Git tags forbid spaces,
-	// so the tag is "v.2.2.16#1000" while the release TITLE may show
-	// "v.2.2.16 #1000". On every new fork release: bump the counter, push the
-	// tag from main, cut the release, update THIS constant in the same commit
-	// - or the title icon stays orange.
-	public static readonly string appVersion = "v.2.2.16#1000";
+	// FORK VERSION LAW (Thomas 03.11, counter rhythm updated 04.11):
+	// TitleController.CheckVersion compares the LATEST RELEASE TAG of our fork
+	// (wit19) against THIS string. Format: upstream number + our build counter
+	// after '#'. Git tags forbid spaces, so the tag is "v.2.2.16#1001" while
+	// the release TITLE may show "v.2.2.16 #1001". NEW RHYTHM (Thomas 04.11):
+	// EVERY push to main bumps the counter by one - the title screen number is
+	// how we see which build is current. Tag + release move WITH the push in
+	// the same step (tag from main, same tag as release title), or the title
+	// icon goes orange: the counter and the latest tag must stay married.
+	public static readonly string appVersion = "v.2.2.16#1001";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

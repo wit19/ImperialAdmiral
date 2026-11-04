@@ -1123,7 +1123,7 @@
   },
   {
    "name": "p19_causal_strike_closer",
-   "comment": "M6s-B7 real-game strike law (Player-19 table discipline): the checkbox flip is the END of a turn and now a causal mission-log line. Damage on the objective-named figure arms a pending strike; the hero whose turn closes next is the shooter. MHD-19 can no longer steal it by flipping its (first-ever) box first.",
+   "comment": "M6s-B7 real-game strike law (Player-19 table discipline): the checkbox flip is the END of a turn and now a causal mission-log line. Damage on the objective-named figure arms a pending strike; the hero whose turn closes next is the shooter. MHD-19 can no longer steal it by flipping its (first-ever) box first. Player-21-b (Thomas 04.11): a landed strike now MOVES the objective marker onto the striker/closer - fighting the phase's troops IS objective work; this case's actor flips from empty to Jyn Odan by law.",
    "events": [
     {
      "kind": "MissionStart",
@@ -1166,12 +1166,12 @@
    "expect": {
     "posture": "stall",
     "objective": "Defeat Ivan Talos.",
-    "objective_actor": "",
+    "objective_actor": "Jyn Odan",
     "round": 2,
     "threat": 0,
     "seq": 4,
     "hash": "ebdd1d5467628996640536d3710be18ef84fe5f6dea5c501727fa7d8bf31af44",
-    "canon": "mission=vector|p19_causal_strike_closer\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0|1|2\n"
+    "canon": "mission=vector|p19_causal_strike_closer\nround=2\nposture=stall\nobjective=Defeat Ivan Talos.\nobjective_actor=Jyn Odan\nthreat=0\nthreatseen=0\nseq=4\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0|1|2\n"
    }
   },
   {
@@ -1453,6 +1453,140 @@
     "seq": 10,
     "hash": "5456bdc9ae8ead36aaec80d28e4344a4e89534938fa78a794183f268c15e2a75",
     "canon": "mission=vector|ra_shot_window_switch_overwrite\nround=3\nposture=eliminate\nobjective=Defeat the rebel cell.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=10\nG|HEAVY|HEAVY|1|0|2|2|1|6|11/12|name=Heavy Troopers|shot=Lokaku|6|2\nG|SCOUT|SCOUT|1|0|1|1|1|5|2/5|name=Scout Troopers|shot=Verena Talos|9|3\nH|Lokaku|Lokaku|0|0|1|2|0|0\nseen=Lokaku zone=at:HEAVY kind=hypothesis seq=6 round=2\nH|Verena Talos|Verena Talos|0|0|1|3|0|0\nseen=Verena Talos zone=at:SCOUT kind=hypothesis seq=9 round=3\n"
+   }
+  },
+  {
+   "name": "p21_garrison_strike_window",
+   "comment": "Player-21-b (Thomas 04.11, EMPIRE2 log): the objective text ('Sucht im Diner nach dem Duros.') never names the garrison, but the troops the mission Spawned DURING this objective are its phase troops - damage inside a hero's window moves the objective marker. Facts only: spawn round vs change round vs window.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Befragt die Informanten.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p21",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 1,
+     "payload": {
+      "hero": "Davith Elso"
+     }
+    },
+    {
+     "kind": "ObjectiveChange",
+     "round": 2,
+     "payload": {
+      "objective": "Sucht im Diner nach dem Duros."
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 2,
+     "payload": {
+      "group": "GGARR",
+      "size": 2,
+      "name": "Imperiale Ordnungssoldaten"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "CT-1701"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 2,
+     "payload": {
+      "group": "GGARR",
+      "figure": 0,
+      "wheel": 1,
+      "health": 5
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "CT-1701"
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p21_garrison_strike_window\nround=2\nposture=stall\nobjective=Sucht im Diner nach dem Duros.\nobjective_actor=CT-1701\nthreat=0\nthreatseen=0\nseq=7\nG|GGARR|GGARR|1|0|2|2|2|5|9/10|name=Imperiale Ordnungssoldaten|shot=CT-1701|6|2\nH|CT-1701|CT-1701|0|0|1|2|0|0|1|2\nseen=CT-1701 zone=at:GGARR kind=hypothesis seq=6 round=2\nH|Davith Elso|Davith Elso|0|0|1|1|0|0\n",
+    "hash": "684d75068f757e211c0f67a75a0a8a78e45c5f1413cd8fbe5c51fea455bf8d97",
+    "objective": "Sucht im Diner nach dem Duros.",
+    "objective_actor": "CT-1701",
+    "posture": "stall",
+    "round": 2,
+    "seq": 7,
+    "threat": 0
+   }
+  },
+  {
+   "name": "p21_prechange_spawn_inert",
+   "comment": "Player-21-b negative pair: BEFORE the first ObjectiveChange the garrison channel is CLOSED - a hero shooting an initial-phase spawn changes nothing (initial vectors byte-identical).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Befragt die Informanten.",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "p21n",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GPROBE",
+      "size": 1,
+      "name": "Suchdroide"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 1,
+     "payload": {
+      "hero": "Biv Bodhrik"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 1,
+     "payload": {
+      "group": "GPROBE",
+      "figure": 0,
+      "wheel": 1,
+      "health": 4
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 1,
+     "payload": {
+      "hero": "Biv Bodhrik"
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|p21_prechange_spawn_inert\nround=1\nposture=stall\nobjective=Befragt die Informanten.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|GPROBE|GPROBE|1|0|1|1|1|4|3/4|name=Suchdroide|shot=Biv Bodhrik|4|1\nH|Biv Bodhrik|Biv Bodhrik|0|0|1|1|0|0\nseen=Biv Bodhrik zone=at:GPROBE kind=hypothesis seq=4 round=1\n",
+    "hash": "03d1531466cca060eed89f9499d582dcccdade6e982d7d4c810444423696214a",
+    "objective": "Befragt die Informanten.",
+    "objective_actor": "",
+    "posture": "stall",
+    "round": 1,
+    "seq": 5,
+    "threat": 0
    }
   }
  ]

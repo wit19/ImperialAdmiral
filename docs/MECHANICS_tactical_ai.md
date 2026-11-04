@@ -444,6 +444,16 @@ information only:
 
 ### Posture and patterns (the "posture" half of the wiki line)
 
+Two posture vocabularies coexist **by design** and answer different questions.
+The **doctrine posture** (`hunt`/`defend`, Debug line `doctrines posture=…`) is
+the structural mission state behind `ClassifyPattern`'s dice rows and the guard
+band (the "Punkt-2" phase rule); it has no word for stall. The **planner
+posture** (`eliminate`/`stall`/`protect`/`deny`, Debug line `posture=… round=N`)
+is the round stance derived from the public feed and drives formation, focus
+measure and clamps. An escort/infiltration mission legitimately prints `hunt`
+and `stall` side by side in the same round — different layers, not a
+misclassification.
+
 Posture is derived per round from public feed state, not chosen secretly:
 the bridge's doctrine phase rule (defend → hunt phase flip,
 TacticalAIBridge.cs "Punkt-2") feeds `ClassifyPattern`, which assigns each

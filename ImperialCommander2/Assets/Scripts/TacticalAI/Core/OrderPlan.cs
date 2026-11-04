@@ -77,12 +77,20 @@ namespace TacticalAI.Core
         // card / printed lane). Default false keeps EVERY pre-O-A vector and
         // caller bit-identical; only OfficerDoctrine reads it.
         public bool Supporter;
+        // Playtest Player-20 (Thomas 04.11): the PRINTED plain command token
+        // (OfficerOrder WITHOUT OfficerExecOrder) grants only +2 movement —
+        // real value, but too thin to earn the head of the activation order
+        // ("von einem Angriff einer Truppe hat man viel mehr"). The elite
+        // command (Executive Order = extra attack) keeps its chain slot.
+        // Default false keeps every pinned vector and caller bit-identical.
+        public bool MovementBuffOnly;
 
         public GroupFacts(string groupId, int index, string cardId, string name,
                           string pattern, int nAlive, Rational vitalityFrac,
                           string zone = null, int? arrivedRound = null,
                           bool isHeavy = false, bool isSwarm = false,
-                          bool priorityOne = false, bool supporter = false)
+                          bool priorityOne = false, bool supporter = false,
+                          bool movementBuffOnly = false)
         {
             GroupId = groupId;
             Index = index;
@@ -97,6 +105,7 @@ namespace TacticalAI.Core
             IsSwarm = isSwarm;
             PriorityOne = priorityOne;
             Supporter = supporter;
+            MovementBuffOnly = movementBuffOnly;
         }
     }
 
@@ -509,6 +518,10 @@ namespace TacticalAI.Core
 
         /// buff_before_receiver: every support group acts before the attack
         /// groups it would buff (receiver = first aggressive/hunter in order).
+        /// Playtest Player-20 (Thomas 04.11): a group whose PRINTED command is
+        /// the plain +2-movement order (MovementBuffOnly) is EXEMPT — that
+        /// buff never earns the head of the order. Elite command and every
+        /// non-officer support pattern keep the chain untouched.
         static void ApplySlotBuff(List<GroupFactsWithEv> order,
                                   Dictionary<string, List<string>> tags,
                                   Dictionary<string, List<string>> why)
@@ -517,7 +530,8 @@ namespace TacticalAI.Core
             if (receivers.Count == 0)
                 return;
             var firstReceiver = receivers[0];
-            foreach (var w in Filter(order, x => x.Facts.Pattern == "support"))
+            foreach (var w in Filter(order, x => x.Facts.Pattern == "support" &&
+                                                 !x.Facts.MovementBuffOnly))
                 MoveBefore(order, w, firstReceiver, tags, why, "buff_before_receiver",
                            "Buff zuerst: Staerkt die Angreifer dieser Runde");
         }

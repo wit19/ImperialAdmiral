@@ -388,7 +388,7 @@ labels as shipped):
 | **Vorstoß** (aggressive) | "Vorstoß (zum Kampf vorrücken)" | Press toward the fight; the workhorse of hunt missions | 1.5 / 0.8 / 0.7 / 1.1 |
 | **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective (heavily tilted by the defend modifier) | 0.6 / 1.4 / 1.5 / 1.0 |
 | **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers (the dice rows favour large bases) | 0.8 / 1.5 / 1.3 / 0.9 |
-| **Jäger** (hunter) | "Jäger (Schwerpunktzone abkämmen)" | Sweep the zone of main effort; the dice rows favour fast melee hunters; intercept heroes working the objective | 1.4 / 0.9 / 0.8 / **1.5** |
+| **Jäger** (hunter) | "Jäger (Schwerpunktzone abkämmen — …)" | Sweep the zone of main effort; the dice rows favour fast melee hunters; intercept heroes working the objective (the pop-up label now carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
 | **Support** | "Support (Distanz halten, aus der Deckung)" | Keep distance, fire from cover | 0.9 / 1.0 / 1.3 / 1.0 |
 | **Hinterhalt** (ambusher) | "Hinterhalt (ungesehen bis zum ersten Schuss)" | Deny the point until a target enters range | 1.1 / 1.1 / 0.9 / 1.3 |
 
@@ -403,6 +403,12 @@ Reading the table (full mechanics in `MECHANICS_tactical_ai.md` §6):
 
 Two honest notes from the shipped code:
 
+- **Two posture words, two layers (both public):** the doctrine dice layer runs on
+  a structural *hunt/defend* state (logged as `doctrines posture=…` in Debug),
+  the planner layer on a per-round *eliminate / stall /
+  protect / deny* stance derived from the feed (logged as `posture=… round=N`). A
+  escort/infiltration mission can therefore honestly show `hunt` on one line and
+  `stall` on the other — same mission, different layers, no contradiction.
 - The **ambusher** is implemented (tree + planner weights) but currently unassigned:
   no shipped figure prints an Ambush keyword, so `ClassifyPattern` never hands it
   out. It is ready for custom cards that do.

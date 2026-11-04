@@ -417,6 +417,35 @@ namespace TacticalAiHarness
                     SkillProfile.For(skill), rng, 1, new string[0], null, null);
                 Check("order_plan.trace[" + i + "].plan", t["plan"], plan.AsDict());
             }
+
+            // Player-20 law (Thomas 04.11, playtest Player-20.log): the PRINTED
+            // plain +2-movement order never earns the head of the activation
+            // order — the buff chain must not tag it. The executive command
+            // (elite) and plain non-officer support keep the chain slot.
+            {
+                var roster = new List<GroupFacts>
+                {
+                    new GroupFacts("O", 0, "DG021", "Offizier (normal)", "support", 2,
+                        Rational.One, supporter: true, movementBuffOnly: true),
+                    new GroupFacts("E", 1, "DG021", "Offizier (Elite)", "support", 2,
+                        Rational.One, supporter: true),
+                    new GroupFacts("S", 2, "DG021", "Support ohne Befehl", "support", 2,
+                        Rational.One),
+                    new GroupFacts("A", 3, "DG021", "Sturmtruppen", "aggressive", 2,
+                        Rational.One),
+                };
+                var pl = OrderPlanner.PlanRound(3, roster, catalog, "eliminate",
+                    SkillProfile.For("S5"), new DeterministicRandom(7), 1,
+                    new string[0], null, null);
+                OrderPlanner.AssertPermutation(pl, roster.Select(g => g.GroupId));
+                var tagOf = pl.Slots.ToDictionary(s => s.GroupId, s => s.Tags);
+                Check("order_plan.player20.plain_order_exempt", false,
+                      tagOf["O"].Contains("buff_before_receiver"));
+                Check("order_plan.player20.exec_order_chained", true,
+                      tagOf["E"].Contains("buff_before_receiver"));
+                Check("order_plan.player20.plain_support_chained", true,
+                      tagOf["S"].Contains("buff_before_receiver"));
+            }
         }
 
         // ------------------------------------------------------------ action_plan

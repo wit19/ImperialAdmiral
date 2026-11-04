@@ -804,7 +804,8 @@ namespace TacticalAI
                             // O-A: no catalog record here (fan import / left
                             // roster) - read the PRINTED lane directly, the
                             // same law ToRecord applies for catalog cards.
-                            supporter: PrintedOfficerSupporter(cd));
+                            supporter: PrintedOfficerSupporter(cd),
+                            movementBuffOnly: PrintedPlainOrder(cd));
                     }
                     pending.Add(cd.id);
                     selFacts.Add(f);
@@ -2734,6 +2735,28 @@ namespace TacticalAI
             return token;
         }
 
+        /// Playtest Player-20 (Thomas 04.11): the PRINTED PLAIN command only
+        /// (Order/Befehl WITHOUT Executive Order/Vollstreckungsbefehl) — the
+        /// +2-movement order that never earns the head of the activation
+        /// order. Printed-ability law, DG-id belt mirrors
+        /// PrintedOfficerSupporter (DG004/DG005 plain, DG006 executive).
+        static bool PrintedPlainOrder(global::DeploymentCard cd)
+        {
+            bool plain = false, exec = false;
+            var ab = cd.abilities;
+            if (ab != null)
+                foreach (var a in ab)
+                {
+                    if (a == null) continue;
+                    if (a.name == "{A} Order" || a.name == "{A} Befehl") plain = true;
+                    if (a.name == "{A} Executive Order" ||
+                        a.name == "{A} Vollstreckungsbefehl") exec = true;
+                }
+            if (cd.id == "DG004" || cd.id == "DG005") plain = true;
+            if (cd.id == "DG006" || cd.id == "DG075" || cd.id == "DG078") plain = false;
+            return plain && !exec;
+        }
+
         /// <summary>Only the PRINTED card values go through (fairness
         /// whitelist Core DeploymentCard.CardFieldWhitelist); no bonus data.</summary>
         static Dictionary<string, object> ToRecord(global::DeploymentCard cd)
@@ -2935,7 +2958,11 @@ namespace TacticalAI
                     isHeavy: core.IsLargeBase, isSwarm: false,
                     // O-A: supporter identity from the catalog card (printed
                     // command token, DG075/DG078 excluded in FromRecord).
-                    supporter: core.Supporter));
+                    supporter: core.Supporter,
+                    // Player-20 law: plain +2-movement order only -> exempt
+                    // from the buff chain head (executive order keeps it).
+                    movementBuffOnly: core.Keywords.Contains("OfficerOrder") &&
+                                      !core.Keywords.Contains("OfficerExecOrder")));
                 var fig = new Tac.Figure
                 {
                     Id = cd.id, GroupId = cd.id, Card = core, Team = "imperial",

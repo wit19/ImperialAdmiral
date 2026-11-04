@@ -65,6 +65,31 @@ namespace TacticalAI.Core
         public int Round;
     }
 
+    /// S-C projection options. Defaults reproduce the S-B law exactly
+    /// (Refine = true, no door-owner knowledge), so every pre-S-C call
+    /// site - the whole section_space.json canon - stays bit-identical.
+    ///  * Refine=false (low skill rungs, Thomas-Gesetz 04.11.): the belief
+    ///    carries ONLY feed facts - deploy seed, dilation, observed speed,
+    ///    graph edges, alive bookkeeping. No hit re-grounding, no wounded
+    ///    group disjunctive, no transit hypotheses. The exception probes
+    ///    (Wachzone/3c) and the victim ring do NOT consult this flag:
+    ///    Fakt-Reaktion ist Fairness, kein Intelligenz-Bonus.
+    ///  * DoorOwners: door GUID -> owning section GUID from the shipped
+    ///    tactical_mission_critical table (SectionTrust.DoorOwnersOf). A
+    ///    door flip inside an open hero window then records the TRANSIT
+    ///    HYPOTHESIS "the hero went through / into the owner section"
+    ///    (concept 8.1 L2': hypothesis grade, never fact).
+    public sealed class SectionOptions
+    {
+        public bool Refine = true;
+        public Dictionary<string, string> DoorOwners;
+
+        public SectionOptions Copy()
+        {
+            return new SectionOptions { Refine = Refine, DoorOwners = DoorOwners };
+        }
+    }
+
     public sealed class SectionSpace
     {
         public SectionGraph Graph = new SectionGraph();
@@ -136,6 +161,17 @@ namespace TacticalAI.Core
         // ActivationStart, closed by the ActivationEnd of that same group).
         private string _imperialWindowGroup = "";
 
+        // S-C: projection options (see SectionOptions) + the transit
+        // hypothesis track. A transit is a door flip inside an open hero
+        // window whose OWNING section is named by the shipped table - the
+        // hero plausibly went there (hypothesis grade, concept 8.1 L2').
+        // Facts stay facts: the hero's fact anchor only ever moves via an
+        // EntityInteract with a section payload.
+        private SectionOptions _opts = new SectionOptions();
+        public SectionOptions Options { get { return _opts; } }
+        private struct TransitRecord { public string Hero; public string Door; public string Section; public int Round; }
+        private readonly List<TransitRecord> _transits = new List<TransitRecord>();
+
         public int Round { get; private set; }
         public bool IsResync { get; private set; }
 
@@ -161,10 +197,15 @@ namespace TacticalAI.Core
         public static SectionSpace Project(IReadOnlyList<WorldEvent> events,
                                            SectionSpace prior = null,
                                            Dictionary<string, string[]> deploySeeds = null,
-                                           List<string[]> doorEdges = null)
+                                           List<string[]> doorEdges = null,
+                                           SectionOptions opts = null)
         {
             var s = prior != null ? prior.Clone() : new SectionSpace();
             if (prior != null) s.IsResync = true;
+            // S-C: an explicit opts always wins; without one a prior keeps
+            // its own (the curve does not flip mid-mission), a fresh space
+            // takes the S-B default (full refinement, no door owners).
+            if (opts != null) s._opts = opts.Copy();
             if (deploySeeds == null) deploySeeds = new Dictionary<string, string[]>(StringComparer.Ordinal);
             if (doorEdges != null)
                 foreach (var row in doorEdges)
@@ -321,6 +362,27 @@ namespace TacticalAI.Core
                             ? win.Sections[win.Sections.Count - 1] : "";
                         win.Doors.Add(new PendingDoor { Door = door, Section = standing });
                     }
+                    // S-C transit hypothesis (concept 8.1 L2'): a door flip
+                    // inside an open hero window whose OWNING section the
+                    // shipped table names records "the hero plausibly went
+                    // through/into that section" for the window hero -
+                    // HYPOTHESIS grade, the fact anchor is untouched. Refine
+                    // off (low rungs) or owner unknown: no hypothesis, and
+                    // nothing is excluded either (Grundgesetz). The owner
+                    // node becomes known here - the hero physically used it.
+                    if (_opts.Refine && _opts.DoorOwners != null)
+                    {
+                        string owner;
+                        if (_opts.DoorOwners.TryGetValue(door, out owner) && owner.Length > 0)
+                            foreach (var kv in _windows)
+                            {
+                                Graph.AddSection(owner);
+                                _transits.Add(new TransitRecord
+                                {
+                                    Hero = kv.Key, Door = door, Section = owner, Round = e.Round
+                                });
+                            }
+                    }
                     break;
                 }
 
@@ -360,6 +422,10 @@ namespace TacticalAI.Core
                     var group = S(e, "group");
                     GroupSectionBelief b;
                     if (group.Length == 0 || !_beliefs.TryGetValue(group, out b)) break; // data-exists
+                    // S-C skill curve: the Eichung re-grounding is mask
+                    // VERFEINERUNG - low rungs keep the seed-and-dilation
+                    // entry reading (Thomas-Gesetz 04.11., no switch).
+                    if (!_opts.Refine) break;
                     int figure = (int)e.Long("figure");
                     b.NoteHit(Graph, figure, e.Round, SectionsPerWindow);
                     break;
@@ -378,6 +444,9 @@ namespace TacticalAI.Core
                     if (_windows.Count > 0) break;
                     GroupSectionBelief b;
                     if (!_beliefs.TryGetValue(_imperialWindowGroup, out b)) break;
+                    if (!_opts.Refine) break;   // S-C skill curve: the
+                    // group disjunctive is a VERFEINERUNG observation, the
+                    // low rung keeps its entry reading (see GroupDamage).
                     b.NoteHeroWounded(Graph, e.Round, SectionsPerWindow);
                     break;
                 }
@@ -480,7 +549,193 @@ namespace TacticalAI.Core
             return facts; // built in sorted order already
         }
 
-        // ---- deterministic dump (harness pin + EXPLAIN trail) --------------
+        // S-C (concept 10 "VERGELTUNG", card Scope 1): the backwards ring for
+        // ONE victim. The shooter's position is what Vergeltung wants; the
+        // VICTIM's position is what the command actually knows nothing about
+        // beyond its own belief - so the only honest ring is built around the
+        // argmax of the victim's OWN mask (card wording). Semantics:
+        //  * strong = the victim mask's candidate set. Masks are uniform-weight
+        //    (S-B set semantics), so "the argmax" of a uniform mask is exactly
+        //    its candidate set - a tie is not broken by invention, it is stated
+        //    (one candidate = the sharp case; several = the honest disjunctive).
+        //  * figureIndex -1 (anonymous victim, S-B convention): the victim
+        //    figure is unknown, so the ring rides the union over ALL of the
+        //    group's figure masks and NEVER names a figure (disjunctive law).
+        //  * weak = the distributed disjunctiv over the REST: every other
+        //    KNOWN section, ordered by lower-bound distance from the strong set
+        //    (unknown distance last, then ordinal). A section the graph never
+        //    saw is not in the list because nothing is known about it - and it
+        //    is NEVER excluded (Grundgesetz: the ring names possibilities, not
+        //    prohibitions; consumers may down-weight weak, never forbid strong).
+        //  * Death deduction: alive==0 => basis "wiped", empty ring (a defeated
+        //    group was not shot at - the feed cannot produce that anyway);
+        //    PoolSize states the surviving-figure pool honestly.
+        // NOT skill-gated, NOT trust-gated: a hit is a FACT, reaction to facts
+        // is fairness (Thomas-Gesetz 04.11.).
+        public sealed class VictimRing
+        {
+            public string Group;
+            public int Figure;
+            public string Basis;                 // argmax | anon-disjunctive | wiped | unseeded | no-belief
+            public int PoolSize;                 // surviving figures (Death deduction applied)
+            public readonly List<string> Strong = new List<string>();
+            public readonly List<string> Weak = new List<string>();
+
+            /// Deterministic one-line form (harness pin + EXPLAIN rail).
+            public string Dump()
+            {
+                return "ring " + Group + " fig=" + Figure + " basis=" + Basis +
+                       " pool=" + PoolSize +
+                       " strong=" + (Strong.Count == 0 ? "-" : string.Join(",", Strong.ToArray())) +
+                       " weak=" + (Weak.Count == 0 ? "-" : string.Join(",", Weak.ToArray())) + "\n";
+            }
+        }
+
+        /// The transit hypothesis sections (hypothesis grade) a hero plausibly
+        /// moved through/into via a table-owned door during an activation
+        /// window. Fact anchors are NOT mixed in - HeroInSection stays the
+        /// fact rail. Sorted, unique, deterministic.
+        public List<string> HeroTransitSections(string hero)
+        {
+            var l = new List<string>();
+            if (hero == null) return l;
+            foreach (var t in _transits)
+                if (string.Equals(t.Hero, hero, StringComparison.Ordinal) && !l.Contains(t.Section))
+                    l.Add(t.Section);
+            l.Sort(StringComparer.Ordinal);
+            return l;
+        }
+
+        /// Backwards ring around the victim-argmax of its own mask (see
+        /// VictimRing). No belief for the group => null (data-exists).
+        public VictimRing VictimRingOf(string group, int figureIndex)
+        {
+            GroupSectionBelief b;
+            if (group == null || !_beliefs.TryGetValue(group, out b)) return null;
+            var ring = new VictimRing { Group = group, Figure = figureIndex, Basis = "no-belief" };
+            ring.PoolSize = b.Alive;                                // Death deduction
+            if (b.Alive <= 0) { ring.Basis = "wiped"; return ring; }
+            var strong = new HashSet<string>(StringComparer.Ordinal);
+            if (figureIndex >= 0)
+            {
+                var m = b.MaskOf(figureIndex);
+                if (m == null) { ring.Basis = "no-belief"; return ring; }
+                foreach (var s in m.Candidates(Graph, Round, SectionsPerWindow)) strong.Add(s);
+                ring.Basis = strong.Count > 0 ? "argmax" : "unseeded";
+            }
+            else
+            {
+                foreach (var idx in b.FigureIndexes())
+                {
+                    var m = b.MaskOf(idx);
+                    if (m == null) continue;
+                    foreach (var s in m.Candidates(Graph, Round, SectionsPerWindow)) strong.Add(s);
+                }
+                ring.Basis = strong.Count > 0 ? "anon-disjunctive" : "unseeded";
+            }
+            foreach (var s in strong) ring.Strong.Add(s);
+            ring.Strong.Sort(StringComparer.Ordinal);
+            if (ring.Strong.Count == 0) return ring;   // no base knowledge: honest empty ring
+            var weak = new List<string>();
+            var dist = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var s in Graph.Sections)
+            {
+                if (strong.Contains(s)) continue;
+                int best = SectionGraph.NoKnowledge;
+                foreach (var a in ring.Strong)
+                {
+                    int d = Graph.DistanceLowerBound(a, s);
+                    if (d == SectionGraph.NoKnowledge) continue;
+                    if (best == SectionGraph.NoKnowledge || d < best) best = d;
+                }
+                dist[s] = best;
+                weak.Add(s);
+            }
+            weak.Sort((x, y) =>
+            {
+                int dx = dist[x], dy = dist[y];
+                bool nx = dx == SectionGraph.NoKnowledge, ny = dy == SectionGraph.NoKnowledge;
+                if (nx != ny) return nx ? 1 : -1;      // no-knowledge last, never "far"
+                if (dx != dy) return dx < dy ? -1 : 1;
+                return string.CompareOrdinal(x, y);
+            });
+            ring.Weak.AddRange(weak);
+            return ring;
+        }
+
+        // ---- EXPLAIN evidence chain (S-C roundtrip law) ----------------------
+        // One line per carried observation, coordinate-free by construction:
+        // section GUIDs plus the app-authored public name in parentheses when
+        // known. Loch-Gesetz: EXPLAIN shows EREIGNIS + REGEL, never a position
+        // (the vector's coordinate-free Public() surface is untouched - this
+        // trail is the belief rail's own disclosure, not the public vector).
+        public List<string> ExplainTrail()
+        {
+            var lines = new List<string>();
+            lines.Add("explain space round=" + Round + " speed=" + SectionsPerWindow +
+                      " sections=" + Graph.Sections.Count);
+            var groups = new List<string>(_beliefs.Keys);
+            groups.Sort(StringComparer.Ordinal);
+            foreach (var g in groups)
+            {
+                var b = _beliefs[g];
+                lines.Add("explain group " + g + " alive=" + b.Alive + " fallen=" + b.Fallen +
+                          " anonVictim=" + (b.AnonymousVictimObserved ? "yes" : "no") +
+                          " woundedDisjunctive=" + (b.WoundedDisjunctiveObserved ? "yes" : "no"));
+                foreach (var idx in b.FigureIndexes())
+                {
+                    var m = b.MaskOf(idx);
+                    if (m == null) continue;
+                    foreach (var v in m.ObservationViews())
+                        lines.Add("explain obs group=" + g + " fig=" + idx + " round=" + v.Round +
+                                  " src=" + v.Source + " rule=" + ExplainRule(v.Source, v.AlternativeCount) +
+                                  " secs=" + JoinSecs(v.Sections));
+                    var c = m.Candidates(Graph, Round, SectionsPerWindow);
+                    bool degraded = m.DegradedToUnion;
+                    lines.Add("explain mask group=" + g + " fig=" + idx + " cands=" + JoinSecs(c) +
+                              (degraded ? " degraded=union" : "") +
+                              (c.Count > 0 ? " dom=" + new Rational(1, c.Count).ToString() : ""));
+                }
+            }
+            var heroKeys = new List<string>(_heroInSection.Keys);
+            heroKeys.Sort(StringComparer.Ordinal);
+            foreach (var h in heroKeys)
+                lines.Add("explain hero " + h + " section=" + JoinSec(_heroInSection[h]) +
+                          " round=" + _heroInSectionRound[h] + " rule=fenster-fakt");
+            foreach (var t in _transits)
+                lines.Add("explain transit hero=" + t.Hero + " door=" + t.Door +
+                          " section=" + JoinSec(t.Section) +
+                          " round=" + t.Round + " rule=transit-hypothese");
+            return lines;
+        }
+
+        // Regel-Ids are stable identifiers (ui text mapping is S-D's job; the
+        // trail itself carries the rule NAME so a Player.log line is readable
+        // without any lookup).
+        static string ExplainRule(string source, int alternativeCount)
+        {
+            if (source == "deploy") return alternativeCount == 1 ? "saat-exakt" : "saat-kandidatenmenge";
+            if (source == "hit") return "eichung-hit-reground";
+            if (source == "hit-group") return "eichung-anon-disjunktiv";
+            if (source == "wounded-group") return "vergeltung-gruppen-disjunktiv";
+            return source.Length == 0 ? "regel-unnamed" : "regel:" + source;
+        }
+
+        string JoinSecs(IEnumerable<string> secs)
+        {
+            var l = new List<string>();
+            foreach (var s in secs) if (!string.IsNullOrEmpty(s)) l.Add(JoinSec(s));
+            l.Sort(StringComparer.Ordinal);
+            return l.Count == 0 ? "-" : string.Join(",", l.ToArray());
+        }
+
+        string JoinSec(string s)
+        {
+            var n = Graph.SectionName(s);
+            return n.Length > 0 ? s + "(" + n + ")" : s;
+        }
+
+    // ---- deterministic dump (harness pin + EXPLAIN trail) --------------
         public string Dump()
         {
             var sb = new System.Text.StringBuilder();
@@ -503,6 +758,12 @@ namespace TacticalAI.Core
             foreach (var f in _interactions)
                 sb.Append("interact ").Append(f.Hero).Append(' ').Append(f.Entity)
                   .Append(" section=").Append(f.Section).Append(" round=").Append(f.Round).Append('\n');
+            // S-C transit hypotheses: emitted ONLY when the track is
+            // populated (door-owner knowledge present), so every pre-S-C
+            // dump - the whole section_space.json canon - is unchanged.
+            foreach (var t in _transits)
+                sb.Append("transit ").Append(t.Hero).Append(' ').Append(t.Door)
+                  .Append(" section=").Append(t.Section).Append(" round=").Append(t.Round).Append('\n');
             return sb.ToString();
         }
 
@@ -528,6 +789,8 @@ namespace TacticalAI.Core
             }
             foreach (var kv in _beliefs) s._beliefs[kv.Key] = kv.Value.Clone();
             s._speedObs.AddRange(_speedObs);
+            s._transits.AddRange(_transits);
+            s._opts = _opts.Copy();
             foreach (var kv in _windows)
             {
                 var w = new HeroWindow { Round = kv.Value.Round };

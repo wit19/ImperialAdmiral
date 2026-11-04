@@ -200,6 +200,36 @@ namespace TacticalAI.Core
             AddObservation(roundNow, source, c, kind);
         }
 
+        /// S-C EXPLAIN accessor: a read-only view of the carried
+        /// observations (round, source, unique alternative sections sorted,
+        /// how many alternatives are fact-grade). Pure read - no candidate
+        /// evaluation, no DegradedToUnion side effect.
+        public struct ObservationView
+        {
+            public int Round;
+            public string Source;
+            public int AlternativeCount;
+            public IReadOnlyList<string> Sections;
+        }
+
+        public List<ObservationView> ObservationViews()
+        {
+            var l = new List<ObservationView>();
+            foreach (var obs in _observations)
+            {
+                var secs = new List<string>();
+                foreach (var a in obs.Alternatives)
+                    if (!secs.Contains(a.Section)) secs.Add(a.Section);
+                secs.Sort(StringComparer.Ordinal);
+                l.Add(new ObservationView
+                {
+                    Round = obs.Round, Source = obs.Source,
+                    AlternativeCount = obs.Alternatives.Count, Sections = secs,
+                });
+            }
+            return l;
+        }
+
         /// Deterministic dump (harness pin + EXPLAIN trail).
         public string Dump(SectionGraph graph, int roundNow, int sectionsPerWindow)
         {

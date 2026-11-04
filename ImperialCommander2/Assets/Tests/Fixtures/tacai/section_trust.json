@@ -1,0 +1,456 @@
+{
+ "_comment": "S-C section-trust fixture (synthetic hand-pinned missions, same harness-internal test worlds as section_space.json - sections are named s-* on purpose, the module only ever sees feed strings). Covers the S-C mask-update rules: backwards victim ring (named argmax, anonymous group disjunctive, Death deduction, wiped/unseeded honest bases), the table-owned door transit hypothesis (hypothesis grade, fact rail untouched), the EXPLAIN evidence chain (Ereignis+Regel, coordinate-free) and the coarse low-skill reading. Expect blocks recorded ONCE via --record and reviewed line by line; the laws themselves are hand-pinned in SectionsSectionTrust.cs.",
+ "cases": [
+  {
+   "name": "st_ring_argmax_sharp",
+   "_comment": "Named victim, single-candidate mask: strong = the victim argmax of its OWN mask; weak = every other KNOWN section as distributed disjunctiv, ordered by lower-bound distance (s-b 1, s-c 2). Same round 1 everywhere so the belief is undilated - the sharp case.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "ST1"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-a",
+      "name": "Corridor"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-b",
+      "name": "Catwalk"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-c",
+      "name": "Overhead"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 1,
+      "section": "s-a"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    }
+   ],
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-1"
+    ],
+    [
+     "s-b",
+     "s-c",
+     "d-2"
+    ]
+   ],
+   "rings": [
+    [
+     "GUARD",
+     0
+    ]
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a name=Corridor\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b name=Catwalk\nedge s-b s-c kind=door doors=d-2 state=unknown\nsec s-c name=Overhead\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit alts=s-a:fact\ncands s-a\ndom 1\n",
+    "canon": "mission=vector|st_ring_argmax_sharp\nround=1\nposture=protect\nobjective=Hold the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|GUARD|GUARD|1|0|1|1|1|5|3/5\n",
+    "explain": [
+     "explain space round=1 speed=1 sections=3",
+     "explain group GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no",
+     "explain obs group=GUARD fig=0 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain obs group=GUARD fig=0 round=1 src=hit rule=eichung-hit-reground secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=0 cands=s-a(Corridor) dom=1"
+    ],
+    "ring": [
+     "ring GUARD fig=0 basis=argmax pool=1 strong=s-a weak=s-b,s-c\n"
+    ],
+    "transit": [],
+    "coarse": "round=1 speedSectionsPerWindow=1\nsec s-a name=Corridor\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b name=Catwalk\nedge s-b s-c kind=door doors=d-2 state=unknown\nsec s-c name=Overhead\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\n"
+   }
+  },
+  {
+   "name": "st_ring_anon_disjunctive",
+   "_comment": "Anonymous victim (-1): the victim figure is unknown, the ring rides the union over the group's figure masks and names NO figure; named rows still read per figure; figure 7 was never created -> basis no-belief, empty strong/weak (data-exists, never a guess).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "ST2"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-a",
+      "name": "Corridor"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-b",
+      "name": "Catwalk"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "section": "s-a"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "figure": -1,
+      "wheel": 1,
+      "health": 5
+     }
+    }
+   ],
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-1"
+    ]
+   ],
+   "rings": [
+    [
+     "GUARD",
+     -1
+    ],
+    [
+     "GUARD",
+     0
+    ],
+    [
+     "GUARD",
+     1
+    ],
+    [
+     "GUARD",
+     7
+    ]
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a name=Corridor\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b name=Catwalk\ngroup GUARD alive=2 fallen=0 anonVictim=yes woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit-group alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit-group alts=s-a:fact\ncands s-a\ndom 1\n",
+    "canon": "mission=vector|st_ring_anon_disjunctive\nround=1\nposture=protect\nobjective=Hold the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nG|GUARD|GUARD|1|0|2|2|1|5|9/10\n",
+    "explain": [
+     "explain space round=1 speed=1 sections=2",
+     "explain group GUARD alive=2 fallen=0 anonVictim=yes woundedDisjunctive=no",
+     "explain obs group=GUARD fig=0 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain obs group=GUARD fig=0 round=1 src=hit-group rule=eichung-anon-disjunktiv secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=0 cands=s-a(Corridor) dom=1",
+     "explain obs group=GUARD fig=1 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain obs group=GUARD fig=1 round=1 src=hit-group rule=eichung-anon-disjunktiv secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=1 cands=s-a(Corridor) dom=1"
+    ],
+    "ring": [
+     "ring GUARD fig=-1 basis=anon-disjunctive pool=2 strong=s-a weak=s-b\n",
+     "ring GUARD fig=0 basis=argmax pool=2 strong=s-a weak=s-b\n",
+     "ring GUARD fig=1 basis=argmax pool=2 strong=s-a weak=s-b\n",
+     "ring GUARD fig=7 basis=no-belief pool=2 strong=- weak=-\n"
+    ],
+    "transit": [],
+    "coarse": "round=1 speedSectionsPerWindow=1\nsec s-a name=Corridor\nedge s-a s-b kind=door doors=d-1 state=unknown\nsec s-b name=Catwalk\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\n"
+   }
+  },
+  {
+   "name": "st_ring_wiped_unseeded",
+   "_comment": "Death deduction: GUARD loses both figures -> basis wiped, pool 0, empty ring. STORM spawns without any section knowledge -> basis unseeded, empty ring. Both honest, neither a guess nor a wall.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "ST3"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-a",
+      "name": "Corridor"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 2,
+      "section": "s-a"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "STORM",
+      "size": 1
+     }
+    },
+    {
+     "kind": "Death",
+     "round": 2,
+     "payload": {
+      "group": "GUARD"
+     }
+    },
+    {
+     "kind": "Death",
+     "round": 2,
+     "payload": {
+      "group": "GUARD"
+     }
+    }
+   ],
+   "rings": [
+    [
+     "GUARD",
+     0
+    ],
+    [
+     "STORM",
+     0
+    ]
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Corridor\ngroup GUARD alive=0 fallen=2 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup STORM alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\ncands -\n",
+    "canon": "mission=vector|st_ring_wiped_unseeded\nround=2\nposture=protect\nobjective=Hold the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|GUARD|GUARD|1|0|0|2|1|0|1\nG|STORM|STORM|1|0|1|1|1|0|1\n",
+    "explain": [
+     "explain space round=2 speed=1 sections=1",
+     "explain group GUARD alive=0 fallen=2 anonVictim=no woundedDisjunctive=no",
+     "explain obs group=GUARD fig=0 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=0 cands=s-a(Corridor) dom=1",
+     "explain obs group=GUARD fig=1 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=1 cands=s-a(Corridor) dom=1",
+     "explain group STORM alive=1 fallen=0 anonVictim=no woundedDisjunctive=no",
+     "explain mask group=STORM fig=0 cands=-"
+    ],
+    "ring": [
+     "ring GUARD fig=0 basis=wiped pool=0 strong=- weak=-\n",
+     "ring STORM fig=0 basis=unseeded pool=1 strong=- weak=-\n"
+    ],
+    "transit": [],
+    "coarse": "round=2 speedSectionsPerWindow=1\nsec s-a name=Corridor\ngroup GUARD alive=0 fallen=2 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup STORM alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\ncands -\n"
+   }
+  },
+  {
+   "name": "st_transit_hypothesis",
+   "_comment": "Table-owned door 'd-own' (owner s-cat) flips inside LEIA's open window -> transit hypothesis on the hero track (dump + transit + explain lines); the fact anchor never moves. Record discipline pins the exact dump; SectionsSectionTrust.cs pins the law (no owner / outside window / low rung all stay silent).",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "ST4"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-a",
+      "name": "Corridor"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-cat",
+      "name": "Catwalk"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 1,
+      "section": "s-a"
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "DoorOpen",
+     "round": 2,
+     "payload": {
+      "door": "d-own",
+      "name": "Catwalk Door"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "doorOwners": {
+    "d-own": "s-cat"
+   },
+   "rings": [
+    [
+     "GUARD",
+     0
+    ]
+   ],
+   "heroTransits": [
+    "LEIA",
+    "NOPE"
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Corridor\nsec s-cat name=Catwalk\nspeed LEIA round=2 crossings=0 touched=0\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ntransit LEIA d-own section=s-cat round=2\n",
+    "canon": "mission=vector|st_transit_hypothesis\nround=2\nposture=protect\nobjective=Hold the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|1|1|1|0|1\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=door:d-own kind=fact seq=6 round=2\n",
+    "explain": [
+     "explain space round=2 speed=1 sections=2",
+     "explain group GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no",
+     "explain obs group=GUARD fig=0 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=0 cands=s-a(Corridor) dom=1",
+     "explain transit hero=LEIA door=d-own section=s-cat(Catwalk) round=2 rule=transit-hypothese"
+    ],
+    "ring": [
+     "ring GUARD fig=0 basis=argmax pool=1 strong=s-a weak=s-cat\n"
+    ],
+    "transit": [
+     "s-cat",
+     ""
+    ],
+    "coarse": "round=2 speedSectionsPerWindow=1\nsec s-a name=Corridor\nsec s-cat name=Catwalk\nspeed LEIA round=2 crossings=0 touched=0\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\n"
+   }
+  },
+  {
+   "name": "st_coarse_reading",
+   "_comment": "The same carrier stream read refined (dump/explain) and coarse (coarse): a hit re-ground and a wounded group disjunctive are mask VERFEINERUNG - Refine=false keeps the seed-and-dilation chain-entry reading (Thomas-Gesetz 04.11.). The ring (fact reaction) still computes on the coarse reading.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Hold the relay.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "ST5"
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 1,
+     "payload": {
+      "section": "s-a",
+      "name": "Corridor"
+     }
+    },
+    {
+     "kind": "Spawn",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "size": 1,
+      "section": "s-a"
+     }
+    },
+    {
+     "kind": "GroupDamage",
+     "round": 1,
+     "payload": {
+      "group": "GUARD",
+      "figure": 0,
+      "wheel": 2,
+      "health": 5
+     }
+    },
+    {
+     "kind": "ActivationStart",
+     "round": 1,
+     "payload": {
+      "group": "GUARD"
+     }
+    },
+    {
+     "kind": "HeroWounded",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "rings": [
+    [
+     "GUARD",
+     0
+    ]
+   ],
+   "expect": {
+    "dump": "round=1 speedSectionsPerWindow=1\nsec s-a name=Corridor\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=yes\nfig 0\nobs round=1 src=deploy alts=s-a:fact\nobs round=1 src=hit alts=s-a:fact\nobs round=1 src=wounded-group alts=s-a:hypothesis\ncands s-a\ndom 1\n",
+    "canon": "mission=vector|st_coarse_reading\nround=1\nposture=protect\nobjective=Hold the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nG|GUARD|GUARD|1|0|1|1|1|5|3/5\nH|LEIA|LEIA|1|0|0|0|0|0\n",
+    "explain": [
+     "explain space round=1 speed=1 sections=1",
+     "explain group GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=yes",
+     "explain obs group=GUARD fig=0 round=1 src=deploy rule=saat-exakt secs=s-a(Corridor)",
+     "explain obs group=GUARD fig=0 round=1 src=hit rule=eichung-hit-reground secs=s-a(Corridor)",
+     "explain obs group=GUARD fig=0 round=1 src=wounded-group rule=vergeltung-gruppen-disjunktiv secs=s-a(Corridor)",
+     "explain mask group=GUARD fig=0 cands=s-a(Corridor) dom=1"
+    ],
+    "ring": [
+     "ring GUARD fig=0 basis=argmax pool=1 strong=s-a weak=-\n"
+    ],
+    "transit": [],
+    "coarse": "round=1 speedSectionsPerWindow=1\nsec s-a name=Corridor\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\n"
+   }
+  }
+ ]
+}

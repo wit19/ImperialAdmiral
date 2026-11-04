@@ -152,6 +152,7 @@ namespace TacticalAiHarness
             Run("officer_tree.json", SecOfficerTree);
             Run("section_feed.json", SecSectionFeed);
             Run("section_space.json", SecSectionSpace);
+            Run("section_trust.json", SecSectionTrust);
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

@@ -354,8 +354,10 @@ itself — related idea, different mechanism; both are on the cards.)
 **Focus zone ("Fokuszone").** The area the rebels' *current* mission
 objective points at — the sector with their main effort. Hunter-doctrine figures
 treat it as their hunting ground: from tier 3 up they lock onto the hero who is
-factually working inside it, take their movement paths there, and let heroes
-outside the zone lie — even when one stands right on their path (the *hunter's
+factually working inside it **or who is moving into it** — several candidates
+competing? the one with the higher threat value takes it (EXPLAIN names him) —
+take their movement paths there, and let heroes outside the zone *and not headed
+into it* lie — even when one stands right on their path (the *hunter's
 creed*; whoever attacks the hunter may still reap one shot back that round, but
 nobody is pursued for it). Below tier 3 the hunter behaves like the old
 Vorstoß — the lock is an earned discipline, not a printed constant. Unlike the
@@ -422,7 +424,7 @@ labels as shipped):
 | **Vorstoß** (aggressive) | "Vorstoß (zum Kampf vorrücken)" | Press toward the fight; the workhorse of hunt missions | 1.5 / 0.8 / 0.7 / 1.1 |
 | **Wachschutz** (guard) | "Wachschutz (Zone halten, Wege versperren, nie herauslocken)" | Hold the guard zone; clear only its own line, never be lured out; block heroes' paths to the objective (heavily tilted by the defend modifier) | 0.6 / 1.4 / 1.5 / 1.0 |
 | **Blockierer** (blocker) | "Blockierer (Engstelle halten)" | Hold a chokepoint/lane, attach to and interrupt attackers (the dice rows favour large bases) | 0.8 / 1.5 / 1.3 / 0.9 |
-| **Jäger** (hunter) | "Jäger (Fokuszone abkämmen — …)" | Sweep the focus zone; from tier 3 the Fokuszone lock: attack the hero working inside the zone, ignore pass-by heroes outside it, move toward the zone (pop-up label carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
+| **Jäger** (hunter) | "Jäger (Fokuszone abkämmen — …)" | Sweep the focus zone; from tier 3 the Fokuszone lock: attack the hero working inside the zone OR moving into it (several candidates? the higher threat value), ignore heroes outside it who are not headed into it, move toward the zone (pop-up label carries its own definition — see the glossary) | 1.4 / 0.9 / 0.8 / **1.5** |
 | **Support** | "Support (Distanz halten, aus der Deckung)" | Keep distance, fire from cover | 0.9 / 1.0 / 1.3 / 1.0 |
 | **Hinterhalt** (ambusher) | "Hinterhalt (ungesehen bis zum ersten Schuss)" | Deny the point until a target enters range | 1.1 / 1.1 / 0.9 / 1.3 |
 
@@ -449,8 +451,13 @@ Two honest notes from the shipped code:
 - **Hunter vs. Vorstoß:** below tier 3 they deliberately share one tree (same
   board behaviour, the honest S1/S2 brawler); from tier 3 the hunter plays its
   own pop-up tree and the **Fokuszone lock** (`SectionConsumers.FokuszoneHeadFor`):
-  target = the hero factually anchored in the focus zone, pass-by heroes outside
-  it are ignored, retaliation outranks the lock (fact beats brand). The old
+  target = a hero factually anchored in the focus zone **or moving into it**
+  (the shipped M14d doctrine text names both candidates; several competing?
+  the higher threat value takes it, EXPLAIN shows him), the ignoring covers
+  only heroes outside the zone who are not headed into it, retaliation
+  outranks the lock (fact beats brand). The plan-side head pick itself is
+  unchanged: it still pins the head on the hero factually anchored *inside*.
+  The old
   planner-side target override (`Core/Patterns.TargetOverride`) stays exactly
   what it always was — a sim-level preference.
 
@@ -540,10 +547,70 @@ The exact per-rank effect mix is data, not prose: `tactical_personas.json` is th
 source, pinned by a 144-vector parity canon (`tools/TacticalAiHarness/SectionsPersonasSwap.cs`
 + fixture `personas_swap.json`).
 
+**How a rank works (the law, from `Core/Personas.cs` `Resolve`).** A persona's rank
+is the **highest authored rank whose threat threshold the mission's threat pool has
+reached** — and the effects are **cumulative**: you always play the union of ALL
+unlocked ranks' effects, in authored order (a later guard split supersedes the
+earlier one it escalates). Threat pool below 2 means **rank 0: the persona is
+silent** — plain rules, no persona effect at all. All six personas unlock at threat
+**2 / 4 / 6 / 8**. The matrix below is the shipped fleet, read back against
+`tactical_personas.json` (swap targets named by their deck group, as the table
+promises):
+
+**Sturmtruppen-Kapitän** — ranks 1–4 at threat 2/4/6/8.
+- **R1:** Elite swap — one regular Stormtrooper becomes **Stormtrooper (Elite)**,
+  at the regular's printed cost.
+- **R2:** Aggressive pattern weight ×1.2 (Stormtroopers).
+- **R3:** Guard split 25 % (Stormtroopers) — a guard reserve forms.
+- **R4:** Guard split escalates to 40 % (Stormtroopers) + the persona's signature
+  text fires.
+
+**Feldherr** (Warlord) — ranks 1–4 at threat 2/4/6/8.
+- **R1:** Elite swap — an Imperial Officer becomes **Imperial Officer (Elite)**.
+- **R2:** Aggressive weight ×1.25 (Imperial Officers).
+- **R3:** Aggressive weight ×1.15 (ALL Imperial figures) + guard split 20 %.
+- **R4:** Guard split escalates to 30 % + signature text.
+
+**ISB-Kommandant** — ranks 1–4 at threat 2/4/6/8.
+- **R1:** Elite swap — a Probe Droid becomes **Probe Droid (Elite)**.
+- **R2:** Ambusher (Hinterhalt) weight ×1.35 (all Imperial figures).
+- **R3:** Guard split 30 % + blocker weight ×1.2 (E-Web Engineers and the droid
+  roster: probe/sentry/assassin droids).
+- **R4:** Aggressive weight ×1.25 + signature text.
+
+**Hutt-Kriegsfürst** — ranks 1–4 at threat 2/4/6/8.
+- **R1:** Hunter weight ×1.15 on the persona's *notables* list (the bounty,
+  villain and officer names the JSON names: Boba Fett, Bossk, Dengar, Greedo,
+  IG-88, Jabba, Vader, Thrawn and kin).
+- **R2:** Hunter weight ×1.3 on the *beasts & hired guns* list (Rancor, Wampa,
+  Clawdite, Gamorrean, Trandoshan, Tusken, Hired Gun and kin).
+- **R3:** Hunter weight ×1.2 (all Imperial figures).
+- **R4:** Ambusher weight ×1.2 + signature text — escalation as business.
+
+**Droiden-Direktor** — ranks 1–4 at threat 2/4/6/8.
+- **R1:** Elite swap — a Probe Droid becomes **Probe Droid (Elite)**.
+- **R2:** Guard split 25 % + blocker weight ×1.2 (E-Web Engineers and the droid
+  roster).
+- **R3:** Aggressive weight ×1.3 + guard split 30 % (the droid & heavy roster:
+  probe/sentry/assassin droids, E-Web Engineers, AT-ST/AT-DP, jet and heavy
+  Stormtroopers, repulsor tank).
+- **R4:** Elite swap — an E-Web Engineer becomes **E-Web Engineer (Elite)** +
+  signature text (the late elite escalation of the doctrine).
+
+**Großmoff der Unterdrückung** — ranks 1–4 at threat 2/4/6/8.
+- **R1:** Guard split 30 % — garrisons hold first.
+- **R2:** Guard pattern weight ×1.2 (all Imperial figures).
+- **R3:** Elite swap — one regular Stormtrooper becomes **Stormtrooper (Elite)**
+  — veterans enforce.
+- **R4:** Elite swap — an E-Web Engineer becomes **E-Web Engineer (Elite)**,
+  guard split escalates to 40 % + signature text — fear closes in.
+
 Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 
 - **Delta-0:** the elite *replaces* the regular figure; cost stays the regular's
   printed cost. No extra figures, no discounts — missions stay exactly as balanced.
+  Every elite swap in the matrix above works under exactly this law: the swap
+  *replaces*, never adds, and never rolls a hidden second copy into existence.
 - **One elite per name (persona swaps):** the swap never puts a second copy of
   the same elite on the board; the swap
   only happens if the elite card exists in your activated collection and is in the
@@ -659,9 +726,12 @@ only executing a standing plan. What players feel, with the file behind each
 claim:
 
 - **Shots are remembered.** When an Imperial group is hit, the shooter is
-  attributed to the hero activation window that opened it (public event
-  facts, never a readout of positions), and that hero is ranked ahead for
-  the attacked group's next shot — the *reaction key* in the target ranking
+  attributed from public facts, never a readout of positions: the damage
+  arms a credit on the struck group, and the hero whose activation closes
+  that credit in the same round is the shooter (the *closer* law, M14a;
+  the older activation-window attribution survives with precedence where
+  it fires). That hero is ranked ahead for the attacked group's next shot
+  — the *reaction key* in the target ranking
   (`WorldEventsUnity.cs`, `OverlordFocus.cs`; 11-language player texts).
 - **Every click re-decides.** Pressing "activate Imperials" re-ranks the
   REMAINING figures from what has happened since the last click. No
@@ -698,9 +768,15 @@ What players feel, with the file behind each claim:
   **every skill level** — reacting to facts is fairness, not an
   intelligence bonus.
 - **Retaliation.** A unit that got shot at this round makes the suspected
-  shooter (attributed from public activation windows, same mechanism as the
-  reactive layer) its priority target: "moves against the suspected
-  shooter" (`ordExplainVergeltung`). Every skill level.
+  shooter its priority target: "moves against the suspected
+  shooter" (`ordExplainVergeltung`). Every skill level. The attribution is
+  the **closer** law (M14a): windowless damage arms a credit on the struck
+  group, and the hero whose activation first closes that credit in the same
+  round is the suspected shooter (`RoundEnd` clears it — table discipline:
+  mark your damage *before* the round ends, a hit after the last hero
+  activation of the round credits nobody). The old activation-window
+  attribution is legacy: where it fires it still takes precedence, but in
+  the live game that window never opened.
 - **Fresh intrusions react first.** When a section activates with a hero
   already inside, the units placed there push immediately ("X pushed into
   the newly activated section — Y reacts first", `ordExplainThreeC`).

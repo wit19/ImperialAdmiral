@@ -150,6 +150,7 @@ namespace TacticalAiHarness
             Run("officer_doctrine.json", SecOfficerDoctrine);
             Run("officer_support.json", SecOfficerSupport);
             Run("officer_tree.json", SecOfficerTree);
+            Run("officer_timing.json", SecOfficerTiming);
             Run("section_feed.json", SecSectionFeed);
             Run("section_space.json", SecSectionSpace);
             Run("section_trust.json", SecSectionTrust);

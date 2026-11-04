@@ -301,15 +301,29 @@ the plan translated back into board language.
 Officers are the Empire's remote control — their orders go to *another* figure
 (`apTreeOfficer<Pattern>` / `apTreeOfficerElite<Pattern>` trees):
 
-- **Officer (DG004/DG005)** — "Order": gives another Imperial figure in range **2
-  movement points**. No attack order.
-- **Executive Officer (DG006, elite)** — "Executive Order": gives a figure in range
-  **either 2 movement points OR one attack** — one order per command, never both
-  simultaneously; the order consumes the officer's own attack point.
+- **Officer (DG004/DG005)** — "Order": choose another friendly figure within 2
+  spaces. In skirmish it gains 2 movement points; in campaign the shipped prints
+  differ (De: perform *a turn*; EN: perform *a move*) — an open wording question,
+  and one reason the AI never plays the plain command as a timing instrument. The
+  head-slot law stands either way: a plain-command officer never leads the round.
+- **Executive Officer (DG006, elite)** — "Executive Order": choose a friendly
+  figure within 2 spaces. It interrupts immediately to perform **one move OR one
+  attack** (both prints agree: a full move action or a full attack — the older
+  "2 movement points" wording here was wrong, corrected 04.11) — one order per
+  command, never both; the order consumes the officer's own attack point.
 - Which figure, and which target / which direction, is chosen at the board through
   the pop-up questions. The officer's own fragility (and its cover trick of
   re-rolling a defense die next to a friendly figure) is printed on its card and is
   *your* consideration — the orders never lecture you about it.
+
+**Command timing (level 4/5).** Since Player-24 the app slots the executive
+officer's activation exactly where the command pays: a hero stands in the chosen
+receiver's area (fresh fact anchor) → the troop activates first and the command
+follows, paying the interrupt as a **second attack**; no hero there → the officer
+leads and the command's move leg extends the troop's reach this round. The named
+receiver and the reason ride on the officer's order card ("Befehlszeitpunkt …"),
+and the card keeps reminding you: the command only reaches figures within 2
+spaces — that check stays yours at the table.
 
 A machine-enforced text gate (`tools/TacticalAiGate/OfficerTextGate.cs`, ~1,900
 checks with mutation self-tests) makes it *impossible* to ship an order text that

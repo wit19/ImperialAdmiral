@@ -461,6 +461,31 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   the chain slot (`order_plan.player20.*`, `order_plan.player21.*`).
   Canon: 45266 → 45282 checks, additions only, no existing fixture
   touched.
+- **Befehlszeitpunkt law (Player-24, Thomas 04.11 „Go").** The blind
+  `buff_before_receiver` treated commands like stat buffs — the printed
+  cards (De enemies.json, DG004/DG005/DG006, verified 04.11) say otherwise:
+  the plain Befehl is a campaign RE-ORDER (the receiver interrupts for A
+  TURN — zero net action gain, so the Player-21 head demotion stays its
+  whole story and the new law never speaks for it); the elite
+  Vollstreckungsbefehl is the only command that CREATES an action
+  (interrupt: one movement OR attack). Only the elite's slot is therefore a
+  timing question at all, and `CommandTiming.ForRound` decides it per round
+  on zone facts: named receiver = the living attack-pattern group with the
+  highest PrintedEvTotal x VitalityFrac (finisher key; unknown card = never
+  bet on), slot follows the PAYLOAD — a FRESH hero anchor inside the
+  receiver's zone means the troop activates first and the interrupt pays
+  the second attack (tag `receiver_before_buff`, direct adjacency survives
+  `finisher_last` through a quiet follow-law re-anchor); no anchor, the
+  supporter goes first and the command's movement leg doubles the troop's
+  reach this round. The printed 2-field ring stays TABLE knowledge: same
+  zone = zone-fact claim in the why-line, anything else hands the check to
+  the table (E2 discipline, the app never sees cells). The bridge feeds it
+  from the `SupporterMaskTrustEnabled` rung (S4/S5); below and on every
+  failure the blind chain runs bit-identical. `officer_timing.json`: 10
+  decision vectors on the real feed path (recorded + reviewed line by line,
+  silence laws hand-pinned) + 3 plan-consumption cases (before-relation,
+  adjacency after the finisher pull, blind canon intact).
+  Canon: 45312 → 45356 checks, additions only.
 - **Canon through the whole chain:** 45174 -> 45312 checks. Additions
   only, with ONE deliberate law-flip exception: `p19_causal_strike_closer`
   flips its expected objective_actor from empty to Jyn Odan because the
@@ -558,8 +583,11 @@ Two distinct printed economies, both in ThreatEconomy.cs:
 
 ### From matrix to order: hard slots and laws
 
-On top of the efficiency order, four named synergy chains move pairs
-(OrderPlan.cs:241): `buff_before_receiver`,
+On top of the efficiency order, named synergy chains move pairs
+(OrderPlan.cs:241): `buff_before_receiver` and `receiver_before_buff`
+(the Player-24 Befehlszeitpunkt law made them ONE payload decision —
+`CommandTiming` names which side the elite supporter earns: Bewegung vor
+dem Empfänger, Angriff direkt nach ihm),
 `blocker_before_attached_attack`, `deploy_before_intercept`,
 `finisher_last` (highest damage potential activates last; with the
 woundAll VictoryCounter law, fresh damage stays last regardless,

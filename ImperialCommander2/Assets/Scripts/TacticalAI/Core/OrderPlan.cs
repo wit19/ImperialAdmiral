@@ -245,8 +245,13 @@ namespace TacticalAI.Core
         /// attacker that a blocker "attaches" to, candidate finisher).
         public static readonly string[] AttackPatterns = { "aggressive", "hunter" };
         /// The order in which the planner names hard slots (deterministic).
+        /// Player-24: "receiver_before_buff" rides beside buff_before_receiver -
+        /// which of the two an ELITE supporter earns is the CommandTiming
+        /// payload decision (Bewegungs- vs. Angriffs-Nutzlast), not a choice
+        /// of the chain any more.
         public static readonly string[] HardSlots =
-            { "buff_before_receiver", "blocker_before_attached_attack",
+            { "buff_before_receiver", "receiver_before_buff",
+              "blocker_before_attached_attack",
               "deploy_before_intercept", "finisher_last" };
 
         static bool IsAttackPattern(string pattern)
@@ -321,7 +326,13 @@ namespace TacticalAI.Core
                                           IEnumerable<string> ringZones = null,
                                           string contestZone = null,
                                           string counter = null,
-                                          CardEffects cardEffects = null)
+                                          CardEffects cardEffects = null,
+                                          // Player-24 (Thomas 04.11 Go): the
+                                          // Befehlszeitpunkt table (CommandTiming);
+                                          // null/absent = today's blind chain,
+                                          // bit-identical canon (every pinned
+                                          // order_plan vector runs untouched).
+                                          Dictionary<string, CommandTimingDecision> commandTiming = null)
         {
             var prof = skill;                       // resolve_skill(skill)
             var level = prof != null ? prof.Level : "ref";
@@ -393,12 +404,22 @@ namespace TacticalAI.Core
             bool useChains = prof != null && (level == "S3" || level == "S4" || level == "S5");
             if (useChains)
             {
-                ApplySlotBuff(order, tags, why);
+                ApplySlotBuff(order, tags, why, commandTiming);
                 ApplySlotBlocker(order, tags, why);
                 ApplySlotDeploy(order, tags, why, roundNo);
             }
             if (prof != null && (level == "S4" || level == "S5"))
                 ApplySlotFinisher(order, tags, why, counter);
+
+            // Player-24 after-slot follow law (Thomas 04.11 Go): the finisher
+            // step can PULL the receiver out from under an after-decision
+            // (receiver = strongest attacker = classic finisher candidate).
+            // The Befehlszeitpunkt decision then re-anchors the supporter
+            // directly behind the receiver — quiet re-move: tag + why were
+            // recorded by the chain step and must not double-print.
+            if (useChains && commandTiming != null && prof != null &&
+                (level == "S4" || level == "S5"))
+                ReapplyAfterSlots(order, tags, commandTiming);
 
             // M12d public announcement: whenever card hooks moved numbers,
             // EVERY group's order card names the owned cards (open book -
@@ -539,6 +560,33 @@ namespace TacticalAI.Core
             why[mover.Facts.GroupId].Add(text);
         }
 
+        /// Mirror of MoveBefore: the mover lands DIRECTLY behind the anchor.
+        /// Already-immediate-follower = the slot law stands satisfied: no
+        /// move, but tag + why are recorded the same way (the law must stay
+        /// visible in ExplainFor, and the pinned canon never sees this path).
+        static void MoveAfter(List<GroupFactsWithEv> order, GroupFactsWithEv mover,
+                              GroupFactsWithEv anchor, Dictionary<string, List<string>> tags,
+                              Dictionary<string, List<string>> why, string tag, string text)
+        {
+            if (ReferenceEquals(mover, anchor))
+                return;                              // a group is never its own anchor
+            int iM = IdentityIndexOf(order, mover);
+            int iA = IdentityIndexOf(order, anchor);
+            if (iM == iA + 1)
+            {
+                if (!tags[mover.Facts.GroupId].Contains(tag))
+                    tags[mover.Facts.GroupId].Add(tag);
+                why[mover.Facts.GroupId].Add(text);
+                return;
+            }
+            order.RemoveAt(iM);
+            iA = IdentityIndexOf(order, anchor);
+            order.Insert(iA + 1, mover);
+            if (!tags[mover.Facts.GroupId].Contains(tag))
+                tags[mover.Facts.GroupId].Add(tag);
+            why[mover.Facts.GroupId].Add(text);
+        }
+
         static int IdentityIndexOf(List<GroupFactsWithEv> list, GroupFactsWithEv item)
         {
             for (int i = 0; i < list.Count; i++) if (ReferenceEquals(list[i], item)) return i;
@@ -551,9 +599,17 @@ namespace TacticalAI.Core
         /// the plain +2-movement order (MovementBuffOnly) is EXEMPT — that
         /// buff never earns the head of the order. Elite command and every
         /// non-officer support pattern keep the chain untouched.
+        /// Player-24 (Thomas 04.11 Go): when the bridge feeds a CommandTiming
+        /// decision for an elite supporter, the blind "first receiver" anchor
+        /// is REPLACED by the named receiver and the slot follows the
+        /// payload: before = movement leg extends the receiver's reach, after
+        /// ("receiver_before_buff") = the interrupt pays a second attack once
+        /// the receiver has activated. No decision for the group = the blind
+        /// law, bit-identical to the pinned canon.
         static void ApplySlotBuff(List<GroupFactsWithEv> order,
                                   Dictionary<string, List<string>> tags,
-                                  Dictionary<string, List<string>> why)
+                                  Dictionary<string, List<string>> why,
+                                  Dictionary<string, CommandTimingDecision> timing = null)
         {
             var receivers = Filter(order, w => IsAttackPattern(w.Facts.Pattern));
             if (receivers.Count == 0)
@@ -561,8 +617,27 @@ namespace TacticalAI.Core
             var firstReceiver = receivers[0];
             foreach (var w in Filter(order, x => x.Facts.Pattern == "support" &&
                                                  !x.Facts.MovementBuffOnly))
-                MoveBefore(order, w, firstReceiver, tags, why, "buff_before_receiver",
-                           "Buff zuerst: Staerkt die Angreifer dieser Runde");
+            {
+                CommandTimingDecision d = null;
+                GroupFactsWithEv rec = null;
+                if (timing != null && timing.TryGetValue(w.Facts.GroupId, out d) && d != null)
+                {
+                    foreach (var cand in receivers)
+                        if (string.Equals(cand.Facts.GroupId, d.ReceiverGroup,
+                                          StringComparison.Ordinal))
+                        { rec = cand; break; }
+                }
+                if (d == null || rec == null)
+                {
+                    MoveBefore(order, w, firstReceiver, tags, why, "buff_before_receiver",
+                               "Buff zuerst: Staerkt die Angreifer dieser Runde");
+                    continue;
+                }
+                if (d.Before)
+                    MoveBefore(order, w, rec, tags, why, "buff_before_receiver", d.Why);
+                else
+                    MoveAfter(order, w, rec, tags, why, "receiver_before_buff", d.Why);
+            }
         }
 
         /// blocker_before_attached_attack: a blocker takes its position before
@@ -637,6 +712,35 @@ namespace TacticalAI.Core
             var outl = new List<GroupFactsWithEv>();
             foreach (var w in order) if (pred(w)) outl.Add(w);
             return outl;
+        }
+
+        /// Quiet re-anchoring of the after-decisions (see the follow law in
+        /// PlanRound): moves only, no tags, no why - the chain step already
+        /// stated the law. before-decisions need nothing: the finisher can
+        /// only pull the receiver FURTHER behind the supporter, never ahead.
+        static void ReapplyAfterSlots(List<GroupFactsWithEv> order,
+                                       Dictionary<string, List<string>> tags,
+                                       Dictionary<string, CommandTimingDecision> timing)
+        {
+            foreach (var kv in timing)
+            {
+                var d = kv.Value;
+                if (d == null || d.Before) continue;
+                GroupFactsWithEv w = null, rec = null;
+                foreach (var x in order)
+                {
+                    if (w == null && string.Equals(x.Facts.GroupId, d.SupporterGroup, StringComparison.Ordinal)) w = x;
+                    if (rec == null && string.Equals(x.Facts.GroupId, d.ReceiverGroup, StringComparison.Ordinal)) rec = x;
+                }
+                if (w == null || rec == null || ReferenceEquals(w, rec)) continue;
+                if (!tags[w.Facts.GroupId].Contains("receiver_before_buff")) continue;  // chain never spoke
+                int iM = IdentityIndexOf(order, w);
+                int iA = IdentityIndexOf(order, rec);
+                if (iM == iA + 1) continue;                    // still adjacent - done
+                order.RemoveAt(iM);
+                iA = IdentityIndexOf(order, rec);
+                order.Insert(iA + 1, w);
+            }
         }
     }
 }

@@ -170,6 +170,13 @@ namespace TacticalAI
         // never a decision themselves (ExplainFor only RENDERS them).
         static Dictionary<string, Tac.WachzoneDecision> _sdWatchByGroup;
         static Dictionary<string, Tac.ThreeCFact> _sdThreeCByGroup;
+        // Player-24 Befehlszeitpunkt (Thomas 04.11 Go): this round's timing
+        // table for ELITE supporters (Vollstreckungsbefehl only - the plain
+        // command moves a turn, it never creates one, so the Player-21
+        // head-slot demotion stays its whole story). Null off the
+        // SupporterMaskTrustEnabled rung and on every failure - the chain
+        // then runs the old blind law, bit-identical to the pinned canon.
+        static Dictionary<string, Tac.CommandTimingDecision> _commandTimingByGroup;
         static string _sdClampActive;        // posture clamp in force this round
         static readonly Dictionary<string, string> _sdVergByGroup =
             new Dictionary<string, string>();  // group -> suspected shooter hero
@@ -710,6 +717,30 @@ namespace TacticalAI
                     Debug.LogWarning("TacticalAIBridge::section decisions cache failed: " + e.Message);
                 }
             }
+            // Player-24 Befehlszeitpunkt (Thomas 04.11 Go): replace the
+            // blind "buff first" anchor with the printed interrupt
+            // semantics. Zone facts only (the app never sees cells): fresh
+            // hero anchor in the receiver's zone -> the troop activates
+            // FIRST and the command pays the second attack; no anchor ->
+            // the command goes FIRST and its movement leg doubles the
+            // troop's reach. The exact 2-field ring stays table work and
+            // the why-line says so (E2 discipline). Rung: same trust gate
+            // as the supporter mask law (S4/S5); below = the blind chain.
+            _commandTimingByGroup = null;
+            if (feedView != null && LastSectionSpace != null &&
+                Tac.SectionSkill.SupporterMaskTrustEnabled(skill))
+            {
+                try
+                {
+                    _commandTimingByGroup = Tac.CommandTiming.ForRound(
+                        roundNo, facts, LastSectionSpace, feedView, _catalog);
+                }
+                catch (Exception e)
+                {
+                    _commandTimingByGroup = null;
+                    Debug.LogWarning("TacticalAIBridge::command timing failed: " + e.Message);
+                }
+            }
             // M12d: the campaign deck's acquired class cards hook into the
             // SAME pipeline (activation efficiency + printed strength). No
             // deck / no firing hook -> null -> bit-identical canon plan.
@@ -722,7 +753,8 @@ namespace TacticalAI
                                                   roundNo,
                                                   LastSdZones != null ? LastSdZones.RingZones : null,
                                                   LastSdZones != null ? LastSdZones.ContestZone : null,
-                                                  MissionCounter(), null);
+                                                  MissionCounter(), null,
+                                                  _commandTimingByGroup);
             Tac.OrderPlanner.AssertPermutation(plan, facts.Select(f => f.GroupId));
             _slots = plan.Slots;
             var names = facts.ToDictionary(f => f.GroupId, f => f.Name);

@@ -1,0 +1,230 @@
+{
+"_comment": "Player-24 BEFEHLSZEITPUNKT vectors (Thomas 04.11 Go). CommandTiming.ForRound pinned on the real feed path (expect blocks recorded once via `dotnet run -- <fixtures> --record`, then reviewed line by line; the silence rows and slot laws are hand-pinned ground truth) + plan consumption in OrderPlanner (relations, tags, why-ride, finisher-follow adjacency, blind canon).",
+"cards": [
+  {"id": "DG005", "name": "Imperial Officer", "miniSize": "Small1x1", "speed": 4, "health": 3, "attackType": "Ranged", "attacks": ["Blue", "Yellow"], "isElite": false, "keywords": ["OfficerOrder"]},
+  {"id": "DG006", "name": "Imperial Officer (Elite)", "miniSize": "Small1x1", "speed": 4, "health": 5, "attackType": "Ranged", "attacks": ["Blue", "Yellow"], "isElite": true, "keywords": ["OfficerExecOrder"]},
+  {"id": "DG021", "name": "Stormtroopers", "miniSize": "Small1x1", "speed": 4, "health": 3, "attackType": "Ranged", "attacks": ["Blue"], "isElite": false, "keywords": []},
+  {"id": "DG007", "name": "E-Web Engineer", "miniSize": "Medium1x2", "speed": 2, "health": 5, "attackType": "Ranged", "attacks": ["Blue", "Red", "Yellow"], "isElite": false, "keywords": []}
+],
+"cases": [
+  {
+    "name": "plain_silent",
+    "comment": "plain command MOVES a turn, it never creates one - the elite law never speaks for it (Player-21 head demotion stays its whole story).",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}}
+    ],
+    "groups": [
+      {"id": "PL", "card": "DG005", "name": "Offizier", "pattern": "support", "supporter": 1, "plain_order": 1, "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {},
+    "silent": ["PL"]
+  },
+  {
+    "name": "elite_moves_first",
+    "comment": "no hero anchor anywhere -> the command's movement leg extends the troop's reach -> supporter BEFORE the receiver; both in one zone -> ring claim from the zone fact.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-canteen", "name": "Kantine"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {
+      "OF": {"present": 1, "receiver": "TR", "before": 1, "ring": 1, "why": "Befehlszeitpunkt: kein Held im Bereich von Sturmtruppe - der Vollstreckungsbefehl geht vor, die Bewegungshilfe verdoppelt die Reichweite der Truppe. || Befehlsring: beide in Kantine."}
+    }
+  },
+  {
+    "name": "elite_second_shot",
+    "comment": "fresh hero anchor inside the receiver's zone -> the troop activates first (moves, shoots), the interrupt pays the SECOND attack after the move.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-canteen", "name": "Kantine"}},
+      {"kind": "HeroActivationStart", "round": 2, "payload": {"hero": "Jek"}},
+      {"kind": "EntityInteract", "round": 2, "payload": {"entity": "t-kasse", "section": "s-canteen"}},
+      {"kind": "HeroActivated", "round": 2, "payload": {"hero": "Jek"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {
+      "OF": {"present": 1, "receiver": "TR", "before": 0, "ring": 1, "why": "Befehlszeitpunkt: im Bereich von Sturmtruppe steht ein frischer Helden-Anker - erst rückt die Truppe ein und schießt, dann zahlt der Vollstreckungsbefehl den zweiten Angriff. || Befehlsring: beide in Kantine."}
+    }
+  },
+  {
+    "name": "stale_anchor_moves_first",
+    "comment": "the anchor is from round 1 - yesterday's news (R-A live-round discipline): not engaged, the command leads with its movement leg.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-canteen", "name": "Kantine"}},
+      {"kind": "HeroActivationStart", "round": 1, "payload": {"hero": "Jek"}},
+      {"kind": "EntityInteract", "round": 1, "payload": {"entity": "t-kasse", "section": "s-canteen"}},
+      {"kind": "HeroActivated", "round": 1, "payload": {"hero": "Jek"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {
+      "OF": {"present": 1, "receiver": "TR", "before": 1, "ring": 1, "why": "Befehlszeitpunkt: kein Held im Bereich von Sturmtruppe - der Vollstreckungsbefehl geht vor, die Bewegungshilfe verdoppelt die Reichweite der Truppe. || Befehlsring: beide in Kantine."}
+    }
+  },
+  {
+    "name": "cross_zone_table_check",
+    "comment": "supporter and receiver in DIFFERENT zones: the 2-field ring is unknowable here - the why-line hands the check to the table (E2 discipline), the slot law still runs.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-canteen", "name": "Kantine"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-tunnel"}
+    ],
+    "expect": {
+      "OF": {"present": 1, "receiver": "TR", "before": 1, "ring": 0, "why": "Befehlszeitpunkt: kein Held im Bereich von Sturmtruppe - der Vollstreckungsbefehl geht vor, die Bewegungshilfe verdoppelt die Reichweite der Truppe. || Befehlsring am Tisch prüfen: der Befehl erreicht nur Figuren in 2 Feldern."}
+    }
+  },
+  {
+    "name": "receiver_is_strongest",
+    "comment": "receiver pick = highest PrintedEvTotal x VitalityFrac (the finisher key), not the first attacker in order.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-canteen", "name": "Kantine"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-canteen"},
+      {"id": "EW", "card": "DG007", "name": "E-Web-Schütze", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {
+      "OF": {"present": 1, "receiver": "EW", "before": 1, "ring": 1, "why": "Befehlszeitpunkt: kein Held im Bereich von E-Web-Schütze - der Vollstreckungsbefehl geht vor, die Bewegungshilfe verdoppelt die Reichweite der Truppe. || Befehlsring: beide in Kantine."}
+    }
+  },
+  {
+    "name": "receiver_yields_to_vitality",
+    "comment": "same cards, different wounds: the key carries VitalityFrac - the command pays the unit that will experience the payout (finisher analogy).",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-ramp", "name": "Andruck"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-ramp"},
+      {"id": "TR1", "card": "DG021", "name": "Halbe Kompanie", "pattern": "aggressive", "vitality": "1/2", "zone": "s-ramp"},
+      {"id": "TR2", "card": "DG021", "name": "Frische Kompanie", "pattern": "aggressive", "zone": "s-ramp"}
+    ],
+    "expect": {
+      "OF": {"present": 1, "receiver": "TR2", "before": 1, "ring": 1, "why": "Befehlszeitpunkt: kein Held im Bereich von Frische Kompanie - der Vollstreckungsbefehl geht vor, die Bewegungshilfe verdoppelt die Reichweite der Truppe. || Befehlsring: beide in Andruck."}
+    }
+  },
+  {
+    "name": "dead_elite_silent",
+    "comment": "a dead elite commands nothing.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "n_alive": 0, "vitality": "0", "zone": "s-canteen"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {},
+    "silent": ["OF"]
+  },
+  {
+    "name": "unknown_receiver_card_silent",
+    "comment": "the only receiver's card is not in the catalog - unknown EV is never bet on (fairness law of the WithEv channel).",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"},
+      {"id": "TRX", "card": "DGXX", "name": "Fremdkörper", "pattern": "aggressive", "zone": "s-canteen"}
+    ],
+    "expect": {},
+    "silent": ["OF"]
+  },
+  {
+    "name": "no_receivers_silent",
+    "comment": "no living attack-pattern group at all - nothing to command.",
+    "round": 2,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-canteen"}
+    ],
+    "expect": {},
+    "silent": ["OF"]
+  }
+],
+"plan_cases": [
+  {
+    "name": "before_no_hero",
+    "comment": "S5 consumption, no hero -> supporter lands before the named receiver (the EW is also the finisher: it slides to the tail, the before-relation holds).",
+    "round": 2,
+    "skill": 5,
+    "use_timing": 1,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive"},
+      {"id": "EW", "card": "DG007", "name": "E-Web-Schütze", "pattern": "aggressive"}
+    ],
+    "supporter": "OF",
+    "receiver": "EW",
+    "expect": "before"
+  },
+  {
+    "name": "after_engaged_finisher_pull",
+    "comment": "the receiver EW is engaged AND the finisher candidate: finisher_last drags it to the tail, the follow law re-anchors the supporter directly behind it (adjacency iS == iR+1, supporter last).",
+    "round": 2,
+    "skill": 5,
+    "use_timing": 1,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}},
+      {"kind": "SectionActivated", "round": 1, "payload": {"section": "s-post", "name": "Posten"}},
+      {"kind": "HeroActivationStart", "round": 2, "payload": {"hero": "Jek"}},
+      {"kind": "EntityInteract", "round": 2, "payload": {"entity": "t-schleuse", "section": "s-post"}},
+      {"kind": "HeroActivated", "round": 2, "payload": {"hero": "Jek"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1, "zone": "s-post"},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive"},
+      {"id": "EW", "card": "DG007", "name": "E-Web-Schütze", "pattern": "aggressive", "zone": "s-post"}
+    ],
+    "supporter": "OF",
+    "receiver": "EW",
+    "expect": "after"
+  },
+  {
+    "name": "blind_canon_intact",
+    "comment": "use_timing=0 -> the blind chain runs untouched: old tag, old why, first attacker anchor. (The pinned order_plan.json vectors govern the null-parameter canon.)",
+    "round": 2,
+    "skill": 5,
+    "use_timing": 0,
+    "events": [
+      {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the canteen.", "priorityTarget": "", "roundLimit": 6, "mission": "timing"}}
+    ],
+    "groups": [
+      {"id": "OF", "card": "DG006", "name": "Elite-Offizier", "pattern": "support", "supporter": 1},
+      {"id": "TR", "card": "DG021", "name": "Sturmtruppe", "pattern": "aggressive"},
+      {"id": "EW", "card": "DG007", "name": "E-Web-Schütze", "pattern": "aggressive"}
+    ],
+    "supporter": "OF",
+    "receiver": "TR",
+    "expect": "blind"
+  }
+]
+}

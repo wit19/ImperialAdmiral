@@ -320,10 +320,15 @@ Officers are the Empire's remote control — their orders go to *another* figure
 officer's activation exactly where the command pays: a hero stands in the chosen
 receiver's area (fresh fact anchor) → the troop activates first and the command
 follows, paying the interrupt as a **second attack**; no hero there → the officer
-leads and the command's move leg extends the troop's reach this round. The named
+leads and the command's move leg extends the troop's reach this round. The chosen
+receiver is the troop *in contact* whenever the app has seen a hero next to one of
+them this round (playtest law after Player-24: the commander orders the troops he
+sees fighting — the globally strongest troop only gets the order when nobody is
+engaged). The named
 receiver and the reason ride on the officer's order card ("Befehlszeitpunkt …"),
 and the card keeps reminding you: the command only reaches figures within 2
-spaces — that check stays yours at the table.
+spaces — that check stays yours at the table. Since #1007 the decision is also
+printed in the play log at every elite-officer activation (`timing DG…:` line).
 
 A machine-enforced text gate (`tools/TacticalAiGate/OfficerTextGate.cs`, ~1,900
 checks with mutation self-tests) makes it *impossible* to ship an order text that

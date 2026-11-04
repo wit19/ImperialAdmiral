@@ -23,7 +23,11 @@ namespace TacticalAI.Core
     //  The law, per living elite supporter, on ZONE facts only (the app
     //  never sees board cells - Nie-raten-Gesetz; the exact 2-field
     //  command ring is TABLE knowledge and the why-line says so):
-    //    receiver = the living attack-pattern group with the highest
+    //    receiver = ENGAGED FIRST (Player-24 log review, Thomas 04.11):
+    //      attack-pattern groups whose zone carries a fresh same-round
+    //      hero anchor compete first - the table commander orders the
+    //      troop in contact, where the interrupt pays. Nobody engaged ->
+    //      the living attack-pattern group with the highest
     //      PrintedEvTotal x VitalityFrac (the finisher key; lower Index
     //      breaks ties) whose card is known (unknown EV = never chosen).
     //    engaged (a hero carries a FRESH same-round fact anchor inside the
@@ -82,7 +86,8 @@ namespace TacticalAI.Core
                 if (!s.Supporter || s.MovementBuffOnly) continue;   // elites only
                 GroupFacts rec;
                 Rational key;
-                PickReceiver(s, receivers, cards, out rec, out key);
+                PickReceiver(s, receivers, cards, space, view, roundNo,
+                             out rec, out key);
                 if (rec == null)
                     continue;
                 bool engaged = HeroInZone(space, view, rec.Zone, roundNo);
@@ -124,23 +129,59 @@ namespace TacticalAI.Core
         /// Highest PrintedEvTotal x VitalityFrac among the receiver pool
         /// (the finisher key; the card must be known - unknown EV is never
         /// bet on). Ties keep the LOWER Index (Python max keeps first).
+        ///
+        /// Player-24 log review (Thomas 04.11, Player-24.log R2): ENGAGED
+        /// FIRST. A raw-EV pick sent the Vollstreckungsbefehl's plan to the
+        /// strongest troop ACROSS the map while the heroes stood right next
+        /// to the garrison - the table commander orders the troop HE SEES IN
+        /// CONTACT, so the pool is tiered: groups whose zone carries a fresh
+        /// same-round hero anchor compete first (there the interrupt pays
+        /// the second attack); only when NO attack zone shows an anchor does
+        /// the global strongest win (movement-leg branch, unchanged).
         static void PickReceiver(GroupFacts supporter, List<GroupFacts> receivers,
                                  Dictionary<string, DeploymentCard> cards,
+                                 SectionSpace space, FeedWorldView view, int roundNo,
                                  out GroupFacts best, out Rational bestKey)
         {
             best = null; bestKey = Rational.Zero;
+            // tier 1: engaged candidates (fresh hero anchor in their zone)
             foreach (var r in receivers)
             {
-                if (string.Equals(r.GroupId, supporter.GroupId, StringComparison.Ordinal))
-                    continue;
-                DeploymentCard card;
-                if (r.CardId == null || !cards.TryGetValue(r.CardId, out card) || card == null)
-                    continue;                                   // unknown EV - never chosen
-                var key = OrderPlanner.WithEv(r, card).PrintedEvTotal * r.VitalityFrac;
-                if (best == null || key > bestKey ||
-                    (key == bestKey && r.Index < best.Index))
-                { best = r; bestKey = key; }
+                DeploymentCard t;
+                if (!ReceiverCandidate(r, supporter, cards, out t)) continue;
+                if (!HeroInZone(space, view, r.Zone, roundNo)) continue;
+                var k = OrderPlanner.WithEv(r, t).PrintedEvTotal * r.VitalityFrac;
+                if (best == null || k > bestKey ||
+                    (k == bestKey && r.Index < best.Index))
+                { best = r; bestKey = k; }
             }
+            if (best != null) return;
+            // tier 2: nobody is in contact - the global strongest gets the
+            // movement help (the pre-review law, bit-identical fallback).
+            foreach (var r in receivers)
+            {
+                DeploymentCard t;
+                if (!ReceiverCandidate(r, supporter, cards, out t)) continue;
+                var k = OrderPlanner.WithEv(r, t).PrintedEvTotal * r.VitalityFrac;
+                if (best == null || k > bestKey ||
+                    (k == bestKey && r.Index < best.Index))
+                { best = r; bestKey = k; }
+            }
+        }
+
+        /// Shared candidate gate for both receiver tiers: not the supporter
+        /// itself, and the printed EV must be KNOWN (unknown EV never chosen).
+        static bool ReceiverCandidate(GroupFacts r, GroupFacts supporter,
+                                      Dictionary<string, DeploymentCard> cards,
+                                      out DeploymentCard card)
+        {
+            card = null;
+            if (r == null || r.NAlive <= 0) return false;
+            if (string.Equals(r.GroupId, supporter.GroupId, StringComparison.Ordinal))
+                return false;
+            if (r.CardId == null || !cards.TryGetValue(r.CardId, out card) || card == null)
+                return false;
+            return true;
         }
 
         /// A hero with a FRESH (this-round) fact anchor inside the zone.

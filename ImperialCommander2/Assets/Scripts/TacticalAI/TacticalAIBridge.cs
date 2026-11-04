@@ -947,6 +947,19 @@ namespace TacticalAI
             if (plan.Officer)
                 Debug.Log("TacticalAIBridge::officer " + cd.id +
                           " order=1 elite=" + (plan.OfficerElite ? 1 : 0));
+            // Player-24 log review (Thomas 04.11 Go): the timing decision was
+            // REAL but invisible in the Player log - it lived only on the
+            // round-plan card. Playtests must SEE which receiver and which
+            // branch the law chose, so the supporter's activation prints its
+            // decision verbatim (public-safe text, the same line the plan
+            // why-lane carries). Silent when the law never spoke (off rung,
+            // plain supporter, no table entry) - absence keeps old logs clean.
+            if (plan.OfficerElite && _commandTimingByGroup != null)
+            {
+                Tac.CommandTimingDecision td;
+                if (_commandTimingByGroup.TryGetValue(cd.id, out td) && td != null)
+                    Debug.Log("TacticalAIBridge::timing " + cd.id + ": " + td.Why);
+            }
             // Aufgabe 4: the fixed move/attack pair synthesis is GONE - the
             // universal AP pool (RenderBlocks) replaces the block sequence;
             // Assault/Tripod still ride as flags on the plan itself.

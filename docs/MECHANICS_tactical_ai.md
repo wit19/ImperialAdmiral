@@ -481,11 +481,20 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   zone = zone-fact claim in the why-line, anything else hands the check to
   the table (E2 discipline, the app never sees cells). The bridge feeds it
   from the `SupporterMaskTrustEnabled` rung (S4/S5); below and on every
-  failure the blind chain runs bit-identical. `officer_timing.json`: 10
+  failure the blind chain runs bit-identical. `officer_timing.json`: 11
   decision vectors on the real feed path (recorded + reviewed line by line,
-  silence laws hand-pinned) + 3 plan-consumption cases (before-relation,
-  adjacency after the finisher pull, blind canon intact).
-  Canon: 45312 → 45356 checks, additions only.
+  silence laws hand-pinned) + 4 plan-consumption cases (before-relation,
+  adjacency after the finisher pull, engaged-weaker adjacency, blind canon
+  intact). **Player-24.log review follow-up (Thomas 04.11):** the raw-EV
+  receiver pick had sent the plan across the map (Diner garrison engaged,
+  receiver = far stormtroopers) — receiver choice is now TIERED: groups
+  whose zone carries a fresh same-round hero anchor compete first
+  (`engaged_first_over_global_ev`), the global strongest is the
+  no-contact fallback (all pre-review vectors untouched — record diff
+  verified additions-only). Same review: the decision now also prints per
+  activation in the Player log (`TacticalAIBridge::timing DGxxx:` + the
+  public-safe why line; silent where the law never spoke).
+  Canon: 45312 → 45365 checks, additions only.
 - **Canon through the whole chain:** 45174 -> 45312 checks. Additions
   only, with ONE deliberate law-flip exception: `p19_causal_strike_closer`
   flips its expected objective_actor from empty to Jyn Odan because the

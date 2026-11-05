@@ -6,18 +6,12 @@ Star Wars, the Star Wars logo, and all other logos, characters, artwork, stories
 
 **Imperial Commander** is a non-profit project, available free of charge. It is in no way affiliated with or endorsed by Lucasfilm Limited, Disney, Fantasy Flight Games or any of their subsidiaries, employees, or associates.
  
-## Download the latest release
-[Click here](https://github.com/GlowPuff/ImperialCommander2/releases/latest).
-
-## Manual and Documentation
-[Full documentation](https://github.com/GlowPuff/ImperialCommander2/wiki)<br>
-[YouTube channel](https://www.youtube.com/channel/UC8mzMnsLZPgzQW2X2EkCR-Q)
 
 ---
 
 ## This fork: Tactical AI
 
-*The text above is the original README of [GlowPuff/ImperialCommander2](https://github.com/GlowPuff/ImperialCommander2), kept verbatim. Everything below describes this fork.*
+*The intro above is the original README text of [GlowPuff/ImperialCommander2](https://github.com/GlowPuff/ImperialCommander2), kept word for word. Everything below describes this fork; upstream's manual and video links sit at the bottom.*
 
 **Goal.** An optional Tactical AI for the Imperial side that plays by the printed rules and plays fair. It reads only what is already on the table (mission data, entered damage wheels, public objective state), never buffs figures and never holds dice. Difficulty means decision quality: five levels, Recruit to Thrawn, all choosing among the identical set of legal moves. The AI commands and the human at the table acts: every figure receives a concrete if-then order, and every targeting decision stays re-computable from the formula the app itself prints.
 
@@ -34,7 +28,12 @@ Star Wars, the Star Wars logo, and all other logos, characters, artwork, stories
 
 ### Downloads and docs for this fork
 [Latest fork release](https://github.com/wit19/ImperialCommander2/releases/latest)<br>
-[Tactical AI guide](docs/WIKI_tactical_ai.md) (in this repo)<br>
-[Base app documentation](https://github.com/GlowPuff/ImperialCommander2/wiki) (upstream)
+[Tactical AI guide](docs/WIKI_tactical_ai.md) (in this repo)
 
 Like upstream, this fork is a non-commercial fan project in no way affiliated with or endorsed by Lucasfilm Limited, Disney or Fantasy Flight Games.
+
+---
+
+## Manual and Documentation (upstream base app)
+[Full documentation](https://github.com/GlowPuff/ImperialCommander2/wiki)<br>
+[YouTube channel](https://www.youtube.com/channel/UC8mzMnsLZPgzQW2X2EkCR-Q)

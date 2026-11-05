@@ -19,7 +19,7 @@ public static class DataStore
 	// and the latest tag must stay married - the check reads the TAG, not a
 	// release page. A GitHub RELEASE is only ever created when Thomas says
 	// so (04.11, after an auto-created #1007 release was deleted).
-	public static readonly string appVersion = "v.2.2.16#1011";
+	public static readonly string appVersion = "v.2.2.16#1012";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

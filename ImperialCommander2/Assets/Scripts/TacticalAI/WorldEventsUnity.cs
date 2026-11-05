@@ -892,6 +892,21 @@ namespace TacticalAI
                         // HUD flag only fills in sessions whose log predates
                         // the activation-line change (old saves).
                         if (_heroLoggedActivated.Contains(name + "#" + round)) continue;
+                        // M15 F4 (Player-26 ghost activation, Thomas 05.11):
+                        // since M6s-B7 EVERY session's hero writes its own
+                        // activation line (the end-of-turn checkbox flip), so
+                        // within a logger session the flag path is redundant
+                        // AND it is the only carrier of RESTORED checkbox
+                        // state leaking in as a fresh activation of the new
+                        // mission (Player-26 r1: Jyn Odan carried a +4 strain
+                        // prior before she had acted a single step). Where a
+                        // logger exists, the flag path is SILENT - real flips
+                        // arrive causally through the log. Only logger-less
+                        // sessions (the documented old saves) keep the
+                        // flag fill-in.
+                        var sdLog = DataStore.sagaSessionData;
+                        if (sdLog != null && sdLog.missionLogger != null
+                            && sdLog.missionLogger.logItems != null) continue;
                         // The tag carries the ROUND: the checkbox resets each
                         // round, so a flip is a per-round fact - the old
                         // round-free tag emitted each hero exactly ONCE per

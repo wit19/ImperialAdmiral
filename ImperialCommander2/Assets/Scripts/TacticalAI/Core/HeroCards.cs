@@ -253,9 +253,37 @@ namespace TacticalAI.Core
     {
         static readonly List<string> NoItems = new List<string>();
 
+        // M15 (Player-26 audit, Thomas ruling 05.11): DAMAGE-WEIGHTED THREAT
+        // LAW. The printed damage exchange (exact per-face EV through
+        // Dice.ExpectedDamage - the per-die "Gewichtung Wuerfel -> Schaden"
+        // the game already owns) is the MOST IMPORTANT threat factor. The
+        // mobility factor (band x range) stays, but strictly subordinate:
+        // DamageWeight = 24 exceeds the LARGEST possible mobility term on
+        // any printed hero (band <= 3 x range <= 7 = 21), so one full damage
+        // EV per round ALWAYS outweighs even the fastest longest-reaching
+        // hero, and mobility decides only between heroes of equal (or very
+        // close) firepower. Before M15 protect/stall ran on PURE mobility
+        // (Player-26 r1 "Loku 15 = band 3 x range 5" carried zero damage) -
+        // that is the bug this law closes.
+        public const int DamageWeight = 24;
+
+        /// <summary>M15 F2/F3: the threat broken into its printable operands.
+        /// The EXPLAIN text and the threat-accounting log must show the REAL
+        /// arithmetic with these values (Thomas: "die Rechnung mit Kommentar,
+        /// welcher Wert wofuer steht" - never prose about how it works).</summary>
+        public struct ThreatParts
+        {
+            public Rational DamageEv;        // exchange EV per round (best printed pool)
+            public Rational MobilityTerm;    // band x range (0 in the damage races)
+            public List<string> BestPool;    // dice the DamageEv was computed from
+        }
+
         /// <summary>Printed-threat value of one hero in one race, or null
         /// when the posture is not a threat race. card null -> caller falls
         /// back to the M2a.4 curation table (Han/Wookiee sim rows).
+        /// M15: every threat posture now carries the damage exchange;
+        /// eliminate/attrition stay PURE damage, protect/stall =
+        /// DamageWeight x damage + mobility factor (see DamageWeight law).
         /// M12d: engage = the IMPERIAL SIDE's card effects on the hero
         /// exchange (owned engage-hook cards, ImperialCardEffects). null or
         /// neutral -> bit-identical pre-M12d threat (canon law): the acc pip
@@ -272,8 +300,42 @@ namespace TacticalAI.Core
             if (posture == "eliminate" || posture == "attrition")
                 return EliminateEv(card, table, profile, wounded, defenderDefense, engage);
             if (posture == "protect" || posture == "stall")
-                return RunnerValue(card, table, profile, wounded);
+            {
+                // M15 damage-weighted law: firepower first, mobility second
+                // (see DamageWeight). The engage hook rides the exchange here
+                // exactly as in the damage races (M12d seam).
+                List<string> pool;
+                var dmg = EliminateEv(card, table, profile, wounded,
+                                      defenderDefense, engage, out pool);
+                return DamageWeight * dmg + RunnerValue(card, table, profile, wounded);
+            }
             return null;
+        }
+
+        /// <summary>M15: the SAME threat as Threat(), plus its operands -
+        /// damage EV, mobility term and the exact dice pool the damage was
+        /// computed from (LogThreatAccounting + the EXPLAIN cell print the
+        /// arithmetic with these, never prose).</summary>
+        public static ThreatParts? PartsOf(HeroCard card, HeroCardTable table,
+                                           HeroThreatProfile profile, bool wounded,
+                                           string posture, IList<string> defenderDefense,
+                                           EngagementEffects engage = null)
+        {
+            if (card == null) return null;
+            bool damageRace = posture == "eliminate" || posture == "attrition";
+            bool runnerRace = posture == "protect" || posture == "stall";
+            if (!damageRace && !runnerRace) return null;
+            List<string> pool;
+            var dmg = EliminateEv(card, table, profile, wounded,
+                                  defenderDefense, engage, out pool);
+            var parts = new ThreatParts
+            {
+                DamageEv = dmg,
+                MobilityTerm = runnerRace
+                    ? RunnerValue(card, table, profile, wounded) : Rational.Zero,
+                BestPool = pool,
+            };
+            return parts;
         }
 
         // ------------------------------------------------------- damage race
@@ -281,6 +343,17 @@ namespace TacticalAI.Core
                                     HeroThreatProfile profile, bool wounded,
                                     IList<string> defenderDefense,
                                     EngagementEffects engage = null)
+        {
+            List<string> unused;
+            return EliminateEv(card, table, profile, wounded, defenderDefense,
+                               engage, out unused);
+        }
+
+        static Rational EliminateEv(HeroCard card, HeroCardTable table,
+                                    HeroThreatProfile profile, bool wounded,
+                                    IList<string> defenderDefense,
+                                    EngagementEffects engage,
+                                    out List<string> bestPool)
         {
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
@@ -316,6 +389,10 @@ namespace TacticalAI.Core
             int engagePierce = engage == null ? 0 : engage.Pierce;
             int engageAcc = engage == null ? 0 : engage.AccDelta;
             var best = Rational.Zero;
+            // the pool whose EV produced `best` (M15 print: the accounting
+            // shows WHICH printed pool the damage was read from; stays the
+            // base pool when every pool trades at zero)
+            bestPool = card.BasisWuerfel;
             foreach (var p in pools)
             {
                 var stats = Dice.BuildAttackStats(p.Item1, keywords, p.Item2, null,
@@ -330,12 +407,15 @@ namespace TacticalAI.Core
                     stats.AccGate = (int)(gate.Num / gate.Den);
                 }
                 var ev = Dice.ExpectedDamage(stats, defender, 1, pierce + engagePierce);
-                if (ev > best) best = ev;
+                if (ev > best) { best = ev; bestPool = p.Item1; }
             }
             return best;
         }
 
-        // ------------------------------------------------------- runner race
+        // ------------------------------------------------- mobility factor
+        // (M15: no longer a threat of its own - it is the SUBORDINATE second
+        // summand of the damage-weighted protect/stall threat; the runner's
+        // reach still extends with printed ranged items, exactly as before)
         static Rational RunnerValue(HeroCard card, HeroCardTable table,
                                     HeroThreatProfile profile, bool wounded)
         {

@@ -291,28 +291,34 @@
    ],
    "expect": [
     {
+     "basis": "economy",
      "hero": "Han Solo",
      "marked": false,
-     "wounded": false,
-     "threat": "14",
-     "threat_econ": "14",
-     "basis": "economy"
+     "threat": "98",
+     "threat_econ": "98",
+     "wounded": false
     },
     {
+     "basis": "card",
+     "best_pool": "Green+Yellow",
      "hero": "Diala Passil",
      "marked": false,
-     "wounded": false,
-     "threat": "4",
-     "threat_econ": "4",
-     "basis": "card"
+     "threat": "52",
+     "threat_damage": "2",
+     "threat_econ": "52",
+     "threat_mobility": "4",
+     "wounded": false
     },
     {
+     "basis": "card",
+     "best_pool": "Red+Yellow",
      "hero": "Gaarkhan",
      "marked": false,
-     "wounded": true,
-     "threat": "1",
-     "threat_econ": "1",
-     "basis": "card"
+     "threat": "21",
+     "threat_damage": "5/6",
+     "threat_econ": "21",
+     "threat_mobility": "1",
+     "wounded": true
     }
    ]
   },
@@ -447,41 +453,53 @@
    ],
    "expect": [
     {
+     "basis": "card",
+     "best_pool": "Blue+Blue+Red",
      "hero": "Drokkatta",
      "marked": false,
-     "wounded": false,
-     "threat": "12",
-     "threat_econ": "12",
-     "basis": "card"
+     "threat": "100",
+     "threat_damage": "11/3",
+     "threat_econ": "100",
+     "threat_mobility": "12",
+     "wounded": false
     },
     {
-     "hero": "Biv Bodhrik",
-     "marked": false,
-     "wounded": false,
-     "threat": "6",
-     "threat_econ": "6",
-     "basis": "card"
-    },
-    {
+     "basis": "card",
+     "best_pool": "Green+Green",
      "hero": "CT-1701",
      "marked": false,
-     "wounded": false,
-     "threat": "6",
-     "threat_econ": "6",
-     "basis": "card"
+     "threat": "62",
+     "threat_damage": "7/3",
+     "threat_econ": "62",
+     "threat_mobility": "6",
+     "wounded": false
     },
     {
+     "basis": "card",
+     "best_pool": "Blue+Red",
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "threat": "58",
+     "threat_damage": "13/6",
+     "threat_econ": "58",
+     "threat_mobility": "6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Green+Yellow",
      "hero": "Davith Elso",
      "marked": false,
-     "wounded": false,
-     "threat": "2",
-     "threat_econ": "2",
-     "basis": "card"
+     "threat": "50",
+     "threat_damage": "2",
+     "threat_econ": "50",
+     "threat_mobility": "2",
+     "wounded": false
     }
    ]
   },
   {
-   "name": "m10a_wounded_beats_investment",
+   "name": "m15_wounded_loses_to_firepower",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -532,28 +550,37 @@
    ],
    "expect": [
     {
-     "hero": "Saska Teft",
-     "marked": false,
-     "wounded": true,
-     "threat": "6",
-     "threat_econ": "6",
-     "basis": "card"
-    },
-    {
-     "hero": "Biv Bodhrik",
-     "marked": false,
-     "wounded": false,
-     "threat": "6",
-     "threat_econ": "6",
-     "basis": "card"
-    },
-    {
+     "basis": "card",
+     "best_pool": "Green+Green",
      "hero": "CT-1701",
      "marked": false,
-     "wounded": false,
-     "threat": "6",
-     "threat_econ": "6",
-     "basis": "card"
+     "threat": "62",
+     "threat_damage": "7/3",
+     "threat_econ": "62",
+     "threat_mobility": "6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Blue+Red",
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "threat": "58",
+     "threat_damage": "13/6",
+     "threat_econ": "58",
+     "threat_mobility": "6",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Green+Yellow",
+     "hero": "Saska Teft",
+     "marked": false,
+     "threat": "42",
+     "threat_damage": "3/2",
+     "threat_econ": "42",
+     "threat_mobility": "6",
+     "wounded": true
     }
    ]
   },
@@ -597,20 +624,26 @@
    ],
    "expect": [
     {
+     "basis": "card",
+     "best_pool": "Blue+Blue+Red",
      "hero": "Biv Bodhrik",
      "marked": false,
-     "wounded": false,
-     "threat": "12",
-     "threat_econ": "12",
-     "basis": "card"
+     "threat": "100",
+     "threat_damage": "11/3",
+     "threat_econ": "100",
+     "threat_mobility": "12",
+     "wounded": false
     },
     {
+     "basis": "card",
+     "best_pool": "Blue+Blue+Red",
      "hero": "Davith Elso",
      "marked": false,
-     "wounded": false,
-     "threat": "12",
-     "threat_econ": "12",
-     "basis": "card"
+     "threat": "100",
+     "threat_damage": "11/3",
+     "threat_econ": "100",
+     "threat_mobility": "12",
+     "wounded": false
     }
    ]
   },
@@ -644,20 +677,20 @@
    ],
    "expect": [
     {
+     "basis": "economy",
      "hero": "Han Solo Two",
      "marked": false,
-     "wounded": false,
-     "threat": "15",
-     "threat_econ": "15",
-     "basis": "economy"
+     "threat": "99",
+     "threat_econ": "99",
+     "wounded": false
     },
     {
+     "basis": "economy",
      "hero": "Han Solo",
      "marked": false,
-     "wounded": false,
-     "threat": "14",
-     "threat_econ": "14",
-     "basis": "economy"
+     "threat": "98",
+     "threat_econ": "98",
+     "wounded": false
     }
    ]
   },
@@ -847,20 +880,26 @@
    ],
    "expect": [
     {
+     "basis": "card",
+     "best_pool": "Blue+Red+Green",
      "hero": "Diala Passil",
      "marked": false,
-     "wounded": false,
-     "threat": "4",
-     "threat_econ": "4",
-     "basis": "card"
+     "threat": "102",
+     "threat_damage": "25/6",
+     "threat_econ": "102",
+     "threat_mobility": "2",
+     "wounded": true
     },
     {
+     "basis": "card",
+     "best_pool": "Blue+Green+Yellow",
      "hero": "Diala Passil",
      "marked": false,
-     "wounded": true,
-     "threat": "2",
-     "threat_econ": "2",
-     "basis": "card"
+     "threat": "72",
+     "threat_damage": "17/6",
+     "threat_econ": "72",
+     "threat_mobility": "4",
+     "wounded": false
     }
    ]
   },
@@ -1042,29 +1081,38 @@
    ],
    "expect": [
     {
+     "basis": "mark",
+     "best_pool": "Blue+Green+Yellow",
      "hero": "Diala Passil",
      "marked": true,
-     "wounded": false,
-     "threat": "4",
-     "threat_econ": "12",
-     "basis": "mark",
-     "strain_druck": "8"
+     "strain_druck": "8",
+     "threat": "72",
+     "threat_damage": "17/6",
+     "threat_econ": "80",
+     "threat_mobility": "4",
+     "wounded": false
     },
     {
-     "hero": "Fenn Signis",
-     "marked": false,
-     "wounded": false,
-     "threat": "10",
-     "threat_econ": "10",
-     "basis": "card"
-    },
-    {
+     "basis": "card",
+     "best_pool": "Blue+Red+Green",
      "hero": "Diala Passil",
      "marked": false,
-     "wounded": true,
-     "threat": "2",
-     "threat_econ": "2",
-     "basis": "card"
+     "threat": "102",
+     "threat_damage": "25/6",
+     "threat_econ": "102",
+     "threat_mobility": "2",
+     "wounded": true
+    },
+    {
+     "basis": "card",
+     "best_pool": "Blue+Green",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "62",
+     "threat_damage": "13/6",
+     "threat_econ": "62",
+     "threat_mobility": "10",
+     "wounded": false
     }
    ]
   },

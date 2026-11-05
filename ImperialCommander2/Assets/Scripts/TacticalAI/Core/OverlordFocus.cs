@@ -161,6 +161,14 @@ namespace TacticalAI.Core
         public bool Wounded;
         public Rational? Threat;            // printed threat BEFORE economy
         public Rational? ThreatEconomic;    // after the wound-economy multiplier
+        // M15 (Player-26 audit): the threat's operands, printed verbatim by
+        // the EXPLAIN cell and the threat accounting. Populated ONLY on card
+        // rows under protect/stall (where the threat is NOT just the damage
+        // EV - eliminate rows read their damage straight from Threat, every
+        // pre-M15 canon vector stays byte-identical, record discipline).
+        public Rational? ThreatDamage;      // exchange EV per round (best pool)
+        public Rational? ThreatMobility;    // band x range subordination term
+        public string BestPool;             // dice the damage EV came from
         public string Basis;                // "mark"|"chip"|"card"|"economy"|"proxy"
         // M11d: the LIVE strain-pressure surcharge actually applied to the
         // econ key this call: 8 (buffer full), 0 (source visible, below the
@@ -220,6 +228,15 @@ namespace TacticalAI.Core
             };
             if (StrainDruck.HasValue && StrainDruck.Value > 0)
                 d["strain_druck"] = StrainDruck.Value.ToString();
+            // M15: the arithmetic operands - appear ONLY on the protect/stall
+            // card rows that carry them (record discipline, see fields).
+            if (ThreatDamage.HasValue)
+            {
+                d["threat_damage"] = ThreatDamage.Value.ToString();
+                d["threat_mobility"] = ThreatMobility.HasValue
+                    ? ThreatMobility.Value.ToString() : "0";
+                if (!string.IsNullOrEmpty(BestPool)) d["best_pool"] = BestPool;
+            }
             if (StrainDruckUnscharf.HasValue && StrainDruckUnscharf.Value > 0)
                 d["strain_druck_unscharf"] = StrainDruckUnscharf.Value.ToString();
             if (Reaktion) d["reaktion"] = true;
@@ -242,7 +259,14 @@ namespace TacticalAI.Core
         {
             if (p == null) return null;
             if (posture == "protect" || posture == "stall")
-                return new Rational(p.RunnerValue);       // mission-denial value
+                // M15 damage-weighted law (mirrors HeroThreatModelV2.Threat):
+                // damage EV x DamageWeight + the mobility/mission-denial term.
+                // Curated rows carry the tabled EV (plain Rational - the
+                // curation table always has one, NeutralEv on blank reads)
+                // and the tabled runner value; the weight law is identical
+                // to the card model.
+                return HeroThreatModelV2.DamageWeight * p.EvDamagePerRound
+                       + new Rational(p.RunnerValue);
             if (posture == "attrition" || posture == "eliminate")
                 return p.EvDamagePerRound;                // damage race
             return null;                                  // deny: node rules
@@ -324,6 +348,10 @@ namespace TacticalAI.Core
                 Threat = ThreatOf(c, posture, defenderDefense, table, engage),
                 Econ = EconOf(c, posture, counter, defenderDefense, table,
                               engage, attackerDamageEv),
+                Parts = c.Card != null
+                    ? HeroThreatModelV2.PartsOf(c.Card, table, c.Profile, c.Wounded,
+                                                posture, defenderDefense, engage)
+                    : null,
                 Chip = woundAll && c.Profile != null ? c.Profile.ChipKey() : null,
             }).ToList();
 
@@ -432,6 +460,21 @@ namespace TacticalAI.Core
                 Wounded = x.C.Wounded,
                 Threat = x.Threat,
                 ThreatEconomic = x.Econ,
+                // M15 operands: ride ONLY on the card rows of a runner race
+                // (protect/stall) - there the threat is a SUM and the
+                // operands are the honest print. Eliminate card rows already
+                // ARE pure damage (Threat itself), curated rows have no card
+                // -> both stay key-free, every pre-M15 vector identical.
+                ThreatDamage = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                    ? x.Parts.Value.DamageEv : (Rational?)null,
+                ThreatMobility = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                    ? x.Parts.Value.MobilityTerm : (Rational?)null,
+                BestPool = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                    ? string.Join("+", x.Parts.Value.BestPool ?? new List<string>())
+                    : null,
                 StrainDruck = x.Druck,
                 StrainDruckUnscharf = x.Unscharf,
                 // WHY args ride along ONLY when the fuzzy stage actually
@@ -564,6 +607,8 @@ namespace TacticalAI.Core
             public FocusCandidate C;
             public Rational? Threat;
             public Rational? Econ;
+            // M15: threat operands (card rows only - PartsOf is card-based).
+            public HeroThreatModelV2.ThreatParts? Parts;
             public List<object> Chip;
             public int? Druck;              // M11d strain surcharge (see Rank)
             public int? Unscharf;           // M11h fuzzy round-prior stage (see Rank)

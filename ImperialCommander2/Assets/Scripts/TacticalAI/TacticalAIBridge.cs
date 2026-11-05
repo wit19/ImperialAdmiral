@@ -1887,6 +1887,14 @@ namespace TacticalAI
                 Tac.FeedWorldView.HeroView hv;
                 heroViews.TryGetValue(id, out hv);
                 var ch = CampaignHeroFor(id);
+                // M15 F1 (Player-26): campaignHeroes.heroID stores the app
+                // CARD id ("H9"), never the display name - the name-only join
+                // never hit, so NO bought weapon/item and NO XP ability ever
+                // reached the threat model ("items=none|eqIndex=0|xpIndex=0"
+                // while Jyn owned the E-11). The live card's own id is the
+                // exact join key; the name path stays first for saves whose
+                // heroID carries a name (imports).
+                if (ch == null) ch = CampaignHeroFor(h.id);
                 var prof = TacticalAIAssets.ProfileFor(id, ch);
                 _profileByName[id] = prof;
                 outp.Add(new Tac.FocusCandidate
@@ -2065,44 +2073,64 @@ namespace TacticalAI
 
         // M6s-B9 (Thomas 03.11): "threat=8 is nice to SEE - but WHICH sum is
         // it?" The ORD focus line ranks every living hero; the plain log
-        // channel now accounts each of them: final threat, the raw damage
-        // EV before the +1 objective credit, HIS dice pool, HIS bought items
-        // and the flags that moved the number. Same public facts the math
-        // used, per hero - so a human can re-check or spot a wrong input.
-        // Threat law in one line: threat is NOT the printed card cost - it
-        // is the expected damage exchange of the hero's FULL dice pool
-        // (printed card dice + every bought campaign item die, see
-        // HeroThreatModelV2.EliminateEv), plus exactly +1 for the objective
-        // actor (public event credit). Two heroes with different gear may
-        // still land on the same EV: gear adds dice, dice are compared
-        // exchange-by-exchange, and equal EV means equal expected damage -
-        // here it is a computed coincidence, not a rounding default.
+        // channel accounts each of them so a human can re-check the exact
+        // arithmetic and spot a wrong input.
+        // M15 (Player-26, Thomas 05.11): the line prints the REAL formula of
+        // the ACTIVE posture, never prose:
+        //   eliminate/attrition: threat = Schadens-Austausch EV/Runde
+        //   protect/stall:       threat = 24 x Schadens-Austausch EV/Runde
+        //                          + Bewegung (Band x Reichweite, items
+        //                          verified) [+1 objective credit]
+        // The damage EV reads from the hero's BEST printed pool (card dice +
+        // bought campaign items, HeroThreatModelV2.EliminateEv) - the pool
+        // name rides in the line so gear effects are visible per hero.
         static List<Tac.FocusPick> _roundFocusRanked;
         static List<Tac.FocusCandidate> _focusCandsDbg;
 
         internal static void LogThreatAccounting(int roundNo)
         {
             if (_roundFocusRanked == null || _focusCandsDbg == null) return;
+            var posture = _roundFocusPosture ?? "eliminate";
+            var table = Tac.HeroCards.Load();
             foreach (var p in _roundFocusRanked)
             {
                 var c = _focusCandsDbg.FirstOrDefault(x => x.HeroId == p.HeroId);
-                string pool = c != null && c.Card != null && c.Card.BasisWuerfel != null
-                    ? string.Join("+", c.Card.BasisWuerfel)
-                    : "(curation row)";
                 string items = c != null && c.Profile != null && c.Profile.LoadoutItems != null
                                && c.Profile.LoadoutItems.Count > 0
                     ? string.Join(",", c.Profile.LoadoutItems.ConvertAll(ItemInvestStr)) : "none";
                 string eq = c != null && c.Profile != null
                     ? " eqIndex=" + c.Profile.EquipmentIndex + " xpIndex=" + c.Profile.AbilityIndex : "";
-                bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue
-                              && p.ThreatEconomic.HasValue;
-                string ev = p.Threat.HasValue
-                    ? (objAdd ? (p.Threat.Value - Tac.Rational.One) : p.Threat.Value).ToString()
-                    : "-";
+                // the round projection's OWN operands (pure re-computation of
+                // the exact rank inputs: same card, same posture, no defender)
+                string calc = "(curation row)";
+                if (c != null && c.Card != null)
+                {
+                    var parts = Tac.HeroThreatModelV2.PartsOf(c.Card, table, c.Profile,
+                        c.Wounded, posture, null, null);
+                    if (parts.HasValue)
+                    {
+                        bool runner = posture == "protect" || posture == "stall";
+                        string mob = "";
+                        if (runner)
+                        {
+                            int band = Tac.HeroThreatModelV2.MobilityTier(
+                                c.Wounded ? c.Card.TempoVerwundet : c.Card.Tempo);
+                            // second factor = the EXACT reach the model used
+                            // (printed range extended by item accuracy gates)
+                            mob = " + Bewegung " + parts.Value.MobilityTerm +
+                                  " (Band " + band + " x Reichweite " +
+                                  (parts.Value.MobilityTerm / band) + ")";
+                        }
+                        calc = (runner ? Tac.HeroThreatModelV2.DamageWeight + " x " : "") +
+                               "Schadens-Austausch " + parts.Value.DamageEv + "/Runde" +
+                               " (Pool " + string.Join("+", parts.Value.BestPool) + ")" + mob;
+                    }
+                }
+                bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue;
                 Debug.Log("TacticalAIBridge::ORD threat r" + roundNo + " \"" + p.HeroId +
                           "\": threat=" + (p.Threat.HasValue ? p.Threat.Value.ToString() : "-") +
-                          " = ev " + ev + (objAdd ? " +1 objective-actor" : "") +
-                          " | attack pool=" + pool + " | items=" + items +
+                          " = " + calc + (objAdd ? " +1 objective-actor" : "") +
+                          " | items=" + items +
                           " | basis=" + p.Basis +
                           " marked=" + (p.Marked ? 1 : 0) + "(" + (c != null ? c.Marks : 0) + " tokens)" +
                           " wounded=" + (p.Wounded ? 1 : 0) +
@@ -2214,7 +2242,21 @@ namespace TacticalAI
             var parts = new List<string>();
             if (dec.Marked) parts.Add(TF(L.ordMarked));
             if (dec.Threat.HasValue)
-                parts.Add(TF(L.ordThreat, Tac.Py.F2(dec.Threat.Value.ToDouble())));
+            {
+                // M15 F2 (Thomas 05.11): the EXPLAIN cell shows the REAL
+                // arithmetic with the meaning of each operand - not prose
+                // about how the calculation works. Exact rational strings
+                // (24 x 13/6 + 15 = 67), so a human can re-add the sum.
+                // Operands ride on protect/stall card rows; everywhere else
+                // (eliminate race = pure damage EV, curation rows) the single
+                // number IS the damage - ordThreat says exactly that now.
+                parts.Add(dec.ThreatDamage.HasValue && dec.ThreatMobility.HasValue
+                    ? TF(L.ordThreatCalcRunner, dec.Threat.Value.ToString(),
+                         dec.ThreatDamage.Value.ToString(),
+                         dec.ThreatMobility.Value.ToString(),
+                         dec.BestPool ?? "-")
+                    : TF(L.ordThreat, dec.Threat.Value.ToString()));
+            }
             else parts.Add(TF(L.focusFirepower));
             if (dec.Wounded) parts.Add(TF(L.focusWounded));
             // M11d: only when the pressure actually fired this round

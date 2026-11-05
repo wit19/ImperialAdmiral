@@ -2112,6 +2112,11 @@ namespace TacticalAI
                     {
                         bool runner = posture == "protect" || posture == "stall";
                         string poolTxt = "Pool " + string.Join("+", parts.Value.BestPool);
+                        // M19: band decomposition - which weapon wins which
+                        // distance, so the printed average is re-addable
+                        string bandTxt = parts.Value.BandBests != null
+                                         && parts.Value.BandBests.Count > 1
+                            ? " | Beste pro Distanz " + BandLabel(parts.Value.BandBests) : "";
                         string en = parts.Value.Energy > Tac.Rational.Zero
                             ? " + Energie-Zuschlag " + parts.Value.Energy + "/Runde (Waffenpreis)" : "";
                         if (runner)
@@ -2120,11 +2125,11 @@ namespace TacticalAI
                             // factors - the whole sum is re-computable.
                             calc = "Postur Halten: 55% x Schadens-Austausch " +
                                    parts.Value.DamageEv + "/Runde (" + poolTxt + en +
-                                   ") / 8/3 + 35% x Tempo-Band " + parts.Value.SpeedBand +
+                                   ")" + bandTxt + " / 8/3 + 35% x Tempo-Band " + parts.Value.SpeedBand +
                                    "/3 + 10% x Reichweite " + parts.Value.RangeCells + "/7";
                         else
                             calc = "Postur Toeten/Verwunden: reiner Waffenschaden " +
-                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en + ")";
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en + ")" + bandTxt;
                     }
                 }
                 bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue;
@@ -2139,6 +2144,26 @@ namespace TacticalAI
                           " threatEcon=" + (p.ThreatEconomic.HasValue ? p.ThreatEconomic.Value.ToString() : "-") +
                           eq);
             }
+        }
+
+        // M19: collapse the per-distance winners into a compact run label
+        // ("1:Green+Green, 2-4:Blue+Yellow, 5:kein Treffer") - accounting
+        // only, the vectors pin the raw list semantics via the averages.
+        static string BandLabel(System.Collections.Generic.List<string> bests)
+        {
+            var sb = new System.Text.StringBuilder();
+            int i = 0;
+            while (i < bests.Count)
+            {
+                int j = i;
+                while (j + 1 < bests.Count && bests[j + 1] == bests[i]) j++;
+                sb.Append(i + 1 == j + 1 ? (i + 1).ToString() : (i + 1) + "-" + (j + 1));
+                sb.Append(':');
+                sb.Append(string.IsNullOrEmpty(bests[i]) ? "kein Treffer" : bests[i]);
+                if (j + 1 < bests.Count) sb.Append(", ");
+                i = j + 1;
+            }
+            return sb.ToString();
         }
 
         // The item id with its printed investment (tier + price) from the

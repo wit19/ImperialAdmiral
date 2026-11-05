@@ -149,15 +149,19 @@ announced publicly at round start (and re-ranked each activation from the same k
 
 1. **Wounded / defeated marks** outrank everything (except at S1/S2, which are
    `CounterBlind` and ignore them by design — that is the handicap, not a bug).
-2. **Threat value per hero** — current law (M15–M17, Thomas rulings 05.11): the
+2. **Threat value per hero** — current law (M15–M19, Thomas rulings 05.11): the
    hero's TRUE standard-weapon dice from `tactical_hero_cards.json` (never the
    printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
    weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
-   E-11 +2/5, lightsaber +3, gloves 0). In hold postures (protect/stall) the
-   score is percent-weighted:
+   E-11 +2/5, lightsaber +3, gloves 0). The score itself is the **band average**
+   (M19, Player-28 DL-44 finding): every distance 1..reach is paired once, the
+   hero's strongest pool scores each distance (printed sidearm at 1, the bought
+   long gun out deep), misses count as 0 in the average, and melee pools pay no
+   accuracy toll per distance so they stay distance-inert. In hold postures
+   (protect/stall) that average is percent-weighted:
    `threat = 100 × (55% × score/(8/3) + 35% × band/3 + 10% × range/7)`
    with fixed anchors (max exchange EV 8/3 = RR item weapon, band 3, reach 7);
-   in kill/wound postures it stays the raw exchange EV. Wound rides purely
+   in kill/wound postures the band average stands raw. Wound rides purely
    through the printed `tempoVerwundet` (no percent malus — proven redundant).
    Campaign purchases still count twice: the bought weapon moves the score
    (M17), the XP-ability index stays the economic basis (M4) — the hero who is

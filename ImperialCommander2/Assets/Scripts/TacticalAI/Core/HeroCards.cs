@@ -315,6 +315,13 @@ namespace TacticalAI.Core
             public int SpeedBand;            // mobility band 1..3 (printed wound tempo!)
             public int RangeCells;           // reach incl. printed ranged-item gates
             public List<string> BestPool;    // dice the DamageEv was computed from
+                                             //  (M19: the pool that decided the
+                                             //  most distances of the band)
+            public List<string> BandBests;   // M19: per-distance winner pool,
+                                             //  entry d-1, empty = nothing
+                                             //  scores at that distance - the
+                                             //  accounting prints the band so
+                                             //  the average is hand-re-addable
         }
 
         /// <summary>Printed-threat value of one hero in one race, or null
@@ -344,9 +351,9 @@ namespace TacticalAI.Core
                 // speed, 10% range over the game's own printed anchors. The
                 // engage hook rides the exchange exactly as in the damage
                 // races (M12d seam).
-                List<string> pool; Rational energyX;
+                List<string> pool, band; Rational energyX;
                 var dmg = EliminateEv(card, table, profile, wounded,
-                                      defenderDefense, engage, out pool, out energyX);
+                                      defenderDefense, engage, out pool, out energyX, out band);
                 return RunnerThreat(dmg, RunnerBand(card, wounded),
                                     RunnerRange(card, table, profile, wounded));
             }
@@ -366,9 +373,9 @@ namespace TacticalAI.Core
             bool damageRace = posture == "eliminate" || posture == "attrition";
             bool runnerRace = posture == "protect" || posture == "stall";
             if (!damageRace && !runnerRace) return null;
-            List<string> pool; Rational energy;
+            List<string> pool, band; Rational energy;
             var dmg = EliminateEv(card, table, profile, wounded,
-                                  defenderDefense, engage, out pool, out energy);
+                                  defenderDefense, engage, out pool, out energy, out band);
             var parts = new ThreatParts
             {
                 DamageEv = dmg,
@@ -376,6 +383,7 @@ namespace TacticalAI.Core
                 SpeedBand = runnerRace ? RunnerBand(card, wounded) : 0,
                 RangeCells = runnerRace ? RunnerRange(card, table, profile, wounded) : 0,
                 BestPool = pool,
+                BandBests = band,
             };
             return parts;
         }
@@ -386,9 +394,9 @@ namespace TacticalAI.Core
                                     IList<string> defenderDefense,
                                     EngagementEffects engage = null)
         {
-            List<string> unused; Rational unusedE;
+            List<string> unused, unusedB; Rational unusedE;
             return EliminateEv(card, table, profile, wounded, defenderDefense,
-                               engage, out unused, out unusedE);
+                               engage, out unused, out unusedE, out unusedB);
         }
 
         static Rational EliminateEv(HeroCard card, HeroCardTable table,
@@ -396,7 +404,8 @@ namespace TacticalAI.Core
                                     IList<string> defenderDefense,
                                     EngagementEffects engage,
                                     out List<string> bestPool,
-                                    out Rational energy)
+                                    out Rational energy,
+                                    out List<string> bandBests)
         {
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
@@ -441,15 +450,29 @@ namespace TacticalAI.Core
             // hero - same direction as the M10a investment tie-break)
             int engagePierce = engage == null ? 0 : engage.Pierce;
             int engageAcc = engage == null ? 0 : engage.AccDelta;
-            var best = Rational.Zero;
-            // the pool whose EV produced `best` (M15 print: the accounting
-            // shows WHICH printed pool the damage was read from; stays the
-            // base pool when every pool trades at zero)
-            bestPool = card.BasisWuerfel;
-            energy = Rational.Zero;
-            Rational bestEnergy = Rational.Zero;
-            foreach (var p in pools)
+            // M19 (Thomas ruling 05.11., Player-28 DL-44 fund): BAND-
+            // AVERAGED EXCHANGE. The pre-M19 law scored EVERY weapon at
+            // distance 1 - but the pairing law spends accuracy for
+            // distance, so that reading systematically over-valued green
+            // damage dice and hid the accuracy-rich blue dice of the
+            // premium ranged weapons (a DL-44 out-scores Jyn's printed GG
+            // from d2 on, yet could never win the d=1 score). The honest
+            // table projection: the hero fights somewhere inside HIS
+            // reach band (printed reach, extended only by verified ranged
+            // items - the existing RunnerRange law), and weapon switching
+            // is free at the table, so the damage term is
+            //     average over d = 1..reach of ( best pool score at d ).
+            // Melee pools are distance-inert inside the pairing law by
+            // design (no distance spend) - printed melee value simply
+            // holds across their band. The per-distance winners ride out
+            // in bandBests, so the average stays hand-re-addable (the
+            // percent law demands visible arithmetic, not prose).
+            int reach = RunnerRange(card, table, profile, wounded);
+            if (reach < 1) reach = 1;
+            var statsAt = new AttackStats[pools.Count];
+            for (int i = 0; i < pools.Count; i++)
             {
+                var p = pools[i];
                 var stats = Dice.BuildAttackStats(p.Item1, keywords, p.Item2, null,
                     defenderDefense != null ? new List<string>(defenderDefense) : null);
                 // M12d engagement hook: the acc pips ride the AccEv/GATE of
@@ -461,16 +484,50 @@ namespace TacticalAI.Core
                     var gate = stats.AccEv + Rational.One / 2;
                     stats.AccGate = (int)(gate.Num / gate.Den);
                 }
-                // M17: the WEAPON SCORE is dice EV + the price-energy
-                // surcharge of THIS pool's weapon - so a bought weapon may
-                // legitimately outrank printed-equal or slightly stronger
-                // dice (E-11 400cr: 13/6 + 2/5 > Jyn's printed GG 7/3).
-                var ev = Dice.ExpectedDamage(stats, defender, 1, pierce + engagePierce)
-                         + p.Item3;
-                if (ev > best) { best = ev; bestPool = p.Item1; bestEnergy = p.Item3; }
+                statsAt[i] = stats;
             }
-            energy = bestEnergy;
-            return best;
+            // the printed winner slot (M15 accounting print): the pool that
+            // decided the MOST distances of the band; its surcharge rides
+            // as the display energy. A band where nothing scores leaves
+            // the base pool + zero energy (M15 print semantics kept).
+            bestPool = card.BasisWuerfel;
+            energy = Rational.Zero;
+            bandBests = new List<string>();
+            var sum = Rational.Zero;
+            var wins = new int[pools.Count];
+            for (int d = 1; d <= reach; d++)
+            {
+                var best = Rational.Zero;
+                int bestIdx = -1;
+                for (int i = 0; i < pools.Count; i++)
+                {
+                    // M17: the WEAPON SCORE is dice EV + the price-energy
+                    // surcharge of THIS pool's weapon - so a bought weapon
+                    // may legitimately outrank printed-equal or slightly
+                    // stronger dice (E-11 400cr: 13/6 + 2/5 out-scores
+                    // printed GG wherever the band reaches it).
+                    var ev = Dice.ExpectedDamage(statsAt[i], defender, d,
+                                                 pierce + engagePierce)
+                             + pools[i].Item3;
+                    if (ev > best) { best = ev; bestIdx = i; }  // strict >: ties keep the earlier pool (base weapon first)
+                }
+                sum += best;
+                if (bestIdx >= 0)
+                {
+                    wins[bestIdx]++;
+                    bandBests.Add(string.Join("+", pools[bestIdx].Item1));
+                }
+                else bandBests.Add("");    // this distance trades at zero
+            }
+            int champ = -1;
+            for (int i = 0; i < pools.Count; i++)
+                if (champ < 0 || wins[i] > wins[champ]) champ = i;
+            if (champ >= 0 && wins[champ] > 0)
+            {
+                bestPool = pools[champ].Item1;
+                energy = pools[champ].Item3;
+            }
+            return sum / reach;
         }
 
         // ------------------------------------------------- mobility factors

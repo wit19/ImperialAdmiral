@@ -1005,8 +1005,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1025,8 +1025,8 @@
      "acc_delta": 1,
      "pierce": 0
     },
-    "threat_base": "1/2",
-    "threat_cards": "1"
+    "threat_base": "1/6",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1042,8 +1042,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1059,8 +1059,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1076,8 +1076,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1093,8 +1093,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1110,8 +1110,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1127,8 +1127,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1144,8 +1144,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1161,8 +1161,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1178,8 +1178,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1195,8 +1195,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1214,8 +1214,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/2",
-    "threat_cards": "1/2"
+    "threat_base": "1/6",
+    "threat_cards": "1/6"
    }
   },
   {
@@ -1236,8 +1236,8 @@
      "acc_delta": 0,
      "pierce": 1
     },
-    "threat_base": "1/2",
-    "threat_cards": "3/2"
+    "threat_base": "1/6",
+    "threat_cards": "2/3"
    }
   },
   {
@@ -1267,8 +1267,8 @@
    ],
    "expect": {
     "order_base": [
-     "Biv Bodhrik",
-     "Fenn Signis"
+     "Fenn Signis",
+     "Biv Bodhrik"
     ],
     "order_cards": [
      "Fenn Signis",
@@ -1279,16 +1279,16 @@
       "basis": "card",
       "hero": "Fenn Signis",
       "marked": false,
-      "threat": "13/6",
-      "threat_econ": "13/6",
+      "threat": "49/30",
+      "threat_econ": "49/30",
       "wounded": false
      },
      {
       "basis": "card",
       "hero": "Biv Bodhrik",
       "marked": false,
-      "threat": "7/6",
-      "threat_econ": "7/6",
+      "threat": "4/9",
+      "threat_econ": "4/9",
       "wounded": false
      }
     ]
@@ -1321,28 +1321,28 @@
    ],
    "expect": {
     "order_base": [
-     "Biv Bodhrik",
-     "Fenn Signis"
+     "Fenn Signis",
+     "Biv Bodhrik"
     ],
     "order_cards": [
-     "Biv Bodhrik",
-     "Fenn Signis"
+     "Fenn Signis",
+     "Biv Bodhrik"
     ],
     "rows": [
      {
       "basis": "card",
-      "hero": "Biv Bodhrik",
+      "hero": "Fenn Signis",
       "marked": false,
-      "threat": "7/6",
-      "threat_econ": "7/6",
+      "threat": "19/30",
+      "threat_econ": "19/30",
       "wounded": false
      },
      {
       "basis": "card",
-      "hero": "Fenn Signis",
+      "hero": "Biv Bodhrik",
       "marked": false,
-      "threat": "7/6",
-      "threat_econ": "7/6",
+      "threat": "4/9",
+      "threat_econ": "4/9",
       "wounded": false
      }
     ]

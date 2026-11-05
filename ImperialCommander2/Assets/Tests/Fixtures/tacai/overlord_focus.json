@@ -49,36 +49,36 @@
    ],
    "expect": [
     {
+     "basis": "economy",
      "hero": "Han Solo",
      "marked": false,
-     "wounded": false,
      "threat": "7/2",
      "threat_econ": "7/2",
-     "basis": "economy"
+     "wounded": false
     },
     {
-     "hero": "Fenn Signis",
-     "marked": false,
-     "wounded": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "basis": "card"
-    },
-    {
+     "basis": "card",
      "hero": "Gaarkhan",
      "marked": false,
-     "wounded": true,
      "threat": "5/6",
      "threat_econ": "5/3",
-     "basis": "card"
+     "wounded": true
     },
     {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "7/5",
+     "threat_econ": "7/5",
+     "wounded": false
+    },
+    {
+     "basis": "proxy",
      "hero": "Squad Stranger",
      "marked": false,
-     "wounded": true,
      "threat": null,
      "threat_econ": null,
-     "basis": "proxy"
+     "wounded": true
     }
    ]
   },
@@ -130,36 +130,36 @@
    ],
    "expect": [
     {
+     "basis": "chip",
      "hero": "Fenn Signis",
      "marked": false,
-     "wounded": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "basis": "chip"
+     "threat": "7/5",
+     "threat_econ": "7/5",
+     "wounded": false
     },
     {
+     "basis": "chip",
      "hero": "Gaarkhan",
      "marked": false,
-     "wounded": false,
      "threat": "5/6",
      "threat_econ": "5/6",
-     "basis": "chip"
+     "wounded": false
     },
     {
+     "basis": "chip",
      "hero": "Han Solo",
      "marked": false,
-     "wounded": true,
      "threat": "7/2",
      "threat_econ": "7/2",
-     "basis": "chip"
+     "wounded": true
     },
     {
+     "basis": "proxy",
      "hero": "Squad Stranger",
      "marked": false,
-     "wounded": true,
      "threat": null,
      "threat_econ": null,
-     "basis": "proxy"
+     "wounded": true
     }
    ]
   },
@@ -459,36 +459,12 @@
      "best_pool": "Blue+Blue+Red",
      "hero": "Drokkatta",
      "marked": false,
-     "threat": "185",
+     "threat": "160",
      "threat_band": "2",
-     "threat_damage": "89/12",
-     "threat_econ": "185",
+     "threat_damage": "223/36",
+     "threat_econ": "160",
      "threat_energy": "15/4",
      "threat_range": "6",
-     "wounded": false
-    },
-    {
-     "basis": "card",
-     "best_pool": "Green+Green",
-     "hero": "CT-1701",
-     "marked": false,
-     "threat": "76",
-     "threat_band": "2",
-     "threat_damage": "7/3",
-     "threat_econ": "76",
-     "threat_range": "3",
-     "wounded": false
-    },
-    {
-     "basis": "card",
-     "best_pool": "Blue+Red",
-     "hero": "Biv Bodhrik",
-     "marked": false,
-     "threat": "72",
-     "threat_band": "2",
-     "threat_damage": "13/6",
-     "threat_econ": "72",
-     "threat_range": "3",
      "wounded": false
     },
     {
@@ -501,6 +477,30 @@
      "threat_damage": "2",
      "threat_econ": "66",
      "threat_range": "1",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Green+Green",
+     "hero": "CT-1701",
+     "marked": false,
+     "threat": "55",
+     "threat_band": "2",
+     "threat_damage": "4/3",
+     "threat_econ": "55",
+     "threat_range": "3",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Blue+Red",
+     "hero": "Biv Bodhrik",
+     "marked": false,
+     "threat": "52",
+     "threat_band": "2",
+     "threat_damage": "7/6",
+     "threat_econ": "52",
+     "threat_range": "3",
      "wounded": false
     }
    ]
@@ -561,10 +561,10 @@
      "best_pool": "Green+Green",
      "hero": "CT-1701",
      "marked": false,
-     "threat": "76",
+     "threat": "55",
      "threat_band": "2",
-     "threat_damage": "7/3",
-     "threat_econ": "76",
+     "threat_damage": "4/3",
+     "threat_econ": "55",
      "threat_range": "3",
      "wounded": false
     },
@@ -573,10 +573,10 @@
      "best_pool": "Blue+Red",
      "hero": "Biv Bodhrik",
      "marked": false,
-     "threat": "72",
+     "threat": "52",
      "threat_band": "2",
-     "threat_damage": "13/6",
-     "threat_econ": "72",
+     "threat_damage": "7/6",
+     "threat_econ": "52",
      "threat_range": "3",
      "wounded": false
     },
@@ -585,10 +585,10 @@
      "best_pool": "Green+Yellow",
      "hero": "Saska Teft",
      "marked": false,
-     "threat": "59",
+     "threat": "41",
      "threat_band": "2",
-     "threat_damage": "3/2",
-     "threat_econ": "59",
+     "threat_damage": "2/3",
+     "threat_econ": "41",
      "threat_range": "3",
      "wounded": true
     }
@@ -638,10 +638,10 @@
      "best_pool": "Blue+Blue+Red",
      "hero": "Biv Bodhrik",
      "marked": false,
-     "threat": "185",
+     "threat": "160",
      "threat_band": "2",
-     "threat_damage": "89/12",
-     "threat_econ": "185",
+     "threat_damage": "223/36",
+     "threat_econ": "160",
      "threat_energy": "15/4",
      "threat_range": "6",
      "wounded": false
@@ -651,10 +651,10 @@
      "best_pool": "Blue+Blue+Red",
      "hero": "Davith Elso",
      "marked": false,
-     "threat": "185",
+     "threat": "160",
      "threat_band": "2",
-     "threat_damage": "89/12",
-     "threat_econ": "185",
+     "threat_damage": "223/36",
+     "threat_econ": "160",
      "threat_energy": "15/4",
      "threat_range": "6",
      "wounded": false
@@ -768,24 +768,24 @@
      "basis": "card",
      "hero": "MHD-19",
      "marked": false,
-     "threat": "77/12",
-     "threat_econ": "77/12",
+     "threat": "191/36",
+     "threat_econ": "191/36",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "threat": "7/6",
-     "threat_econ": "7/6",
+     "threat": "19/30",
+     "threat_econ": "19/30",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "Biv Bodhrik",
      "marked": false,
-     "threat": "7/6",
-     "threat_econ": "7/6",
+     "threat": "4/9",
+     "threat_econ": "4/9",
      "wounded": false
     },
     {
@@ -837,20 +837,20 @@
    ],
    "expect": [
     {
+     "basis": "card",
      "hero": "Murne Rin",
      "marked": false,
-     "wounded": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
-     "basis": "card"
+     "threat": "13/30",
+     "threat_econ": "13/30",
+     "wounded": false
     },
     {
+     "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "wounded": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
-     "basis": "card"
+     "threat": "13/30",
+     "threat_econ": "13/30",
+     "wounded": false
     }
    ]
   },
@@ -954,21 +954,21 @@
    ],
    "expect": [
     {
+     "basis": "card",
      "hero": "Murne Rin",
      "marked": false,
-     "wounded": false,
-     "threat": "5/6",
-     "threat_econ": "53/6",
-     "basis": "card",
-     "strain_druck": "8"
+     "strain_druck": "8",
+     "threat": "13/30",
+     "threat_econ": "253/30",
+     "wounded": false
     },
     {
+     "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "wounded": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
-     "basis": "card"
+     "threat": "13/30",
+     "threat_econ": "13/30",
+     "wounded": false
     }
    ]
   },
@@ -1014,29 +1014,29 @@
    ],
    "expect": [
     {
+     "basis": "card",
      "hero": "CT-1701",
      "marked": false,
-     "wounded": false,
-     "threat": "7/3",
-     "threat_econ": "31/3",
-     "basis": "card",
-     "strain_druck": "8"
+     "strain_druck": "8",
+     "threat": "4/3",
+     "threat_econ": "28/3",
+     "wounded": false
     },
     {
+     "basis": "card",
      "hero": "Drokkatta",
      "marked": false,
-     "wounded": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "basis": "card"
+     "threat": "7/6",
+     "threat_econ": "7/6",
+     "wounded": false
     },
     {
+     "basis": "card",
      "hero": "Biv Bodhrik",
      "marked": false,
-     "wounded": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "basis": "card"
+     "threat": "7/6",
+     "threat_econ": "7/6",
+     "wounded": false
     }
    ]
   },
@@ -1177,16 +1177,16 @@
      "hero": "Murne Rin",
      "marked": false,
      "strain_druck_unscharf": "8",
-     "threat": "5/6",
-     "threat_econ": "53/6",
+     "threat": "13/30",
+     "threat_econ": "253/30",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
+     "threat": "13/30",
+     "threat_econ": "13/30",
      "wounded": false
     }
    ]
@@ -1228,16 +1228,16 @@
      "hero": "Murne Rin",
      "marked": false,
      "strain_druck_unscharf": "4",
-     "threat": "5/6",
-     "threat_econ": "29/6",
+     "threat": "13/30",
+     "threat_econ": "133/30",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
+     "threat": "13/30",
+     "threat_econ": "13/30",
      "wounded": false
     }
    ]
@@ -1279,16 +1279,16 @@
      "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
+     "threat": "13/30",
+     "threat_econ": "13/30",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "Murne Rin",
      "marked": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
+     "threat": "13/30",
+     "threat_econ": "13/30",
      "wounded": false
     }
    ]
@@ -1336,8 +1336,8 @@
      "basis": "card",
      "hero": "Onar Koma",
      "marked": false,
-     "threat": "2/3",
-     "threat_econ": "2/3",
+     "threat": "1/3",
+     "threat_econ": "1/3",
      "wounded": false
     }
    ]
@@ -1393,8 +1393,8 @@
      "marked": false,
      "strain_druck": "8",
      "strain_druck_unscharf": "8",
-     "threat": "5/6",
-     "threat_econ": "53/6",
+     "threat": "13/30",
+     "threat_econ": "253/30",
      "wounded": false
     },
     {
@@ -1403,16 +1403,16 @@
      "marked": false,
      "strain_druck": "8",
      "strain_druck_unscharf": "4",
-     "threat": "5/6",
-     "threat_econ": "53/6",
+     "threat": "13/30",
+     "threat_econ": "253/30",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "threat": "5/6",
-     "threat_econ": "5/6",
+     "threat": "13/30",
+     "threat_econ": "13/30",
      "wounded": false
     }
    ]
@@ -1461,8 +1461,8 @@
      "basis": "objactor",
      "hero": "Jyn Odan",
      "marked": false,
-     "threat": "10/3",
-     "threat_econ": "10/3",
+     "threat": "7/3",
+     "threat_econ": "7/3",
      "wounded": false
     },
     {
@@ -1477,8 +1477,8 @@
      "basis": "card",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "3/2",
-     "threat_econ": "3/2",
+     "threat": "1",
+     "threat_econ": "1",
      "wounded": false
     }
    ]
@@ -1527,16 +1527,16 @@
      "basis": "card",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "41/20",
-     "threat_econ": "41/20",
+     "threat": "51/40",
+     "threat_econ": "51/40",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "MHD-19",
      "marked": false,
-     "threat": "17/10",
-     "threat_econ": "17/10",
+     "threat": "11/10",
+     "threat_econ": "11/10",
      "wounded": false
     }
    ]
@@ -1621,8 +1621,8 @@
      "basis": "card",
      "hero": "Fenn Signis",
      "marked": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
+     "threat": "7/5",
+     "threat_econ": "7/5",
      "wounded": false
     },
     {
@@ -1704,19 +1704,19 @@
     },
     {
      "basis": "card",
-     "hero": "Fenn Signis",
-     "marked": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "wounded": false
-    },
-    {
-     "basis": "card",
      "hero": "Gaarkhan",
      "marked": false,
      "threat": "5/6",
      "threat_econ": "5/3",
      "wounded": true
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "7/5",
+     "threat_econ": "7/5",
+     "wounded": false
     },
     {
      "basis": "proxy",
@@ -1797,19 +1797,19 @@
     },
     {
      "basis": "card",
-     "hero": "Fenn Signis",
-     "marked": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "wounded": false
-    },
-    {
-     "basis": "card",
      "hero": "Gaarkhan",
      "marked": false,
      "threat": "5/6",
      "threat_econ": "5/3",
      "wounded": true
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "7/5",
+     "threat_econ": "7/5",
+     "wounded": false
     },
     {
      "basis": "proxy",
@@ -1890,19 +1890,19 @@
     },
     {
      "basis": "card",
-     "hero": "Fenn Signis",
-     "marked": false,
-     "threat": "13/6",
-     "threat_econ": "13/6",
-     "wounded": false
-    },
-    {
-     "basis": "card",
      "hero": "Gaarkhan",
      "marked": false,
      "threat": "5/6",
      "threat_econ": "5/3",
      "wounded": true
+    },
+    {
+     "basis": "card",
+     "hero": "Fenn Signis",
+     "marked": false,
+     "threat": "7/5",
+     "threat_econ": "7/5",
+     "wounded": false
     },
     {
      "basis": "proxy",
@@ -1911,6 +1911,158 @@
      "threat": null,
      "threat_econ": null,
      "wounded": true
+    }
+   ]
+  },
+  {
+   "name": "m19_band_switch_stall",
+   "comment": "M19 (Player-28 DL-44-Fund): Banden-Mittel mit Waffenwechsel. Jyn (Gruen+Gruen-Basis, Reichweite 3) mit DL-44 (Blau+Gelb, Reichweite 4, 500 XP -> +1/2 Energie): d1 gewinnt Gruen+Gruen (7/3 > 2), ab d2 die DL-44 -> Mittel ueber 1..4 = 19/12, Bedrohung 73 (war 89 unter Distanz-1-Law, Handrechnung siehe findings-band-average-threat.md). Loku ohne Gueter: Schnitt ueber 1..5 = 7/5 -> 71. Ferne dominiert nicht mehr durch gruenen Kurzstrecken-Schaden.",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Jyn Odan",
+     "row": 0,
+     "profile": "Jyn Odan",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item110"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Loku Kanoloa",
+     "row": 1,
+     "profile": "Loku Kanoloa",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "best_pool": "Blue+Yellow",
+     "hero": "Jyn Odan",
+     "marked": false,
+     "threat": "73",
+     "threat_band": "3",
+     "threat_damage": "19/12",
+     "threat_econ": "73",
+     "threat_energy": "1/2",
+     "threat_range": "4",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Blue+Green",
+     "hero": "Loku Kanoloa",
+     "marked": false,
+     "threat": "71",
+     "threat_band": "3",
+     "threat_damage": "7/5",
+     "threat_econ": "71",
+     "threat_range": "5",
+     "wounded": false
+    }
+   ]
+  },
+  {
+   "name": "m19_band_switch_eliminate",
+   "comment": "M19 in der Toeten-Postur: reines Bandenmittel OHNE Prozentgewichtung - Jyn 19/12 (Bandenschnitt, NICHT mehr das Distanz-1-Kap 7/3), Loku 7/5 (fuenfte Zelle traff nicht und zaehlt als 0 - der Schnitt haertet Reichweite ehrlich ein).",
+   "posture": "eliminate",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Jyn Odan",
+     "row": 0,
+     "profile": "Jyn Odan",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item110"
+      ],
+      "skills": []
+     }
+    },
+    {
+     "hero": "Loku Kanoloa",
+     "row": 1,
+     "profile": "Loku Kanoloa",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "hero": "Jyn Odan",
+     "marked": false,
+     "threat": "19/12",
+     "threat_econ": "19/12",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "hero": "Loku Kanoloa",
+     "marked": false,
+     "threat": "7/5",
+     "threat_econ": "7/5",
+     "wounded": false
+    }
+   ]
+  },
+  {
+   "name": "m19_band_melee_inert",
+   "comment": "M19 Neutralitaets-Pin: der Nahkampf-Pool zahlt im Pairing keinen Genauigkeits-Zoll pro Distanz (distanz-traege) - Verenas Panzerhandschuhe (Gruen+Gelb Nahkampf, 300 XP -> +3/10) liefern wie vor M19 exakt 23/10 pro Anschlag, Bedrohung 76 unveraendert. Wer keine Reichweite hat, verliert durch M19 nichts.",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Verena Talos",
+     "row": 0,
+     "profile": "Verena Talos",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 0,
+     "health": 0,
+     "loadout": {
+      "items": [
+       "item101"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+    {
+     "basis": "card",
+     "best_pool": "Green+Yellow",
+     "hero": "Verena Talos",
+     "marked": false,
+     "threat": "76",
+     "threat_band": "2",
+     "threat_damage": "23/10",
+     "threat_econ": "76",
+     "threat_energy": "3/10",
+     "threat_range": "4",
+     "wounded": false
     }
    ]
   }

@@ -257,27 +257,32 @@ namespace TacticalAI.Core
 
 
         // M16 (Thomas design ruling 05.11): PERCENT-WEIGHTED THREAT LAW for
-        // protect/stall. threat = 100 x (55% normalized weapon DAMAGE
-        //        + 35% normalized SPEED band + 10% normalized weapon RANGE).
-        // Percent weights only mean something over NORMALIZED factors, so
-        // every factor rides the largest value the GAME itself can print:
-        // DamageAnchor = 8/3 (RR - the strongest printed weapon dice in the
-        // item table, two red faces at 4/3 each), BandAnchor = 3 (fastest
-        // mobility band), RangeAnchor = 7 (printed max range extended by the
-        // reach-giving items). Fixed anchors: threat values never wander
-        // mid-mission (dynamic anchors would jump whenever the strongest
-        // hero falls or a weapon is bought - Thomas: explanation must stay
+        // protect/stall. M20 (Thomas ruling 05.11, melee debate): the 10%
+        // RANGE cell is STRICKEN - threat = 100 x (60% normalized weapon
+        // DAMAGE + 40% normalized SPEED band). Range was double-counted:
+        // the M19 band average already reads every weapon across its whole
+        // reach (wide but weak bands dilute, melee pays nothing), so the
+        // extra cell only taxed printed melee heroes for carrying no
+        // distance they could ever shoot. DamageAnchor stays 8/3 (RR - the
+        // strongest printed weapon dice in the item table, two red faces at
+        // 4/3 each), BandAnchor stays 3 (fastest mobility band): the 60/40
+        // split keeps the law's maximum at 100. Fixed anchors: threat values
+        // never wander mid-mission (dynamic anchors would jump whenever the
+        // strongest hero falls or a weapon is bought - Thomas: explanation must stay
         // re-computable from the log). The wound effect is the PRINTED
         // tempoVerwundet only (band drop) - NO extra percent malus (ruling).
         // eliminate/attrition stay PURE damage: in a kill mission speed does
         // not make a hero harder to remove (ruling: weights apply to the
         // holding postures protect/stall only). M15's absolute DamageWeight
-        // law (24 x EV + band x range) is superseded by this softer law -
-        // damage keeps the plurality (55 > 35+10) but a fast scout may now
-        // legitimately outrank a slow heavy shooter.
-        public static readonly Rational DamageShare  = new Rational(11, 20); // 55 %
-        public static readonly Rational SpeedShare   = new Rational(7, 20);  // 35 %
-        public static readonly Rational RangeShare   = new Rational(1, 10);  // 10 %
+        // law (24 x EV + band x range) and M16's 55/35/10 split are both
+        // superseded - damage keeps the plurality (60 > 40) and a fast scout
+        // may legitimately outrank a slow heavy shooter.
+        public static readonly Rational DamageShare  = new Rational(3, 5);   // 60 %
+        public static readonly Rational SpeedShare   = new Rational(2, 5);   // 40 %
+        // M20: the 10% range cell is stricken (see law comment). RangeAnchor
+        // and the range operand stay printed in the EXPLAIN row - the M19
+        // band average still RUNS over 1..range, it just earns no own points.
+        public static readonly Rational RangeShare   = Rational.Zero;         // 0 %
         public static readonly Rational DamageAnchor = new Rational(8, 3);
         public const int BandAnchor  = 3;
         public const int RangeAnchor = 7;

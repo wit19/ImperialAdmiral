@@ -36,7 +36,8 @@ CHAR = {'G':'Green','B':'Blue','Y':'Yellow','R':'Red'}
 
 class Stats:
     def __init__(self, letters, kw_acc, kw_dmg, ranged, defdice):
-        cols=[CHAR[c] for c in letters if c in CHAR]
+        core = letters.split('+')[0]   # engine BasisWuerfel: '+Reach' suffix stripped
+        cols=[CHAR[c] for c in core if c in CHAR]
         self.raw = sum(F(sum(f[0] for f in FACES[c]),6) for c in cols) + kw_dmg
         self.acc = sum(F(sum(f[1] for f in FACES[c]),6) for c in cols) + kw_acc
         self.ranged = ranged
@@ -128,7 +129,8 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
     if posture in ('eliminate','attrition'): return bav
     band_t = card['tempoVerwundet'] if wounded else card['tempo']
     band = 1 if band_t <= 3 else 2 if band_t == 4 else 3
-    th = 100 * (F(11,20)*bav/F(8,3) + F(7,20)*band/3 + F(1,10)*range_/7)
+    # M20 law (Thomas ruling 05.11): range cell stricken, 60/40 weights
+    th = 100 * (F(3,5)*bav/F(8,3) + F(2,5)*band/3)
     return int(th + F(1,2))   # round-half-up
 
 def fstr(x):

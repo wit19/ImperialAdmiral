@@ -158,10 +158,14 @@ announced publicly at round start (and re-ranked each activation from the same k
    hero's strongest pool scores each distance (printed sidearm at 1, the bought
    long gun out deep), misses count as 0 in the average, and melee pools pay no
    accuracy toll per distance so they stay distance-inert. In hold postures
-   (protect/stall) that average is percent-weighted:
-   `threat = 100 × (55% × score/(8/3) + 35% × band/3 + 10% × range/7)`
-   with fixed anchors (max exchange EV 8/3 = RR item weapon, band 3, reach 7);
-   in kill/wound postures the band average stands raw. Wound rides purely
+   (protect/stall) that average is percent-weighted — and since M20 (Thomas
+   melee ruling, 05.11) WITHOUT a range cell:
+   `threat = 100 × (60% × score/(8/3) + 40% × band/3)`
+   with fixed anchors (max exchange EV 8/3 = RR item weapon, band 3). Range
+   is counted exactly once — inside the band average (wide weak bands dilute,
+   melee pays nothing); the old 10% × range/7 cell double-counted reach and
+   only taxed printed melee heroes. In kill/wound postures the band average
+   stands raw. Wound rides purely
    through the printed `tempoVerwundet` (no percent malus — proven redundant).
    Campaign purchases still count twice: the bought weapon moves the score
    (M17), the XP-ability index stays the economic basis (M4) — the hero who is

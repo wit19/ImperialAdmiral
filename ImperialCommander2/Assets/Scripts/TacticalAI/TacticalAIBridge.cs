@@ -2110,20 +2110,18 @@ namespace TacticalAI
                     if (parts.HasValue)
                     {
                         bool runner = posture == "protect" || posture == "stall";
-                        string mob = "";
+                        string poolTxt = "Pool " + string.Join("+", parts.Value.BestPool);
                         if (runner)
-                        {
-                            int band = Tac.HeroThreatModelV2.MobilityTier(
-                                c.Wounded ? c.Card.TempoVerwundet : c.Card.Tempo);
-                            // second factor = the EXACT reach the model used
-                            // (printed range extended by item accuracy gates)
-                            mob = " + Bewegung " + parts.Value.MobilityTerm +
-                                  " (Band " + band + " x Reichweite " +
-                                  (parts.Value.MobilityTerm / band) + ")";
-                        }
-                        calc = (runner ? Tac.HeroThreatModelV2.DamageWeight + " x " : "") +
-                               "Schadens-Austausch " + parts.Value.DamageEv + "/Runde" +
-                               " (Pool " + string.Join("+", parts.Value.BestPool) + ")" + mob;
+                            // M16 (Thomas 05.11): the accounting prints the
+                            // EXACT percent law with all three normalized
+                            // factors - the whole sum is re-computable.
+                            calc = "Postur Halten: 55% x Schadens-Austausch " +
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt +
+                                   ") / 8/3 + 35% x Tempo-Band " + parts.Value.SpeedBand +
+                                   "/3 + 10% x Reichweite " + parts.Value.RangeCells + "/7";
+                        else
+                            calc = "Postur Toeten/Verwunden: reiner Waffenschaden " +
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt + ")";
                     }
                 }
                 bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue;
@@ -2250,11 +2248,13 @@ namespace TacticalAI
                 // Operands ride on protect/stall card rows; everywhere else
                 // (eliminate race = pure damage EV, curation rows) the single
                 // number IS the damage - ordThreat says exactly that now.
-                parts.Add(dec.ThreatDamage.HasValue && dec.ThreatMobility.HasValue
+                parts.Add(dec.ThreatDamage.HasValue && dec.ThreatBand.HasValue
+                               && dec.ThreatRange.HasValue
                     ? TF(L.ordThreatCalcRunner, dec.Threat.Value.ToString(),
                          dec.ThreatDamage.Value.ToString(),
-                         dec.ThreatMobility.Value.ToString(),
-                         dec.BestPool ?? "-")
+                         dec.BestPool ?? "-",
+                         (dec.ThreatBand ?? 0).ToString(),
+                         (dec.ThreatRange ?? 0).ToString())
                     : TF(L.ordThreat, dec.Threat.Value.ToString()));
             }
             else parts.Add(TF(L.focusFirepower));

@@ -253,28 +253,61 @@ namespace TacticalAI.Core
     {
         static readonly List<string> NoItems = new List<string>();
 
-        // M15 (Player-26 audit, Thomas ruling 05.11): DAMAGE-WEIGHTED THREAT
-        // LAW. The printed damage exchange (exact per-face EV through
-        // Dice.ExpectedDamage - the per-die "Gewichtung Wuerfel -> Schaden"
-        // the game already owns) is the MOST IMPORTANT threat factor. The
-        // mobility factor (band x range) stays, but strictly subordinate:
-        // DamageWeight = 24 exceeds the LARGEST possible mobility term on
-        // any printed hero (band <= 3 x range <= 7 = 21), so one full damage
-        // EV per round ALWAYS outweighs even the fastest longest-reaching
-        // hero, and mobility decides only between heroes of equal (or very
-        // close) firepower. Before M15 protect/stall ran on PURE mobility
-        // (Player-26 r1 "Loku 15 = band 3 x range 5" carried zero damage) -
-        // that is the bug this law closes.
-        public const int DamageWeight = 24;
+        // M16 (Thomas design ruling 05.11): PERCENT-WEIGHTED THREAT LAW for
+        // protect/stall. threat = 100 x (55% normalized weapon DAMAGE
+        //        + 35% normalized SPEED band + 10% normalized weapon RANGE).
+        // Percent weights only mean something over NORMALIZED factors, so
+        // every factor rides the largest value the GAME itself can print:
+        // DamageAnchor = 8/3 (RR - the strongest printed weapon dice in the
+        // item table, two red faces at 4/3 each), BandAnchor = 3 (fastest
+        // mobility band), RangeAnchor = 7 (printed max range extended by the
+        // reach-giving items). Fixed anchors: threat values never wander
+        // mid-mission (dynamic anchors would jump whenever the strongest
+        // hero falls or a weapon is bought - Thomas: explanation must stay
+        // re-computable from the log). The wound effect is the PRINTED
+        // tempoVerwundet only (band drop) - NO extra percent malus (ruling).
+        // eliminate/attrition stay PURE damage: in a kill mission speed does
+        // not make a hero harder to remove (ruling: weights apply to the
+        // holding postures protect/stall only). M15's absolute DamageWeight
+        // law (24 x EV + band x range) is superseded by this softer law -
+        // damage keeps the plurality (55 > 35+10) but a fast scout may now
+        // legitimately outrank a slow heavy shooter.
+        public static readonly Rational DamageShare  = new Rational(11, 20); // 55 %
+        public static readonly Rational SpeedShare   = new Rational(7, 20);  // 35 %
+        public static readonly Rational RangeShare   = new Rational(1, 10);  // 10 %
+        public static readonly Rational DamageAnchor = new Rational(8, 3);
+        public const int BandAnchor  = 3;
+        public const int RangeAnchor = 7;
 
-        /// <summary>M15 F2/F3: the threat broken into its printable operands.
+        /// M16: round half up to the whole threat value (exact rationals all
+        /// the way, quantized once at the end). The printed and ranked number
+        /// is the rounded one; the EXPLAIN cell shows the exact fractions so
+        /// the sum can be re-added by hand.
+        public static Rational Quantize(Rational v)
+        {
+            return new Rational((v.Num * 2 + v.Den) / (2 * v.Den));   // floor(x + 1/2)
+        }
+
+        /// M16 law, uniform for card rows AND curation rows (Thomas ruling:
+        /// the percent law is a protect/stall law - never applied to the
+        /// damage races here, callers route eliminate/attrition to the EV).
+        public static Rational RunnerThreat(Rational damageEv, int band, int range)
+        {
+            return Quantize(new Rational(100) * (
+                DamageShare * damageEv / DamageAnchor
+                + SpeedShare * band / BandAnchor
+                + RangeShare * range / RangeAnchor));
+        }
+
+        /// <summary>M16: the threat broken into its printable operands.
         /// The EXPLAIN text and the threat-accounting log must show the REAL
         /// arithmetic with these values (Thomas: "die Rechnung mit Kommentar,
         /// welcher Wert wofuer steht" - never prose about how it works).</summary>
         public struct ThreatParts
         {
             public Rational DamageEv;        // exchange EV per round (best printed pool)
-            public Rational MobilityTerm;    // band x range (0 in the damage races)
+            public int SpeedBand;            // mobility band 1..3 (printed wound tempo!)
+            public int RangeCells;           // reach incl. printed ranged-item gates
             public List<string> BestPool;    // dice the DamageEv was computed from
         }
 
@@ -301,21 +334,23 @@ namespace TacticalAI.Core
                 return EliminateEv(card, table, profile, wounded, defenderDefense, engage);
             if (posture == "protect" || posture == "stall")
             {
-                // M15 damage-weighted law: firepower first, mobility second
-                // (see DamageWeight). The engage hook rides the exchange here
-                // exactly as in the damage races (M12d seam).
+                // M16 percent law (see DamageShare law): 55% damage, 35%
+                // speed, 10% range over the game's own printed anchors. The
+                // engage hook rides the exchange exactly as in the damage
+                // races (M12d seam).
                 List<string> pool;
                 var dmg = EliminateEv(card, table, profile, wounded,
                                       defenderDefense, engage, out pool);
-                return DamageWeight * dmg + RunnerValue(card, table, profile, wounded);
+                return RunnerThreat(dmg, RunnerBand(card, wounded),
+                                    RunnerRange(card, table, profile, wounded));
             }
             return null;
         }
 
-        /// <summary>M15: the SAME threat as Threat(), plus its operands -
-        /// damage EV, mobility term and the exact dice pool the damage was
-        /// computed from (LogThreatAccounting + the EXPLAIN cell print the
-        /// arithmetic with these, never prose).</summary>
+        /// <summary>M16: the SAME threat as Threat(), plus its operands -
+        /// damage EV, mobility band, reach and the exact dice pool the
+        /// damage was computed from (LogThreatAccounting + the EXPLAIN cell
+        /// print the arithmetic with these, never prose).</summary>
         public static ThreatParts? PartsOf(HeroCard card, HeroCardTable table,
                                            HeroThreatProfile profile, bool wounded,
                                            string posture, IList<string> defenderDefense,
@@ -331,8 +366,8 @@ namespace TacticalAI.Core
             var parts = new ThreatParts
             {
                 DamageEv = dmg,
-                MobilityTerm = runnerRace
-                    ? RunnerValue(card, table, profile, wounded) : Rational.Zero,
+                SpeedBand = runnerRace ? RunnerBand(card, wounded) : 0,
+                RangeCells = runnerRace ? RunnerRange(card, table, profile, wounded) : 0,
                 BestPool = pool,
             };
             return parts;
@@ -412,14 +447,19 @@ namespace TacticalAI.Core
             return best;
         }
 
-        // ------------------------------------------------- mobility factor
-        // (M15: no longer a threat of its own - it is the SUBORDINATE second
-        // summand of the damage-weighted protect/stall threat; the runner's
-        // reach still extends with printed ranged items, exactly as before)
-        static Rational RunnerValue(HeroCard card, HeroCardTable table,
-                                    HeroThreatProfile profile, bool wounded)
+        // ------------------------------------------------- mobility factors
+        // (M16: the mobility FACTORS - band and reach are separate percent
+        // terms of the weighted law now; the reach still extends with
+        // printed ranged items exactly as before, wound band from the
+        // PRINTED wound tempo - Thomas ruling: no hidden extra malus)
+        static int RunnerBand(HeroCard card, bool wounded)
         {
-            int tier = MobilityTier(wounded ? card.TempoVerwundet : card.Tempo);
+            return MobilityTier(wounded ? card.TempoVerwundet : card.Tempo);
+        }
+
+        static int RunnerRange(HeroCard card, HeroCardTable table,
+                               HeroThreatProfile profile, bool wounded)
+        {
             int range = card.Reichweite;
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
@@ -437,7 +477,7 @@ namespace TacticalAI.Core
                     true, null, null);
                 if (stats.AccGate > range) range = stats.AccGate;
             }
-            return new Rational((long)tier * range);
+            return range;
         }
 
         /// <summary>Mobility bands exactly as tactical_hero_profiles/1

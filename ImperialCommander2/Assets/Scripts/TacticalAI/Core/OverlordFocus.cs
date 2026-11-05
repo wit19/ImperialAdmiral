@@ -167,7 +167,8 @@ namespace TacticalAI.Core
         // EV - eliminate rows read their damage straight from Threat, every
         // pre-M15 canon vector stays byte-identical, record discipline).
         public Rational? ThreatDamage;      // exchange EV per round (best pool)
-        public Rational? ThreatMobility;    // band x range subordination term
+        public int? ThreatBand;             // M16 mobility band 1..3 (wound tempo!)
+        public int? ThreatRange;            // M16 weapon reach incl. item gates
         public string BestPool;             // dice the damage EV came from
         public string Basis;                // "mark"|"chip"|"card"|"economy"|"proxy"
         // M11d: the LIVE strain-pressure surcharge actually applied to the
@@ -233,8 +234,8 @@ namespace TacticalAI.Core
             if (ThreatDamage.HasValue)
             {
                 d["threat_damage"] = ThreatDamage.Value.ToString();
-                d["threat_mobility"] = ThreatMobility.HasValue
-                    ? ThreatMobility.Value.ToString() : "0";
+                d["threat_band"] = (ThreatBand ?? 0).ToString();
+                d["threat_range"] = (ThreatRange ?? 0).ToString();
                 if (!string.IsNullOrEmpty(BestPool)) d["best_pool"] = BestPool;
             }
             if (StrainDruckUnscharf.HasValue && StrainDruckUnscharf.Value > 0)
@@ -259,14 +260,14 @@ namespace TacticalAI.Core
         {
             if (p == null) return null;
             if (posture == "protect" || posture == "stall")
-                // M15 damage-weighted law (mirrors HeroThreatModelV2.Threat):
-                // damage EV x DamageWeight + the mobility/mission-denial term.
-                // Curated rows carry the tabled EV (plain Rational - the
-                // curation table always has one, NeutralEv on blank reads)
-                // and the tabled runner value; the weight law is identical
-                // to the card model.
-                return HeroThreatModelV2.DamageWeight * p.EvDamagePerRound
-                       + new Rational(p.RunnerValue);
+                // M16 percent law (mirrors HeroThreatModelV2.Threat): 55%
+                // damage + 35% speed band + 10% range over the printed game
+                // anchors. Curated rows carry the tabled EV (plain Rational -
+                // the curation table always has one, NeutralEv on blank
+                // reads), the tabled mobility BAND and max range; the law is
+                // identical to the card model.
+                return HeroThreatModelV2.RunnerThreat(p.EvDamagePerRound,
+                                                      p.Mobility, p.RangeMax);
             if (posture == "attrition" || posture == "eliminate")
                 return p.EvDamagePerRound;                // damage race
             return null;                                  // deny: node rules
@@ -468,9 +469,12 @@ namespace TacticalAI.Core
                 ThreatDamage = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
                     ? x.Parts.Value.DamageEv : (Rational?)null,
-                ThreatMobility = x.C.Card != null && x.Parts.HasValue
+                ThreatBand = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
-                    ? x.Parts.Value.MobilityTerm : (Rational?)null,
+                    ? x.Parts.Value.SpeedBand : (int?)null,
+                ThreatRange = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                    ? x.Parts.Value.RangeCells : (int?)null,
                 BestPool = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
                     ? string.Join("+", x.Parts.Value.BestPool ?? new List<string>())

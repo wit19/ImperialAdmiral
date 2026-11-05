@@ -2111,7 +2111,7 @@ namespace TacticalAI
                     {
                         bool runner = posture == "protect" || posture == "stall";
                         string poolTxt = "Pool " + string.Join("+", parts.Value.BestPool);
-                        string en = parts.Value.Energy > Rational.Zero
+                        string en = parts.Value.Energy > Tac.Rational.Zero
                             ? " + Energie-Zuschlag " + parts.Value.Energy + "/Runde (Waffenpreis)" : "";
                         if (runner)
                             // M16 (Thomas 05.11): the accounting prints the

@@ -149,11 +149,19 @@ announced publicly at round start (and re-ranked each activation from the same k
 
 1. **Wounded / defeated marks** outrank everything (except at S1/S2, which are
    `CounterBlind` and ignore them by design — that is the handicap, not a bug).
-2. **Threat value per hero**, computed from the printed hero card values (dice pools,
-   stamina, speed — digitized 1:1 for all 21 era-1 heroes into
-   `tactical_hero_cards.json`) **plus the hero's own campaign purchases** (equipment
-   tier×cost index, XP-cost ability index) — i.e. the hero who is really strongest on
-   THIS campaign, not from a tier list.
+2. **Threat value per hero** — current law (M15–M17, Thomas rulings 05.11): the
+   hero's TRUE standard-weapon dice from `tactical_hero_cards.json` (never the
+   printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
+   weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
+   E-11 +2/5, lightsaber +3, gloves 0). In hold postures (protect/stall) the
+   score is percent-weighted:
+   `threat = 100 × (55% × score/(8/3) + 35% × band/3 + 10% × range/7)`
+   with fixed anchors (max exchange EV 8/3 = RR item weapon, band 3, reach 7);
+   in kill/wound postures it stays the raw exchange EV. Wound rides purely
+   through the printed `tempoVerwundet` (no percent malus — proven redundant).
+   Campaign purchases still count twice: the bought weapon moves the score
+   (M17), the XP-ability index stays the economic basis (M4) — the hero who is
+   really strongest on THIS campaign, not from a tier list.
 3. Deterministic tie-break by table order.
 
 The popup's "why" line states which key decided ("highest firepower among the remaining

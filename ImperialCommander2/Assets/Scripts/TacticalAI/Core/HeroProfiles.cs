@@ -41,6 +41,14 @@ namespace TacticalAI.Core
         public string AppHeroId = null;
         public string Knowledge = "kuratiert";   // kuratiert | bestaetigt
         public Rational EquipmentIndex = Rational.Zero;  // tier x cost typ-gewichtet
+        // M17 (Thomas 05.11): per WEAPON item the curated ev_model bonus
+        // (weapon_ev_per_1000_cost x tier x cost) - the printed price is the
+        // public signal for the value the dice table cannot see (energy
+        // abilities, keywords). Card-model candidates add this to their dice
+        // EV; curated rows already carry the sum in EvDamagePerRound (M4
+        // proxy), so BOTH paths speak one cost language now.
+        public System.Collections.Generic.Dictionary<string, Rational> WeaponEvBonus
+            = new System.Collections.Generic.Dictionary<string, Rational>();
         public int AbilityIndex = 0;                   // Summe der xpCost
         public List<string> LoadoutItems = new List<string>();
         public List<string> LoadoutSkills = new List<string>();
@@ -111,6 +119,7 @@ namespace TacticalAI.Core
                 EquipmentIndex = EquipmentIndex, AbilityIndex = AbilityIndex,
                 LoadoutItems = new List<string>(LoadoutItems),
                 LoadoutSkills = new List<string>(LoadoutSkills),
+                WeaponEvBonus = new System.Collections.Generic.Dictionary<string, Rational>(WeaponEvBonus),
             };
             return edit(c);
         }
@@ -366,6 +375,7 @@ namespace TacticalAI.Core
 
             Rational equip = Rational.Zero;
             Rational weaponEv = Rational.Zero;
+            var weaponBonus = new System.Collections.Generic.Dictionary<string, Rational>();
             bool hasSupportItem = false;
             bool unknownAny = false;
             foreach (var iid in SortedStrs(itemIdsRaw))
@@ -380,7 +390,11 @@ namespace TacticalAI.Core
                 var w = cls != null && weights.ContainsKey(cls) ? weights[cls] : Rational.Zero;
                 equip += w * new Rational((long)tier * cost);
                 if (cls != null && cls.StartsWith("weapon", StringComparison.Ordinal))
-                    weaponEv += weaponEvK * new Rational((long)tier * cost);
+                {
+                    var b = weaponEvK * new Rational((long)tier * cost);
+                    weaponEv += b;
+                    weaponBonus[iid] = b;             // M17: per-weapon share
+                }
                 else if (cls == "support") hasSupportItem = true;
             }
 
@@ -411,6 +425,7 @@ namespace TacticalAI.Core
                 p.AbilityIndex = (int)xpSum;
                 p.LoadoutItems = SortedStrs(itemIdsRaw);
                 p.LoadoutSkills = SortedStrs(skillIdsRaw);
+                foreach (var kv in weaponBonus) p.WeaponEvBonus[kv.Key] = kv.Value;
                 return p;
             });
         }

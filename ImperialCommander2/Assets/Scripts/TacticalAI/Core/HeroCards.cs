@@ -252,6 +252,9 @@ namespace TacticalAI.Core
     public static class HeroThreatModelV2
     {
         static readonly List<string> NoItems = new List<string>();
+        static readonly System.Collections.Generic.Dictionary<string, Rational>
+            EmptyBonus = new System.Collections.Generic.Dictionary<string, Rational>();
+
 
         // M16 (Thomas design ruling 05.11): PERCENT-WEIGHTED THREAT LAW for
         // protect/stall. threat = 100 x (55% normalized weapon DAMAGE
@@ -305,7 +308,10 @@ namespace TacticalAI.Core
         /// welcher Wert wofuer steht" - never prose about how it works).</summary>
         public struct ThreatParts
         {
-            public Rational DamageEv;        // exchange EV per round (best printed pool)
+            public Rational DamageEv;        // exchange EV per round (weapon
+                                             //  score: printed dice + M17
+                                             //  price-energy of the winner)
+            public Rational Energy;          // M17 surcharge inside DamageEv
             public int SpeedBand;            // mobility band 1..3 (printed wound tempo!)
             public int RangeCells;           // reach incl. printed ranged-item gates
             public List<string> BestPool;    // dice the DamageEv was computed from
@@ -338,9 +344,9 @@ namespace TacticalAI.Core
                 // speed, 10% range over the game's own printed anchors. The
                 // engage hook rides the exchange exactly as in the damage
                 // races (M12d seam).
-                List<string> pool;
+                List<string> pool; Rational energyX;
                 var dmg = EliminateEv(card, table, profile, wounded,
-                                      defenderDefense, engage, out pool);
+                                      defenderDefense, engage, out pool, out energyX);
                 return RunnerThreat(dmg, RunnerBand(card, wounded),
                                     RunnerRange(card, table, profile, wounded));
             }
@@ -360,12 +366,13 @@ namespace TacticalAI.Core
             bool damageRace = posture == "eliminate" || posture == "attrition";
             bool runnerRace = posture == "protect" || posture == "stall";
             if (!damageRace && !runnerRace) return null;
-            List<string> pool;
+            List<string> pool; Rational energy;
             var dmg = EliminateEv(card, table, profile, wounded,
-                                  defenderDefense, engage, out pool);
+                                  defenderDefense, engage, out pool, out energy);
             var parts = new ThreatParts
             {
                 DamageEv = dmg,
+                Energy = energy,
                 SpeedBand = runnerRace ? RunnerBand(card, wounded) : 0,
                 RangeCells = runnerRace ? RunnerRange(card, table, profile, wounded) : 0,
                 BestPool = pool,
@@ -379,24 +386,34 @@ namespace TacticalAI.Core
                                     IList<string> defenderDefense,
                                     EngagementEffects engage = null)
         {
-            List<string> unused;
+            List<string> unused; Rational unusedE;
             return EliminateEv(card, table, profile, wounded, defenderDefense,
-                               engage, out unused);
+                               engage, out unused, out unusedE);
         }
 
         static Rational EliminateEv(HeroCard card, HeroCardTable table,
                                     HeroThreatProfile profile, bool wounded,
                                     IList<string> defenderDefense,
                                     EngagementEffects engage,
-                                    out List<string> bestPool)
+                                    out List<string> bestPool,
+                                    out Rational energy)
         {
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
             int pierce = 0;
             var keywords = new List<string>();
-            var pools = new List<Tuple<List<string>, bool>>
+            // M17 (Thomas 05.11): each candidate pool carries its weapon's
+            // PRICE-ENERGY surcharge (curated ev_model: weapon_ev_per_1000_cost
+            // x tier x cost, fed per item through HeroThreatProfile.
+            // WeaponEvBonus). The printed dice understate bought weapons -
+            // energy abilities and keywords are priced into the cost but not
+            // printed in the dice; price is 100% public (shop + purchases).
+            // The base weapon costs nothing -> surcharge 0.
+            var bonus = profile != null && profile.WeaponEvBonus != null
+                ? profile.WeaponEvBonus : EmptyBonus;
+            var pools = new List<Tuple<List<string>, bool, Rational>>
             {
-                Tuple.Create(card.BasisWuerfel, !card.Nahkaempfer),
+                Tuple.Create(card.BasisWuerfel, !card.Nahkaempfer, Rational.Zero),
             };
             foreach (var id in owned)
             {
@@ -406,21 +423,22 @@ namespace TacticalAI.Core
                 if (e.Genauigkeit > 0) keywords.Add("+" + e.Genauigkeit + " Accuracy");
                 if (e.Schaden > 0) keywords.Add("+" + e.Schaden + " {H}");
                 bool ranged = e.Typ == "O";
+                Rational b; bonus.TryGetValue(id, out b);   // default 0
                 if (e.Wuerfel.Count > 0)
-                    pools.Add(Tuple.Create(new List<string>(e.Wuerfel), ranged));
+                    pools.Add(Tuple.Create(new List<string>(e.Wuerfel), ranged, b));
                 if (e.Attribut != null)
                 {
                     var attr = card.AttributWuerfel(e.Attribut, wounded);
                     if (attr != null && attr.Count > 0)
-                        pools.Add(Tuple.Create(attr, ranged));
+                        pools.Add(Tuple.Create(attr, ranged, b));
                 }
             }
             var defender = Dice.BuildAttackStats(null, null, false, null,
                 defenderDefense != null ? new List<string>(defenderDefense) : null);
-            // the overlord assumes the hero fights with its BEST known
-            // printed weapon (rules-true: one weapon per attack, and the
-            // Empire may never under-estimate an equipped hero - same
-            // direction as the M10a investment tie-break)
+            // the overlord assumes the hero fights with its best known
+            // weapon SCORER (dice EV + M17 price-energy: one weapon per
+            // attack, and the Empire may never under-estimate an equipped
+            // hero - same direction as the M10a investment tie-break)
             int engagePierce = engage == null ? 0 : engage.Pierce;
             int engageAcc = engage == null ? 0 : engage.AccDelta;
             var best = Rational.Zero;
@@ -428,6 +446,8 @@ namespace TacticalAI.Core
             // shows WHICH printed pool the damage was read from; stays the
             // base pool when every pool trades at zero)
             bestPool = card.BasisWuerfel;
+            energy = Rational.Zero;
+            Rational bestEnergy = Rational.Zero;
             foreach (var p in pools)
             {
                 var stats = Dice.BuildAttackStats(p.Item1, keywords, p.Item2, null,
@@ -441,9 +461,15 @@ namespace TacticalAI.Core
                     var gate = stats.AccEv + Rational.One / 2;
                     stats.AccGate = (int)(gate.Num / gate.Den);
                 }
-                var ev = Dice.ExpectedDamage(stats, defender, 1, pierce + engagePierce);
-                if (ev > best) { best = ev; bestPool = p.Item1; }
+                // M17: the WEAPON SCORE is dice EV + the price-energy
+                // surcharge of THIS pool's weapon - so a bought weapon may
+                // legitimately outrank printed-equal or slightly stronger
+                // dice (E-11 400cr: 13/6 + 2/5 > Jyn's printed GG 7/3).
+                var ev = Dice.ExpectedDamage(stats, defender, 1, pierce + engagePierce)
+                         + p.Item3;
+                if (ev > best) { best = ev; bestPool = p.Item1; bestEnergy = p.Item3; }
             }
+            energy = bestEnergy;
             return best;
         }
 

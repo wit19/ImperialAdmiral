@@ -166,7 +166,9 @@ namespace TacticalAI.Core
         // rows under protect/stall (where the threat is NOT just the damage
         // EV - eliminate rows read their damage straight from Threat, every
         // pre-M15 canon vector stays byte-identical, record discipline).
-        public Rational? ThreatDamage;      // exchange EV per round (best pool)
+        public Rational? ThreatDamage;      // exchange EV per round (weapon
+                                            //  score: dice + M17 energy)
+        public Rational? ThreatEnergy;      // M17 price-energy part inside it
         public int? ThreatBand;             // M16 mobility band 1..3 (wound tempo!)
         public int? ThreatRange;            // M16 weapon reach incl. item gates
         public string BestPool;             // dice the damage EV came from
@@ -234,6 +236,8 @@ namespace TacticalAI.Core
             if (ThreatDamage.HasValue)
             {
                 d["threat_damage"] = ThreatDamage.Value.ToString();
+                if (ThreatEnergy.HasValue && !ThreatEnergy.Value.IsZero)
+                    d["threat_energy"] = ThreatEnergy.Value.ToString();
                 d["threat_band"] = (ThreatBand ?? 0).ToString();
                 d["threat_range"] = (ThreatRange ?? 0).ToString();
                 if (!string.IsNullOrEmpty(BestPool)) d["best_pool"] = BestPool;
@@ -469,6 +473,10 @@ namespace TacticalAI.Core
                 ThreatDamage = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
                     ? x.Parts.Value.DamageEv : (Rational?)null,
+                ThreatEnergy = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                               && x.Parts.Value.Energy > Rational.Zero
+                    ? x.Parts.Value.Energy : (Rational?)null,
                 ThreatBand = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
                     ? x.Parts.Value.SpeedBand : (int?)null,

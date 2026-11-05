@@ -2111,17 +2111,19 @@ namespace TacticalAI
                     {
                         bool runner = posture == "protect" || posture == "stall";
                         string poolTxt = "Pool " + string.Join("+", parts.Value.BestPool);
+                        string en = parts.Value.Energy > Rational.Zero
+                            ? " + Energie-Zuschlag " + parts.Value.Energy + "/Runde (Waffenpreis)" : "";
                         if (runner)
                             // M16 (Thomas 05.11): the accounting prints the
                             // EXACT percent law with all three normalized
                             // factors - the whole sum is re-computable.
                             calc = "Postur Halten: 55% x Schadens-Austausch " +
-                                   parts.Value.DamageEv + "/Runde (" + poolTxt +
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en +
                                    ") / 8/3 + 35% x Tempo-Band " + parts.Value.SpeedBand +
                                    "/3 + 10% x Reichweite " + parts.Value.RangeCells + "/7";
                         else
                             calc = "Postur Toeten/Verwunden: reiner Waffenschaden " +
-                                   parts.Value.DamageEv + "/Runde (" + poolTxt + ")";
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en + ")";
                     }
                 }
                 bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue;
@@ -2239,6 +2241,11 @@ namespace TacticalAI
         {
             var parts = new List<string>();
             if (dec.Marked) parts.Add(TF(L.ordMarked));
+            // M17 (Thomas 05.11): the price-energy surcharge inside the
+            // damage operand gets its own visible clause - the player sees
+            // WHY a bought weapon outscores printed dice alone.
+            if (dec.ThreatEnergy.HasValue && !dec.ThreatEnergy.Value.IsZero)
+                parts.Add(TF(L.ordThreatEnergy, dec.ThreatEnergy.Value.ToString()));
             if (dec.Threat.HasValue)
             {
                 // M15 F2 (Thomas 05.11): the EXPLAIN cell shows the REAL

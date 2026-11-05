@@ -3,7 +3,9 @@
 Project facts (verified in `ProjectSettings/`): Unity **2020.3.49f1**,
 Android app id `com.GlowPuff.ImperialCommander2.tacai` (test builds, see
 below), minSdk **22** (Android 5.1+), targetSdk **30**, architectures
-ARMv7+ARM64, scripting backend **Mono**, five build scenes (Title first),
+ARMv7+ARM64, scripting backend **IL2CPP** (`scriptingBackend: Android: 1`
+in `ProjectSettings.asset` — already IL2CPP in the upstream original, so the
+NDK from the build-support module is genuinely needed, not optional), five build scenes (Title first),
 merged manifest at `Assets/Plugins/Android/AndroidManifest.xml` (leave it
 untouched — Unity injects the id and merges the rest at build time). The
 project has been Android-built before; the settings are inherited, this
@@ -31,8 +33,16 @@ other build target — nothing to activate per platform.
 1. Open the project → *File → Build Settings* → platform **Android** →
    **Switch Platform**. All assets are re-imported for Android; this takes
    a while on first run. The Console must stay free of errors afterwards.
-2. *Build*, choose an output folder → you get `<productName>.apk` (Mono
-   backend, both ABIs in one APK).
+2. *Build*, choose an output folder. As committed, the
+   *Build Separate APKs Per Architecture* option is ON
+   (`AndroidBuildApkPerCpuArchitecture: 1`), so you get **two** APKs:
+   `armeabi-v7a` (32-bit) and `arm64-v8a` (64-bit). Install **arm64-v8a**
+   on anything sold since ~2018 (newest devices are 64-bit-only and reject
+   the v7 file); v7 is only for old/cheap 32-bit hardware. For one
+   universal APK instead, untick the option — slightly bigger file, works
+   everywhere. Backend is IL2CPP: C++ compile makes builds slower than
+   Mono; the first Gradle run additionally downloads the toolchain (§7).
+   (Verified in a real build, 2026-11-04.)
 3. Install on a device: copy the APK over and open it (allow "install from
    unknown sources"), or `adb install <apk>`. USB debugging must be enabled
    on the device for adb.
@@ -105,9 +115,9 @@ private key must never enter the repository.
 
 ## 6. IL2CPP / AAB / Google Play — the honest status
 
-Current backend Mono + both ABIs is fine for sideloading and itch.io-style
-distribution. For a Google Play release you would need IL2CPP + AAB + a
-recent target API, and Google's official requirement (developer.android.com/google/play/requirements/target-sdk,
+The backend is already IL2CPP (see top of this document), so a sideload or
+itch.io-style APK works as is. For a Google Play release you would still
+need an AAB build and a recent target API; Google's official requirement (developer.android.com/google/play/requirements/target-sdk,
 checked 2026-11-04): new apps and updates must target **API 35** since
 2025-08-31, **API 36** from 2026-08-31. Unity 2020.3 tops out far below
 that — a Play release therefore requires upgrading the project to a newer

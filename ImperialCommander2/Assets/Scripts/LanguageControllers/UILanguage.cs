@@ -83,6 +83,7 @@ public class UITacticalAI
 	// M15 F2: the EXPLAIN threat CALCULATION (operands in the message:
 	// {0}=threat {1}=damage exchange {2}=mobility {3}=dice pool).
 	public string ordThreatCalcRunner;
+	public string ordThreatEnergy;
 	// M11d: light strain-pressure note in the round-focus WHY line
 	public string ordStrainPressure;
 	// M11h: fuzzy strain-usage prior in the round-focus WHY line - args

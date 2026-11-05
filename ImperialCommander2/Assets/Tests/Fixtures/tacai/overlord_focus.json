@@ -691,7 +691,7 @@
    ],
    "expect": [
     {
-     "basis": "economy",
+     "basis": "objactor",
      "hero": "Han Solo Two",
      "marked": false,
      "threat": "107",
@@ -1458,7 +1458,7 @@
    ],
    "expect": [
     {
-     "basis": "card",
+     "basis": "objactor",
      "hero": "Jyn Odan",
      "marked": false,
      "threat": "10/3",
@@ -1466,7 +1466,7 @@
      "wounded": false
     },
     {
-     "basis": "proxy",
+     "basis": "objactor",
      "hero": "Lokaku",
      "marked": false,
      "threat": null,

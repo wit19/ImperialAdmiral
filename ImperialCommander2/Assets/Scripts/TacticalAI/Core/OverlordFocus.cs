@@ -515,9 +515,14 @@ namespace TacticalAI.Core
                         : (x.Wachzone ? "wachzone"
                         : (x.Vergeltung ? "vergeltung"
                         : (x.Maskenvertrauen ? "maskenvertrauen"
+                        // M10b's boolean key (Compare key 2) rides ABOVE chip
+                        // and threat - Player-27 (Thomas 05.11): the label
+                        // must name the key that actually carried the win,
+                        // not the first non-null number below it.
+                        : (x.C.ObjectiveActor ? "objactor"
                         : (x.Chip != null ? "chip"
                         : (x.Econ != null ? (x.C.Card != null ? "card" : "economy")
-                                          : "proxy")))))),
+                                          : "proxy"))))))),
             }).ToList();
         }
 

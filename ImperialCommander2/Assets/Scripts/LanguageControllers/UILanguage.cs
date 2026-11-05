@@ -175,6 +175,7 @@ public class UITacticalAI
 	// vocabulary; unknown basis falls through as the raw token).
 	public string ordFocusMeasureDamage, ordFocusMeasureRunner;
 	public string ordFocusBasisMark, ordFocusBasisChip, ordFocusBasisConditioned;
+	public string ordFocusBasisObjactor;
 	public string ordFocusBasisEconomy, ordFocusBasisPrinted;
 	// R-D: basis label when the reaktion key decided the focus (EXPLAIN
 	// disclosure line "Grundlage: ...").

@@ -1457,6 +1457,7 @@ namespace TacticalAI
                 // S-E (card t_9dd56737): the supporter's mask-trust basis
                 // reads its label from ui.json like every other basis.
                 case "maskenvertrauen": return L.ordFocusBasisMaskenvertrauen;
+                case "objactor":  return L.ordFocusBasisObjactor;
                 case "chip":      return L.ordFocusBasisChip;
                 case "card":      return L.ordFocusBasisConditioned;
                 case "economy":   return L.ordFocusBasisEconomy;

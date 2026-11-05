@@ -242,29 +242,40 @@ printed):
 The focus banner's `threat=` value is **not** the printed card cost and not a
 standing score. It is one freshly computed number per round, per hero:
 
-- **The expected damage exchange** of the hero's *best single attack* — his
-  printed card dice **plus every attack die his bought campaign equipment
-  prints**, evaluated die by die against defense. The Empire may never
-  under-estimate an equipped hero, so the model always uses his best weapon,
-  and equipment only raises the number when its attack dice beat what the
-  hero's card already prints. Two heroes can absolutely reach the same
-  number with different gear — same expected damage means same threat.
+The number is the **weapon score** of the hero's *best single attack*: the
+expected damage exchange of his best weapon's dice (card dice **plus every
+attack die his bought campaign weapons print** — dice from `
+tactical_hero_cards.json`, never the printed attribute pools), **plus a
+price-energy surcharge**: the weapon's printed shop **tier × price**, at the
+campaign curve's own rate of 1/1000 (an E-11 at 400 CR/tier 1 adds 2/5 of a
+die per round; gloves and armour add nothing — they add no damage). Price is
+100% public data (shop + purchase log), and it is the signal that catches
+what the dice tables cannot see: energy abilities and bonus dice that are
+priced into the weapon but not printed on it. The model evaluates each
+candidate weapon die by die against the current defense and takes the
+highest-scoring one — the Empire may never under-estimate an equipped hero.
 - **Plus exactly +1** for the *objective actor*: the hero who finished the
   activation in which the mission objective moved (public event credit).
-- Wounded heroes are evaluated with their wounded dice faces (usually a
-  *lower* exchange, sometimes a higher one — printed dice decide).
+- **Mission posture decides the formula.** When the Imperium is ordered to
+  *hold* (Guard/Block-style postures), threat is the percent law:
+  `100 × (55% × score ÷ 8/3 + 35% × speed-band ÷ 3 + 10% × weapon reach ÷ 7)`
+  — damage first, then tempo, then reach, each over the game's own printed
+  maximum. In *kill* postures it is the raw score per round. Same heroes,
+  same score, different emphasis — the focus call names the formula it used.
+- Wounded heroes are evaluated with their wounded dice faces **and** their
+  printed wounded tempo (a wound usually drops the speed band — no separate
+  penalty is applied; the printed rule already carries it).
 - **When two heroes land on the same number**, the better-invested hero
-  leads: the tie-break compares what the campaign actually *spent* on each
-  — every bought item weighted by its printed **tier × price**, then the
-  XP sum of bought abilities — before any squad-order fallback. Same dice,
-  dearer gun means bigger threat: the model cannot see extra surge
-  abilities on items (that data isn't in the dice tables), and printed
-  tier × price is exactly the public signal that catches this.
+  still leads: the tie-break compares what the campaign actually *spent* on
+  each — every bought item weighted by its printed **tier × price**, then
+  the XP sum of bought abilities — before any squad-order fallback.
 
 Since this build, the game log (`Player-N.log`) accounts every ranked hero on
-its own line: final threat, the raw exchange value before the +1, his dice
-pool, his equipment items and the flags (mark/wound/strain) that moved the
-number — so you can re-check each sum yourself instead of trusting it.
+its own line: final threat, the exact formula with the real fractions
+("55% × 7/3 per round (Green+Green + energy bonus 2/5) ÷ 8/3 + 35% × 3/3 +
+10% × 5/7"), his dice pool, his equipment items and the flags
+(mark/wound/strain) that moved the number — so you can re-check each sum
+yourself instead of trusting it.
 
 ---
 

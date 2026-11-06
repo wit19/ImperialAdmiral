@@ -47,9 +47,19 @@ namespace Saga
 			if ( Application.platform == RuntimePlatform.WindowsPlayer
 				|| Application.platform == RuntimePlatform.WindowsEditor )
 			{
-				//Unity on Windows: %userprofile%\AppData\LocalLow\<company>\<product>
-				legacy = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
-					"low", "GlowPuff", "Imperial Commander 2" );
+				//Unity on Windows: %USERPROFILE%\AppData\LocalLow\<company>\<product>
+				//Gotcha (hit in the very first renamed build): 'LocalLow'
+				//is a SIBLING of AppData\Local, NOT Local\low - composing
+				//LocalApplicationData+"low" never exists. Derive the AppData
+				//root from %APPDATA% (which points at AppData\Roaming, the
+				//same anchor Unity uses), fall back to the user profile.
+				string roaming = Environment.GetEnvironmentVariable( "APPDATA" );
+				string localLow;
+				if ( !string.IsNullOrEmpty( roaming ) )
+					localLow = Path.Combine( Path.GetDirectoryName( roaming.TrimEnd( Path.DirectorySeparatorChar ) ), "LocalLow" );
+				else
+					localLow = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.UserProfile ), "AppData", "LocalLow" );
+				legacy = Path.Combine( localLow, "GlowPuff", "Imperial Commander 2" );
 			}
 			else if ( Application.platform == RuntimePlatform.OSXPlayer
 				|| Application.platform == RuntimePlatform.OSXEditor )

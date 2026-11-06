@@ -958,6 +958,14 @@ public static class DataStore
 
 		if ( valid.Count > 0 )
 		{
+			// TAC M14d-R (Thomas 06.11, CONCEPT_reinforce.md): which wounded
+			// group gets the returning figure is a TACTICAL decision - the
+			// bridge ranks the legal candidates deterministically (anchor
+			// proximity, then printed strength). Tactical mode off, single
+			// candidate or any bridge error => the legacy RNG line below runs
+			// VERBATIM (OFF restores bit-identical legacy).
+			if ( TacticalAI.TacticalAIBridge.TryChooseReinforcement( valid, out var tactical ) )
+				return tactical;
 			int[] rnd = GlowEngine.GenerateRandomNumbers( valid.Count );
 			//Debug.Log( "GET: " + valid[rnd[0]].currentSize );
 			return valid[rnd[0]];

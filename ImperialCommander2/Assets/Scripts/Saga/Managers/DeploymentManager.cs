@@ -376,6 +376,13 @@ namespace Saga
 				var adp = FindObjectOfType<MapEntityManager>().GetActiveDeploymentPoint( enemyToAdd );
 				if ( adp != Guid.Empty )
 				{
+					//M14d-R (Thomas 06.11): record the DP this deploy ACTUALLY
+					//used - same law as the ovrd.Active branch above. This is
+					//the path of every round popup, every Aufstellungs-
+					//Ereignis and every reinforcement landing (ovrd==null), so
+					//the deterministic reinforcement priority finally sees the
+					//entry point of ALL groups, not just optional flows.
+					lastActiveDPByCard[enemyToAdd.id] = adp;
 					FindObjectOfType<SagaEventManager>().toggleVisButton.SetActive( true );
 					//M13g: the deployment-mode row was removed entirely
 					//(Thomas 28.10: the app is only a companion to the board

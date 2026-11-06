@@ -1616,6 +1616,102 @@ namespace TacticalAI
             catch { return new List<Tac.DeployAnchor>(); }   // never break a deploy
         }
 
+        /// <summary>TAC M14d-R (Thomas 06.11): deterministic reinforcement
+        /// priority instead of the legacy random pick - CONCEPT_reinforce.md.
+        /// Which wounded group gets the returning figure is a tactical
+        /// decision; a coin flip is not one. Public-data law, no RNG, no
+        /// hidden state (CONCEPT_reinforce Sec.3):
+        /// (1) proximity to the mission objective: the group's last ENTRY
+        ///     point (DeploymentManager.lastActiveDPByCard - the DP that
+        ///     actually deployed it) measured to the LIVE anchor set (same
+        ///     table + same M14d phase filter the DP choice uses; claimed
+        ///     objectives no longer pull). Group sharing an anchor's section
+        ///     ranks tier 0 (mirrors the DeploymentAnchors.Choose section
+        ///     law), other located groups tier 1 by nearest-anchor distance;
+        ///     groups with unknown entry point (restored session, mission-
+        ///     file deploys before this build) rank tier 2 - behind every
+        ///     located group: no data, no proximity claim.
+        /// (2) strength: printed attack dice, then printed health, then
+        ///     current size (biggest remnant first) - the same public
+        ///     firepower proxy the targeting law uses.
+        /// (3) tie-break: name Ordinal, then id Ordinal - stable over reloads.
+        /// No live anchors at all => the proximity tier collapses and the
+        /// order is pure strength (still deterministic).
+        /// Tactical mode off, fewer than two candidates, missing scene
+        /// services or any error => return false => the caller keeps the
+        /// legacy RNG line VERBATIM (OFF restores bit-identical legacy).
+        /// Legality is untouched - this only PERMUTES the legal candidate
+        /// list GetReinforcement built (rcost/size/override filters).</summary>
+        public static bool TryChooseReinforcement(List<global::DeploymentCard> candidates,
+                                                  out global::DeploymentCard pick)
+        {
+            pick = null;
+            try
+            {
+                if (candidates == null || candidates.Count < 2) return false;
+                if (!ActiveNow()) return false;
+                var dm = UnityEngine.Object.FindObjectOfType<Saga.DeploymentManager>();
+                var map = UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>();
+                if (dm == null || map == null) return false;
+                var anchors = MissionDpAnchors();
+
+                var ranked = candidates.Select(c =>
+                {
+                    int tier = 1; double dist = double.MaxValue;
+                    if (anchors.Count > 0)
+                    {
+                        var dpGuid = dm.LastActiveDeploymentPoint(c.id);
+                        var dp = dpGuid != Guid.Empty ? map.GetEntity(dpGuid) : null;
+                        if (dp == null || dp.entityPosition == null)
+                            tier = 2;   // unknown entry point - no proximity claim
+                        else
+                        {
+                            double bestSame = double.MaxValue, bestAny = double.MaxValue;
+                            foreach (var a in anchors)
+                            {
+                                double dx = (double)a.X - (double)dp.entityPosition.X;
+                                double dy = (double)a.Y - (double)dp.entityPosition.Y;
+                                double d = Math.Sqrt(dx * dx + dy * dy);
+                                if (d < bestAny) bestAny = d;
+                                if (string.Equals(dp.mapSectionOwner.ToString(), a.SectionGuid,
+                                        StringComparison.OrdinalIgnoreCase) && d < bestSame)
+                                    bestSame = d;
+                            }
+                            tier = bestSame < double.MaxValue ? 0 : 1;
+                            dist = tier == 0 ? bestSame : bestAny;
+                        }
+                    }
+                    return new
+                    {
+                        Card = c, Tier = tier, Dist = dist,
+                        Dice = c.attacks?.Length ?? 0,
+                        Health = c.health,
+                        Size = c.currentSize,
+                    };
+                })
+                .OrderBy(x => x.Tier)
+                .ThenBy(x => x.Dist)
+                .ThenByDescending(x => x.Dice)
+                .ThenByDescending(x => x.Health)
+                .ThenByDescending(x => x.Size)
+                .ThenBy(x => x.Card.name ?? "", StringComparer.Ordinal)
+                .ThenBy(x => x.Card.id ?? "", StringComparer.Ordinal)
+                .ToList();
+
+                pick = ranked[0].Card;
+                var w = ranked[0];
+                Debug.Log($"TacticalAIBridge::REINFORCE -> {w.Card.name} " +
+                          $"[tier={w.Tier} dist={w.Dist.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)} " +
+                          $"dice={w.Dice} health={w.Health} size={w.Size} of {ranked.Count}, deterministic, no RNG]");
+                return true;
+            }
+            catch
+            {
+                pick = null;
+                return false;   // caller keeps the legacy RNG line
+            }
+        }
+
         // ---------------------------------------------------------- targeting
 
         /// <summary>Deterministic focus WITHOUT the hex board (playtest 27.10

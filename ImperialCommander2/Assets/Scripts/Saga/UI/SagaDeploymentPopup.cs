@@ -270,6 +270,10 @@ namespace Saga
 		/// </summary>
 		bool FinalRoundThreatDump()
 		{
+			//MODE GATE (Thomas 06.11 standing rule): the dump is TAC threat
+			//economy - Legacy never chained extra Landings, so with the mode
+			//off this must always answer false.
+			if ( !TacticalAI.TacticalAIBridge.TacticalMissionActive() ) return false;
 			if ( PlayerPrefs.GetInt( "roundLimitToggle" ) == 0 ) return false;
 			var gv = DataStore.sagaSessionData.gameVars;
 			if ( gv.roundLimit == -1 || gv.round < gv.roundLimit ) return false;
@@ -340,7 +344,7 @@ namespace Saga
 				//Debug.Log( "new size R2:" + r2.currentSize );
 			}
 
-			if ( r1 == null && r2 == null )
+			if ( r1 == null && r2 == null && TacticalAI.TacticalAIBridge.TacticalMissionActive() )
 			{
 				//TAC threat economy (Thomas 06.11): FAIL-OPEN rule. The
 				//Reinforcements mode used to END with a "nothing to
@@ -350,6 +354,8 @@ namespace Saga
 				//NEW groups instead (max 2, the same strict landing budget
 				//and the same override cost law as HandleLanding). Only if
 				//that also finds nothing does the warning show.
+				//MODE GATE (Thomas 06.11 standing rule): fails open ONLY in
+				//Tactical missions - Legacy ends with the warning as before.
 				DeploymentCard f1 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
 				if ( f1 != null )
 				{

@@ -975,22 +975,125 @@ public static class DataStore
 	}
 
 	/// <summary>
+	/// Calculate and return a deployable group from the hand, DOES NOT remove
+	/// it from the deployment hand.
+	/// MODE GATE (Thomas 06.11, standing rule: our changes may only touch the
+	/// Tactical AI - Legacy must stay exactly as it was when the mode is off):
+	/// Tactical AI active on this mission => the strict deterministic economy
+	/// (GetStrictDeployable). Mode off => the legacy "fuzzy deployment" below
+	/// runs VERBATIM - tier-3 cost+3 overrun and the ELITE DEPLOYMENT COIN
+	/// FLIP included, same RNG stream as the GlowPuff-era app.
+	/// Same pattern as GetReinforcement/TryChooseReinforcement (M14d-R).
+	/// </summary>
+	public static DeploymentCard GetFuzzyDeployable( int currentThreat, bool isOnslaught = false )
+	{
+		if ( TacticalAI.TacticalAIBridge.TacticalMissionActive() )
+			return GetStrictDeployable( currentThreat, isOnslaught );
+
+		/*
+		 If the app chooses to deploy a Tier III (=expensive) group, but does not have enough threat by up to 3 points, it still deploys the unit and reduces threat to 0. This way, the deployment of expensive units does not hinge on a tiny amount of missing threat, but doesn't simply make them cheaper. Example: The app chooses to deploy an AT-ST (threat cost 14). It can deploy even if there is only 11, 12, or 13 threat left
+		*/
+
+		List<DeploymentCard> tier1Group = new List<DeploymentCard>();
+		List<DeploymentCard> tier2Group = new List<DeploymentCard>();
+		DeploymentCard tier3Group = null;
+		List<DeploymentCard> tier23Group = new List<DeploymentCard>();
+		DeploymentCard validEnemy = null;
+		int[] rnd;
+		int t2modifier = 0;
+		int t3modifier = 0;
+		if ( isOnslaught )
+		{
+			t2modifier = 1;
+			t3modifier = 2;
+		}
+
+		//get tier 1 affordable groups
+		if ( deploymentHand.Any( x =>
+			x.tier == 1 &&
+			x.cost <= currentThreat ) )
+		{
+			tier1Group = deploymentHand.Where( x => x.tier == 1 && x.cost <= currentThreat ).ToList();
+		}
+
+		//get tier 2 affordable groups
+		if ( deploymentHand.Any( x =>
+			x.tier == 2 &&
+			x.cost - t2modifier <= currentThreat ) )
+		{
+			tier2Group = deploymentHand.Where( x =>
+			x.tier == 2 &&
+			x.cost - t2modifier <= currentThreat )
+			.ToList();
+		}
+
+		//concatenate the tier 1 and tier 2 groups
+		tier23Group = tier1Group.Concat( tier2Group ).ToList();
+		//filter list - minus deployed
+		tier23Group = tier23Group.MinusDeployed();
+		//now get ONE of them randomly IF there are any
+		if ( tier23Group.Count > 0 )
+		{
+			rnd = GlowEngine.GenerateRandomNumbers( tier23Group.Count );
+			validEnemy = tier23Group[rnd[0]];
+		}
+
+		//get a random tier 3 group from deployment hand with cost up to 3 over current threat and NOT DEPLOYED, if one exists
+		if ( deploymentHand.Any( x =>
+				x.tier == 3 &&
+				x.cost - t3modifier <= currentThreat + 3 &&
+				!deployedEnemies.ContainsCard( x )
+		) )
+		{
+			var t3 = deploymentHand.Where( x =>
+				x.tier == 3 &&
+				x.cost - t3modifier <= currentThreat + 3 &&
+				!deployedEnemies.ContainsCard( x )
+			).ToList();
+
+			if ( t3.Count > 0 )
+			{
+				rnd = GlowEngine.GenerateRandomNumbers( t3.Count );
+				tier3Group = t3[rnd[0]];
+			}
+		}
+
+		//if there are valid tier 3 AND tier 1/2 groups, there is a 50/50 chance of either being returned
+		if ( validEnemy != null && tier3Group != null )
+		{
+			Debug.Log( "ELITE DEPLOYMENT COIN FLIP" );
+			if ( GlowEngine.RandomBool() )
+			{
+				return validEnemy;
+			}
+			else
+			{
+				return tier3Group;
+			}
+		}
+		//otherwise try to return the tier 3 group, if any picked
+		else if ( validEnemy == null && tier3Group != null )
+			return tier3Group;
+
+		//finally try to return the tier1/2 group, even if it's null
+		return validEnemy;
+	}
+
 	/// <summary>
-	/// Calculate and return a deployable group from the deployment hand,
-	/// DOES NOT remove it.
 	/// TAC threat-economy law (Thomas 06.11): wir cheaten nicht - gekauft wird
 	/// exakt das, wofür die Bedrohung reicht, und dann aber alles davon.
-	/// The legacy app emulation "fuzzy deployment" is GONE:
-	///  (a) the tier-3 cost+3 OVERRUN bought elites with threat that does not
-	///     exist (the deduct then clamped the bill to zero - free power),
-	///  (b) the "ELITE DEPLOYMENT COIN FLIP" let hidden RNG decide elite vs.
-	///     regular whenever both were affordable.
-	/// Neither survives: (a) spends threat that was never earned, (b) makes
-	/// the purchase depend on a coin - both break the deterministic economy.
-	/// The coin flip was never a persona bonus: it is original clean-room app
-	/// code predating TAC-AI; personas ride the separate, public CostFor
-	/// discount and the elite_swap channel only (Delta-0 untouched).
-	/// New law, fully deterministic:
+	/// Runs ONLY while the Tactical AI is active on this mission (see the mode
+	/// gate in GetFuzzyDeployable); Legacy keeps its fuzzy deployment untouched.
+	/// The strict law drops the two legacy app emulations:
+	///  (a) the tier-3 cost+3 OVERRUN buys elites with threat that does not
+	///     exist (the deduct then clamps the bill to zero - free power),
+	///  (b) the "ELITE DEPLOYMENT COIN FLIP" lets hidden RNG decide elite vs.
+	///     regular whenever both are affordable.
+	/// Neither belongs in the deterministic economy. The coin flip was never a
+	/// persona bonus: it is original clean-room app code predating TAC-AI;
+	/// personas ride the separate, public CostFor discount and the elite_swap
+	/// channel only (Delta-0 untouched).
+	/// Law, fully deterministic:
 	/// * candidates: deploymentHand minus deployed (same MinusDeployed law),
 	/// * affordable: DeployCost(card, isOnslaught) <= currentThreat - persona
 	///   discount FIRST, then the public onslaught reductions (tier2 -1,
@@ -999,7 +1102,7 @@ public static class DataStore
 	///   something affordable is in hand; ties break on tier, name and id
 	///   Ordinal (no RNG, stable across reloads).
 	/// </summary>
-	public static DeploymentCard GetFuzzyDeployable( int currentThreat, bool isOnslaught = false )
+	static DeploymentCard GetStrictDeployable( int currentThreat, bool isOnslaught )
 	{
 		var candidates = deploymentHand.MinusDeployed()
 			.Where( x => DeployCost( x, isOnslaught ) <= currentThreat )

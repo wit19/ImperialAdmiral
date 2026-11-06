@@ -28,6 +28,48 @@ namespace Saga
 			return Directory.Exists( legacy ) ? legacy : Path.Combine( docs, "ImperialAdmiral" );
 		}
 
+		// SAME law for the SAVES root (fix 06.11., found on first renamed
+		// build): persistentDataPath is not stable across the rename - Unity
+		// derives it from company + product name, so it moved from
+		// <os-config>/GlowPuff/Imperial Commander 2 to
+		// <os-config>/wit19/Imperial Admiral. If the old root exists it
+		// keeps being the data home, deterministically (delete or rename it
+		// to force a truly fresh start). Android is NOT coverable here:
+		// its root is the app's own sandbox and the new package id is a new
+		// sandbox the OS will not let us read across to - saves there move
+		// only with the documented adb procedure (docs/ANDROID_build.md).
+		private static string PersistentRoot()
+		{
+#if UNITY_ANDROID
+			return Application.persistentDataPath;
+#else
+			string legacy;
+			if ( Application.platform == RuntimePlatform.WindowsPlayer
+				|| Application.platform == RuntimePlatform.WindowsEditor )
+			{
+				//Unity on Windows: %userprofile%\AppData\LocalLow\<company>\<product>
+				legacy = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
+					"low", "GlowPuff", "Imperial Commander 2" );
+			}
+			else if ( Application.platform == RuntimePlatform.OSXPlayer
+				|| Application.platform == RuntimePlatform.OSXEditor )
+			{
+				legacy = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Personal ),
+					"Library", "Application Support", "GlowPuff", "Imperial Commander 2" );
+			}
+			else
+			{
+				//Linux and friends: $XDG_CONFIG_HOME/unity3d or ~/.config/unity3d
+				string xdg = Environment.GetEnvironmentVariable( "XDG_CONFIG_HOME" );
+				string cfg = string.IsNullOrEmpty( xdg )
+					? Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Personal ), ".config", "unity3d" )
+					: Path.Combine( xdg, "unity3d" );
+				legacy = Path.Combine( cfg, "GlowPuff", "Imperial Commander 2" );
+			}
+			return Directory.Exists( legacy ) ? legacy : Application.persistentDataPath;
+#endif
+		}
+
 		public static bool SetupDefaultFolders()
 		{
 			Debug.Log( "SETTING UP DEFAULT FOLDERS" );
@@ -37,12 +79,16 @@ namespace Saga
 			//MacOS: ~/Library/Application Support/<companyName>/<productName>
 			//Windows: %localappdata%low\<companyName>\<productName>
 			//Linux: $XDG_CONFIG_HOME/unity3d or $HOME/.config/unity3d
+			//(company+product moved with the rename - PersistentRoot() above
+			//keeps an existing GlowPuff-era root as the data home)
 
-			campaignPath = Path.Combine( Application.persistentDataPath, "SagaCampaigns" );
-			classicSessionPath = Path.Combine( Application.persistentDataPath, "Session" );
-			sagaSessionPath = Path.Combine( Application.persistentDataPath, "SagaSession" );
-			campaignSessionPath = Path.Combine( Application.persistentDataPath, "CampaignSession" );
-			classicDefaultsPath = Path.Combine( Application.persistentDataPath, "Defaults" );
+			string persistentRoot = PersistentRoot();
+			Debug.Log( "DATA ROOT: " + persistentRoot );
+			campaignPath = Path.Combine( persistentRoot, "SagaCampaigns" );
+			classicSessionPath = Path.Combine( persistentRoot, "Session" );
+			sagaSessionPath = Path.Combine( persistentRoot, "SagaSession" );
+			campaignSessionPath = Path.Combine( persistentRoot, "CampaignSession" );
+			classicDefaultsPath = Path.Combine( persistentRoot, "Defaults" );
 
 			//OS-specific paths that are NOT 'persistentDataPath', except on Android
 #if UNITY_ANDROID

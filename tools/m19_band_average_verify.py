@@ -129,21 +129,31 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
         # melee item = one cell (HeroCards.cs poolGate[i]).
         if idx>0:
             pool_gate.append(1 if pool_is_melee_item[idx] else (st.gate if st.gate>=1 else 1))
-    # pass 1: score every option as the ONLY weapon over the whole band
+    # pass 1 (M29): gun-slot score over the band for the RANGED competition
     wscore=[]
     for idx,(st,b) in enumerate(stats):
         s=F(0)
         for d in range(1, min(range_, pool_gate[idx])+1):
             s += st.ev(d, pierce + engagePierce) + b
         wscore.append(s)
-    champ=0   # base first: ties keep the printed weapon
-    for i in range(1,len(stats)):
-        if wscore[i] > wscore[champ]: champ = i
-    # pass 2: the argmax weapon decides every band cell
-    stc,bc = stats[champ]
+    gun=-1
+    for idx,(letters, ranged, b) in enumerate(pools):
+        if not ranged: continue
+        if gun<0 or wscore[idx] > wscore[gun]: gun=idx
+    # pass 2 (M29): per distance ONE attack with the ONE strongest weapon
+    # that can fight there; melee wins a cell only strictly (dice+price of
+    # its own law); ties keep the gun. Mirrors HeroCards.cs.
     total=F(0)
-    for d in range(1, min(range_, pool_gate[champ])+1):
-        total += stc.ev(d, pierce + engagePierce) + bc
+    for d in range(1, range_+1):
+        cell=F(0)
+        if gun>=0 and d <= pool_gate[gun]:
+            cell=stats[gun][0].ev(d, pierce+engagePierce) + pools[gun][2]
+        for i in range(len(pools)):
+            if pools[i][1]: continue
+            if d > pool_gate[i]: continue
+            s=stats[i][0].ev(d, pierce+engagePierce) + pools[i][2]
+            if s > cell: cell=s
+        total += cell
     bav = total / range_
     if posture in ('eliminate','attrition'): return bav
     band_t = card['tempoVerwundet'] if wounded else card['tempo']

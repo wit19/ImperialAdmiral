@@ -173,16 +173,21 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
    weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
    E-11 +2/5, lightsaber +3, gloves 0). The score itself is the **band average**
-   (M19, Player-28 DL-44 finding; candidate law under M27): every distance
-   1..reach is paired once, and WHICH weapon the hero fights with is a
-   RESULT of the arithmetic (M27, see its section): each attack option is
-   scored over the whole band as if it were the only weapon in the holster
-   (`score = Σ_d covered? ev(d)+price : 0`), and the argmax option decides
-   every cell - no per-distance switching (the M19 free switch let a
-   strictly weaker printed pistol win single cells), no hard replace decree
-   (the M26 shortcut). Distances the equipped weapon cannot reach count as
-   0, and melee pools pay no accuracy toll per distance so they stay
-   distance-inert. In hold
+   (M19, Player-28 DL-44 finding; two-economy law since M27→M29, see those
+   sections): every distance 1..reach is paired once, and each distance is
+   ONE attack with the ONE strongest weapon that can physically fight there
+   (M29, Thomas ruling "Zwei-Ökonomien-Bande"). Ranged candidates compete
+   for the gun slot ONCE — `score(gun) = Σ_d≤gate ev(d)+price` over the whole
+   band, argmax wins, no per-distance gun switching (the M19 free switch let
+   a strictly weaker printed pistol win single cells; the M26 replace decree
+   and the M27 single-weapon rule were both shortcuts, see their sections).
+   Melee options (a P hero's printed attack, melee items, attribute-bound
+   pools) score their OWN coverage cells under the melee economy — no
+   distance accuracy spend (M20 distance-inert rule) — and take a cell only
+   with a STRICTLY greater own-economy value (dice + price); a tie keeps the
+   gun, reach wins ties. Distances no option can fight at count as 0. The
+   operand is a mean over distances, never a sum over weapons: no cell ever
+   combines two weapons, one attack = one weapon (Thomas, 06.11.). In hold
    postures
    (protect/stall) that average is percent-weighted — and since M20 (Thomas
    melee ruling, 05.11) WITHOUT a range cell:
@@ -960,3 +965,81 @@ rc=0 (285 files) / TESTS rc=0; gate ALL PASS. Lesson logged: two uncommitted
 patches (fixture M25 rows, m19 position-key rank branch + layers) died to
 `git checkout` the same day — the drift-oracle delegation exists so such a
 loss can never masquerade as a passing check again.
+
+## Two economies, one attack per distance — M29 (Thomas ruling 06.11.)
+
+**Trigger.** M27's single-weapon law answered "which weapon is best" but
+broke Thomas' lightsaber question ("Ich habe ein Lichtschwert und einen
+Blaster — das Lichtschwert sollte gewinnen und nicht der Blaster wegen der
+Distanz"): the band average punished melee options with cells they can
+never fight at. The M28 "dominance override" patch that grew from it died
+the same day — Thomas asked for the CONCEPT instead: "es muss unterschieden
+werden, ob eine Nahkampf- oder eine Fernkampfwaffe bewertet wird … die
+Panzerhandschuhe sind wirklich gut."
+
+**Law (HeroCards.cs).** Two weapon economies, scored under their OWN laws:
+
+1. **Gun slot (ranged economy, pays the distance accuracy spend).** All
+   ranged candidates (printed O standard, every carried gun) compete over
+   the whole band exactly as under M27 — argmax wins ONCE and holds every
+   distance it covers. Multiple carried guns are legal and encouraged:
+   the best one wins by arithmetic, per-distance gun switching stays dead
+   ("mit einem Blaster mit Reichweite 1 rechnet man nicht").
+2. **Melee economy (no distance spend — the M20 distance-inert rule).**
+   A P hero's printed attack, every melee item, and attribute-bound pools
+   score their own coverage (melee items: cell 1; P base: 1..printed
+   reach) with their own dice law plus price.
+3. **Cell law.** At each distance the value is the strongest weapon that
+   can physically fight there; melee takes a cell only on a STRICTLY
+   greater own-economy value — a tie keeps the gun ("Gleichstand +
+   Distanz = die Waffe mit Coverage"). Distances nothing can fight at: 0.
+
+**What it is NOT (Thomas, same ruling):** never two weapons in one
+attack — each cell is one hypothetical attack with one weapon. The
+operand is a MEAN OVER DISTANCES, the empire's "expected damage per
+attack if we land somewhere in her band" — never a sum over weapons.
+
+**Direction property:** M27 ≤ M29 ≤ M26. The single-weapon rule never
+over-reads a mixed loadout; the free-switch envelope never under-reads
+it. Both bounds were wrong for opposite reasons and both are now gone.
+
+**What the arithmetic prints (all re-recorded, harness 06.11.).**
+Verena Talos + Panzerhandschuhe: cell 1 = gloves 2 + 3/10 (strictly
+above the blaster's 3/2), cells 2–4 stay blaster → operand 6/5, threat
+54, energy 3/40 (case renamed m19_band_melee_inert →
+**m29_band_melee_overlay** — "melee never wins anything" was overruled
+by Thomas' "die sind wirklich gut"). Diala + Lichtschwert: saber cell 1,
+printed fists cell 2 → 55/12 wounded (116) / 47/12 healthy (115).
+m29_saber_and_blaster (new case): item303 + item110 → saber head (d1,
+operand 59/24, threat 82, energy 9/8, headline Blue+Green+Yellow) AND
+the DL-44 beyond it — "saber wins over blaster" no longer means the
+blaster is deleted. Fenn + saber: 83 / 5/2 — exactly the old M26
+number, now derived cleanly (M26 had the same mixed cells but also kept
+the illegal gun switching). p19/Jyn/Loku vectors: untouched (no melee
+in them). The M28 dominance-override (defender-invariant strip test) is
+removed from all three implementations — under M29 the saber wins with
+dice, no decree needed.
+
+## Where does the distance come from? (Thomas question 06.11.)
+
+The model never sees the board. The distance axis is 100 % printed data:
+the hero's `reichweite` from the card table, extended only by verified
+ranged items whose own accuracy justifies a longer band (RunnerRange —
+Jyn's printed 3 + DL-44 gate 4 = band 1..4, and the asset value is
+`"reichweite": 3` in `tactical_hero_cards.json` — her 5 is TEMPO, and
+Fenn has range 5). Averaging the whole band WITHOUT board knowledge is
+the M19 ruling's point: the empire does not choose where it stands, and
+runners run — assuming "we stay at 4" is exactly the optimistic bias
+M19 removed. Actual board position enters one layer DOWN (target
+legality, movement, blocking), so the chip order (who gets wounded
+first) does not wobble whenever a figure steps closer. Static weapon
+profile vs. tactics of the moment — deliberately separate.
+
+**QA, M29 (06.11.):** harness ALL PASS 45582 ×2 (deterministic, +3 checks
+= new case); m21 full-law sweep 64 card rows 0 fails; m22 ALL PASS; m23
+43/0; m24 anchors OK; gate ALL PASS; compile APP rc=0 (285) / TESTS rc=0;
+three drifted cases merged via m26_merge_drift.py (C# == port == the
+throwaway concept probe — three independent implementations agreed on
+every number BEFORE the fixture moved). Lesson logged: when a ruling
+changes the LAW, prototype it in a throwaway probe with real numbers
+first — M29 was argued and accepted on engine output, not on prose.

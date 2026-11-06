@@ -838,23 +838,65 @@ namespace TacticalAI.Core
                              + pools[i].Item3;
                 weaponScore[i] = s;
             }
-            int champ = 0;   // base first: a tie keeps the printed weapon
-            for (int i = 1; i < pools.Count; i++)
-                if (weaponScore[i] > weaponScore[champ]) champ = i;
-            bestPool = pools[champ].Item1;
+            // M29 (Thomas ruling 06.11., "Zwei-Ökonomien-Bande"): the gun
+            // slot is ONE ranged weapon - the argmax over the RANGED
+            // candidates (printed standard of an O hero, every carried gun).
+            // Multiple carried guns compete and the best over the whole band
+            // wins ONCE for the whole fight; per-distance gun switching stays
+            // dead (M19 artifact: Jyn's GG pistol must not steal cell 1 from
+            // her DL-44). Melee options (P hero's printed attack, melee
+            // items, attribute-bound pools) NEVER hold the gun - they fight
+            // under their own law (no distance spend) inside their own
+            // coverage, per cell, in the cell loop below. A P hero with no
+            // ranged option has gun = -1: every cell is melee economy.
+            int gun = -1;
+            for (int i = 0; i < pools.Count; i++)
+            {
+                if (!pools[i].Item2) continue;    // melee economy: no gun slot
+                if (gun < 0 || weaponScore[i] > weaponScore[gun]) gun = i;
+            }
+            bestPool = gun >= 0 ? pools[gun].Item1 : pools[0].Item1;
             var sum = Rational.Zero;
             var energySum = Rational.Zero;   // surcharge share of the cells FIRED
+            // M29 cell law: at each distance, ONE attack with the ONE
+            // strongest weapon that can physically fight there. The gun
+            // holds every distance it covers; a melee option takes a cell
+            // only if its own-economy value (dice of its law + its price)
+            // is STRICTLY greater - a tie keeps the weapon with reach
+            // (printed ruling: Gleichstand + Distanz = die Waffe mit
+            // Coverage). Empty = no option reaches the distance. Never two
+            // weapons in one attack; the operand is a mean over distances,
+            // never a sum over weapons ("Was soll das - man kann nur mit
+            // einer Waffe angreifen" - exactly: each cell is one attack).
+            var cell = Rational.Zero;
             for (int d = 1; d <= reach; d++)
             {
-                if (d <= poolGate[champ])
+                cell = Rational.Zero;
+                int who = -1;
+                if (gun >= 0 && d <= poolGate[gun])
                 {
-                    var ev = Dice.ExpectedDamage(statsAt[champ], defender, d,
-                                                 pierce + engagePierce);
-                    sum += ev + pools[champ].Item3;
-                    energySum += pools[champ].Item3;
-                    bandBests.Add(string.Join("+", pools[champ].Item1));
+                    cell = Dice.ExpectedDamage(statsAt[gun], defender, d,
+                                               pierce + engagePierce)
+                           + pools[gun].Item3;
+                    who = gun;
                 }
-                else bandBests.Add("");    // the equipped weapon cannot reach this
+                for (int i = 0; i < pools.Count; i++)
+                {
+                    if (pools[i].Item2) continue;         // ranged: gun economy only
+                    if (d > poolGate[i]) continue;        // cannot fight here
+                    var s = Dice.ExpectedDamage(statsAt[i], defender, d,
+                                                pierce + engagePierce)
+                            + pools[i].Item3;
+                    if (s > cell) { cell = s; who = i; }
+                }
+                if (who >= 0)
+                {
+                    sum += cell;
+                    energySum += pools[who].Item3;
+                    bandBests.Add(string.Join("+", pools[who].Item1));
+                    if (d == 1) bestPool = pools[who].Item1;   // headline weapon
+                }
+                else bandBests.Add("");    // nothing can fight at this distance
             }
             // M26 law kept: the display energy is the ACTUAL surcharge
             // share of the average (Σ winners' surcharge / reach), so a

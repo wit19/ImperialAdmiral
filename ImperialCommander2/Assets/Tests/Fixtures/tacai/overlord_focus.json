@@ -858,7 +858,7 @@
   },
   {
    "name": "m11b_real_wound_runner",
-   "comment": "M27 (Thomas-Ruling 06.11., 'Die Waffenrechnung muss bestimmen was die beste Waffe ist'): die Heldin traegt item303 'Einsicht' (Typ P, Attribut-Waffenbindung) - der Argmax ueber [{Grundwaffe GY+Reach (Reiche 2)}, {Einsicht-Attributpool (1 Zelle)}] WAEHLT bei Diala in beiden Zustaenden die Einsicht-Waffe: gesund Pool Blue+Green+Yellow Operand 35/12 -> Bedrohung 92, verwundet Blue+Red+Green 43/12 -> 94 (der gedruckte Attributpool tauscht im Wundzustand die Wuerfel und wird dann staerker - Gedrucktes, nicht Modell-Phantasie). Rang: verwundet (94) vor gesund (92), Handicap bleibt der Zaehler. alt (M26): 116/115 - pro-Zelle-Mix aus Attribut@1 + Grundwaffe@2, der freie Schalter ist mit M27 tot: eine Waffe pro Gefecht.",
+   "comment": "M29 (Thomas-Ruling 06.11., Zwei-Ökonomien-Bande): jede Distanz = EIN Angriff mit der einen Waffe, die dort kämpfen kann - nie zwei Waffen in einem Angriff, aber auch nicht eine Waffe für alle Distanzen, wenn eine andere dort stärker ist. Diala traegt das Antike Lichtschwert (item303, Einsicht-Pool): Zelle 1 = Schwertschwung (mit +3 Aufpreis), Zelle 2 = ihr gedruckter GY+Reach-Schlag. Verwundet (gedruckte Schwertwürfel tauschen auf Blue+Red+Green): Operand 55/12 -> Bedrohung 116; gesund (Blue+Green+Yellow): 47/12 -> 115. best_pool druckt den Gewinner der Zelle 1 (Schwert). alt M27 (94/12er-Welt): Ein-Waffen-Gesetz las ihre Fäuste auf Zelle 2 ganz weg - zu unehrlich; alt M26 (116/115, gleiche Zahlen!): dort mischten ZUSÄTZLICH die Gewehre pro Zelle - Waffentausch ist tot, die Zwei-Ökonomien-Zellen bleiben.",
    "posture": "protect",
    "counter": null,
    "heroes": [
@@ -901,10 +901,10 @@
      "best_pool": "Blue+Red+Green",
      "hero": "Diala Passil",
      "marked": false,
-     "threat": "94",
+     "threat": "116",
      "threat_band": "1",
-     "threat_damage": "43/12",
-     "threat_econ": "94",
+     "threat_damage": "55/12",
+     "threat_econ": "116",
      "threat_energy": "3/2",
      "threat_range": "2",
      "wounded": true
@@ -914,10 +914,10 @@
      "best_pool": "Blue+Green+Yellow",
      "hero": "Diala Passil",
      "marked": false,
-     "threat": "92",
+     "threat": "115",
      "threat_band": "2",
-     "threat_damage": "35/12",
-     "threat_econ": "92",
+     "threat_damage": "47/12",
+     "threat_econ": "115",
      "threat_energy": "3/2",
      "threat_range": "2",
      "wounded": false
@@ -1045,7 +1045,7 @@
   },
   {
    "name": "m11d_marks_and_wounded_outrank_pressure",
-   "comment": "M27-Folge: dieselbe Argmax-Umstellung. Diala traegt 'Einsicht' und kaempft damit (Zeitreihen-Feld best_pool belegt's: Blue+Green+Yellow gesund 92 / Blue+Red+Green verwundet 94) - die markierte Zeile fuehrt trotz 92 < 94: Markierung und Druck (strain_druck 8) stehen vor der nackten Zahl, Zeilenreihenfolge = Rang. Fenn traegt denselben Gegenstand, sein Argmax bleibt aber die Grundwaffe Blue+Green: Grund-Mittel 7/5 + Explosion 1/2 = 19/10 -> 69 (alt 83/5pro2: dort mischte der Pro-Zelle-Schalter Attribut@1 in Zelle 1 - gestrichen).",
+   "comment": "M29: dieselbe gemischte Zellenrechnung wie m11b - und die Rangordnung bleibt das Gesetz: die MARKIERTE gesunde Zeile (115) führt vor der unmarkierten verwundeten (116), weil Markierung und Druck (strain_druck 8) vor der nackten Zahl stehen. Fenn traegt dasselbe Lichtschwert: Zelle 1 = Einsicht-Schwung, Zellen 2-5 = seine Blue+Green-Pistole -> Operand 5/2 -> Bedrohung 83 = exakt der alte M26-Wert: Das Zwei-Ökonomien-Gesetz steckte schon in M26, nur unsauber (dort tauschten auch die Gewehre pro Zelle - M19-Artefakt, tot).",
    "posture": "protect",
    "counter": null,
    "defense": null,
@@ -1107,10 +1107,10 @@
       "hero": "Diala Passil",
       "marked": true,
       "strain_druck": "8",
-      "threat": "92",
+      "threat": "115",
       "threat_band": "2",
-      "threat_damage": "35/12",
-      "threat_econ": "100",
+      "threat_damage": "47/12",
+      "threat_econ": "123",
       "threat_energy": "3/2",
       "threat_range": "2",
       "wounded": false
@@ -1120,10 +1120,10 @@
       "best_pool": "Blue+Red+Green",
       "hero": "Diala Passil",
       "marked": false,
-      "threat": "94",
+      "threat": "116",
       "threat_band": "1",
-      "threat_damage": "43/12",
-      "threat_econ": "94",
+      "threat_damage": "55/12",
+      "threat_econ": "116",
       "threat_energy": "3/2",
       "threat_range": "2",
       "wounded": true
@@ -1133,10 +1133,11 @@
       "best_pool": "Blue+Green",
       "hero": "Fenn Signis",
       "marked": false,
-      "threat": "69",
+      "threat": "83",
       "threat_band": "2",
-      "threat_damage": "19/10",
-      "threat_econ": "69",
+      "threat_damage": "5/2",
+      "threat_econ": "83",
+      "threat_energy": "3/5",
       "threat_explosion": "1/2",
       "threat_range": "5",
       "wounded": false
@@ -2032,8 +2033,8 @@
    ]
   },
   {
-   "name": "m19_band_melee_inert",
-   "comment": "M27 in Reinform: Verena traegt item101 (Typ P, Green+Yellow Nahkampf-Option). Argmax: Grundwaffe Blue+Yellow ueber Reiche 4 (Mittel genau 1) schlaegt die Nahkampf-Option (eine Zelle + Preisanteil, durch die leeren Bandstellen immer schlechter). threat 49, Operand 1, Energie entfällt (Grundwaffe = Aufschlag 0). alt (M26): 54/6pro5 mit Energie 3/40 - dort gewann item101 die Zelle 1 im Pro-Zelle-Schalter; mit dem einen equippten Waffensatz ist es mathematisch immer schlechter als die eigene Langwaffe. Genau das war Thomas' Punkt: 'mit einem Blaster mit Reichweite 1 rechnet man nicht'.",
+   "name": "m29_band_melee_overlay",
+   "comment": "M29 (Thomas-Ruling 06.11.: 'die Panzerhandschuhe sind wirklich gut - Nahkampf und Fernkampf müssen verschieden gerechnet werden'): Verena Talos + item101 (Green+Yellow Nahkampf, Aufschlag +3/10). Zelle 1: Handschuhe 2 + 3/10 = 23/10 schlagen den Blaster (3/2) STRENG -> sie besetzen Zelle 1. Zellen 2-4: wie bisher das Blue+Yellow-Gewehr (3/2, 1, 0 - die Paarungsregel bezahlt Genauigkeit für Distanz). Operand 6/5 -> Bedrohung 54, Energie 3/40 (der Aufpreis reitet nur auf der einen Zelle, die ihn abfeuert). Der alte Fallname 'melee_inert' (M26/M27: Nahkampf gewinnt nie etwas) ist überholt: Nahkampf gewinnt genau die Zellen, in denen es nach SEINEM Gesetz (ohne Distanzabzug) streng stärker ist - und nur die. Kein zweiter Name: der Fall heißt jetzt m29_band_melee_overlay.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2057,17 +2058,57 @@
    "expect": [
     {
      "basis": "card",
-     "best_pool": "Blue+Yellow",
+     "best_pool": "Green+Yellow",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "49",
+     "threat": "54",
      "threat_band": "2",
-     "threat_damage": "1",
-     "threat_econ": "49",
+     "threat_damage": "6/5",
+     "threat_econ": "54",
+     "threat_energy": "3/40",
      "threat_range": "4",
      "wounded": false
     }
    ]
+  },
+  {   "name": "m29_saber_and_blaster",
+   "comment": "M29-Beweisfall (Thomas-Frage 06.11.: 'Ich habe ein Lichtschwert und einen Blaster - das Lichtschwert soll gewinnen und nicht der Blaster wegen der Distanz'): Diala traegt item303 (Antikes Lichtschwert, Einsicht-Pool) UND item110 (DL-44). Kein Entweder-oder: Zelle 1 fuehrt der Schwert-Schwung (Einsicht-Wuerfel + 3 Aufpreis, Nahkampf-Gesetz ohne Distanzabzug - streng hoeher als der Gewehrschuss), Zellen 2-4 fuehrt der DL-44 mit der Paarungsregel inklusive Distanzabzug. Der Blaster wird nicht bestraft, wo er kann, und das Schwert nicht entlaesst, wo es muss. best_pool = Gewinner Zelle 1 (Schwert-Pool). Ein reines Wuerfel-Item wie Verenas Panzerhandschuhe gewinnt dasselbe Gesetz fuer seine eine Zelle - 'die sind wirklich gut'.",
+   "posture": "stall",
+   "counter": null,
+   "heroes": [
+    {
+     "hero": "Diala Passil",
+     "row": 0,
+     "profile": "Diala Passil",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 6,
+     "loadout": {
+      "items": [
+       "item303",
+       "item110"
+      ],
+      "skills": []
+     }
+    }
+   ],
+   "expect": [
+ {
+  "basis": "card",
+  "best_pool": "Blue+Green+Yellow",
+  "hero": "Diala Passil",
+  "marked": false,
+  "threat": "82",
+  "threat_band": "2",
+  "threat_damage": "59/24",
+  "threat_econ": "82",
+  "threat_energy": "9/8",
+  "threat_range": "4",
+  "wounded": false
+ }
+]
   },
   {
    "name": "m20_reach_not_a_bonus",

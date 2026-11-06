@@ -108,21 +108,35 @@ def threat21(hero, wounded, loadout, posture, defense, engage=None):
         if idx > 0:
             pool_gate.append(1 if pool_is_melee_item[idx] else (st.gate if st.gate >= 1 else 1))
     total = F(0)
-    # M27 two-pass: score every option as the ONLY weapon over the whole
-    # band, argmax equips, then that weapon decides every cell.
+    # M29 (Thomas ruling 06.11., Zwei-Ökonomien-Bande): the GUN slot is one
+    # ranged weapon (argmax over ranged candidates - multiple carried guns
+    # compete, the best over the band wins once; no per-distance gun switch).
     wscore = []
     for idx, (st, b) in enumerate(stats):
         s = F(0)
         for d in range(1, min(range_, pool_gate[idx]) + 1):
             s += st.ev(d, pierce + engagePierce) + b
         wscore.append(s)
-    champ = 0   # base first: ties keep the printed weapon
-    for i in range(1, len(stats)):
-        if wscore[i] > wscore[champ]: champ = i
-    stc, bc = stats[champ]
+    gun = -1
+    for idx, (letters, ranged, b) in enumerate(pools):
+        if not ranged: continue
+        if gun < 0 or wscore[idx] > wscore[gun]: gun = idx
+    # Cell law: at each distance ONE attack with the ONE strongest weapon
+    # that can fight there; melee options (Item2==false equivalents) take a
+    # cell only with a STRICTLY greater own-economy value (dice+price); a
+    # tie keeps the gun (reach wins ties). Mean over distances, never a
+    # sum over weapons.
     total = F(0)
-    for d in range(1, min(range_, pool_gate[champ]) + 1):
-        total += stc.ev(d, pierce + engagePierce) + bc
+    for d in range(1, range_+1):
+        cell = F(0)
+        if gun >= 0 and d <= pool_gate[gun]:
+            cell = stats[gun][0].ev(d, pierce+engagePierce) + pools[gun][2]
+        for i in range(len(pools)):
+            if pools[i][1]: continue                       # ranged: gun economy
+            if d > pool_gate[i]: continue
+            s = stats[i][0].ev(d, pierce+engagePierce) + pools[i][2]
+            if s > cell: cell = s
+        total += cell
     bav = total / range_
     # --- M21 (a): flat blast increment on the damage operand -------------
     bav += EXPLOSION_SHARE * blast_wert(card, skills)

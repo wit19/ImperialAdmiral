@@ -256,14 +256,14 @@ what the dice tables cannot see: energy abilities and bonus dice that are
 priced into the weapon but not printed on it. The model evaluates each
 candidate weapon die by die against the current defense and takes the
 highest-scoring one — the Empire may never under-estimate an equipped hero.
-Since M27 (06.11., "Die Waffenrechnung muss bestimmen was die beste Waffe
-ist") the hero's weapon is a RESULT of the arithmetic: every attack option
-(printed standard, each bought gun, attribute-bound pools) is scored over
-the hero's whole band as if it were the only weapon carried, and the best
-one is equipped for every distance — no per-distance switching, no
-replace-rule. Each weapon only scores distances ITS OWN coverage reaches
-(printed Reichweite for the base blaster, its accuracy gate for a bought
-gun, one cell for a melee item).
+Since M29 (06.11., "Zwei-Ökonomien-Bande") each distance is ONE attack with
+the ONE strongest weapon that can fight there: ranged candidates compete for
+the gun slot once (argmax over the band — the best carried gun wins, no
+per-distance gun switching), while melee options (P-hero base attack, melee
+items, attribute-bound pools like the lightsaber's Einsicht pool) score
+their own coverage cells under the melee law (no distance accuracy spend)
+and take a cell only when strictly stronger. The operand is a mean over
+distances — never a sum over weapons.
 - **Plus exactly +1** for the *objective actor*: the hero who finished the
   activation in which the mission objective moved (public event credit).
 - **Mission posture decides the formula.** When the Imperium is ordered to
@@ -272,10 +272,11 @@ gun, one cell for a melee item).
   tempo, each over the game's own printed maximum (the strongest printed
   exchange EV is 8/3 — an item weapon; band 3 is the fastest band). Reach
   is not a third factor: it is already priced into the score as the
-  **band average** — every distance 1..reach is paired once by the ONE
-  equipped (argmax) weapon (M27), and every distance it cannot reach counts
-  as 0, so wide weak bands dilute while melee pools pay no per-distance
-  accuracy toll.
+  **band average** — every distance 1..reach is paired once, each distance
+  with the strongest weapon that can fight there (M29: gun slot by argmax,
+  melee overlay where strictly stronger), and every distance nothing can
+  fight at counts as 0, so wide weak bands dilute while melee pools pay no
+  per-distance accuracy toll.
   In *kill* postures the band average stands raw. Same heroes,
   same score, different emphasis — the focus call names the formula it used.
 - **Printed card effects count exactly as printed.** A blast/explosion card

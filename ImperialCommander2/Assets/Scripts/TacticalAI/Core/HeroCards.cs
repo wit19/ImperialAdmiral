@@ -72,6 +72,30 @@ namespace TacticalAI.Core
         // a threat number: eliminate stays pure dice (findings 06.11. §1).
         public bool SupporterImmer;
         public List<string> SupporterSkills = new List<string>();
+        // M24 (Thomas ruling 06.11., Karten-Audit): the printed HEALER kit.
+        // Card pins ONLY - no identity healer exists in the live roster, and
+        // SELF-heal (gaarkhan01) deliberately does NOT pin (heals others =
+        // healer; self-heal = the separate selfHealPossible data field).
+        // MHD-19's kit: mhd01 (ally wound), mhd03 (attack-Z ally 2 wounds),
+        // mhd05 (attack-Z 1 wound), mhd06 (defeat rescue 3 wounds),
+        // mhd07 (Bacta Radiator round aura wound+strain). Consumer is the
+        // woundAll chip law ONLY: a hero whose printed cards REPAIR wounds
+        // undoes counter progress, so he is chipped BEFORE the supporter
+        // class (class 3) - the printed counterpart of the heiler_hammer
+        // doctrine line. It never moves a threat number.
+
+        /// <summary>M24: is this hero a card-pinned HEALER with the chosen
+        /// skill cards? Printed wound-repair skill ids only; unknown ids
+        /// never match - the pin stays inert.</summary>
+        public bool HeilerEffektiv(IList<string> skills)
+        {
+            if (skills == null || HeilerSkills.Count == 0) return false;
+            foreach (var s in HeilerSkills)
+                if (s != null && skills.Contains(s)) return true;
+            return false;
+        }
+
+        public List<string> HeilerSkills = new List<string>();
 
         /// <summary>M21: effective printed blast value with the hero's
         /// chosen skill cards (Rebel Elite fenn07 ABSORBS the base value,
@@ -194,7 +218,7 @@ namespace TacticalAI.Core
         }
     }
 
-    /// <summary>Loaded tactical_hero_cards/2 asset (M21: "effekte" skill
+    /// <summary>Loaded tactical_hero_cards/4 asset (M21: "effekte" skill
     /// pins on hero rows - absent means no effects, null law).</summary>
 
     public sealed class HeroCardTable
@@ -311,6 +335,13 @@ namespace TacticalAI.Core
                         foreach (var rawS in Json.AsList(Json.Get(sd, "skills", new List<object>())))
                             c.SupporterSkills.Add(Json.AsStr(rawS));
                     }
+                    // M24: the printed healer kit (skill ids only - a card
+                    // that repairs wounds makes its bearer the hammer
+                    // target of the woundAll chip law).
+                    var hl = Json.Get(ef, "healer", null);
+                    if (hl != null)
+                        foreach (var rawH in Json.AsList(Json.Get(Json.AsDict(hl), "skills", new List<object>())))
+                            c.HeilerSkills.Add(Json.AsStr(rawH));
                 }
                 if (!string.IsNullOrEmpty(c.Name)) t._byName[c.Name] = c;
             }

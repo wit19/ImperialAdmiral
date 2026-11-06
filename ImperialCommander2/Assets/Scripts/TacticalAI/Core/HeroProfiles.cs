@@ -56,23 +56,34 @@ namespace TacticalAI.Core
         /// §3.3.1a Laeuferwert protect/stall: mobility x rangeMax (exakt).
         public int RunnerValue => Mobility * RangeMax;
 
-        /// woundAll-Chip: Nicht-Heiler/Support vor Heiler, dann
-        /// mobility x rangeMax, dann evDamagePerRound.
-        /// [int (0 healer | 1 non-healer), int runner, Rational ev]
+        /// woundAll-Chip: Heiler-Kartenpin zuerst (M24), dann
+        /// Nicht-Heiler/Support, dann Identitaets-Heiler (Vektor-Wahrheit,
+        /// kein lebender Traeger), dann mobility x rangeMax, dann
+        /// evDamagePerRound.
+        /// [int (3 heal-kit | 2 support | 1 normal | 0 identity-healer),
+        ///  int runner, Rational ev]
         /// M22 (Thomas-Ruling 06.11.): supporterPin = gedruckter Supporter
         /// ueber Identitaets-/Skill-ID-Pin (HeroCard.SupporterEffektiv, z.B.
         /// Davith, MHD-19, Diala mit diala02/diala03). Er zaehlt wie die
         /// kuratierte "support"-Spalte - gelesen wird je HELD nur in der
         /// woundAll-Chip-Reihenfolge, nie in einer Bedrohungszahl.
-        public List<object> ChipKey(bool supporterPin = false)
+        /// M24 (Thomas-Ruling 06.11.): healerPin = gedruckte Wunden-
+        /// Heilung auf ausgeruesteten Karten (HeroCard.HeilerEffektiv,
+        /// MHD-Kit mhd01/03/05/06/07). Solch ein Held REPARIERT
+        /// Zaehler-Fortschritt - er wird VOR dem Support gechippt (Klasse 3,
+        /// Compare liest absteigend). Der Ast Role=="healer" (zuletzt)
+        /// bleibt Vektor-Wahrheit fuer die Sim-Profile: kein Held der
+        /// lebenden Roster traegt diese Rolle, keine Gold-Zeile aendert sich.
+        public List<object> ChipKey(bool supporterPin = false, bool healerPin = false)
         {
             return new List<object>
             {
                 // FINAL-QA audit #5 + Vektor-Wahrheit (woundall_chip_law:
                 // Fenns Zeile fuehrt trotz niedrigerer Bedrohung): der
-                // Compare liest ABSTEIGEND - SUPPORT (2) wird zuerst
-                // gechippt, dann das normale Volk (1), Heiler zuletzt (0).
-                Role == "healer" ? 0 : (Role == "support" || supporterPin) ? 2 : 1,
+                // Compare liest ABSTEIGEND - HEILER-PIN (3) zuerst, dann
+                // SUPPORT (2), dann das normale Volk (1), Identitaets-
+                // Heiler zuletzt (0).
+                healerPin ? 3 : Role == "healer" ? 0 : (Role == "support" || supporterPin) ? 2 : 1,
                 RunnerValue,
                 EvDamagePerRound,
             };

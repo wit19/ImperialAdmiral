@@ -365,9 +365,13 @@ namespace TacticalAI.Core
                 // M22: the woundAll chip sees the printed supporter pin of
                 // the CARD (identity or chosen support skill id), not just
                 // the trait-derived profile column.
+                // M24: same shape for the printed HEALER kit - a hero who
+                // repairs wounds is chipped before the supporter class.
                 Chip = woundAll && c.Profile != null
                     ? c.Profile.ChipKey(c.Card != null &&
-                        c.Card.SupporterEffektiv(c.Profile.LoadoutSkills))
+                        c.Card.SupporterEffektiv(c.Profile.LoadoutSkills),
+                        c.Card != null &&
+                        c.Card.HeilerEffektiv(c.Profile.LoadoutSkills))
                     : null,
             }).ToList();
 

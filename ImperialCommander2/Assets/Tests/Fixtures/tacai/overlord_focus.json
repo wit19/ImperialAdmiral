@@ -2370,6 +2370,169 @@
       "wounded": true
      }
     ]
+  },
+  {
+   "name": "m24_healer_hammer_first",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Fenn Signis",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Fenn Signis",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "MHD-19",
+      "loadout": {
+       "items": [],
+       "skills": [
+        "mhd07"
+       ]
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "MHD-19",
+      "row": 1,
+      "wounded": false
+     }
+   ],
+      "expect": [
+     {
+      "basis": "chip",
+      "hero": "MHD-19",
+      "marked": false,
+      "threat": "1",
+      "threat_econ": "1",
+      "wounded": false
+     },
+     {
+      "basis": "chip",
+      "hero": "Fenn Signis",
+      "marked": false,
+      "threat": "19/10",
+      "threat_econ": "19/10",
+      "wounded": false
+     }
+   ]
+  },
+  {
+   "name": "m24_healer_pin_flip_baseline",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Fenn Signis",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Fenn Signis",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "MHD-19",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "MHD-19",
+      "row": 1,
+      "wounded": false
+     }
+   ],
+      "expect": [
+     {
+      "basis": "chip",
+      "hero": "Fenn Signis",
+      "marked": false,
+      "threat": "19/10",
+      "threat_econ": "19/10",
+      "wounded": false
+     },
+     {
+      "basis": "chip",
+      "hero": "MHD-19",
+      "marked": false,
+      "threat": "1",
+      "threat_econ": "1",
+      "wounded": false
+     }
+   ]
+  },
+  {
+   "name": "m24_selfheal_not_healer",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "MHD-19",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "MHD-19",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Gaarkhan",
+      "loadout": {
+       "items": [],
+       "skills": [
+        "gaarkhan01"
+       ]
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Gaarkhan",
+      "row": 1,
+      "wounded": false
+     }
+   ],
+      "expect": [
+     {
+      "basis": "chip",
+      "hero": "MHD-19",
+      "marked": false,
+      "threat": "1",
+      "threat_econ": "1",
+      "wounded": false
+     },
+     {
+      "basis": "chip",
+      "hero": "Gaarkhan",
+      "marked": false,
+      "threat": "5/6",
+      "threat_econ": "5/6",
+      "wounded": false
+     }
+   ]
   }
  ]
 }

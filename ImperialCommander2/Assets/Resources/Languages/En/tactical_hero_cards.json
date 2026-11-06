@@ -1,5 +1,5 @@
 {
-  "schema": "tacai.hero_cards/3",
+  "schema": "tacai.hero_cards/4",
   "source": "Kuratierung: oeffentlich gedruckte Heldenkarten-Werte aller 21 Kampagnen-Helden (gesund + verwundete Rueckseite), Basiswaffen und Item-Wuerfel/Modifikatoren; ids und xp-Kosten aus den App-Tabellen (CardData/heroes.json, CampaignData/items.json, CampaignData/skills.json). Cleanroom-Policy: wiki_data/LICENSE_DATA.md Punkt 5 — Zahlen, Wuerfelbuchstaben, Keyword-Slugs; Volltext nur bei auf der Karte aufgedruckten Faehigkeiten (Brettspiel-Inhalt, Wiki als Transkriptions-Medium); Roh-Wiki-Dumps out-of-build.",
   "conventions": {
     "wuerfelBuchstaben": "B/R/G/Y = gedruckte Angruesfel (App-Konvention); verteidigung: K=schwarz, W=weiss",
@@ -1009,6 +1009,15 @@
       "effekte": {
         "supporter": {
           "always": true
+        },
+        "healer": {
+          "skills": [
+            "mhd01",
+            "mhd03",
+            "mhd05",
+            "mhd06",
+            "mhd07"
+          ]
         }
       },
       "faehigkeiten": [

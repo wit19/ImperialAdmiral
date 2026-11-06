@@ -8,6 +8,7 @@ public class HPTrackerContainer : MonoBehaviour
 	{
 		//show it
 		gameObject.SetActive( true );
+		wasVisible = true;   //also covers the already-active container
 
 		for ( int i = 0; i < trackers.Length; i++ )
 		{
@@ -28,7 +29,34 @@ public class HPTrackerContainer : MonoBehaviour
 		for ( int i = 0; i < 3; i++ )
 			trackers[i].UpdateWoundValue();
 
+		//forensic trail (Player-31): what the tracker windows commit to the card
+		if ( trackers.Length > 0 && trackers[0].GetCard() != null )
+		{
+			var c = trackers[0].GetCard();
+			Debug.Log( "TRACKER_COMMIT::card=" + c.name +
+				" wounds=[" + string.Join( ",", c.woundTrackerValue ?? new int[0] ) + "]" );
+		}
+
 		for ( int i = 0; i < trackers.Length; i++ )
 			trackers[i].ResetTracker();
 	}
+
+	//any hide path (UI toggle, scene teardown, SetActive(false) without the
+	//OK button) now commits instead of silently discarding the wheel values
+	//(Player-31: "values vanished when we clicked elsewhere")
+	private void OnDisable()
+	{
+		if ( trackers == null || trackers.Length == 0 || !wasVisible )
+			return;
+		for ( int i = 0; i < trackers.Length; i++ )
+			trackers[i].UpdateWoundValue();
+		wasVisible = false;
+	}
+
+	private void OnEnable()
+	{
+		wasVisible = true;
+	}
+
+	bool wasVisible = false;
 }

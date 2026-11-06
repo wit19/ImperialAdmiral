@@ -198,22 +198,21 @@ public class DeploymentCard : IEquatable<DeploymentCard>
 	}
 
 	/// <summary>
-	/// Reinforcement damage reset: for each figure that comes back via
-	/// reinforcement (figuresAdded = how many were just added to currentSize),
-	/// clear ONE damage tracker that still shows at least full damage for a
-	/// figure (wound >= health), down to 0. Trackers below health (figures
-	/// still standing wounded) are untouched. Slots carry no figure identity
-	/// (the DM can renumber them freely), so any dead slot may serve a revived
-	/// figure; if the app's bookkeeping is ahead (no dead slot left) nothing
-	/// is cleared - the new figure simply starts at 0. Returns how many slots
-	/// were cleared.
+	/// Reinforcement damage reset: clear EVERY damage tracker that shows at
+	/// least full damage for a figure (wound >= health) down to 0 - such a
+	/// tracker can only belong to a dead figure, so this can never rob a
+	/// living figure of its damage. Trackers below health (figures still
+	/// standing, or dead figures the table marked with less damage) stay
+	/// untouched and are reset by hand. Slots carry no figure identity (the
+	/// DM assigns board-figure numbers via the number wheels). Returns how
+	/// many slots were cleared.
 	/// </summary>
 	public int ResetWoundTrackersForReinforcement( int figuresAdded )
 	{
 		if ( woundTrackerValue == null || figuresAdded <= 0 )
 			return 0;
 		int cleared = 0;
-		for ( int i = 0; i < woundTrackerValue.Length && cleared < figuresAdded; i++ )
+		for ( int i = 0; i < woundTrackerValue.Length; i++ )
 		{
 			if ( woundTrackerValue[i] >= health )
 			{

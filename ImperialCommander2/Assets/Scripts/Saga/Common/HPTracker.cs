@@ -46,4 +46,10 @@ public class HPTracker : MonoBehaviour
 		if ( card != null )
 			card.woundTrackerValue[index] = 0;
 	}
+
+	//forensic helper (Player-31)
+	public DeploymentCard GetCard()
+	{
+		return card;
+	}
 }

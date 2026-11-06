@@ -16,32 +16,67 @@ namespace Saga
 		/// <summary>
 		/// Creates default folders and sets up folder path properties
 		/// </summary>
-		// Rename law (Thomas 06.11., project became "Imperial Admiral"):
-		// choose the data root by what is actually THERE. An existing
-		// 'ImperialCommander' folder (any older install) keeps being used
-		// as-is - no migration, no orphaned saves. Fresh installs get the
-		// new 'ImperialAdmiral' folder under Documents.
+		// Option B (Thomas 06.11.): cut the umbilical cord - GlowPuff-era
+		// data trees are migrated ONCE into our own folders, then we always
+		// work in ours. A marker file inside the old tree guarantees the
+		// copy runs exactly once per machine; old files are never deleted,
+		// so a rollback is always possible. On any migration failure the
+		// OLD tree stays the working root for this run and the copy
+		// retries at next start - a half-migrated state is never used.
+		private const string MigrationMarker = ".imperial-admiral-migrated";
+
+		// Copies every file of 'from' that does not exist in 'to' yet
+		// (existing files in 'to' win - they are the newer ones after the
+		// first migration), keeps 'from' intact and marks it as migrated.
+		private static void MigrateTree( string from, string to )
+		{
+			Directory.CreateDirectory( to );
+			foreach ( string file in Directory.GetFiles( from, "*", SearchOption.AllDirectories ) )
+			{
+				string rel = file.Substring( from.Length ).TrimStart( Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar );
+				string dst = Path.Combine( to, rel );
+				Directory.CreateDirectory( Path.GetDirectoryName( dst ) );
+				if ( !File.Exists( dst ) ) File.Copy( file, dst );
+			}
+			File.WriteAllText( Path.Combine( from, MigrationMarker ),
+				"Imperial Admiral took its data from here to " + to + " at " + DateTime.UtcNow.ToString( "u" ) + Environment.NewLine +
+				"Original files were kept; this marker stops the migration from running again." );
+		}
+
 		private static string DocumentsBase()
 		{
 			string docs = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
+			string own = Path.Combine( docs, "ImperialAdmiral" );
 			string legacy = Path.Combine( docs, "ImperialCommander" );
-			return Directory.Exists( legacy ) ? legacy : Path.Combine( docs, "ImperialAdmiral" );
+			if ( Directory.Exists( legacy ) && !File.Exists( Path.Combine( legacy, MigrationMarker ) ) )
+			{
+				try
+				{
+					MigrateTree( legacy, own );
+					Debug.Log( "Migrated Documents\\ImperialCommander into Documents\\ImperialAdmiral" );
+				}
+				catch ( Exception e )
+				{
+					Debug.LogError( "Documents migration failed (" + e.Message + ") - working on the old folder, retrying next start" );
+					return legacy;
+				}
+			}
+			return own;
 		}
 
-		// SAME law for the SAVES root (fix 06.11., found on first renamed
-		// build): persistentDataPath is not stable across the rename - Unity
-		// derives it from company + product name, so it moved from
-		// <os-config>/GlowPuff/Imperial Commander 2 to
-		// <os-config>/wit19/Imperial Admiral. If the old root exists it
-		// keeps being the data home, deterministically (delete or rename it
-		// to force a truly fresh start). Android is NOT coverable here:
-		// its root is the app's own sandbox and the new package id is a new
-		// sandbox the OS will not let us read across to - saves there move
-		// only with the documented adb procedure (docs/ANDROID_build.md).
-		private static string PersistentRoot()
+		// SAVES root (Option B 06.11., replaces the read-only legacy law):
+		// Unity derives persistentDataPath from company + product name, so
+		// the rename moved it from <os-config>/GlowPuff/Imperial
+		// Commander 2 to <os-config>/wit19/Imperial Admiral. We MIGRATE the
+		// old tree once (marker-guarded) and then always work in our own
+		// root - same philosophy as DocumentsBase above, so log, saves and
+		// custom missions live in one place. Android needs no migration:
+		// the new package id already IS a fresh sandbox; moving saves there
+		// is the adb procedure in docs/ANDROID_build.md.
+		private static string LegacyPersistentPath()
 		{
 #if UNITY_ANDROID
-			return Application.persistentDataPath;
+			return null; // new sandbox IS the home; adb moves the saves in
 #else
 			string legacy;
 			if ( Application.platform == RuntimePlatform.WindowsPlayer
@@ -76,8 +111,27 @@ namespace Saga
 					: Path.Combine( xdg, "unity3d" );
 				legacy = Path.Combine( cfg, "GlowPuff", "Imperial Commander 2" );
 			}
-			return Directory.Exists( legacy ) ? legacy : Application.persistentDataPath;
+			return legacy;
 #endif
+		}
+
+		private static string PersistentRoot()
+		{
+			string legacy = LegacyPersistentPath();
+			if ( legacy != null && Directory.Exists( legacy ) && !File.Exists( Path.Combine( legacy, MigrationMarker ) ) )
+			{
+				try
+				{
+					MigrateTree( legacy, Application.persistentDataPath );
+					Debug.Log( "Migrated old Imperial Commander saves into " + Application.persistentDataPath );
+				}
+				catch ( Exception e )
+				{
+					Debug.LogError( "Save migration failed (" + e.Message + ") - working on the old folder, retrying next start" );
+					return legacy;
+				}
+			}
+			return Application.persistentDataPath;
 		}
 
 		public static bool SetupDefaultFolders()

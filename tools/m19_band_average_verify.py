@@ -92,8 +92,7 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
     engagePierce = (engage or {}).get('pierce',0)
     engageAcc = (engage or {}).get('acc_delta',0)
     pools = [ (card['basisAngriffswuerfel'], card['angriffsTyp'] != 'P', F(0)) ]
-    pool_is_melee_item = [False]   # M26: coverage of every pool
-    has_ranged = False
+    pool_is_melee_item = [False]   # M27: coverage of every option
     for iid in items:
         e = ITEMS.get(iid)
         if e is None: continue
@@ -101,18 +100,14 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
         b = weapon_bonus(iid)
         if e.get('wuerfel'):
             pools.append((e['wuerfel'], ranged, b)); pool_is_melee_item.append(not ranged)
-            has_ranged = has_ranged or ranged
         if e.get('attribut'):
             ap = attr_pool(card, e['attribut'], wounded)
             if ap:
                 pools.append((ap, ranged, b)); pool_is_melee_item.append(not ranged)
-                has_ranged = has_ranged or ranged
-    # M26 (Thomas ruling 06.11., Player-29 "Jyn hat den DL-44"): a carried
-    # ranged weapon OCCUPIES the ranged slot - the printed standard blaster
-    # never competes. The melee standard of a {{P}} hero is never replaced.
-    base_replaced = has_ranged and card['angriffsTyp'] != 'P'
-    # reach (RunnerRange law, M26-unchanged): printed Reichweite, extended
-    # only by verified ranged items' own acc-gates.
+    # M27 (Thomas ruling 06.11.): which weapon the hero fights with is a
+    # RESULT of the arithmetic - every option is scored over the whole band
+    # as if it were the ONLY weapon (argmax), no replace decree, no
+    # per-distance switch. HeroCards.cs band loop, verbatim direction.
     range_ = card['reichweite']
     for iid in items:
         e = ITEMS.get(iid)
@@ -134,15 +129,21 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
         # melee item = one cell (HeroCards.cs poolGate[i]).
         if idx>0:
             pool_gate.append(1 if pool_is_melee_item[idx] else (st.gate if st.gate>=1 else 1))
+    # pass 1: score every option as the ONLY weapon over the whole band
+    wscore=[]
+    for idx,(st,b) in enumerate(stats):
+        s=F(0)
+        for d in range(1, min(range_, pool_gate[idx])+1):
+            s += st.ev(d, pierce + engagePierce) + b
+        wscore.append(s)
+    champ=0   # base first: ties keep the printed weapon
+    for i in range(1,len(stats)):
+        if wscore[i] > wscore[champ]: champ = i
+    # pass 2: the argmax weapon decides every band cell
+    stc,bc = stats[champ]
     total=F(0)
-    for d in range(1, range_+1):
-        best=F(0)
-        for idx,(st,b) in enumerate(stats):
-            if idx==0 and base_replaced: continue   # standard stays in the bag
-            if d > pool_gate[idx]: continue         # a pool never leaves its coverage
-            v = st.ev(d, pierce + engagePierce) + b
-            if v > best: best = v
-        total += best
+    for d in range(1, min(range_, pool_gate[champ])+1):
+        total += stc.ev(d, pierce + engagePierce) + bc
     bav = total / range_
     if posture in ('eliminate','attrition'): return bav
     band_t = card['tempoVerwundet'] if wounded else card['tempo']
@@ -156,67 +157,83 @@ def fstr(x):
     if isinstance(x,int): return str(x)
     return str(x.numerator) if x.denominator==1 else f"{x.numerator}/{x.denominator}"
 
-# --- verify drifted rows
-fails = 0; checked = 0
-for fn in ('overlord_focus','imperial_card_effects'):
-    if not os.path.exists(f'{FIX}/{fn}_record.json'): continue
-    fix = load(f'{FIX}/{fn}.json'); rec = load(f'{FIX}/{fn}_record.json')
-    for c in fix['cases']:
-        name=c['name']
-        if name not in rec: continue
-        if json.dumps(c['expect'],sort_keys=True)==json.dumps(rec[name],sort_keys=True):
-            continue
-        post=c.get('posture'); defdice=c.get('defense'); engage=c.get('engage')
-        exp = rec[name]
-        if isinstance(exp, dict) and 'rows' in exp:   # ICE rank cases
-            heroes=c.get('heroes',[]); e2=exp.get('engage',engage)
-            sur=F(c.get('surcharge',0) or 0)
-            for row in exp['rows']:
-                h=next((x for x in heroes if x['hero']==row['hero']),None)
-                t=threat(h,h.get('wounded',False),h.get('loadout'),post,defdice,e2)
-                if h and h.get('conditioned') and sur: t = t + sur
-                checked+=1
-                got=fstr(t)
-                if got!=row['threat']:
-                    fails+=1; print(f'FAIL {fn}/{name} {row["hero"]}: port {got} vs rec {row["threat"]}')
-        elif isinstance(exp, dict):                    # ICE threat_* cases
-            for key in ('threat_base','threat_cards'):
-                for variant,eng in ((False,None),(True,exp.get('engage'))):
-                    pass
-            heroes=c.get('heroes',[])
-            for eng_key in ('threat_base','threat_cards'):
-                eng=None
-                e=exp.get('engage')
-                if eng_key=='threat_cards' and e: eng=e
-                # threat_base: without card engage; threat_cards: with
-                for h in heroes:
-                    t=threat(h,h.get('wounded',False),h.get('loadout'),post,defdice,eng)
+if __name__ == "__main__":
+    # M27 QA: the DRIFT verification delegates to the canonical full-law
+    # second implementation (m21 threat21: band law + M21 blast + M22 tempo
+    # + M25 printed bonuses). The bare threat() above stays as the pure
+    # band-average reference, not as a full-law oracle.
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import m21_fenn_effects_verify as M21
+    threat = M21.threat21
+    # --- verify drifted rows
+    fails = 0; checked = 0
+    for fn in ('overlord_focus','imperial_card_effects'):
+        if not os.path.exists(f'{FIX}/{fn}_record.json'): continue
+        fix = load(f'{FIX}/{fn}.json'); rec = load(f'{FIX}/{fn}_record.json')
+        for c in fix['cases']:
+            name=c['name']
+            if name not in rec: continue
+            if json.dumps(c['expect'],sort_keys=True)==json.dumps(rec[name],sort_keys=True):
+                continue
+            post=c.get('posture'); defdice=c.get('defense'); engage=c.get('engage')
+            exp = rec[name]
+            if isinstance(exp, dict) and 'rows' in exp:   # ICE rank cases
+                heroes=c.get('heroes',[]); e2=exp.get('engage',engage)
+                sur=F(c.get('surcharge',0) or 0)
+                for row in exp['rows']:
+                    h=next((x for x in heroes if x['hero']==row['hero']),None)
+                    t=threat(h,h.get('wounded',False),h.get('loadout'),post,defdice,e2)
+                    if h and h.get('conditioned') and sur: t = t + sur
                     checked+=1
                     got=fstr(t)
-                    if got!=exp[eng_key]:
-                        fails+=1
-                        print(f'FAIL {fn}/{name} {eng_key} {h["hero"]}: port {got} vs rec {exp[eng_key]}')
-        else:                                          # rank vectors
-            oldmap={r['hero']:r for r in c['expect']}
-            for row in exp:
-                h=next((x for x in c.get('heroes',[]) if x['hero']==row['hero']),None)
-                if row['threat'] is None: continue
-                o=oldmap.get(row['hero'])
-                if o and o.get('threat')==row['threat'] and o.get('threat_econ')==row.get('threat_econ'):
-                    continue   # order-only drift: row values unchanged, not our law
-                t=threat(h,row['wounded'],h.get('loadout'),post,defdice,engage)
-                if h and h.get('objective_actor'): t = (t if t is not None else F(0)) + 1  # +1 actor rides the printed threat
-                checked+=1
-                got=fstr(t)
-                if got!=row['threat']:
-                    fails+=1; print(f'FAIL {fn}/{name} {row["hero"]}: port {got} vs rec {row["threat"]}')
-                # econ: delta-invariant check (strain/wound additions ride unchanged)
-                if row['threat_econ'] is not None:
-                    old=next((r for r in c['expect'] if r['hero']==row['hero']),None)
-                    if old and old['threat'] is not None and old['threat_econ'] is not None:
-                        add = F(old['threat_econ']) - F(old['threat'])
-                        want = F(row['threat']) + add
-                        if want != F(row['threat_econ']):
-                            fails+=1; print(f'FAIL {fn}/{name} {row["hero"]} econ: {fstr(want)} vs rec {row["threat_econ"]}')
+                    if got!=row['threat']:
+                        fails+=1; print(f'FAIL {fn}/{name} {row["hero"]}: port {got} vs rec {row["threat"]}')
+            elif isinstance(exp, dict):                    # ICE threat_* cases
+                for key in ('threat_base','threat_cards'):
+                    for variant,eng in ((False,None),(True,exp.get('engage'))):
+                        pass
+                heroes=c.get('heroes',[])
+                for eng_key in ('threat_base','threat_cards'):
+                    eng=None
+                    e=exp.get('engage')
+                    if eng_key=='threat_cards' and e: eng=e
+                    # threat_base: without card engage; threat_cards: with
+                    for h in heroes:
+                        t=threat(h,h.get('wounded',False),h.get('loadout'),post,defdice,eng)
                         checked+=1
-print(f'== port verification: {checked} rows checked, {fails} fails')
+                        got=fstr(t)
+                        if got!=exp[eng_key]:
+                            fails+=1
+                            print(f'FAIL {fn}/{name} {eng_key} {h["hero"]}: port {got} vs rec {exp[eng_key]}')
+            else:                                          # rank vectors
+                # M26 QA (06.11.): rows may repeat a hero name (m11d carries
+                # TWO Dialas - marked and plain). Position-key occurrence
+                # counting replaces the name collision-prone next()/dict
+                # lookups on BOTH sides (case heroes AND old expect rows).
+                oldmap_rows = c['expect']
+                seen = {}
+                for row in exp:
+                    k = seen.get(row['hero'], 0)
+                    seen[row['hero']] = k + 1
+                    hm = [x for x in c.get('heroes', []) if x.get('hero') == row['hero']]
+                    h = hm[k] if k < len(hm) else None
+                    if row['threat'] is None: continue
+                    om = [r for r in oldmap_rows if r.get('hero') == row['hero']]
+                    o = om[k] if k < len(om) else None
+                    if o and o.get('threat')==row['threat'] and o.get('threat_econ')==row.get('threat_econ'):
+                        continue   # order-only drift: row values unchanged, not our law
+                    t=threat(h,row['wounded'],h.get('loadout'),post,defdice,engage)
+                    if h and h.get('objective_actor'): t = (t if t is not None else F(0)) + 1  # +1 actor rides the printed threat
+                    checked+=1
+                    got=fstr(t)
+                    if got!=row['threat']:
+                        fails+=1; print(f'FAIL {fn}/{name} {row["hero"]}#{k}: port {got} vs rec {row["threat"]}')
+                    # econ: delta-invariant check (strain/wound additions ride unchanged)
+                    if row['threat_econ'] is not None:
+                        if o and o['threat'] is not None and o['threat_econ'] is not None:
+                            add = F(o['threat_econ']) - F(o['threat'])
+                            want = F(row['threat']) + add
+                            if want != F(row['threat_econ']):
+                                fails+=1; print(f'FAIL {fn}/{name} {row["hero"]}#{k} econ: {fstr(want)} vs rec {row["threat_econ"]}')
+                            checked+=1
+    print(f'== port verification: {checked} rows checked, {fails} fails')

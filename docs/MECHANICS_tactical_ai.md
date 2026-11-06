@@ -173,13 +173,16 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
    weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
    E-11 +2/5, lightsaber +3, gloves 0). The score itself is the **band average**
-   (M19, Player-28 DL-44 finding; candidate set under M26): every distance
-   1..reach is paired once — but only pools score that distance whose OWN
-   coverage reaches it, and a carried ranged weapon has REPLACED the printed
-   standard blaster outright (see the M26 section; "Jyn hat den DL-44"), so
-   the pre-M26 reading "printed sidearm at 1, bought long gun out deep" is
-   dead; distances no pool covers count as 0 in the average, and melee pools
-   pay no accuracy toll per distance so they stay distance-inert. In hold
+   (M19, Player-28 DL-44 finding; candidate law under M27): every distance
+   1..reach is paired once, and WHICH weapon the hero fights with is a
+   RESULT of the arithmetic (M27, see its section): each attack option is
+   scored over the whole band as if it were the only weapon in the holster
+   (`score = Σ_d covered? ev(d)+price : 0`), and the argmax option decides
+   every cell - no per-distance switching (the M19 free switch let a
+   strictly weaker printed pistol win single cells), no hard replace decree
+   (the M26 shortcut). Distances the equipped weapon cannot reach count as
+   0, and melee pools pay no accuracy toll per distance so they stay
+   distance-inert. In hold
    postures
    (protect/stall) that average is percent-weighted — and since M20 (Thomas
    melee ruling, 05.11) WITHOUT a range cell:
@@ -897,3 +900,63 @@ second engine) 63 card-basis rows 0 fails; m22 ALL PASS; m23 rows=43 fails=0;
 m24 anchors OK; fixture `overlord_focus.json` rebased via
 `tools/m26_merge_drift.py` (style-proven surgical expect merge, 10 cases) with
 fresh M26 explain-comments per case; compile_check APP rc=0 (285 files).
+
+## The best weapon is a result, not a decree — M27 (Thomas ruling 06.11.)
+
+**Trigger.** Thomas on the M26 law: "Hart auf die getragene Waffe zu gehen ist
+nicht logisch, sondern einfach. Was ist, wenn der Held 2 Waffen gekauft hat?
+Die Waffenrechnung muss bestimmen, was die beste Waffe ist. Und der
+Standard-Blaster von Jyn ist schlechter als der DL-44 — das muss unsere
+Rechnung auch ergeben." M26's `baseReplaced` was a rule, not arithmetic, and
+its per-cell leftovers still "computed with" reach-1 weapons nobody would
+equip (item301/item101 class).
+
+**Law (HeroCards.cs, two passes).**
+1. Options = every attack the hero owns: printed standard, each carried
+   ranged weapon, each attribute-bound weapon pool. Coverage as under M26
+   (`poolGate[i]`: base = printed Reichweite, ranged item = its own
+   acc-gate, melee item = one cell).
+2. `score(option) = Σ_{d=1..reach} (d ≤ poolGate ? ev(d) + price : 0)` —
+   what the option delivers AS THE ONLY WEAPON over the hero's whole band.
+   3. argmax equips; that single weapon then decides EVERY band cell
+   (`threat = Σ cells(equipped)/reach + price-share`, price only on cells
+   the weapon can fire). Ties keep the printed weapon (earlier pool).
+   No per-distance switching (M19 artifact: "1:Green+Green"), no replace
+   decree (M26 shortcut).
+
+**What the arithmetic now shows (all re-derived, record 06.11.).** Jyn: GG
+pistol band score 4/12·6=… → average 1, DL-44 average 3/2 — the computation
+itself retires the standard (M26 demanded it by decree; same threat 74,
+different justification). Two bought weapons simply compete (p19: Verena
+item108 and MHD item109 - both GY guns - LOSE to the printed Blue+Yellow
+standard in the pairing average; both heroes equip the standard, threats
+tie at 1, the eqIndex price key still leads the dearer investment).
+Diala Passil ({{P}}, carries item303 'Einsicht'): the argmax legitimately
+EQUIPS her three-dice attribute pool weapon (printed Blue+Green+Yellow
+healthy / Blue+Red+Green wounded — printed dice swap with the wound state):
+operand 35/12 → 92 healthy, 43/12 → 94 wounded (was 116/115 while per-cell
+switching mixed attribute-at-1 with base-at-2). Fenn's Fenn-with-Einsicht
+row drops 83 → 69 for the same reason. m19_band_melee_inert: a
+reach-1 melee option is now MATHEMATICALLY always worse than Verena's own
+full-band blaster — "mit einem Blaster mit Reichweite 1 rechnet man nicht"
+holds by construction; it only wins where the printed attribute pool really
+out-scores everything else (Diala), and then it wins over the WHOLE band as
+her one weapon.
+
+**Direction note (honesty):** the single-weapon law is never more optimistic
+than the old per-cell switch (the switch was an envelope). Where it lowers
+threat (Diala 116→94, Fenn 83→69), the old number had been reading two
+weapons into one attack. Jyn's "never underestimate" stays intact — her
+DL-44 rides with full price surcharge.
+
+**QA, M27 (06.11.):** harness ALL PASS 45579 checks ×2 (deterministic);
+second engines re-ported (m19 band-law reference + the drift oracle now
+delegates to `m21.threat21`, the full-law implementation; both tools gained
+proper `__main__` guards — import = helpers only, run = verification);
+m21 sweep 63 rows 0 fails, m22 ALL PASS, m23 43/0, m24 anchors OK; 16
+drifted rows C# == port before the fixture merge (m26_merge_drift.py, 4
+cases rebased + all six affected explain-comments rewritten); compile APP
+rc=0 (285 files) / TESTS rc=0; gate ALL PASS. Lesson logged: two uncommitted
+patches (fixture M25 rows, m19 position-key rank branch + layers) died to
+`git checkout` the same day — the drift-oracle delegation exists so such a
+loss can never masquerade as a passing check again.

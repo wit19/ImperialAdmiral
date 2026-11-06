@@ -858,7 +858,7 @@
   },
   {
    "name": "m11b_real_wound_runner",
-   "comment": "M26-REBASE (Player-29 Fall): Diala (Reiche 2, item120 Blue+Yellow Reichweite 2): Zellen = 2 + 1,5 (je + 1/2 Energie-Anteil); das Verwundet-Handicap bleibt der einzige Runner-Zaehler - die verwundete Zeile (116, Band 1) fuehrt weiter gegen die gesunde (115). alt: 175/158 mit Green+Green-Zelle 1. Support-/Heiler-Pins bleiben unberuehrt: Support-Zaehler == Ziellaeufer-Zaehler.",
+   "comment": "M27 (Thomas-Ruling 06.11., 'Die Waffenrechnung muss bestimmen was die beste Waffe ist'): die Heldin traegt item303 'Einsicht' (Typ P, Attribut-Waffenbindung) - der Argmax ueber [{Grundwaffe GY+Reach (Reiche 2)}, {Einsicht-Attributpool (1 Zelle)}] WAEHLT bei Diala in beiden Zustaenden die Einsicht-Waffe: gesund Pool Blue+Green+Yellow Operand 35/12 -> Bedrohung 92, verwundet Blue+Red+Green 43/12 -> 94 (der gedruckte Attributpool tauscht im Wundzustand die Wuerfel und wird dann staerker - Gedrucktes, nicht Modell-Phantasie). Rang: verwundet (94) vor gesund (92), Handicap bleibt der Zaehler. alt (M26): 116/115 - pro-Zelle-Mix aus Attribut@1 + Grundwaffe@2, der freie Schalter ist mit M27 tot: eine Waffe pro Gefecht.",
    "posture": "protect",
    "counter": null,
    "heroes": [
@@ -898,26 +898,26 @@
    "expect": [
     {
      "basis": "card",
-     "best_pool": "Green+Yellow",
+     "best_pool": "Blue+Red+Green",
      "hero": "Diala Passil",
      "marked": false,
-     "threat": "116",
+     "threat": "94",
      "threat_band": "1",
-     "threat_damage": "55/12",
-     "threat_econ": "116",
+     "threat_damage": "43/12",
+     "threat_econ": "94",
      "threat_energy": "3/2",
      "threat_range": "2",
      "wounded": true
     },
     {
      "basis": "card",
-     "best_pool": "Green+Yellow",
+     "best_pool": "Blue+Green+Yellow",
      "hero": "Diala Passil",
      "marked": false,
-     "threat": "115",
+     "threat": "92",
      "threat_band": "2",
-     "threat_damage": "47/12",
-     "threat_econ": "115",
+     "threat_damage": "35/12",
+     "threat_econ": "92",
      "threat_energy": "3/2",
      "threat_range": "2",
      "wounded": false
@@ -1045,7 +1045,7 @@
   },
   {
    "name": "m11d_marks_and_wounded_outrank_pressure",
-   "comment": "M26-REBASE: Zeilenreihenfolge = Rang: die getaggte Diala (115, strain_druck 8) fuehrt vor der ungetaggten verwundeten (116), obwohl ihr Rohwert minimal niedriger ist - Markierung und Druck stehen vor der reinen Zahl. Fenn ohne Gueter: 13/6 Banden-Schnitt + 1/2 Scout-Bonus (M25) -> threat_damage 5/2, Bedrohung 83. alt: 158/175/154 mit Standard-Baendern.",
+   "comment": "M27-Folge: dieselbe Argmax-Umstellung. Diala traegt 'Einsicht' und kaempft damit (Zeitreihen-Feld best_pool belegt's: Blue+Green+Yellow gesund 92 / Blue+Red+Green verwundet 94) - die markierte Zeile fuehrt trotz 92 < 94: Markierung und Druck (strain_druck 8) stehen vor der nackten Zahl, Zeilenreihenfolge = Rang. Fenn traegt denselben Gegenstand, sein Argmax bleibt aber die Grundwaffe Blue+Green: Grund-Mittel 7/5 + Explosion 1/2 = 19/10 -> 69 (alt 83/5pro2: dort mischte der Pro-Zelle-Schalter Attribut@1 in Zelle 1 - gestrichen).",
    "posture": "protect",
    "counter": null,
    "defense": null,
@@ -1103,27 +1103,27 @@
    "expect": [
      {
       "basis": "mark",
-      "best_pool": "Green+Yellow",
+      "best_pool": "Blue+Green+Yellow",
       "hero": "Diala Passil",
       "marked": true,
       "strain_druck": "8",
-      "threat": "115",
+      "threat": "92",
       "threat_band": "2",
-      "threat_damage": "47/12",
-      "threat_econ": "123",
+      "threat_damage": "35/12",
+      "threat_econ": "100",
       "threat_energy": "3/2",
       "threat_range": "2",
       "wounded": false
      },
      {
       "basis": "card",
-      "best_pool": "Green+Yellow",
+      "best_pool": "Blue+Red+Green",
       "hero": "Diala Passil",
       "marked": false,
-      "threat": "116",
+      "threat": "94",
       "threat_band": "1",
-      "threat_damage": "55/12",
-      "threat_econ": "116",
+      "threat_damage": "43/12",
+      "threat_econ": "94",
       "threat_energy": "3/2",
       "threat_range": "2",
       "wounded": true
@@ -1133,11 +1133,10 @@
       "best_pool": "Blue+Green",
       "hero": "Fenn Signis",
       "marked": false,
-      "threat": "83",
+      "threat": "69",
       "threat_band": "2",
-      "threat_damage": "5/2",
-      "threat_econ": "83",
-      "threat_energy": "3/5",
+      "threat_damage": "19/10",
+      "threat_econ": "69",
       "threat_explosion": "1/2",
       "threat_range": "5",
       "wounded": false
@@ -1489,7 +1488,7 @@
   },
   {
    "name": "p19_equal_dice_dearer_gear_leads",
-   "comment": "M26-REBASE: Verena kauft Blaster+Yellow (item110), MHD-19 bleibt blanko - beide schiessen jetzt Blue+Yellow (Acc 4, Green-Bonus 1/2), identische Wuerfel in allen vier Zellen. threat 73/80 vs 13/20 (eliminate): der Unterschied ist NUR der Aufpreis - Verenas Preisanteil (3/4) laeuft in der Kette mit, MHD zahlt 0 -> eqIndex/Preis-Key haelt Verena vorn. alt (M22): Gleichstand 51/40 vs 11/10 mit Standardwuerfeln in Zelle 1.",
+   "comment": "M27 haertet den Fall ehrlich aus: Verena kauft item108, MHD-19 item109 - BEIDE GY-Gewehre (Typ O). Der Argmax ueber {Grundwaffe Blue+Yellow (Reiche 4), GY-Kauf} rechnet fuer beide Helden denselben Sieger: die gedruckte BY-Standardwaffe - GYs hohe Schadenwuerfel bezahlt das Paarungsgesetz mit der schwachen Genauigkeit, ueber das Band gemittelt verliert sie gegen beide gekauften Gewehre. threat = 1 fuer beide -> reicher Gleichstand; der eqIndex/Preis-Key haelt Verena (die teuere Investition) vorn. alt (M22/M26): 51/40 vs 73/80 - der Preisanteil entschied ueber den Waffenschnitt, nicht die Waffe selbst. Kasus-Beweis bleibt: Gleichstand -> Preisordnung.",
    "posture": "eliminate",
    "counter": null,
    "heroes": [
@@ -1531,16 +1530,16 @@
      "basis": "card",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "73/80",
-     "threat_econ": "73/80",
+     "threat": "1",
+     "threat_econ": "1",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "MHD-19",
      "marked": false,
-     "threat": "13/20",
-     "threat_econ": "13/20",
+     "threat": "1",
+     "threat_econ": "1",
      "wounded": false
     }
    ]
@@ -1920,7 +1919,7 @@
   },
   {
    "name": "m19_band_switch_stall",
-   "comment": "M26-REBASE 06.11. (Thomas-Ruling zu Player-29 'Jyn hat den DL-44'): Gekaufte Blaster ERSETZEN die Standardwuerfel in JEDEM Band (kein 1:Green+Green mehr, kein BY-Standard@1 fuer MHD) - der Aufpreis laeuft nur als Energie-Operand mit. Jyn Odan (DL-44 Blue+Yellow, Acc 4, Green-Bonus 1/2): Zellen d1..d4 = 2 + 2 + 1,5 + 0,5 -> Schnitt 3/2 (war 19/12) -> Bedrohung 74 (war 76). Loku (keine Gueter, Base Gate = Reiche 5): 13/6 Banden-Schnitt + 1/2 Gedruckter-Scout-Bonus (M25) = 8/3 -> Band 3 erfuellt -> 100. alt (M19/M24): Jyn bedruckte 4 liessen Zelle 5 sterben (76) und das 1:Green+Green winning-Team stellte 19/12.",
+   "comment": "M26/M27-REBASE 06.11. (Thomas-Ruling zu Player-29 'Jyn hat den DL-44'; M27: 'die Rechnung muss bestimmen was die beste Waffe ist'): der Argmax-Bandvergleich (jede Waffe als einzige im Holster gerechnet) waehlt fuer Jyn die DL-44 gegen Green+Green und lasst MHD bei der gedruckten Blue+Yellow - kein Dekret, kein 1:Green+Green-Schalter mehr; der Aufpreis laeuft als Energie-Operand der ausgewaehlten Waffe mit. Jyn Odan (DL-44 Blue+Yellow, Acc 4, Green-Bonus 1/2): Zellen d1..d4 = 2 + 2 + 1,5 + 0,5 -> Schnitt 3/2 (war 19/12) -> Bedrohung 74 (war 76). Loku (keine Gueter, Base Gate = Reiche 5): 13/6 Banden-Schnitt + 1/2 Gedruckter-Scout-Bonus (M25) = 8/3 -> Band 3 erfuellt -> 100. alt (M19/M24): Jyns bedruckte 4 liessen Zelle 5 sterben (76) und das 1:Green+Green winning-Team stellte 19/12.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2034,7 +2033,7 @@
   },
   {
    "name": "m19_band_melee_inert",
-   "comment": "M26-REBASE + M19-Grenzfall: Verena mit item303 (Einsicht, Nahkampf-Only Blue+Yellow Reichweite 1) plus item110: der Nahkampf-Only-Blaster punktet nur in Zelle 1 - ab dem 2er-Band gewinnt der gedruckte Green+Reach-Regelwert die Slots (Grenzwert 3). threat 54, threat_damage 6/5, Energie 3/40: die Zusatz-Munition zahlt als Preisanteil, nie als Reichweiten-Pseudo. alt (M22): 78/23pro10 - item303 war damals unsichtbar (Sammel-Filter lieh Reichweite).",
+   "comment": "M27 in Reinform: Verena traegt item101 (Typ P, Green+Yellow Nahkampf-Option). Argmax: Grundwaffe Blue+Yellow ueber Reiche 4 (Mittel genau 1) schlaegt die Nahkampf-Option (eine Zelle + Preisanteil, durch die leeren Bandstellen immer schlechter). threat 49, Operand 1, Energie entfällt (Grundwaffe = Aufschlag 0). alt (M26): 54/6pro5 mit Energie 3/40 - dort gewann item101 die Zelle 1 im Pro-Zelle-Schalter; mit dem einen equippten Waffensatz ist es mathematisch immer schlechter als die eigene Langwaffe. Genau das war Thomas' Punkt: 'mit einem Blaster mit Reichweite 1 rechnet man nicht'.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2061,11 +2060,10 @@
      "best_pool": "Blue+Yellow",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "54",
+     "threat": "49",
      "threat_band": "2",
-     "threat_damage": "6/5",
-     "threat_econ": "54",
-     "threat_energy": "3/40",
+     "threat_damage": "1",
+     "threat_econ": "49",
      "threat_range": "4",
      "wounded": false
     }

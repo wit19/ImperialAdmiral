@@ -701,24 +701,20 @@ namespace TacticalAI.Core
             {
                 Tuple.Create(card.BasisWuerfel, !card.Nahkaempfer, Rational.Zero),
             };
-            // M26 (Thomas ruling 06.11., Player-29 log "1:Green+Green"):
-            // a hero's attack is the weapon SHE CARRIES (rule text: for a
-            // hero the attack value "is found on his weapon Item card").
-            // A bought ranged weapon OCCUPIES the hero's ranged slot and
-            // REPLACES the printed base blaster outright - the standard
-            // dice never compete while a {{O}} item is carried ("Jyn hat
-            // den DL-44"; she is no melee fighter and does not switch to
-            // the weaker printed pistol just because the pairing law
-            // scores green dice higher at distance 1). The melee standard
-            // of a Nahkaempfer is NOT replaced (fists are the body, not a
-            // stored weapon); {{P}} items merely ADD a melee option at
-            // their own reach. poolGate[i] = the distances each pool
-            // actually covers: base = printed Reichweite, ranged item =
-            // its own acc-gate, melee item = 1.
+            // M26/M27 (Thomas rulings 06.11., Player-29 log): a hero's
+            // attack is the weapon SHE CARRIES (rule text: for a hero the
+            // attack value "is found on his weapon Item card") - but WHICH
+            // weapon that is must be COMPUTED, not decreed (M27: "Die
+            // Waffenrechnung muss bestimmen was die beste Waffe ist").
+            // Every attack option - printed standard, each carried weapon,
+            // attribute pools - is scored over the hero's whole reach band
+            // AS IF IT WERE THE ONLY WEAPON (see the band section below);
+            // the argmax option is what the hero equips. poolGate[i] = the
+            // distances each option actually covers: base = printed
+            // Reichweite, ranged item = its own acc-gate, melee item = 1.
             int baseGate = card.Reichweite < 1 ? 1 : card.Reichweite;
             var poolGate = new List<int> { baseGate };
             var poolIsMeleeItem = new List<bool> { false };
-            bool hasRangedItem = false;
             foreach (var id in owned)
             {
                 var e = table != null ? table.Item(id) : null;
@@ -733,7 +729,6 @@ namespace TacticalAI.Core
                     pools.Add(Tuple.Create(new List<string>(e.Wuerfel), ranged, b));
                     poolGate.Add(0);   // ranged: filled from the pool's own
                     poolIsMeleeItem.Add(!ranged);   // acc-gate below; melee = 1
-                    if (ranged) hasRangedItem = true;
                 }
                 if (e.Attribut != null)
                 {
@@ -743,12 +738,9 @@ namespace TacticalAI.Core
                         pools.Add(Tuple.Create(attr, ranged, b));
                         poolGate.Add(0);
                         poolIsMeleeItem.Add(!ranged);
-                        if (ranged) hasRangedItem = true;
                     }
                 }
             }
-            // ranged slot occupied -> printed base blaster stays in the bag
-            bool baseReplaced = hasRangedItem && !card.Nahkaempfer;
             // M25: the hero's OWN printed static accuracy (weapon line +
             // healthy-side ability + accuracy cards) rides the existing
             // keyword seam - the M12d pairing law pairs the acc pips with
@@ -757,11 +749,11 @@ namespace TacticalAI.Core
             if (heroAcc > 0) keywords.Add("+" + heroAcc + " Accuracy");
             var defender = Dice.BuildAttackStats(null, null, false, null,
                 defenderDefense != null ? new List<string>(defenderDefense) : null);
-            // the overlord assumes the hero fights with its best CARRIED
-            // weapon SCORER (dice EV + M17 price-energy: one weapon per
-            // attack, each pool only inside its own coverage - M26; and the
-            // Empire may never under-estimate an equipped hero - same
-            // direction as the M10a investment tie-break)
+            // the overlord equips the hero's argmax weapon scorer (dice EV
+            // + M17 price-energy; one weapon per attack, each weapon only
+            // inside its own coverage - M27; the Empire may never
+            // under-estimate an equipped hero - same direction as the M10a
+            // investment tie-break)
             int engagePierce = engage == null ? 0 : engage.Pierce;
             int engageAcc = engage == null ? 0 : engage.AccDelta;
             // M19 (Thomas ruling 05.11., Player-28 DL-44 fund): BAND-
@@ -769,30 +761,35 @@ namespace TacticalAI.Core
             // distance 1 - but the pairing law spends accuracy for
             // distance, so that reading systematically over-valued green
             // damage dice and hid the accuracy-rich blue dice of the
-            // premium ranged weapons (a DL-44 out-scores Jyn's printed GG
-            // from d2 on, yet could never win the d=1 score). The honest
-            // table projection: the hero fights somewhere inside HIS
-            // reach band (printed reach, extended only by verified ranged
-            // items - the existing RunnerRange law), and the damage term
-            // is     average over d = 1..reach of ( best pool score at d ).
-            // Melee pools are distance-inert inside the pairing law by
-            // design (no distance spend) - printed melee value simply
-            // holds across their band. The per-distance winners ride out
-            // in bandBests, so the average stays hand-re-addable (the
-            // percent law demands visible arithmetic, not prose).
+            // premium ranged weapons. The honest table projection: the
+            // hero fights somewhere inside HIS reach band (printed reach,
+            // extended only by verified ranged items - the existing
+            // RunnerRange law), and the damage term is the average over
+            // d = 1..reach. Melee pools are distance-inert inside the
+            // pairing law by design (no distance spend).
             //
-            // M26 OVERRIDE (Thomas ruling 06.11., Player-29 log): the per-
-            // distance switch was too generous. A hero's attack is the
-            // weapon she CARRIES (rule: the attack is on the weapon item
-            // card) - a bought {{O}} weapon OCCUPIES the ranged slot and
-            // replaces the printed standard blaster at EVERY distance
-            // ("Jyn hat den DL-44" -> Blue+Yellow auch auf 1, die
-            // Standardwaffe rechnet nie mit), and a pool only ever scores
-            // inside its OWN coverage poolGate (a Gauntlet cannot "shoot"
-            // across the band). Choice stays free between CARRIED weapons
-            // and for a Nahkaempfer's innate melee value - her fists are
-            // the body, not a stored weapon, so no {{O}} item replaces a
-            // printed {{P}} standard.
+            // M27 (Thomas ruling 06.11., after M26): WHICH weapon the hero
+            // fights with is a RESULT of the arithmetic, never a decree
+            // ("Die Waffenrechnung muss bestimmen was die beste Waffe ist"
+            // / "was ist, wenn der Held 2 Waffen gekauft hat?"). Each
+            // attack option is scored over the WHOLE band as if it were
+            // the only weapon in the holster:
+            //     score(weapon) = Σ_{d=1..reach}
+            //                       ( d <= poolGate ? ev(d) + price : 0 )
+            // (same pairing law, same M17 price surcharge - one weapon,
+            // one attack). The argmax option is equipped and decides EVERY
+            // band cell. This kills both old artifacts: the M19 free
+            // per-distance switch (a strictly weaker printed pistol won
+            // single cells: Player-29 log "1:Green+Green") and the M26
+            // hard replace-rule (a shortcut, not a computation). The
+            // arithmetic now SHOWS what Thomas demands: Jyn's DL-44 band
+            // score beats her printed GG pistol score, so the standard
+            // never rides; a second bought weapon simply competes; and a
+            // reach-1 blaster that only duplicates a longer carried gun's
+            // dice (item303 'Einsicht' vs item110) is strictly worse
+            // through its own empty cells - "mit einem Blaster mit
+            // Reichweite 1 rechnet" tut niemand. Ties keep the earlier
+            // pool (base first; identical value either way).
             int reach = RunnerRange(card, table, profile, wounded);
             if (reach < 1) reach = 1;
             var statsAt = new AttackStats[pools.Count];
@@ -818,60 +815,52 @@ namespace TacticalAI.Core
                     poolGate[i] = poolIsMeleeItem[i] ? 1
                         : (stats.AccGate < 1 ? 1 : stats.AccGate);
             }
-            // the printed winner slot (M15 accounting print): the pool that
-            // decided the MOST distances of the band (M26: its display
-            // surcharge is the band's actual energy share, see below).
-            // A band where nothing scores leaves the base pool + zero
-            // energy (M15 print semantics kept).
+            // the printed winner slot (M15 accounting print) and the band
+            // cells both come from the SINGLE argmax weapon (M27) - the
+            // average stays hand-re-addable (the percent law demands
+            // visible arithmetic, not prose): every printed cell is THAT
+            // weapon's exchange at that distance, empty cells trade at 0.
             bestPool = card.BasisWuerfel;
             energy = Rational.Zero;
             bandBests = new List<string>();
-            var sum = Rational.Zero;
-            var energySum = Rational.Zero;   // M26: the winner's surcharge PER BAND
-            var wins = new int[pools.Count];
-            for (int d = 1; d <= reach; d++)
+            var weaponScore = new Rational[pools.Count];
+            for (int i = 0; i < pools.Count; i++)
             {
-                var best = Rational.Zero;
-                int bestIdx = -1;
-                for (int i = 0; i < pools.Count; i++)
-                {
-                    // M26: a replaced standard weapon never competes, and a
-                    // weapon only ever scores at a distance IT CAN REACH -
-                    // the free per-distance switch across the whole band is
-                    // dead (the old law let Verena's gauntlets "shoot" at 4).
-                    if (i == 0 && baseReplaced) continue;
-                    if (d > poolGate[i]) continue;
-                    // M17: the WEAPON SCORE is dice EV + the price-energy
-                    // surcharge of THIS pool's weapon - so a bought weapon
-                    // may legitimately outrank printed-equal or slightly
-                    // stronger dice (E-11 400cr: 13/6 + 2/5 out-scores
-                    // printed GG wherever the band reaches it).
-                    var ev = Dice.ExpectedDamage(statsAt[i], defender, d,
+                // score(weapon) = what it delivers as the ONLY weapon in
+                // the holster, summed over the hero's whole band. The M17
+                // price surcharge rides EVERY cell this weapon can fire
+                // (the surcharge marks the weapon, not the distance).
+                var s = Rational.Zero;
+                for (int d = 1; d <= reach; d++)
+                    if (d <= poolGate[i])
+                        s += Dice.ExpectedDamage(statsAt[i], defender, d,
                                                  pierce + engagePierce)
                              + pools[i].Item3;
-                    if (ev > best) { best = ev; bestIdx = i; }  // strict >: ties keep the earlier pool (base weapon first)
-                }
-                sum += best;
-                if (bestIdx >= 0)
-                {
-                    energySum += pools[bestIdx].Item3;
-                    wins[bestIdx]++;
-                    bandBests.Add(string.Join("+", pools[bestIdx].Item1));
-                }
-                else bandBests.Add("");    // this distance trades at zero
+                weaponScore[i] = s;
             }
-            int champ = -1;
-            for (int i = 0; i < pools.Count; i++)
-                if (champ < 0 || wins[i] > wins[champ]) champ = i;
-            if (champ >= 0 && wins[champ] > 0)
+            int champ = 0;   // base first: a tie keeps the printed weapon
+            for (int i = 1; i < pools.Count; i++)
+                if (weaponScore[i] > weaponScore[champ]) champ = i;
+            bestPool = pools[champ].Item1;
+            var sum = Rational.Zero;
+            var energySum = Rational.Zero;   // surcharge share of the cells FIRED
+            for (int d = 1; d <= reach; d++)
             {
-                bestPool = pools[champ].Item1;
-                // M26: the display energy is the ACTUAL surcharge share of
-                // the average (winners' surcharges summed over the band /
-                // reach) - a mixed band (Verena: gauntlets at 1, blaster at
-                // 2-4) stays hand-re-addable, the operand never lies.
-                energy = energySum / reach;
+                if (d <= poolGate[champ])
+                {
+                    var ev = Dice.ExpectedDamage(statsAt[champ], defender, d,
+                                                 pierce + engagePierce);
+                    sum += ev + pools[champ].Item3;
+                    energySum += pools[champ].Item3;
+                    bandBests.Add(string.Join("+", pools[champ].Item1));
+                }
+                else bandBests.Add("");    // the equipped weapon cannot reach this
             }
+            // M26 law kept: the display energy is the ACTUAL surcharge
+            // share of the average (Σ winners' surcharge / reach), so a
+            // weapon that cannot cover the whole band shows only the share
+            // it really adds - the operand never lies.
+            energy = energySum / reach;
             // M21 (Thomas ruling 06.11., Fenn playtest): the printed blast
             // ability (Fenn's Havoc Shot: "1C: ... this attack gains Blast
             // 1H"; RR keyword Blast / DE rules "Explosion": everything

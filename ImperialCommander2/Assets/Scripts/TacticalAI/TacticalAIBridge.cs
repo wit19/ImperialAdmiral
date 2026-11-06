@@ -2119,17 +2119,22 @@ namespace TacticalAI
                             ? " | Beste pro Distanz " + BandLabel(parts.Value.BandBests) : "";
                         string en = parts.Value.Energy > Tac.Rational.Zero
                             ? " + Energie-Zuschlag " + parts.Value.Energy + "/Runde (Waffenpreis)" : "";
+                        // M21 (Thomas ruling 06.11.): the flat blast
+                        // increment prints as its own summand, so the
+                        // accounting row stays hand-re-addable for Fenn.
+                        string ex = parts.Value.Explosion > Tac.Rational.Zero
+                            ? " + Explosion +" + parts.Value.Explosion + "/Runde (Blast-Pauschale, halber Kartenwert)" : "";
                         if (runner)
                             // M16 (Thomas 05.11): the accounting prints the
                             // EXACT percent law with all three normalized
                             // factors - the whole sum is re-computable.
                             calc = "Postur Halten: 55% x Schadens-Austausch " +
-                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en +
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en + ex +
                                    ")" + bandTxt + " / 8/3 + 35% x Tempo-Band " + parts.Value.SpeedBand +
                                    "/3 + 10% x Reichweite " + parts.Value.RangeCells + "/7";
                         else
                             calc = "Postur Toeten/Verwunden: reiner Waffenschaden " +
-                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en + ")" + bandTxt;
+                                   parts.Value.DamageEv + "/Runde (" + poolTxt + en + ex + ")" + bandTxt;
                     }
                 }
                 bool objAdd = c != null && c.ObjectiveActor && p.Threat.HasValue;
@@ -2272,6 +2277,12 @@ namespace TacticalAI
             // WHY a bought weapon outscores printed dice alone.
             if (dec.ThreatEnergy.HasValue && !dec.ThreatEnergy.Value.IsZero)
                 parts.Add(TF(L.ordThreatEnergy, dec.ThreatEnergy.Value.ToString()));
+            // M21 (Thomas ruling 06.11.): the flat blast increment reads its
+            // own clause too - Fenn's printed explosion ability is public
+            // card data, the EXPLAIN cell must show why he outscores his
+            // own dice.
+            if (dec.ThreatExplosion.HasValue && !dec.ThreatExplosion.Value.IsZero)
+                parts.Add(TF(L.ordThreatExplosion, dec.ThreatExplosion.Value.ToString()));
             if (dec.Threat.HasValue)
             {
                 // M15 F2 (Thomas 05.11): the EXPLAIN cell shows the REAL

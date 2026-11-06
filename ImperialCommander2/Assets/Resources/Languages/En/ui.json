@@ -388,6 +388,7 @@
     "ordThreat": "threat {0} = pure weapon damage per round (printed dice incl. items) - kill/wound posture: only damage counts",
     "ordThreatCalcRunner": "threat {0} = 60% x weapon damage {1}/round (dice {2}) / 8-3 + 40% x speed band {3}/3 - holding posture: damage weighs most; reach already lives in the average (best exchange per reach cell)",
     "ordThreatEnergy": "incl. energy bonus {0}/round (the priced weapon's value beyond the printed dice)",
+    "ordThreatExplosion": "incl. blast +{0}/round (flat allowance for Fenn’s printed blast ability — half the printed value)",
     "ordStrainPressure": "heroes with a full strain buffer are briefly a little more vulnerable",
     "ordStrainFuzzy": "probably strained from the fighting ({0}/{1} actions)",
     "ordOptionPrinted": "Card special action: {0} - {1}",

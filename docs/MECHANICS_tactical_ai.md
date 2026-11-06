@@ -149,7 +149,7 @@ announced publicly at round start (and re-ranked each activation from the same k
 
 1. **Wounded / defeated marks** outrank everything (except at S1/S2, which are
    `CounterBlind` and ignore them by design — that is the handicap, not a bug).
-2. **Threat value per hero** — current law (M15–M19, Thomas rulings 05.11): the
+2. **Threat value per hero** — current law (M15–M21, Thomas rulings 05.–06.11): the
    hero's TRUE standard-weapon dice from `tactical_hero_cards.json` (never the
    printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
    weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
@@ -167,6 +167,15 @@ announced publicly at round start (and re-ranked each activation from the same k
    only taxed printed melee heroes. In kill/wound postures the band average
    stands raw. Wound rides purely
    through the printed `tempoVerwundet` (no percent malus — proven redundant).
+   Since M21 (Thomas ruling, 06.11) the printed ability effects count too, as
+   language-independent SKILL-ID pins in the hero's `effekte` asset block (schema
+   `tacai.hero_cards/2`): a hero whose ability prints a Blast/Explosion adds a flat
+   hold-posture increment of half the printed value in damage-EV terms
+   (`1/2 × H × 2/6 per round` — Fenn: 1H healthy, 2H once his printed upgrade card
+   `fenn07` is equipped); tempo cards (`fenn01` "Taktisches Vorrücken") raise the
+   band tempo in the healthy AND the wounded state (speed 5 / 4). Unknown skill ids
+   never match — an absent `effekte` block is the null law, every pre-M21 hero
+   parses bit-identical. Both summands print as their own EXPLAIN clause.
    Campaign purchases still count twice: the bought weapon moves the score
    (M17), the XP-ability index stays the economic basis (M4) — the hero who is
    really strongest on THIS campaign, not from a tier list.

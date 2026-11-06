@@ -51,6 +51,44 @@ namespace TacticalAI.Core
         public string BasisAngriffswuerfel;    // e.g. "BR", "GY+Reach"
         public int Reichweite;                 // acc-gate convention (asset doc)
         public List<HeroAbility> Faehigkeiten = new List<HeroAbility>();
+        // M21 (Thomas ruling 06.11., playtest-Nachlese): printed ability
+        // EFFECTS curated per hero - language-independent SKILL-ID pins
+        // (never card names). Curation is the single source (the app's own
+        // skill runtime is not read, same law as the item dice proxies).
+        // First carrier: Fenn Signis. His card back prints Havoc Shot
+        // ("1C: Use while attacking with a O weapon. This attack gains
+        // Blast 1H" - RR keyword Blast/Explosion: figures adjacent to the
+        // target suffer the blast value, no defense dice), and his skill
+        // card fenn01 ("Taktisches Vorrücken"/"Tactical Movement") raises
+        // his speed by one (Thomas ruling: +1 healthy AND wounded).
+        public int ExplosionsWert;                                    // printed blast H
+        public List<HeroSkillPin> ExplosionsUpgrades = new List<HeroSkillPin>(); // skill -> new WERT (absorbs)
+        public List<HeroSkillPin> TempoPins = new List<HeroSkillPin>();          // skill -> tempo DELTA
+
+        /// <summary>M21: effective printed blast value with the hero's
+        /// chosen skill cards (Rebel Elite fenn07 ABSORBS the base value,
+        /// it does not add to it - the upgrade replaces Blast 1H with 2H).</summary>
+        public int ExplosionsWertEffektiv(IList<string> skills)
+        {
+            int w = ExplosionsWert;
+            if (skills != null)
+                foreach (var u in ExplosionsUpgrades)
+                    if (u.Skill != null && skills.Contains(u.Skill) && u.Wert > w) w = u.Wert;
+            return w;
+        }
+
+        /// <summary>M21: sum of the tempo deltas the chosen skill cards
+        /// print (applied to the healthy AND the wounded tempo - Thomas
+        /// ruling 06.11.: "verwundet ebenfalls +1").</summary>
+        public int TempoDelta(IList<string> skills)
+        {
+            if (skills == null || TempoPins.Count == 0) return 0;
+            int d = 0;
+            foreach (var p in TempoPins)
+                if (p.Skill != null && skills.Contains(p.Skill)) d += p.Delta;
+            return d;
+        }
+
 
         public bool Nahkaempfer { get { return AngriffsTyp == "P"; } }
         public bool HatReach { get { return BasisAngriffswuerfel != null &&
@@ -105,6 +143,17 @@ namespace TacticalAI.Core
         public int? StrainKosten;              // printed strain on the card
     }
 
+    /// <summary>M21: one printed skill-card effect pin (asset "effekte").
+    /// Skill is the app's language-stable skill id (skills.json); Wert is
+    /// an absolute replacement value (blast upgrade), Delta an additive
+    /// modifier (tempo). Unknown ids never match - the pin stays inert.</summary>
+    public sealed class HeroSkillPin
+    {
+        public string Skill;
+        public int Wert;
+        public int Delta;
+    }
+
     /// <summary>One campaign item's printed ATTACK-relevant effect
     /// (weapon dice / attribute-pool / static accuracy, damage, pierce).
     /// Surge and activated lines stay out (conservative, cf. Dice.cs).</summary>
@@ -125,7 +174,9 @@ namespace TacticalAI.Core
         }
     }
 
-    /// <summary>Loaded tactical_hero_cards/1 asset.</summary>
+    /// <summary>Loaded tactical_hero_cards/2 asset (M21: "effekte" skill
+    /// pins on hero rows - absent means no effects, null law).</summary>
+
     public sealed class HeroCardTable
     {
         readonly Dictionary<string, HeroCard> _byName =
@@ -200,6 +251,38 @@ namespace TacticalAI.Core
                 if (c.Faehigkeiten.Count > 0)
                     c.Faehigkeiten = c.Faehigkeiten
                         .OrderBy(f => f.Bezeichnung, StringComparer.Ordinal).ToList();
+                // M21: the printed ability-effect pins ("effekte"). Absent
+                // on every pre-M21 hero -> parsing stays bit-identical
+                // (null law).
+                var effekte = Json.Get(r, "effekte", null);
+                if (effekte != null)
+                {
+                    var ef = Json.AsDict(effekte);
+                    var expl = Json.Get(ef, "explosion", null);
+                    if (expl != null)
+                    {
+                        var ex = Json.AsDict(expl);
+                        c.ExplosionsWert = Json.AsInt(Json.Get(ex, "wert", 0));
+                        foreach (var rawU in Json.AsList(Json.Get(ex, "upgrades", new List<object>())))
+                        {
+                            var ud = Json.AsDict(rawU);
+                            c.ExplosionsUpgrades.Add(new HeroSkillPin
+                            {
+                                Skill = Json.AsStr(Json.Get(ud, "skill", null)),
+                                Wert = Json.AsInt(Json.Get(ud, "wert", 0)),
+                            });
+                        }
+                    }
+                    foreach (var rawP in Json.AsList(Json.Get(ef, "tempo_pins", new List<object>())))
+                    {
+                        var pd = Json.AsDict(rawP);
+                        c.TempoPins.Add(new HeroSkillPin
+                        {
+                            Skill = Json.AsStr(Json.Get(pd, "skill", null)),
+                            Delta = Json.AsInt(Json.Get(pd, "delta", 0)),
+                        });
+                    }
+                }
                 if (!string.IsNullOrEmpty(c.Name)) t._byName[c.Name] = c;
             }
             foreach (var raw in Json.AsList(Json.Get(doc, "items", new List<object>())))
@@ -283,6 +366,11 @@ namespace TacticalAI.Core
         // and the range operand stay printed in the EXPLAIN row - the M19
         // band average still RUNS over 1..range, it just earns no own points.
         public static readonly Rational RangeShare   = Rational.Zero;         // 0 %
+        // M21 (Thomas ruling 06.11.): the printed blast value rides the
+        // damage operand at HALF its value (trigger + endurance discount,
+        // see the EliminateEv law text). Exact rational, curation-pinned.
+        public static readonly Rational ExplosionShare = new Rational(1, 2);
+
         public static readonly Rational DamageAnchor = new Rational(8, 3);
         public const int BandAnchor  = 3;
         public const int RangeAnchor = 7;
@@ -317,6 +405,9 @@ namespace TacticalAI.Core
                                              //  score: printed dice + M17
                                              //  price-energy of the winner)
             public Rational Energy;          // M17 surcharge inside DamageEv
+            public Rational Explosion;       // M21 flat blast increment
+                                             //  inside DamageEv (printed
+                                             //  blast x ExplosionShare)
             public int SpeedBand;            // mobility band 1..3 (printed wound tempo!)
             public int RangeCells;           // reach incl. printed ranged-item gates
             public List<string> BestPool;    // dice the DamageEv was computed from
@@ -356,10 +447,10 @@ namespace TacticalAI.Core
                 // speed, 10% range over the game's own printed anchors. The
                 // engage hook rides the exchange exactly as in the damage
                 // races (M12d seam).
-                List<string> pool, band; Rational energyX;
+                List<string> pool, band; Rational energyX, explX;
                 var dmg = EliminateEv(card, table, profile, wounded,
-                                      defenderDefense, engage, out pool, out energyX, out band);
-                return RunnerThreat(dmg, RunnerBand(card, wounded),
+                                      defenderDefense, engage, out pool, out energyX, out band, out explX);
+                return RunnerThreat(dmg, RunnerBand(card, wounded, profile),
                                     RunnerRange(card, table, profile, wounded));
             }
             return null;
@@ -378,14 +469,15 @@ namespace TacticalAI.Core
             bool damageRace = posture == "eliminate" || posture == "attrition";
             bool runnerRace = posture == "protect" || posture == "stall";
             if (!damageRace && !runnerRace) return null;
-            List<string> pool, band; Rational energy;
+            List<string> pool, band; Rational energy, explosion;
             var dmg = EliminateEv(card, table, profile, wounded,
-                                  defenderDefense, engage, out pool, out energy, out band);
+                                  defenderDefense, engage, out pool, out energy, out band, out explosion);
             var parts = new ThreatParts
             {
                 DamageEv = dmg,
                 Energy = energy,
-                SpeedBand = runnerRace ? RunnerBand(card, wounded) : 0,
+                Explosion = explosion,
+                SpeedBand = runnerRace ? RunnerBand(card, wounded, profile) : 0,
                 RangeCells = runnerRace ? RunnerRange(card, table, profile, wounded) : 0,
                 BestPool = pool,
                 BandBests = band,
@@ -399,9 +491,9 @@ namespace TacticalAI.Core
                                     IList<string> defenderDefense,
                                     EngagementEffects engage = null)
         {
-            List<string> unused, unusedB; Rational unusedE;
+            List<string> unused, unusedB; Rational unusedE, unusedX;
             return EliminateEv(card, table, profile, wounded, defenderDefense,
-                               engage, out unused, out unusedE, out unusedB);
+                               engage, out unused, out unusedE, out unusedB, out unusedX);
         }
 
         static Rational EliminateEv(HeroCard card, HeroCardTable table,
@@ -410,8 +502,11 @@ namespace TacticalAI.Core
                                     EngagementEffects engage,
                                     out List<string> bestPool,
                                     out Rational energy,
-                                    out List<string> bandBests)
+                                    out List<string> bandBests,
+                                    out Rational explosion)
         {
+            explosion = ExplosionShare * card.ExplosionsWertEffektiv(
+                profile != null ? profile.LoadoutSkills : null);
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
             int pierce = 0;
@@ -532,7 +627,27 @@ namespace TacticalAI.Core
                 bestPool = pools[champ].Item1;
                 energy = pools[champ].Item3;
             }
-            return sum / reach;
+            // M21 (Thomas ruling 06.11., Fenn playtest): the printed blast
+            // ability (Fenn's Havoc Shot: "1C: ... this attack gains Blast
+            // 1H"; RR keyword Blast / DE rules "Explosion": everything
+            // ADJACENT to the hero's target suffers the blast value, no
+            // defense dice) rides as a FLAT increment on the damage operand.
+            // Ruling: "pauschal" - unconditional, NOT gated on where the
+            // imperial figures stand (Thomas chose the simple reading over
+            // the adjacency-gated one). The printed value is discounted to
+            // HALF (ExplosionShare): Havoc Shot costs 1 endurance per
+            // attack (Fenn has 4), triggers only when the primary attack
+            // lands damage, and the app campaign drops the friendly fire -
+            // the increment models Thomas' "erhöht immer ein wenig seinen
+            // Schaden", never the full dice value. fenn07 (Rebel Elite)
+            // ABSORBS the value to 2H through the curation pin (community-
+            // sourced print upgrade, Thomas ruling 06.11. to encode it).
+            // Being wounded DOUBLES the whole operand downstream through
+            // the wound economy (OverlordFocus.ThreatEconomic) - the blast
+            // rides along consistently. Heroes WITHOUT the printed blast
+            // (all others) carry increment 0 - every pre-M21 vector stays
+            // bit-identical.
+            return sum / reach + explosion;
         }
 
         // ------------------------------------------------- mobility factors
@@ -540,9 +655,14 @@ namespace TacticalAI.Core
         // terms of the weighted law now; the reach still extends with
         // printed ranged items exactly as before, wound band from the
         // PRINTED wound tempo - Thomas ruling: no hidden extra malus)
-        static int RunnerBand(HeroCard card, bool wounded)
+        static int RunnerBand(HeroCard card, bool wounded,
+                              HeroThreatProfile profile = null)
         {
-            return MobilityTier(wounded ? card.TempoVerwundet : card.Tempo);
+            // M21 (Thomas ruling 06.11.): printed skill pins raise the band
+            // tempo in the HEALTHY AND the wounded state (fenn01 "Taktisches
+            // Vorrücken": speed +1 also at 3 -> band 2 while wounded).
+            int delta = card.TempoDelta(profile != null ? profile.LoadoutSkills : null);
+            return MobilityTier((wounded ? card.TempoVerwundet : card.Tempo) + delta);
         }
 
         static int RunnerRange(HeroCard card, HeroCardTable table,

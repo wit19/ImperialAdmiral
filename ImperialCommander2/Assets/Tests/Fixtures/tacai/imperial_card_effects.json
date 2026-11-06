@@ -1266,33 +1266,33 @@
     }
    ],
    "expect": {
-    "order_base": [
-     "Fenn Signis",
-     "Biv Bodhrik"
-    ],
-    "order_cards": [
-     "Fenn Signis",
-     "Biv Bodhrik"
-    ],
-    "rows": [
-     {
-      "basis": "card",
-      "hero": "Fenn Signis",
-      "marked": false,
-      "threat": "49/30",
-      "threat_econ": "49/30",
-      "wounded": false
-     },
-     {
-      "basis": "card",
-      "hero": "Biv Bodhrik",
-      "marked": false,
-      "threat": "4/9",
-      "threat_econ": "4/9",
-      "wounded": false
-     }
-    ]
-   }
+     "order_base": [
+      "Fenn Signis",
+      "Biv Bodhrik"
+     ],
+     "order_cards": [
+      "Fenn Signis",
+      "Biv Bodhrik"
+     ],
+     "rows": [
+      {
+       "basis": "card",
+       "hero": "Fenn Signis",
+       "marked": false,
+       "threat": "32/15",
+       "threat_econ": "32/15",
+       "wounded": false
+      },
+      {
+       "basis": "card",
+       "hero": "Biv Bodhrik",
+       "marked": false,
+       "threat": "4/9",
+       "threat_econ": "4/9",
+       "wounded": false
+      }
+     ]
+    }
   },
   {
    "name": "rank_surcharge_zero_inert",
@@ -1320,33 +1320,33 @@
     }
    ],
    "expect": {
-    "order_base": [
-     "Fenn Signis",
-     "Biv Bodhrik"
-    ],
-    "order_cards": [
-     "Fenn Signis",
-     "Biv Bodhrik"
-    ],
-    "rows": [
-     {
-      "basis": "card",
-      "hero": "Fenn Signis",
-      "marked": false,
-      "threat": "19/30",
-      "threat_econ": "19/30",
-      "wounded": false
-     },
-     {
-      "basis": "card",
-      "hero": "Biv Bodhrik",
-      "marked": false,
-      "threat": "4/9",
-      "threat_econ": "4/9",
-      "wounded": false
-     }
-    ]
-   }
+     "order_base": [
+      "Fenn Signis",
+      "Biv Bodhrik"
+     ],
+     "order_cards": [
+      "Fenn Signis",
+      "Biv Bodhrik"
+     ],
+     "rows": [
+      {
+       "basis": "card",
+       "hero": "Fenn Signis",
+       "marked": false,
+       "threat": "17/15",
+       "threat_econ": "17/15",
+       "wounded": false
+      },
+      {
+       "basis": "card",
+       "hero": "Biv Bodhrik",
+       "marked": false,
+       "threat": "4/9",
+       "threat_econ": "4/9",
+       "wounded": false
+      }
+     ]
+    }
   },
   {
    "name": "cost_basics_armored_onslaught",

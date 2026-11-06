@@ -388,6 +388,7 @@
     "ordThreat": "Bedrohung {0} = reiner Waffenschaden/Runde (gedruckte Würfel inkl. Items) — Postur Töten/Verwunden: nur der Schaden zählt",
     "ordThreatCalcRunner": "Bedrohung {0} = 60% × Waffenschaden {1}/Runde (Würfel {2}) ÷ 8/3 + 40% × Tempo-Band {3}/3 — Postur Halten/Verzögern: Schaden wiegt am schwersten; die Reichweite steckt schon im Schnitt (bestes Tauschfeld pro Reichweitenfeld)",
     "ordThreatEnergy": "inkl. Energie-Zuschlag {0}/Runde (Wert der teureren Waffe über die gedruckten Würfel hinaus)",
+    "ordThreatExplosion": "inkl. Explosion +{0}/Runde (Pauschale für Fenns gedruckte Blast-Fähigkeit — halber Kartenwert)",
     "ordStrainPressure": "Helden mit vollem Strain-Puffer sind kurzzeitig etwas verwundbarer",
     "ordStrainFuzzy": "wahrscheinlich angespannt vom Kämpfen ({0}/{1} Aktionen)",
     "ordOptionPrinted": "Gedruckte Sonder-Aktion der Karte: {0} - {1}",

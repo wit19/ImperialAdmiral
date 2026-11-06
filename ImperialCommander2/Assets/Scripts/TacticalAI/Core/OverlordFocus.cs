@@ -169,6 +169,9 @@ namespace TacticalAI.Core
         public Rational? ThreatDamage;      // exchange EV per round (weapon
                                             //  score: dice + M17 energy)
         public Rational? ThreatEnergy;      // M17 price-energy part inside it
+        public Rational? ThreatExplosion;   // M21 flat blast increment inside it
+                                            //  (printed blast x 1/2, curation
+                                            //  skill-id pins; Fenn Havoc Shot)
         public int? ThreatBand;             // M16 mobility band 1..3 (wound tempo!)
         public int? ThreatRange;            // M16 weapon reach incl. item gates
         public string BestPool;             // dice the damage EV came from
@@ -238,6 +241,8 @@ namespace TacticalAI.Core
                 d["threat_damage"] = ThreatDamage.Value.ToString();
                 if (ThreatEnergy.HasValue && !ThreatEnergy.Value.IsZero)
                     d["threat_energy"] = ThreatEnergy.Value.ToString();
+                if (ThreatExplosion.HasValue && !ThreatExplosion.Value.IsZero)
+                    d["threat_explosion"] = ThreatExplosion.Value.ToString();
                 d["threat_band"] = (ThreatBand ?? 0).ToString();
                 d["threat_range"] = (ThreatRange ?? 0).ToString();
                 if (!string.IsNullOrEmpty(BestPool)) d["best_pool"] = BestPool;
@@ -477,6 +482,10 @@ namespace TacticalAI.Core
                                && (posture == "protect" || posture == "stall")
                                && x.Parts.Value.Energy > Rational.Zero
                     ? x.Parts.Value.Energy : (Rational?)null,
+                ThreatExplosion = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                               && x.Parts.Value.Explosion > Rational.Zero
+                    ? x.Parts.Value.Explosion : (Rational?)null,
                 ThreatBand = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
                     ? x.Parts.Value.SpeedBand : (int?)null,

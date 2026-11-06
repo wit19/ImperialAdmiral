@@ -278,6 +278,9 @@ namespace Saga
 				topR1.Init( r1 );
 				topR2.Init( r1, 1 );
 				r1.currentSize += 1;
+				//Reinforce reset: the returning figure gets a fresh start - clear
+				//one >=health damage tracker slot (see DeploymentCard).
+				r1.ResetWoundTrackersForReinforcement( 1 );
 				//update threat just spent
 				DataStore.sagaSessionData.ModifyThreat( -TacticalAI.PersonaState.CostFor( r1, r1.rcost ) );
 				//Debug.Log( "new size R1:" + r1.currentSize );
@@ -435,6 +438,9 @@ namespace Saga
 				on1R1.Init( r1 );
 				on1R2.Init( r1, 1 );
 				r1.currentSize += 1;
+				//Reinforce reset: same rule as HandleReinforcements - the returning
+				//figure clears one >=health damage tracker slot.
+				r1.ResetWoundTrackersForReinforcement( 1 );
 				// Personas (M2): persona discount FIRST, then the printed
 				// onslaught reduction (-1, floored at 1) - both public.
 				DataStore.sagaSessionData.ModifyThreat( -(Mathf.Max( 1, TacticalAI.PersonaState.CostFor( r1, r1.rcost ) - 1 )) );
@@ -447,6 +453,9 @@ namespace Saga
 				on2R1.Init( r2 );
 				on2R2.Init( r2, 1 );
 				r2.currentSize += 1;
+				//Reinforce reset: same rule as r1 - the returning figure clears
+				//one >=health damage tracker slot.
+				r2.ResetWoundTrackersForReinforcement( 1 );
 				// Personas (M2): see r1.
 				DataStore.sagaSessionData.ModifyThreat( -(Mathf.Max( 1, TacticalAI.PersonaState.CostFor( r2, r2.rcost ) - 1 )) );
 			}

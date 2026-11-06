@@ -92,16 +92,27 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
     engagePierce = (engage or {}).get('pierce',0)
     engageAcc = (engage or {}).get('acc_delta',0)
     pools = [ (card['basisAngriffswuerfel'], card['angriffsTyp'] != 'P', F(0)) ]
+    pool_is_melee_item = [False]   # M26: coverage of every pool
+    has_ranged = False
     for iid in items:
         e = ITEMS.get(iid)
         if e is None: continue
         ranged = e['typ'] == 'O'
         b = weapon_bonus(iid)
-        if e.get('wuerfel'): pools.append((e['wuerfel'], ranged, b))
+        if e.get('wuerfel'):
+            pools.append((e['wuerfel'], ranged, b)); pool_is_melee_item.append(not ranged)
+            has_ranged = has_ranged or ranged
         if e.get('attribut'):
             ap = attr_pool(card, e['attribut'], wounded)
-            if ap: pools.append((ap, ranged, b))
-    # reach
+            if ap:
+                pools.append((ap, ranged, b)); pool_is_melee_item.append(not ranged)
+                has_ranged = has_ranged or ranged
+    # M26 (Thomas ruling 06.11., Player-29 "Jyn hat den DL-44"): a carried
+    # ranged weapon OCCUPIES the ranged slot - the printed standard blaster
+    # never competes. The melee standard of a {{P}} hero is never replaced.
+    base_replaced = has_ranged and card['angriffsTyp'] != 'P'
+    # reach (RunnerRange law, M26-unchanged): printed Reichweite, extended
+    # only by verified ranged items' own acc-gates.
     range_ = card['reichweite']
     for iid in items:
         e = ITEMS.get(iid)
@@ -112,16 +123,23 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
         st = Stats(letters, ka, 0, True, None)
         if st.gate > range_: range_ = st.gate
     stats=[]
-    for letters, ranged, b in pools:
+    pool_gate=[card['reichweite'] if card['reichweite']>=1 else 1]
+    for idx,(letters, ranged, b) in enumerate(pools):
         st = Stats(letters, kw_acc, kw_dmg, ranged, defense)
         if engageAcc:
             st.acc = max(F(0), st.acc + engageAcc)
             st.gate = int(st.acc + F(1,2))
         stats.append((st,b))
+        # M26: each weapon's own coverage - ranged item = its acc-gate,
+        # melee item = one cell (HeroCards.cs poolGate[i]).
+        if idx>0:
+            pool_gate.append(1 if pool_is_melee_item[idx] else (st.gate if st.gate>=1 else 1))
     total=F(0)
     for d in range(1, range_+1):
         best=F(0)
-        for st,b in stats:
+        for idx,(st,b) in enumerate(stats):
+            if idx==0 and base_replaced: continue   # standard stays in the bag
+            if d > pool_gate[idx]: continue         # a pool never leaves its coverage
             v = st.ev(d, pierce + engagePierce) + b
             if v > best: best = v
         total += best

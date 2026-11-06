@@ -172,6 +172,11 @@ namespace TacticalAI.Core
         public Rational? ThreatExplosion;   // M21 flat blast increment inside it
                                             //  (printed blast x 1/2, curation
                                             //  skill-id pins; Fenn Havoc Shot)
+        public Rational? ThreatBonus;       // M25 flat extra-attack/Verstaerkung
+                                            //  increment inside it (printed
+                                            //  cards x neutral attack EV;
+                                            //  Gideon Hammer/Meisterleistung,
+                                            //  Loku recon-token synergy)
         public int? ThreatBand;             // M16 mobility band 1..3 (wound tempo!)
         public int? ThreatRange;            // M16 weapon reach incl. item gates
         public string BestPool;             // dice the damage EV came from
@@ -243,6 +248,8 @@ namespace TacticalAI.Core
                     d["threat_energy"] = ThreatEnergy.Value.ToString();
                 if (ThreatExplosion.HasValue && !ThreatExplosion.Value.IsZero)
                     d["threat_explosion"] = ThreatExplosion.Value.ToString();
+                if (ThreatBonus.HasValue && !ThreatBonus.Value.IsZero)
+                    d["threat_bonus"] = ThreatBonus.Value.ToString();
                 d["threat_band"] = (ThreatBand ?? 0).ToString();
                 d["threat_range"] = (ThreatRange ?? 0).ToString();
                 if (!string.IsNullOrEmpty(BestPool)) d["best_pool"] = BestPool;
@@ -496,6 +503,10 @@ namespace TacticalAI.Core
                                && (posture == "protect" || posture == "stall")
                                && x.Parts.Value.Explosion > Rational.Zero
                     ? x.Parts.Value.Explosion : (Rational?)null,
+                ThreatBonus = x.C.Card != null && x.Parts.HasValue
+                               && (posture == "protect" || posture == "stall")
+                               && x.Parts.Value.Bonus > Rational.Zero
+                    ? x.Parts.Value.Bonus : (Rational?)null,
                 ThreatBand = x.C.Card != null && x.Parts.HasValue
                                && (posture == "protect" || posture == "stall")
                     ? x.Parts.Value.SpeedBand : (int?)null,

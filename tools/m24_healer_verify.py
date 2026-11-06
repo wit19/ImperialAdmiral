@@ -22,7 +22,7 @@ cards = json.load(open(os.path.join(EN, 'tactical_hero_cards.json'), encoding='u
 heroes = {h['appHeroId']: h for h in cards['heroes']}
 
 # --- Anker 1: Schema und MHD-Kit sind im Asset verankert ---
-anchor('schema/4', cards['schema'], 'tacai.hero_cards/4')
+anchor('schema/5', cards['schema'], 'tacai.hero_cards/5')
 mhd = heroes['H10']
 anchor('mhd-kit', mhd['effekte']['healer']['skills'],
        ['mhd01', 'mhd03', 'mhd05', 'mhd06', 'mhd07'])

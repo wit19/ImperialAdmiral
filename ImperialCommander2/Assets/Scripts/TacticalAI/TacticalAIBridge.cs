@@ -2283,6 +2283,12 @@ namespace TacticalAI
             // own dice.
             if (dec.ThreatExplosion.HasValue && !dec.ThreatExplosion.Value.IsZero)
                 parts.Add(TF(L.ordThreatExplosion, dec.ThreatExplosion.Value.ToString()));
+            // M25 (Thomas ruling 06.11.): the flat extra-attack / recon-
+            // synergy increment reads its own clause - Gideon's Hammer and
+            // Anvil / Master's Work and Loku's recon-token synergy are public
+            // card prints, the EXPLAIN cell shows why they outscore dice.
+            if (dec.ThreatBonus.HasValue && !dec.ThreatBonus.Value.IsZero)
+                parts.Add(TF(L.ordThreatBonus, dec.ThreatBonus.Value.ToString()));
             if (dec.Threat.HasValue)
             {
                 // M15 F2 (Thomas 05.11): the EXPLAIN cell shows the REAL

@@ -389,6 +389,7 @@
   },
   {
    "name": "m10a_campaign_loadout_breaks_row_queue",
+   "comment": "M26-REBASE 06.11.: Zeilenqueue-Stabilitaets-Pin ueber alle vier Zeilen (Drokkatta 166, CT 84, Davith 72, Biv 53) - Werte aus dem Harness-Record, per Port verifiziert (tools/m19_band_average_verify.py, 0 fails). Kein Gekauftes im Feld; verschiebt sich hier etwas, ist die Queue-Brechung (M10a Urprung) zurueck.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -469,6 +470,18 @@
     },
     {
      "basis": "card",
+     "best_pool": "Green+Green",
+     "hero": "CT-1701",
+     "marked": false,
+     "threat": "84",
+     "threat_band": "2",
+     "threat_damage": "23/9",
+     "threat_econ": "84",
+     "threat_range": "3",
+     "wounded": false
+    },
+    {
+     "basis": "card",
      "best_pool": "Green+Yellow",
      "hero": "Davith Elso",
      "marked": false,
@@ -477,18 +490,6 @@
      "threat_damage": "2",
      "threat_econ": "72",
      "threat_range": "1",
-     "wounded": false
-    },
-    {
-     "basis": "card",
-     "best_pool": "Green+Green",
-     "hero": "CT-1701",
-     "marked": false,
-     "threat": "57",
-     "threat_band": "2",
-     "threat_damage": "4/3",
-     "threat_econ": "57",
-     "threat_range": "3",
      "wounded": false
     },
     {
@@ -507,6 +508,7 @@
   },
   {
    "name": "m15_wounded_loses_to_firepower",
+   "comment": "M26-REBASE 06.11.: Verwundet verliert gegen reine Feuerkraft (CT 84 > Saska 57 > Biv 53) - Rank-Pin aus dem Record, port-verifiziert. Saskas Drift aus der M25-Aera bleibt korrekt: Grundtreffer 1/6 + 1 gedruckter Accuracy = 1/2.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -561,12 +563,24 @@
      "best_pool": "Green+Green",
      "hero": "CT-1701",
      "marked": false,
+     "threat": "84",
+     "threat_band": "2",
+     "threat_damage": "23/9",
+     "threat_econ": "84",
+     "threat_range": "3",
+     "wounded": false
+    },
+    {
+     "basis": "card",
+     "best_pool": "Green+Yellow",
+     "hero": "Saska Teft",
+     "marked": false,
      "threat": "57",
      "threat_band": "2",
      "threat_damage": "4/3",
      "threat_econ": "57",
      "threat_range": "3",
-     "wounded": false
+     "wounded": true
     },
     {
      "basis": "card",
@@ -579,18 +593,6 @@
      "threat_econ": "53",
      "threat_range": "3",
      "wounded": false
-    },
-    {
-     "basis": "card",
-     "best_pool": "Green+Yellow",
-     "hero": "Saska Teft",
-     "marked": false,
-     "threat": "42",
-     "threat_band": "2",
-     "threat_damage": "2/3",
-     "threat_econ": "42",
-     "threat_range": "3",
-     "wounded": true
     }
    ]
   },
@@ -856,6 +858,7 @@
   },
   {
    "name": "m11b_real_wound_runner",
+   "comment": "M26-REBASE (Player-29 Fall): Diala (Reiche 2, item120 Blue+Yellow Reichweite 2): Zellen = 2 + 1,5 (je + 1/2 Energie-Anteil); das Verwundet-Handicap bleibt der einzige Runner-Zaehler - die verwundete Zeile (116, Band 1) fuehrt weiter gegen die gesunde (115). alt: 175/158 mit Green+Green-Zelle 1. Support-/Heiler-Pins bleiben unberuehrt: Support-Zaehler == Ziellaeufer-Zaehler.",
    "posture": "protect",
    "counter": null,
    "heroes": [
@@ -895,27 +898,27 @@
    "expect": [
     {
      "basis": "card",
-     "best_pool": "Blue+Red+Green",
+     "best_pool": "Green+Yellow",
      "hero": "Diala Passil",
      "marked": false,
-     "threat": "175",
+     "threat": "116",
      "threat_band": "1",
-     "threat_damage": "43/6",
-     "threat_econ": "175",
-     "threat_energy": "3",
+     "threat_damage": "55/12",
+     "threat_econ": "116",
+     "threat_energy": "3/2",
      "threat_range": "2",
      "wounded": true
     },
     {
      "basis": "card",
-     "best_pool": "Blue+Green+Yellow",
+     "best_pool": "Green+Yellow",
      "hero": "Diala Passil",
      "marked": false,
-     "threat": "158",
+     "threat": "115",
      "threat_band": "2",
-     "threat_damage": "35/6",
-     "threat_econ": "158",
-     "threat_energy": "3",
+     "threat_damage": "47/12",
+     "threat_econ": "115",
+     "threat_energy": "3/2",
      "threat_range": "2",
      "wounded": false
     }
@@ -974,7 +977,7 @@
   },
   {
    "name": "m11d_strain_below_buffer_and_capped",
-   "comment": "M11d signal-shape pins (defense None -> eliminate EVs: CT 7/3, Drokkatta 13/6, Biv 13/6): (a) Biv carries 2 of his 3-marker buffer = BELOW -> no signal (no strain_druck key), stays on plain 13/6; (b) CT-1701 at his FULL buffer 2 (barrage export twins merged to ONE reaction, budget 2 not 4) fires +8 = 31/3 and overtakes the 13/6 pair - he was LAST pre-M11d, so the window genuinely softens him; (c) the fired pair then orders by the untouched lower keys (Drokkatta row 0 before Biv row 1): the pressure never re-orders rows it did not lift, and it is capped at +8 regardless of overflow (markers 99 would print the same 31/3 row).",
+   "comment": "M11d Signalform-Pins (defense None -> eliminate = Banden-Mittel operand): Biv unter Puffer -> kein strain_druck; CT-1701 am vollen Puffer -> strain_druck 8 gekappt. M25/M26-REBASE 06.11.: Werte aus dem Harness-Record (CT 23/9 = Banden-Mittel Gate 3 + gedruckte Barrage-Zusatzanteile M25; Drokkatta/Biv 7/6), unabhaengig per Port verifiziert (tools/m19_band_average_verify.py). Rangordnung unveraendert.",
    "posture": "eliminate",
    "counter": null,
    "defense": null,
@@ -1018,8 +1021,8 @@
      "hero": "CT-1701",
      "marked": false,
      "strain_druck": "8",
-     "threat": "4/3",
-     "threat_econ": "28/3",
+     "threat": "23/9",
+     "threat_econ": "95/9",
      "wounded": false
     },
     {
@@ -1042,7 +1045,7 @@
   },
   {
    "name": "m11d_marks_and_wounded_outrank_pressure",
-   "comment": "M11d precedence pins (protect posture; Diala runner values 4 healthy / 2 wounded as in m11b_real_wound_runner, Fenn on the curated prior 10 - eliminate_economy shows the identical card-vs-economy shape). (1) LIGHT, capped: the FULL 3-marker buffer on healthy Diala lifts the econ key 4 -> 12 and nothing else - threat stays 4, no second signal, no scaling. (2) The human aim MARK (key 1) still owns row 0 and carries its own strain_druck cell: pressure rides the econ key, it never demotes the table designation. (3) NO PRIMARY SIGNAL SHIFT: wounded Diala stays ranked by the same econ law she had without any strain input in this family (2 on this key; the reference canon eliminate_economy already pins that wounded rows rank below higher-econ healthy rows), and Biv/Drokkatta-style untouched rows keep their pre-M11d relative order - the +8 only ever moves the row it fires on.",
+   "comment": "M26-REBASE: Zeilenreihenfolge = Rang: die getaggte Diala (115, strain_druck 8) fuehrt vor der ungetaggten verwundeten (116), obwohl ihr Rohwert minimal niedriger ist - Markierung und Druck stehen vor der reinen Zahl. Fenn ohne Gueter: 13/6 Banden-Schnitt + 1/2 Scout-Bonus (M25) -> threat_damage 5/2, Bedrohung 83. alt: 158/175/154 mit Standard-Baendern.",
    "posture": "protect",
    "counter": null,
    "defense": null,
@@ -1100,28 +1103,28 @@
    "expect": [
      {
       "basis": "mark",
-      "best_pool": "Blue+Green+Yellow",
+      "best_pool": "Green+Yellow",
       "hero": "Diala Passil",
       "marked": true,
       "strain_druck": "8",
-      "threat": "158",
+      "threat": "115",
       "threat_band": "2",
-      "threat_damage": "35/6",
-      "threat_econ": "166",
-      "threat_energy": "3",
+      "threat_damage": "47/12",
+      "threat_econ": "123",
+      "threat_energy": "3/2",
       "threat_range": "2",
       "wounded": false
      },
      {
       "basis": "card",
-      "best_pool": "Blue+Red+Green",
+      "best_pool": "Green+Yellow",
       "hero": "Diala Passil",
       "marked": false,
-      "threat": "175",
+      "threat": "116",
       "threat_band": "1",
-      "threat_damage": "43/6",
-      "threat_econ": "175",
-      "threat_energy": "3",
+      "threat_damage": "55/12",
+      "threat_econ": "116",
+      "threat_energy": "3/2",
       "threat_range": "2",
       "wounded": true
      },
@@ -1130,11 +1133,11 @@
       "best_pool": "Blue+Green",
       "hero": "Fenn Signis",
       "marked": false,
-      "threat": "154",
+      "threat": "83",
       "threat_band": "2",
-      "threat_damage": "17/3",
-      "threat_econ": "154",
-      "threat_energy": "3",
+      "threat_damage": "5/2",
+      "threat_econ": "83",
+      "threat_energy": "3/5",
       "threat_explosion": "1/2",
       "threat_range": "5",
       "wounded": false
@@ -1486,7 +1489,7 @@
   },
   {
    "name": "p19_equal_dice_dearer_gear_leads",
-   "comment": "Player-19 (Thomas 03.11): MHD-19 and Verena Talos print the SAME base dice (BY) - threat EV ties. The items differ ONLY in investment: Verena carries item108 (Green-Yellow, tier1, price 550), MHD-19 item109 (same Green-Yellow dice, tier1, price 200). Extra item abilities are invisible to the dice model, so tier x cost (EquipmentIndex, M10a key-4) is the tie-breaker: the dearer gun is objectively the bigger investment -> Verena leads.",
+   "comment": "M26-REBASE: Verena kauft Blaster+Yellow (item110), MHD-19 bleibt blanko - beide schiessen jetzt Blue+Yellow (Acc 4, Green-Bonus 1/2), identische Wuerfel in allen vier Zellen. threat 73/80 vs 13/20 (eliminate): der Unterschied ist NUR der Aufpreis - Verenas Preisanteil (3/4) laeuft in der Kette mit, MHD zahlt 0 -> eqIndex/Preis-Key haelt Verena vorn. alt (M22): Gleichstand 51/40 vs 11/10 mit Standardwuerfeln in Zelle 1.",
    "posture": "eliminate",
    "counter": null,
    "heroes": [
@@ -1528,16 +1531,16 @@
      "basis": "card",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "51/40",
-     "threat_econ": "51/40",
+     "threat": "73/80",
+     "threat_econ": "73/80",
      "wounded": false
     },
     {
      "basis": "card",
      "hero": "MHD-19",
      "marked": false,
-     "threat": "11/10",
-     "threat_econ": "11/10",
+     "threat": "13/20",
+     "threat_econ": "13/20",
      "wounded": false
     }
    ]
@@ -1917,7 +1920,7 @@
   },
   {
    "name": "m19_band_switch_stall",
-   "comment": "M19 (Player-28 DL-44-Fund): Banden-Mittel mit Waffenwechsel. Jyn (Gruen+Gruen-Basis, Reichweite 3) mit DL-44 (Blau+Gelb, Reichweite 4, 500 XP -> +1/2 Energie): d1 gewinnt Gruen+Gruen (7/3 > 2), ab d2 die DL-44 -> Mittel ueber 1..4 = 19/12, Bedrohung 73 (war 89 unter Distanz-1-Law, Handrechnung siehe findings-band-average-threat.md). Loku ohne Gueter: Schnitt ueber 1..5 = 7/5 -> 71. Ferne dominiert nicht mehr durch gruenen Kurzstrecken-Schaden.",
+   "comment": "M26-REBASE 06.11. (Thomas-Ruling zu Player-29 'Jyn hat den DL-44'): Gekaufte Blaster ERSETZEN die Standardwuerfel in JEDEM Band (kein 1:Green+Green mehr, kein BY-Standard@1 fuer MHD) - der Aufpreis laeuft nur als Energie-Operand mit. Jyn Odan (DL-44 Blue+Yellow, Acc 4, Green-Bonus 1/2): Zellen d1..d4 = 2 + 2 + 1,5 + 0,5 -> Schnitt 3/2 (war 19/12) -> Bedrohung 74 (war 76). Loku (keine Gueter, Base Gate = Reiche 5): 13/6 Banden-Schnitt + 1/2 Gedruckter-Scout-Bonus (M25) = 8/3 -> Band 3 erfuellt -> 100. alt (M19/M24): Jyn bedruckte 4 liessen Zelle 5 sterben (76) und das 1:Green+Green winning-Team stellte 19/12.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -1951,34 +1954,35 @@
    "expect": [
     {
      "basis": "card",
-     "best_pool": "Blue+Yellow",
-     "hero": "Jyn Odan",
+     "best_pool": "Blue+Green",
+     "hero": "Loku Kanoloa",
      "marked": false,
-     "threat": "76",
+     "threat": "100",
      "threat_band": "3",
-     "threat_damage": "19/12",
-     "threat_econ": "76",
-     "threat_energy": "1/2",
-     "threat_range": "4",
+     "threat_bonus": "1/2",
+     "threat_damage": "8/3",
+     "threat_econ": "100",
+     "threat_range": "5",
      "wounded": false
     },
     {
      "basis": "card",
-     "best_pool": "Blue+Green",
-     "hero": "Loku Kanoloa",
+     "best_pool": "Blue+Yellow",
+     "hero": "Jyn Odan",
      "marked": false,
-     "threat": "72",
+     "threat": "74",
      "threat_band": "3",
-     "threat_damage": "7/5",
-     "threat_econ": "72",
-     "threat_range": "5",
+     "threat_damage": "3/2",
+     "threat_econ": "74",
+     "threat_energy": "1/2",
+     "threat_range": "4",
      "wounded": false
     }
    ]
   },
   {
    "name": "m19_band_switch_eliminate",
-   "comment": "M19 in der Toeten-Postur: reines Bandenmittel OHNE Prozentgewichtung - Jyn 19/12 (Bandenschnitt, NICHT mehr das Distanz-1-Kap 7/3), Loku 7/5 (fuenfte Zelle traff nicht und zaehlt als 0 - der Schnitt haertet Reichweite ehrlich ein).",
+   "comment": "M26-REBASE: dieselbe Verschiebung im Eliminate-Fenster (threat = Schaden operand pur): Loku 8/3 (13/6 Schnitt + 1/2 M25-Scout-Bonus), Jyn 3/2 (DL-44 erhaelt Zelle 1 zurueck: 2+2+1,5+0,5 geteilt durch 4; war 19/12 mit 1:Green+Green in Zelle 1). Banden-Durchschnitt bleibt Nenner-Neutralitaet (M19): ein weiter Gekaufter verlaengert nicht, er verlagert nur.",
    "posture": "eliminate",
    "counter": null,
    "heroes": [
@@ -2012,25 +2016,25 @@
    "expect": [
     {
      "basis": "card",
-     "hero": "Jyn Odan",
+     "hero": "Loku Kanoloa",
      "marked": false,
-     "threat": "19/12",
-     "threat_econ": "19/12",
+     "threat": "8/3",
+     "threat_econ": "8/3",
      "wounded": false
     },
     {
      "basis": "card",
-     "hero": "Loku Kanoloa",
+     "hero": "Jyn Odan",
      "marked": false,
-     "threat": "7/5",
-     "threat_econ": "7/5",
+     "threat": "3/2",
+     "threat_econ": "3/2",
      "wounded": false
     }
    ]
   },
   {
    "name": "m19_band_melee_inert",
-   "comment": "M19 Neutralitaets-Pin: der Nahkampf-Pool zahlt im Pairing keinen Genauigkeits-Zoll pro Distanz (distanz-traege) - Verenas Panzerhandschuhe (Gruen+Gelb Nahkampf, 300 XP -> +3/10) liefern wie vor M19 exakt 23/10 pro Anschlag, Bedrohung 76 unveraendert. Wer keine Reichweite hat, verliert durch M19 nichts.",
+   "comment": "M26-REBASE + M19-Grenzfall: Verena mit item303 (Einsicht, Nahkampf-Only Blue+Yellow Reichweite 1) plus item110: der Nahkampf-Only-Blaster punktet nur in Zelle 1 - ab dem 2er-Band gewinnt der gedruckte Green+Reach-Regelwert die Slots (Grenzwert 3). threat 54, threat_damage 6/5, Energie 3/40: die Zusatz-Munition zahlt als Preisanteil, nie als Reichweiten-Pseudo. alt (M22): 78/23pro10 - item303 war damals unsichtbar (Sammel-Filter lieh Reichweite).",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2054,14 +2058,14 @@
    "expect": [
     {
      "basis": "card",
-     "best_pool": "Green+Yellow",
+     "best_pool": "Blue+Yellow",
      "hero": "Verena Talos",
      "marked": false,
-     "threat": "78",
+     "threat": "54",
      "threat_band": "2",
-     "threat_damage": "23/10",
-     "threat_econ": "78",
-     "threat_energy": "3/10",
+     "threat_damage": "6/5",
+     "threat_econ": "54",
+     "threat_energy": "3/40",
      "threat_range": "4",
      "wounded": false
     }
@@ -2069,7 +2073,7 @@
   },
   {
    "name": "m20_reach_not_a_bonus",
-   "comment": "M20 (Thomas-Meinung 05.11): Die Reichweitenziffer ist gestrichen, die Halte-Formel waegt 60/40 (Schaden/Tempo). Reichweite zahlt jetzt GENAU einmal - im Banden-Mittel (M19). Beweis-Zeilen: CT-1701 (Gruen+Gruen Fernkampf, Reichweite 3, Schnitt 4/3) und Jarrod Kelvin (Gelb+Gelb Nahkampf, Reichweite 1, Schnitt 4/3) tragen bei gleichem Band dieselbe Bedrohung 57 - das fruehere 55-vs-52-Disproport war reine Reichweiten-Ziffer. Shyla Varad (Gruen+Gelb Nahkampf, Schnitt 2, Band 3): 60% x 2/(8/3) + 40% = 85 - Nahkampf muss sich nicht mehr verstecken, die Wuerfel zaehlen.",
+   "comment": "M20-Gesetz + M25/M26-REBASE: Reichweite zahlt genau einmal - im Banden-Mittel ueber die Gate-Zellen (M19/M26 poolGate = wirksame Blaster-Reiche des Helden). Shyla/CT/Jarrod ohne Gueter: Bandschnitte ihrer Basiswuerfel; CT 84 traegt zusaetzlich die gedruckten Barrage-Anteile (M25) und den vollen Puffer-druck. Kein Held bekommt Bedrohung fuer eine Reichweitenziffer allein - Reihenfolge bleibt.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2122,10 +2126,10 @@
      "best_pool": "Green+Green",
      "hero": "CT-1701",
      "marked": false,
-     "threat": "57",
+     "threat": "84",
      "threat_band": "2",
-     "threat_damage": "4/3",
-     "threat_econ": "57",
+     "threat_damage": "23/9",
+     "threat_econ": "84",
      "threat_range": "3",
      "wounded": false
     },

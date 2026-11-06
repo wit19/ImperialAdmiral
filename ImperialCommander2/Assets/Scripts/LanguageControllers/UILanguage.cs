@@ -85,6 +85,8 @@ public class UITacticalAI
 	public string ordThreatCalcRunner;
 	public string ordThreatEnergy;
 	public string ordThreatExplosion;
+	// M25: flat extra-attack / Verstaerkung clause
+	public string ordThreatBonus;
 	// M11d: light strain-pressure note in the round-focus WHY line
 	public string ordStrainPressure;
 	// M11h: fuzzy strain-usage prior in the round-focus WHY line - args

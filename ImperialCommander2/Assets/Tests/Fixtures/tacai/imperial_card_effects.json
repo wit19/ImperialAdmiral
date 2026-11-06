@@ -1005,8 +1005,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1025,8 +1025,8 @@
      "acc_delta": 1,
      "pierce": 0
     },
-    "threat_base": "1/6",
-    "threat_cards": "1/2"
+    "threat_base": "1/2",
+    "threat_cards": "5/6"
    }
   },
   {
@@ -1042,8 +1042,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1059,8 +1059,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1076,8 +1076,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1093,8 +1093,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1110,8 +1110,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1127,8 +1127,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1144,8 +1144,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1161,8 +1161,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1178,8 +1178,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1195,8 +1195,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1214,8 +1214,8 @@
    ],
    "expect": {
     "engage": null,
-    "threat_base": "1/6",
-    "threat_cards": "1/6"
+    "threat_base": "1/2",
+    "threat_cards": "1/2"
    }
   },
   {
@@ -1236,8 +1236,8 @@
      "acc_delta": 0,
      "pierce": 1
     },
-    "threat_base": "1/6",
-    "threat_cards": "2/3"
+    "threat_base": "1/2",
+    "threat_cards": "4/3"
    }
   },
   {

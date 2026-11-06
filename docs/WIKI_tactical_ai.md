@@ -206,7 +206,9 @@ Each activation shows one pop-up, assembled from printed facts
 
 1. **Focus line** — which hero the Imperials are concentrating on this round, by
    name, on **every** activation pop-up at every difficulty. With EXPLAIN = FULL
-   you also get the *reason* ("wounded — finish him", "highest firepower").
+   you also get the *reason* ("highest firepower among the remaining heroes",
+   "the mission objective names him", "finishing him counts double", "mission
+   goal 'wound all heroes' orders the healthy").
    Deliberately public: a human Imperial player has this information too.
 2. **Doctrine line** — the role this figure plays in this mission, named in plain
    words directly under the focus line, e.g. `Wachschutz (Zone halten, Wege
@@ -254,17 +256,49 @@ what the dice tables cannot see: energy abilities and bonus dice that are
 priced into the weapon but not printed on it. The model evaluates each
 candidate weapon die by die against the current defense and takes the
 highest-scoring one — the Empire may never under-estimate an equipped hero.
+Since M26 (06.11., "Jyn hat den DL-44") a hero's attack is the weapon she
+CARRIES: a bought ranged weapon replaces the printed standard blaster outright
+at every distance, and each weapon may only score the distances ITS OWN
+coverage reaches (printed Reichweite for the base blaster, the weapon's own
+accuracy gate for a bought gun, a single cell for a melee item).
 - **Plus exactly +1** for the *objective actor*: the hero who finished the
   activation in which the mission objective moved (public event credit).
 - **Mission posture decides the formula.** When the Imperium is ordered to
   *hold* (Guard/Block-style postures), threat is the percent law:
-  `100 × (55% × score ÷ 8/3 + 35% × speed-band ÷ 3 + 10% × weapon reach ÷ 7)`
-  — damage first, then tempo, then reach, each over the game's own printed
-  maximum. In *kill* postures it is the raw score per round. Same heroes,
+  `100 × (60% × score ÷ 8/3 + 40% × speed-band ÷ 3)` — damage first, then
+  tempo, each over the game's own printed maximum (the strongest printed
+  exchange EV is 8/3 — an item weapon; band 3 is the fastest band). Reach
+  is not a third factor: it is already priced into the score as the
+  **band average** — every distance 1..reach is paired once, only pools whose
+  own coverage reaches that distance compete (M26), and every miss counts as
+  0, so wide weak bands dilute while melee pools pay no per-distance accuracy
+  toll.
+  In *kill* postures the band average stands raw. Same heroes,
   same score, different emphasis — the focus call names the formula it used.
+- **Printed card effects count exactly as printed.** A blast/explosion card
+  adds half its printed value per round in hold postures (Fenn's Havoc Shot,
+  raised by its printed upgrade card); printed tempo cards raise the hero's
+  speed band in the healthy AND the wounded state; cards printing an extra
+  attack (Gideon's "Hammer und Amboss" / "Meisterleistung") and Loku's
+  recon-token synergy ride on as half of one neutral attack each; static
+  accuracy prints (Loku's All-Weather Rifle +1 and "Clear-Minded" +2,
+  CT-1701 +2, Saska +1, plus the equippable "Spezialeinsatzkräfte von Mon
+  Cala", "Meisterschütze" and "Schuss über Bande") pair with the dice
+  through the same keyword seam items use. State-honest: an ability printed
+  only on the healthy card side ends with the wound — the wounded side of
+  Loku's card prints no abilities at all, so his recon marker AND his +2
+  accuracy are gone, while his weapon's +1 rides in both states. The
+  reference print decides, never a guess — and every one of these effects
+  prints as its own clause in the EXPLAIN cell.
 - Wounded heroes are evaluated with their wounded dice faces **and** their
   printed wounded tempo (a wound usually drops the speed band — no separate
   penalty is applied; the printed rule already carries it).
+- **Under a wound objective the printed roles order the healthy heroes.**
+  When the mission demands *all heroes wounded*, the Empire first reorders
+  the still-healthy candidates: heroes carrying a printed healer kit first,
+  then printed supporters, then the fastest movers, then raw damage. These
+  role flags never enter the threat number — they only order it (see the
+  glossary entry "Wound objective").
 - **When two heroes land on the same number**, the better-invested hero
   still leads: the tie-break compares what the campaign actually *spent* on
   each — every bought item weighted by its printed **tier × price**, then
@@ -378,10 +412,25 @@ can move when the objective moves. (Shown on the doctrine line of the activation
 pop-up; see also the Guard zone above.)
 
 **Focus (target).** The hero the Imperials concentrate on this round, named on
-every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice follows public criteria (objective gravity,
-wound state, firepower) and a fixed, published tie-break chain (squad row, then
-hero id) when several heroes are equally good — deterministic down to the last
-tie, and nothing from another game's rulebook decides your target.
+every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice
+follows public criteria in a fixed, published order: the human's aim mark first;
+then the reaction keys (who shot the activating figure this round, the guard-zone
+and retaliation keys, the supporter's trust section); then the **objective actor**
+— a hero who is actually working the mission objective outranks every wound and
+role law; then the wound-objective law below (healthy before wounded, healer-kit
+carriers, supporters, movers, damage); then the threat number itself. Only when
+all of that ties does the published fallback chain decide (campaign investment,
+squad row, hero id) — deterministic down to the last tie, and nothing from
+another game's rulebook decides your target.
+
+**Wound objective ("alle Helden verwunden").** Some missions end the moment no
+healthy hero is left — the printed mission text names it, the AI only reads that
+text. While such an objective is in play, a hit on an ALREADY-wounded hero
+advances the mission not at all, so the Empire attacks the healthy ones first and
+the usual "wounded — finish him" economy is switched off; the EXPLAIN cell says
+exactly which law ordered the row ("Missionsziel 'alle Helden verwunden'"). An
+objective actor under fire stays the exception: work on the mission objective
+still outranks the wound law.
 
 **Threat budget.** The mission's printed resource for Imperial activations and
 reinforcements. Difficulty decides how *wisely* it is spent (burst vs. held

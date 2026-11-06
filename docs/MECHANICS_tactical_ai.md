@@ -144,20 +144,43 @@ beta).
 
 ## 5. Focus selection (who gets shot at)
 
-`Focus.cs` + `HeroProfiles.cs`. The round's focus target is computed once per round,
-announced publicly at round start (and re-ranked each activation from the same keys):
+`Focus.cs` + `OverlordFocus.cs` + `HeroProfiles.cs`. The round's focus target is
+computed once per round, announced publicly at round start (and re-ranked each
+activation from the same keys). The shipped comparator (`Compare`, keys in order):
 
-1. **Wounded / defeated marks** outrank everything (except at S1/S2, which are
-   `CounterBlind` and ignore them by design — that is the handicap, not a bug).
-2. **Threat value per hero** — current law (M15–M21, Thomas rulings 05.–06.11): the
+0. **Aim mark** (public designation — the mission text or the Imperial feed names
+   a hero; most recent designation first). This is the ONLY human input that
+   ranks above everything else.
+0b. **Reaction keys** (chain R-D/S-D/S-E): `Reaktion` (the hero who shot THIS
+   activating figure inside an open window this round), then `Wachzone`, then
+   `Vergeltung`, then `Maskenvertrauen` — fact-track before suspicion-track,
+   each null-inert when its card/module is not in play.
+0c. **Objective actor** (M10b): the hero credited with the last mission-objective
+   progress (activation-window attribution from the world feed, never a position
+   read) OUTRANKS the entire counter/role doctrine below; two objective actors
+   tie-break by most recent engagement (Player-19). The +1 threat bump is
+   per-tier and rides on top of the number.
+0d. **Wound-objective law** (`woundAll` counter class, wounded-focus fix 03.11,
+   final phrasing 06.11): when the mission's printed END demands wounded heroes
+   ("all heroes wounded"), a hit on an already-wounded hero earns ZERO counter
+   progress — so healthy heroes rank first, the ×2 finisher economy is OFF, and
+   within the healthy the printed chip vector orders: `[healer-kit 3, supporter
+   2, plain 1, identity-healer role 0]` → mobility → damage-EV (lexicographic,
+   `HeroProfiles.ChipKey`). Without the counter none of this exists — the
+   null-counter canon stays bit-identical.
+1. **Threat value per hero** — current law (M15–M25, Thomas rulings 05.–06.11): the
    hero's TRUE standard-weapon dice from `tactical_hero_cards.json` (never the
    printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
    weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
    E-11 +2/5, lightsaber +3, gloves 0). The score itself is the **band average**
-   (M19, Player-28 DL-44 finding): every distance 1..reach is paired once, the
-   hero's strongest pool scores each distance (printed sidearm at 1, the bought
-   long gun out deep), misses count as 0 in the average, and melee pools pay no
-   accuracy toll per distance so they stay distance-inert. In hold postures
+   (M19, Player-28 DL-44 finding; candidate set under M26): every distance
+   1..reach is paired once — but only pools score that distance whose OWN
+   coverage reaches it, and a carried ranged weapon has REPLACED the printed
+   standard blaster outright (see the M26 section; "Jyn hat den DL-44"), so
+   the pre-M26 reading "printed sidearm at 1, bought long gun out deep" is
+   dead; distances no pool covers count as 0 in the average, and melee pools
+   pay no accuracy toll per distance so they stay distance-inert. In hold
+   postures
    (protect/stall) that average is percent-weighted — and since M20 (Thomas
    melee ruling, 05.11) WITHOUT a range cell:
    `threat = 100 × (60% × score/(8/3) + 40% × band/3)`
@@ -169,7 +192,7 @@ announced publicly at round start (and re-ranked each activation from the same k
    through the printed `tempoVerwundet` (no percent malus — proven redundant).
    Since M21 (Thomas ruling, 06.11) the printed ability effects count too, as
    language-independent SKILL-ID pins in the hero's `effekte` asset block (schema
-   `tacai.hero_cards/2`): a hero whose ability prints a Blast/Explosion adds a flat
+   `tacai.hero_cards/5`): a hero whose ability prints a Blast/Explosion adds a flat
    hold-posture increment of half the printed value in damage-EV terms
    (`1/2 × H × 2/6 per round` — Fenn: 1H healthy, 2H once his printed upgrade card
    `fenn07` is equipped); tempo cards (`fenn01` "Taktisches Vorrücken") raise the
@@ -186,15 +209,37 @@ announced publicly at round start (and re-ranked each activation from the same k
    The supporter flag is read ONLY by the woundAll chip law (supporters are
    chipped first — `HeroCard.SupporterEffektiv` into `ChipKey`); it never
    moves a threat number: eliminate stays pure dice (findings 06.11. §1).
-   Schema `tacai.hero_cards/3`.
+   M24 (Thomas ruling, 06.11.) added the HEALER pin (`healer.skills` — printed
+   repair kits like the MHD-19 sets): a hero who can repair wounds is chipped
+   BEFORE the supporter class ("Heiler mit Priorität ausschalten"). M25
+   (same day) extended the block with `angriffs_bonus` (printed extra attacks —
+   Gideon's `gideon07` "Hammer und Amboss" and `gideon08` "Meisterleistung",
+   each HALF of one neutral attack EV, flat on the damage operand like the
+   blast), `genauigkeit_pins` (equipped cards printing static accuracy —
+   `loku08`, `vinto04`, `drokkata03`) and the hero-row prints
+   `waffenGenauigkeit` (weapon line, rides BOTH states: CT +2, Loku +1,
+   Saska +1), `genauigkeitGesund` / `verstaerkungGesund` (healthy-side prints
+   only — the side law: `wiki_heros_raw` models wounded-side abilities for 16
+   of 21 heroes, Loku has NO 'b ability' print, so his "Clear-Minded" +2 AND
+   his recon-token synergy end with the wound; his All-Weather Rifle's +1
+   Accuracy rides on). Accuracy consumption is the EXISTING keyword seam of
+   `Dice.BuildAttackStats` — the M12d pairing rule couples the pips with the
+   damage exactly like item accuracy. Schema `tacai.hero_cards/5`.
    Campaign purchases still count twice: the bought weapon moves the score
    (M17), the XP-ability index stays the economic basis (M4) — the hero who is
    really strongest on THIS campaign, not from a tier list.
-3. Deterministic tie-break by table order.
+2. **Wound economy** (`EconOf`, non-woundAll only): ×2 in the removing races when
+   the figure can actually finish the wounded hero (printed wounded bar fits the
+   figure's damage EV — the sim's ERLEDBAR law, M10a part 2). Protect/stall rows
+   carry no doubling (the penalty there is already the printed tempo).
+3. Deterministic parity + tie chain: for no-profile rows wounded first, then
+   EquipmentIndex (tier × price), AbilityIndex (XP sum), attack dice, health;
+   then squad row left-to-right, then hero id.
 
-The popup's "why" line states which key decided ("highest firepower among the remaining
-heroes", "he is wounded — finish him first"). No hidden dice, no randomness except the
-documented skill-layer fumble draw.
+The popup's "why" line states which key decided ("the mission objective names
+him", "highest firepower among the remaining heroes", "finishing him counts
+double — except when the mission demands new wounds"). No hidden dice, no
+randomness except the documented skill-layer fumble draw.
 
 ## 6. Doctrines (how a group plays the mission)
 
@@ -763,3 +808,92 @@ binding (draw budget + miss rate) -> per-click re-plan over the remaining
 pool (RC). Each layer is separately testable; each layer's inputs are
 public, App-sanctioned, or the group's own orders.
 
+
+## Printed-card law, wound objective, and data governance (2026-11-06, M24+M25)
+
+What the 06.11. card audit changed under the hood, beyond §5:
+
+- **Print honesty is the law.** Every effect enters exactly as the physical card
+  prints it — verified against the `wiki_data` raw fields (`wiki_heros_raw.json`,
+  `wiki_class_cards_raw.json`, `hero_weapons.json`), never against a paraphrase.
+  Surge-prefixed (`{{Z}}`) and exhaustion-gated lines stay OUT (they are options,
+  not prints); static lines are in. Three first-pass "damage buffs" were
+  misreadings caught by this rule ({{V}} is the Evasion pip, there is no orange
+  attack die in this system).
+- **The side law.** Hero-card abilities live on the side that prints them.
+  `wiki_heros_raw` models wounded-side ("b ability") prints for 16 of 21 heroes;
+  heroes whose back side prints nothing (Loku, Fenn, Jyn, Biv, Davith) lose ALL
+  card abilities when wounded. Loku's recon-token marker AND "Clear-Minded" +2
+  end with the wound; only his weapon's static "+1 Accuracy" rides on. A missing
+  b-print means "ends" — never assume a default.
+- **Naming discipline (Thomas rulings, same evening).** No invented in-game
+  words in player-facing texts: the woundAll counter class is presented with the
+  mission's own words — **"Missionsziel 'alle Helden verwunden'"** — in DE and EN
+  ui texts, the asset conventions and the code comments ("Wundzähler",
+  "Wunden-Zähler", "Wunden-Tracker", "Battle Vision" all removed; residue-checked
+  across all 11 ui.json). The basis label "mark" was corrected too: it is the
+  *aim mark the mission objective names* ("Zielmarke dieser Runde: das
+  Missionsziel nennt ihn"), not a wound marker — the old wording contradicted the
+  shipped `ordMarked` text.
+- **Generator ownership restored.** `wiki_data/tools/curate_hero_cards.py` had
+  silently fallen behind (schema /2 since M21 while the asset grew M22–M25 by
+  hand) — a regeneration would have wiped the curated pins. It is now the asset's
+  OWNER again: SKILL_EFFECTS carries every pin (including the late `drokkata03`
+  "Bank Shot" backfill — its raw `effect1: "+1 Accuracy"` print was audited from
+  the start but never made it into the asset), `ROW_PRINTS` carries the hero-row
+  prints, the key order matches the shipped asset, and regeneration is
+  **idempotent** (regenerate + `cmp` is now a supported verification step).
+- **QA battery updates.** `tools/m20_vector_sweep.py` was a corpse (its import of
+  the renamed M19 module had died in the M21 rename — nobody noticed because the
+  M21 sweep covered the same rows); it is now a thin forwarder to the canonical
+  second implementation, `tools/m21_fenn_effects_verify.py`, which re-derives
+  every card-basis row under the CURRENT law. `language_m13c_texts.py` is a
+  one-time migration validator, not a battery entry. `m24_healer_verify.py`
+  anchors follow schema bumps (/5).
+- **Final 06.11. battery:** harness ALL PASS 45591 checks ×2 (deterministic),
+  gate ALL PASS (incl. 11-language key parity), m21 sweep 71 rows + anchors
+  0 drift, m22 ALL PASS, m24 anchors OK, m19 drift check empty, compile_check
+  APP rc=0 errors=0 (285 files) / TESTS rc=0 (10 files).
+
+## The carried weapon replaces the standard — M26 (Thomas ruling 06.11., Player-29 log)
+
+**Trigger.** In the Player-29 session log the planner scored Jyn Odan with her
+printed Green+Green pistol because the M19 per-distance switch let the strongest
+pool at d=1 win that cell ("1:Green+Green"). Thomas' ruling: "Jyn hat den DL-44 …
+Ein Blaster mit Reichweite 1 ist totaler Quatsch. Jyn ist kein Nahkämpfer." The
+rule text backs it: for a hero the attack value *is found on his weapon item
+card* — the hero attacks with what she CARRIES.
+
+**Law (HeroCards.cs, band loop).**
+1. A carried {{O}} (ranged) item weapon OCCUPIES the hero's ranged slot: the
+   printed standard blaster never competes at ANY distance (`baseReplaced`),
+   not even where its green dice would score higher at d=1. A {{P}} hero's
+   printed melee value is never replaced (fists are the body, not a stored
+   weapon); {{P}} items merely ADD a melee option at reach 1.
+2. Every pool scores only inside its OWN coverage (`poolGate[i]`): base =
+   printed Reichweite, a ranged item = its own accuracy gate (the same gate
+   law that extends `RunnerRange`), a melee item = one cell. The free
+   per-distance switch across the whole band is dead — Verena's gauntlets can
+   no longer "shoot" at 4.
+3. The display energy operand is the winners' ACTUAL surcharge share:
+   `energy = Σ(winner's price-energy over the band) / reach` — a mixed band
+   (Verena: melee item at 1, blaster at 2..) stays hand-re-addable.
+4. `best_pool` (print) = the pool that won the most distances of the band.
+
+**Verified shifts (record 06.11., port m21 re-derivation 0 fails).** Jyn Odan
+(DL-44 Blue+Yellow, acc 4, green bonus 1/2): band cells 2 + 2 + 1.5 + 0.5 →
+damage operand 19/12 → **3/2**, stall threat 76 → **74**. MHD-19 stays Blue+Yellow
+printed — p19 tie now rides entirely on the price share (Verena 73/80 vs MHD
+13/20, eqIndex holds the dearer gear first). item303 "Einsicht" (melee-only
+Blue+Yellow, reach 1) became a REAL option at d=1 without buying phantom range
+(m19_band_melee_inert: 78 → 54, energy 3/40 — paid as price share, never as
+reach). Loku/Fenn without gear keep the M25 printed-bonus numbers (8/3 =
+13/6 + 1/2).
+
+**QA battery, M26 (06.11.):** harness ALL PASS 45579 checks ×2 (deterministic);
+`m19_band_average_verify.py` re-ported to the new candidate law (20 drifted rows
+0 fails before merge, 0 drift after); `m21_fenn_effects_verify.py` (canonical
+second engine) 63 card-basis rows 0 fails; m22 ALL PASS; m23 rows=43 fails=0;
+m24 anchors OK; fixture `overlord_focus.json` rebased via
+`tools/m26_merge_drift.py` (style-proven surgical expect merge, 10 cases) with
+fresh M26 explain-comments per case; compile_check APP rc=0 (285 files).

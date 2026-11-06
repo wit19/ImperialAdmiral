@@ -1,5 +1,5 @@
 {
-  "schema": "tacai.hero_cards/4",
+  "schema": "tacai.hero_cards/5",
   "source": "Kuratierung: oeffentlich gedruckte Heldenkarten-Werte aller 21 Kampagnen-Helden (gesund + verwundete Rueckseite), Basiswaffen und Item-Wuerfel/Modifikatoren; ids und xp-Kosten aus den App-Tabellen (CardData/heroes.json, CampaignData/items.json, CampaignData/skills.json). Cleanroom-Policy: wiki_data/LICENSE_DATA.md Punkt 5 — Zahlen, Wuerfelbuchstaben, Keyword-Slugs; Volltext nur bei auf der Karte aufgedruckten Faehigkeiten (Brettspiel-Inhalt, Wiki als Transkriptions-Medium); Roh-Wiki-Dumps out-of-build.",
   "conventions": {
     "wuerfelBuchstaben": "B/R/G/Y = gedruckte Angruesfel (App-Konvention); verteidigung: K=schwarz, W=weiss",
@@ -9,7 +9,7 @@
     "attribut": "Waffen mit Attribut-Pool ('Your attack pool is your X pool'): staerke/einsicht/tech — im verwundeten Zustand schrumpfen die Attributswuerfel (verwundete Kartenseite)",
     "items": "nur Items mit Angriffswirkung; genauigkeit/schaden/durchschlag = statische (nicht-Surge) Aufdrucke; Surge-Zeilen bleiben bewusst aussen vor (konservative Vereinfachung, wie Dice.cs)",
     "faehigkeiten": "Keyword-Slug + Zahlen (xp-Kosten aus App-Tabelle, strain-Kosten von der gedruckten Karte). Bei Fähigkeiten, die auf der Karte vollständig aufgedruckt sind, trägt der Slug zusätzlich den Volltext des gedruckten Fähigkeitstextes (Brettspiel-Inhalt aus dem lizenzierten Exemplar; Transkription, Wiki als Herkunfts-Medium — wiki_data/LICENSE_DATA.md Punkt 5); Konsum erst M11d",
-    "effekte": "M21/M22: manuell kuratierte Gedruckte-Skill-Effekt-Pins pro Held (supporter: always = geprintete Rolle (Davith, MHD-19), skills = Skill-ids, die den Supporter schalten (Diala: diala02/diala03, Thomas-Ruling 06.11.); explosion.wert = aufgedruckter Blast-Wert in H, upgrades = Skill-ids die den Wert ABSORBIEREN; tempo_pins = Skill-ids mit Tempo-Delta, gesund UND verwundet). Skill-ids sind sprachstabil (CampaignData/skills.json). Konsum: HeroThreatModelV2 (Blast-Zuwachs, Banden-Tempo). Quelle: wiki_data/tools/curate_hero_cards.py SKILL_EFFECTS (Sync-Pflicht)."
+    "effekte": "M21/M22: manuell kuratierte Gedruckte-Skill-Effekt-Pins pro Held (supporter: always = geprintete Rolle (Davith, MHD-19), skills = Skill-ids, die den Supporter schalten (Diala: diala02/diala03, Thomas-Ruling 06.11.); explosion.wert = aufgedruckter Blast-Wert in H, upgrades = Skill-ids die den Wert ABSORBIEREN; tempo_pins = Skill-ids mit Tempo-Delta, gesund UND verwundet). Skill-ids sind sprachstabil (CampaignData/skills.json). Konsum: HeroThreatModelV2 (Blast-Zuwachs, Banden-Tempo). Quelle: wiki_data/tools/curate_hero_cards.py SKILL_EFFECTS (Sync-Pflicht). M25-ERWEITERT: angriffs_bonus = Skill-ids mit gedrucktem Extra-Angriff als exakter Bruchteil eines neutralen Angriffs-EV (wert; Gideon gideon07/gideon08 je 1/2, Thomas-Ruling 06.11.); genauigkeit_pins = Skill-ids mit statischer +Zielgenauigkeit (delta; loku08, vinto04, drokkata03); Helden-Reihen-Prints waffenGenauigkeit (Waffen-Zielgenauigkeit beide Zustände: CT +2, Loku +1, Saska +1), genauigkeitGesund (gesunde Heldenkarten-Seite: Loku +2), verstaerkungGesund (Lokus Spähmarken-Synergie 'Set Your Sights' + gedruckter Bonus: je ½ des neutralen Angriffs-EV — die Fähigkeit ist nur auf der gesunden Kartenseite printet, die B-Seite printet keine Fähigkeit; Thomas-Ruling 06.11. gegen Referenz verifiziert)."
   },
   "heroes": [
     {
@@ -113,6 +113,15 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "GG",
       "reichweite": 3,
+      "effekte": {
+        "tempo_pins": [
+          {
+            "skill": "ct05",
+            "delta": 1
+          }
+        ]
+      },
+      "waffenGenauigkeit": 2,
       "faehigkeiten": [
         {
           "bezeichnung": "barrage",
@@ -368,6 +377,14 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "BR",
       "reichweite": 3,
+      "effekte": {
+        "genauigkeit_pins": [
+          {
+            "skill": "drokkata03",
+            "delta": 1
+          }
+        ]
+      },
       "faehigkeiten": [
         {
           "bezeichnung": "bank_shot",
@@ -539,6 +556,14 @@
       "angriffsTyp": "P",
       "basisAngriffswuerfel": "RY",
       "reichweite": 1,
+      "effekte": {
+        "tempo_pins": [
+          {
+            "skill": "gaarkhan08",
+            "delta": 1
+          }
+        ]
+      },
       "faehigkeiten": [
         {
           "bezeichnung": "brutal_cleave",
@@ -616,6 +641,18 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "BY",
       "reichweite": 4,
+      "effekte": {
+        "angriffs_bonus": [
+          {
+            "skill": "gideon07",
+            "wert": "1/2"
+          },
+          {
+            "skill": "gideon08",
+            "wert": "1/2"
+          }
+        ]
+      },
       "faehigkeiten": [
         {
           "bezeichnung": "air_of_command",
@@ -693,6 +730,14 @@
       "angriffsTyp": "P",
       "basisAngriffswuerfel": "YY",
       "reichweite": 1,
+      "effekte": {
+        "tempo_pins": [
+          {
+            "skill": "jarrod06",
+            "delta": 1
+          }
+        ]
+      },
       "faehigkeiten": [
         {
           "bezeichnung": "balanced_approach",
@@ -847,6 +892,14 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "BG",
       "reichweite": 5,
+      "effekte": {
+        "tempo_pins": [
+          {
+            "skill": "kotun06",
+            "delta": 1
+          }
+        ]
+      },
       "faehigkeiten": [
         {
           "bezeichnung": "arms_distribution",
@@ -924,6 +977,17 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "BG",
       "reichweite": 5,
+      "effekte": {
+        "genauigkeit_pins": [
+          {
+            "skill": "loku08",
+            "delta": 1
+          }
+        ]
+      },
+      "waffenGenauigkeit": 1,
+      "genauigkeitGesund": 2,
+      "verstaerkungGesund": "1/2",
       "faehigkeiten": [
         {
           "bezeichnung": "clear_minded",
@@ -1007,6 +1071,12 @@
       "basisAngriffswuerfel": "BY",
       "reichweite": 4,
       "effekte": {
+        "tempo_pins": [
+          {
+            "skill": "mhd04",
+            "delta": 1
+          }
+        ],
         "supporter": {
           "always": true
         },
@@ -1343,6 +1413,7 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "GY",
       "reichweite": 3,
+      "waffenGenauigkeit": 1,
       "faehigkeiten": [
         {
           "bezeichnung": "adrenaline_injector",
@@ -1656,6 +1727,20 @@
       "angriffsTyp": "O",
       "basisAngriffswuerfel": "BY",
       "reichweite": 4,
+      "effekte": {
+        "tempo_pins": [
+          {
+            "skill": "vinto02",
+            "delta": 1
+          }
+        ],
+        "genauigkeit_pins": [
+          {
+            "skill": "vinto04",
+            "delta": 1
+          }
+        ]
+      },
       "faehigkeiten": [
         {
           "bezeichnung": "battlefield_experience",

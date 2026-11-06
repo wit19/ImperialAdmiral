@@ -96,6 +96,66 @@ namespace TacticalAI.Core
         }
 
         public List<string> HeilerSkills = new List<string>();
+        // M25 (Thomas ruling 06.11., Karten-Audit 2. Prüfung): printed
+        // STATIC attack modifiers of the hero row and his cards.
+        // waffenGenauigkeit   - the base weapon's printed '+N Accuracy'
+        //                       line (CT-1701 +2, Loku +1, Saska +1) - the
+        //                       weapon rides in BOTH states.
+        // genauigkeitGesund   - the hero card's healthy-side printed
+        //                       accuracy ability (Loku "Clear-Minded" +2;
+        //                       the wounded back page prints NO ability).
+        // verstaerkungGesund  - Loku's printed recon-token synergy: '+1 damage
+        //                       whenever YOU OR A FRIEND attack a recon-
+        //                       marked figure' - the source sits with him,
+        //                       discounted HALF (ExplosionShare precedent,
+        //                       Thomas: "je ½"), healthy side only (the
+        //                       back page prints no abilities - Print!).
+        // genauigkeit_pins    - chosen cards printing static '+N Accuracy'
+        //                       (loku08, vinto04, drokkata03) while equipped.
+        // angriffs_bonus      - chosen cards printing an EXTRA ATTACK:
+        //                       Gideon's gideon07 'Hammer und Amboss' (he +
+        //                       an ally attack the same target) and gideon08
+        //                       'Meisterleistung' (a second Command free of
+        //                       action AND strain). Each counts as HALF of
+        //                       one NEUTRAL attack EV (prior 1) - the
+        //                       exhaustion-cycle discount mirrors M21;
+        //                       Hammer's printed defence-dice removal is
+        //                       deliberately NOT counted on top (documented).
+        // Consum: the existing keyword seam of Dice.BuildAttackStats
+        // ('+N Accuracy' - the M12d pairing law pairs accuracy with damage)
+        // and the flat M21 addend seam (real damage, never percentage-bent
+        // twice). Attack-accuracy prints are print-honest facts, never a
+        // threat-role judgment: NO chip-class, NO economy component.
+        public int WaffenGenauigkeit;
+        public int GenauigkeitGesund;
+        public Rational VerstaerkungGesund = Rational.Zero;
+        public List<HeroSkillPin> GenauigkeitPins = new List<HeroSkillPin>();
+        public List<HeroSkillFractionPin> AngriffsBonusPins = new List<HeroSkillFractionPin>();
+
+        /// <summary>M25: static accuracy the hero attacks with - printed
+        /// weapon line (both states) + healthy-side hero-card ability +
+        /// equipped accuracy cards. Unknown ids never match.</summary>
+        public int GenauigkeitEffektiv(IList<string> skills, bool wounded)
+        {
+            int g = WaffenGenauigkeit;
+            if (!wounded) g += GenauigkeitGesund;
+            if (skills != null)
+                foreach (var p in GenauigkeitPins)
+                    if (p.Skill != null && skills.Contains(p.Skill)) g += p.Delta;
+            return g;
+        }
+
+        /// <summary>M25: the printed extra-attack flat addend with the
+        /// chosen cards (each card = its fraction of one neutral attack
+        /// EV; exhaustion-cycle share, Thomas ruling "je ½").</summary>
+        public Rational AngriffsBonusEffektiv(IList<string> skills)
+        {
+            var s = Rational.Zero;
+            if (skills == null || AngriffsBonusPins.Count == 0) return s;
+            foreach (var p in AngriffsBonusPins)
+                if (p.Skill != null && skills.Contains(p.Skill)) s += p.Wert;
+            return s;
+        }
 
         /// <summary>M21: effective printed blast value with the hero's
         /// chosen skill cards (Rebel Elite fenn07 ABSORBS the base value,
@@ -196,6 +256,14 @@ namespace TacticalAI.Core
         public string Skill;
         public int Wert;
         public int Delta;
+    }
+
+    /// <summary>M25: one printed skill-card effect pin carrying an exact
+    /// fraction (asset "angriffs_bonus" - extra-attack shares).</summary>
+    public sealed class HeroSkillFractionPin
+    {
+        public string Skill;
+        public Rational Wert;
     }
 
     /// <summary>One campaign item's printed ATTACK-relevant effect
@@ -342,7 +410,38 @@ namespace TacticalAI.Core
                     if (hl != null)
                         foreach (var rawH in Json.AsList(Json.Get(Json.AsDict(hl), "skills", new List<object>())))
                             c.HeilerSkills.Add(Json.AsStr(rawH));
+                    // M25: the printed static accuracy of CHOSEN cards.
+                    var ap = Json.Get(ef, "genauigkeit_pins", null);
+                    if (ap != null)
+                        foreach (var rawP in Json.AsList(ap))
+                        {
+                            var pd = Json.AsDict(rawP);
+                            c.GenauigkeitPins.Add(new HeroSkillPin
+                            {
+                                Skill = Json.AsStr(Json.Get(pd, "skill", null)),
+                                Delta = Json.AsInt(Json.Get(pd, "delta", 0)),
+                            });
+                        }
+                    // M25: the printed EXTRA-ATTACK cards (exact fractions).
+                    var ab = Json.Get(ef, "angriffs_bonus", null);
+                    if (ab != null)
+                        foreach (var rawB in Json.AsList(ab))
+                        {
+                            var bd = Json.AsDict(rawB);
+                            var wb = Json.AsStr(Json.Get(bd, "wert", null));
+                            c.AngriffsBonusPins.Add(new HeroSkillFractionPin
+                            {
+                                Skill = Json.AsStr(Json.Get(bd, "skill", null)),
+                                Wert = string.IsNullOrEmpty(wb) ? Rational.Zero : Rational.Parse(wb),
+                            });
+                        }
                 }
+                // M25: the hero-row static prints (weapon accuracy line,
+                // healthy-side ability accuracy, recon-token synergy flat).
+                c.WaffenGenauigkeit = Json.AsInt(Json.Get(r, "waffenGenauigkeit", 0));
+                c.GenauigkeitGesund = Json.AsInt(Json.Get(r, "genauigkeitGesund", 0));
+                var vg = Json.AsStr(Json.Get(r, "verstaerkungGesund", null));
+                if (!string.IsNullOrEmpty(vg)) c.VerstaerkungGesund = Rational.Parse(vg);
                 if (!string.IsNullOrEmpty(c.Name)) t._byName[c.Name] = c;
             }
             foreach (var raw in Json.AsList(Json.Get(doc, "items", new List<object>())))
@@ -468,6 +567,10 @@ namespace TacticalAI.Core
             public Rational Explosion;       // M21 flat blast increment
                                              //  inside DamageEv (printed
                                              //  blast x ExplosionShare)
+            public Rational Bonus;           // M25 flat extra-attack and
+                                             //  Verstaerkung increment
+                                             //  inside DamageEv (printed
+                                             //  cards x neutral attack EV)
             public int SpeedBand;            // mobility band 1..3 (printed wound tempo!)
             public int RangeCells;           // reach incl. printed ranged-item gates
             public List<string> BestPool;    // dice the DamageEv was computed from
@@ -507,9 +610,9 @@ namespace TacticalAI.Core
                 // speed, 10% range over the game's own printed anchors. The
                 // engage hook rides the exchange exactly as in the damage
                 // races (M12d seam).
-                List<string> pool, band; Rational energyX, explX;
+                List<string> pool, band; Rational energyX, explX, bonusX;
                 var dmg = EliminateEv(card, table, profile, wounded,
-                                      defenderDefense, engage, out pool, out energyX, out band, out explX);
+                                      defenderDefense, engage, out pool, out energyX, out band, out explX, out bonusX);
                 return RunnerThreat(dmg, RunnerBand(card, wounded, profile),
                                     RunnerRange(card, table, profile, wounded));
             }
@@ -529,14 +632,15 @@ namespace TacticalAI.Core
             bool damageRace = posture == "eliminate" || posture == "attrition";
             bool runnerRace = posture == "protect" || posture == "stall";
             if (!damageRace && !runnerRace) return null;
-            List<string> pool, band; Rational energy, explosion;
+            List<string> pool, band; Rational energy, explosion, flatBonus;
             var dmg = EliminateEv(card, table, profile, wounded,
-                                  defenderDefense, engage, out pool, out energy, out band, out explosion);
+                                  defenderDefense, engage, out pool, out energy, out band, out explosion, out flatBonus);
             var parts = new ThreatParts
             {
                 DamageEv = dmg,
                 Energy = energy,
                 Explosion = explosion,
+                Bonus = flatBonus,
                 SpeedBand = runnerRace ? RunnerBand(card, wounded, profile) : 0,
                 RangeCells = runnerRace ? RunnerRange(card, table, profile, wounded) : 0,
                 BestPool = pool,
@@ -551,9 +655,9 @@ namespace TacticalAI.Core
                                     IList<string> defenderDefense,
                                     EngagementEffects engage = null)
         {
-            List<string> unused, unusedB; Rational unusedE, unusedX;
+            List<string> unused, unusedB; Rational unusedE, unusedX, unusedF;
             return EliminateEv(card, table, profile, wounded, defenderDefense,
-                               engage, out unused, out unusedE, out unusedB, out unusedX);
+                               engage, out unused, out unusedE, out unusedB, out unusedX, out unusedF);
         }
 
         static Rational EliminateEv(HeroCard card, HeroCardTable table,
@@ -563,10 +667,23 @@ namespace TacticalAI.Core
                                     out List<string> bestPool,
                                     out Rational energy,
                                     out List<string> bandBests,
-                                    out Rational explosion)
+                                    out Rational explosion,
+                                    out Rational flatBonus)
         {
             explosion = ExplosionShare * card.ExplosionsWertEffektiv(
                 profile != null ? profile.LoadoutSkills : null);
+            // M25 (Thomas ruling 06.11.): the printed EXTRA-ATTACK cards and
+            // Loku's printed recon-token synergy ('Set Your Sights' + recon
+            // bonus) ride the SAME flat
+            // addend seam as the blast - real damage, never percentage-bent
+            // twice; each extra attack = its fraction of ONE neutral attack
+            // EV (prior 1); the recon synergy is healthy-side print ONLY -
+            // wiki_heros_raw models the wounded side for 16 heroes and Loku
+            // has NO 'b ability' print, so the whole ability ends when
+            // wounded (verified 06.11. against the reference).
+            var skillsX = profile != null ? profile.LoadoutSkills : null;
+            flatBonus = card.AngriffsBonusEffektiv(skillsX)
+                        + (wounded ? Rational.Zero : card.VerstaerkungGesund);
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
             int pierce = 0;
@@ -584,6 +701,24 @@ namespace TacticalAI.Core
             {
                 Tuple.Create(card.BasisWuerfel, !card.Nahkaempfer, Rational.Zero),
             };
+            // M26 (Thomas ruling 06.11., Player-29 log "1:Green+Green"):
+            // a hero's attack is the weapon SHE CARRIES (rule text: for a
+            // hero the attack value "is found on his weapon Item card").
+            // A bought ranged weapon OCCUPIES the hero's ranged slot and
+            // REPLACES the printed base blaster outright - the standard
+            // dice never compete while a {{O}} item is carried ("Jyn hat
+            // den DL-44"; she is no melee fighter and does not switch to
+            // the weaker printed pistol just because the pairing law
+            // scores green dice higher at distance 1). The melee standard
+            // of a Nahkaempfer is NOT replaced (fists are the body, not a
+            // stored weapon); {{P}} items merely ADD a melee option at
+            // their own reach. poolGate[i] = the distances each pool
+            // actually covers: base = printed Reichweite, ranged item =
+            // its own acc-gate, melee item = 1.
+            int baseGate = card.Reichweite < 1 ? 1 : card.Reichweite;
+            var poolGate = new List<int> { baseGate };
+            var poolIsMeleeItem = new List<bool> { false };
+            bool hasRangedItem = false;
             foreach (var id in owned)
             {
                 var e = table != null ? table.Item(id) : null;
@@ -594,20 +729,39 @@ namespace TacticalAI.Core
                 bool ranged = e.Typ == "O";
                 Rational b; bonus.TryGetValue(id, out b);   // default 0
                 if (e.Wuerfel.Count > 0)
+                {
                     pools.Add(Tuple.Create(new List<string>(e.Wuerfel), ranged, b));
+                    poolGate.Add(0);   // ranged: filled from the pool's own
+                    poolIsMeleeItem.Add(!ranged);   // acc-gate below; melee = 1
+                    if (ranged) hasRangedItem = true;
+                }
                 if (e.Attribut != null)
                 {
                     var attr = card.AttributWuerfel(e.Attribut, wounded);
                     if (attr != null && attr.Count > 0)
+                    {
                         pools.Add(Tuple.Create(attr, ranged, b));
+                        poolGate.Add(0);
+                        poolIsMeleeItem.Add(!ranged);
+                        if (ranged) hasRangedItem = true;
+                    }
                 }
             }
+            // ranged slot occupied -> printed base blaster stays in the bag
+            bool baseReplaced = hasRangedItem && !card.Nahkaempfer;
+            // M25: the hero's OWN printed static accuracy (weapon line +
+            // healthy-side ability + accuracy cards) rides the existing
+            // keyword seam - the M12d pairing law pairs the acc pips with
+            // damage, exactly as for item accuracy lines.
+            int heroAcc = card.GenauigkeitEffektiv(skillsX, wounded);
+            if (heroAcc > 0) keywords.Add("+" + heroAcc + " Accuracy");
             var defender = Dice.BuildAttackStats(null, null, false, null,
                 defenderDefense != null ? new List<string>(defenderDefense) : null);
-            // the overlord assumes the hero fights with its best known
+            // the overlord assumes the hero fights with its best CARRIED
             // weapon SCORER (dice EV + M17 price-energy: one weapon per
-            // attack, and the Empire may never under-estimate an equipped
-            // hero - same direction as the M10a investment tie-break)
+            // attack, each pool only inside its own coverage - M26; and the
+            // Empire may never under-estimate an equipped hero - same
+            // direction as the M10a investment tie-break)
             int engagePierce = engage == null ? 0 : engage.Pierce;
             int engageAcc = engage == null ? 0 : engage.AccDelta;
             // M19 (Thomas ruling 05.11., Player-28 DL-44 fund): BAND-
@@ -619,14 +773,26 @@ namespace TacticalAI.Core
             // from d2 on, yet could never win the d=1 score). The honest
             // table projection: the hero fights somewhere inside HIS
             // reach band (printed reach, extended only by verified ranged
-            // items - the existing RunnerRange law), and weapon switching
-            // is free at the table, so the damage term is
-            //     average over d = 1..reach of ( best pool score at d ).
+            // items - the existing RunnerRange law), and the damage term
+            // is     average over d = 1..reach of ( best pool score at d ).
             // Melee pools are distance-inert inside the pairing law by
             // design (no distance spend) - printed melee value simply
             // holds across their band. The per-distance winners ride out
             // in bandBests, so the average stays hand-re-addable (the
             // percent law demands visible arithmetic, not prose).
+            //
+            // M26 OVERRIDE (Thomas ruling 06.11., Player-29 log): the per-
+            // distance switch was too generous. A hero's attack is the
+            // weapon she CARRIES (rule: the attack is on the weapon item
+            // card) - a bought {{O}} weapon OCCUPIES the ranged slot and
+            // replaces the printed standard blaster at EVERY distance
+            // ("Jyn hat den DL-44" -> Blue+Yellow auch auf 1, die
+            // Standardwaffe rechnet nie mit), and a pool only ever scores
+            // inside its OWN coverage poolGate (a Gauntlet cannot "shoot"
+            // across the band). Choice stays free between CARRIED weapons
+            // and for a Nahkaempfer's innate melee value - her fists are
+            // the body, not a stored weapon, so no {{O}} item replaces a
+            // printed {{P}} standard.
             int reach = RunnerRange(card, table, profile, wounded);
             if (reach < 1) reach = 1;
             var statsAt = new AttackStats[pools.Count];
@@ -645,15 +811,23 @@ namespace TacticalAI.Core
                     stats.AccGate = (int)(gate.Num / gate.Den);
                 }
                 statsAt[i] = stats;
+                // M26: the weapon's own coverage. A carried ranged weapon
+                // reaches exactly its printed acc-gate (same law that
+                // extends RunnerRange); a melee item reaches 1 cell.
+                if (i > 0)
+                    poolGate[i] = poolIsMeleeItem[i] ? 1
+                        : (stats.AccGate < 1 ? 1 : stats.AccGate);
             }
             // the printed winner slot (M15 accounting print): the pool that
-            // decided the MOST distances of the band; its surcharge rides
-            // as the display energy. A band where nothing scores leaves
-            // the base pool + zero energy (M15 print semantics kept).
+            // decided the MOST distances of the band (M26: its display
+            // surcharge is the band's actual energy share, see below).
+            // A band where nothing scores leaves the base pool + zero
+            // energy (M15 print semantics kept).
             bestPool = card.BasisWuerfel;
             energy = Rational.Zero;
             bandBests = new List<string>();
             var sum = Rational.Zero;
+            var energySum = Rational.Zero;   // M26: the winner's surcharge PER BAND
             var wins = new int[pools.Count];
             for (int d = 1; d <= reach; d++)
             {
@@ -661,6 +835,12 @@ namespace TacticalAI.Core
                 int bestIdx = -1;
                 for (int i = 0; i < pools.Count; i++)
                 {
+                    // M26: a replaced standard weapon never competes, and a
+                    // weapon only ever scores at a distance IT CAN REACH -
+                    // the free per-distance switch across the whole band is
+                    // dead (the old law let Verena's gauntlets "shoot" at 4).
+                    if (i == 0 && baseReplaced) continue;
+                    if (d > poolGate[i]) continue;
                     // M17: the WEAPON SCORE is dice EV + the price-energy
                     // surcharge of THIS pool's weapon - so a bought weapon
                     // may legitimately outrank printed-equal or slightly
@@ -674,6 +854,7 @@ namespace TacticalAI.Core
                 sum += best;
                 if (bestIdx >= 0)
                 {
+                    energySum += pools[bestIdx].Item3;
                     wins[bestIdx]++;
                     bandBests.Add(string.Join("+", pools[bestIdx].Item1));
                 }
@@ -685,7 +866,11 @@ namespace TacticalAI.Core
             if (champ >= 0 && wins[champ] > 0)
             {
                 bestPool = pools[champ].Item1;
-                energy = pools[champ].Item3;
+                // M26: the display energy is the ACTUAL surcharge share of
+                // the average (winners' surcharges summed over the band /
+                // reach) - a mixed band (Verena: gauntlets at 1, blaster at
+                // 2-4) stays hand-re-addable, the operand never lies.
+                energy = energySum / reach;
             }
             // M21 (Thomas ruling 06.11., Fenn playtest): the printed blast
             // ability (Fenn's Havoc Shot: "1C: ... this attack gains Blast
@@ -707,7 +892,7 @@ namespace TacticalAI.Core
             // rides along consistently. Heroes WITHOUT the printed blast
             // (all others) carry increment 0 - every pre-M21 vector stays
             // bit-identical.
-            return sum / reach + explosion;
+            return sum / reach + explosion + flatBonus;
         }
 
         // ------------------------------------------------- mobility factors

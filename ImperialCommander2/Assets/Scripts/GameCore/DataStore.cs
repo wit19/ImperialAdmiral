@@ -10,16 +10,16 @@ public static class DataStore
 {
 	// FORK VERSION LAW (Thomas 03.11, counter rhythm updated 04.11):
 	// TitleController.CheckVersion compares the LATEST RELEASE TAG of our fork
-	// (wit19) against THIS string. Format: upstream number + our build counter
-	// after '#'. Git tags forbid spaces, so the tag is "v.2.2.16#1001" while
-	// the release TITLE may show "v.2.2.16 #1001". NEW RHYTHM (Thomas 04.11):
-	// EVERY push to main bumps the counter by one - the title screen number is
-	// how we see which build is current. The TAG moves WITH the push in the
-	// same step (tag from main), or the title icon goes orange: the counter
-	// and the latest tag must stay married - the check reads the TAG, not a
-	// release page. A GitHub RELEASE is only ever created when Thomas says
-	// so (04.11, after an auto-created #1007 release was deleted).
-	public static readonly string appVersion = "v.2.2.16#1019";
+	// (wit19) against THIS string. NEW PROJECT (06.11.): the fork flies under
+	// its own name "Imperial Admiral" now (Tilman/GlowPuff asked for distance
+	// from "Imperial Commander", upstream stays untouched as the origin) -
+	// versioning restarts at v1.0.0, plain semver, no build counter. The TAG
+	// moves WITH every push to main (tag v1.0.0, v1.0.1, ... from the same
+	// step), or the title icon goes orange: version and latest tag must stay
+	// married - the check reads the TAG, not a release page. A GitHub RELEASE
+	// is only ever created when Thomas says so (04.11, after an auto-created
+	// #1007 release was deleted).
+	public static readonly string appVersion = "v1.0.0";
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

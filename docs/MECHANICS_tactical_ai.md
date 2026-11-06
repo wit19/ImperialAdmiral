@@ -5,9 +5,9 @@ docs. Every value in this document is read out of the shipped code and data file
 and class names are given so anything can be checked. Diagrams are Mermaid (render
 directly on GitHub).
 
-- Code: `ImperialCommander2/Assets/Scripts/TacticalAI/` (pure-C# decision core in
+- Code: `ImperialAdmiral/Assets/Scripts/TacticalAI/` (pure-C# decision core in
   `Core/`, Unity adapters at the top level)
-- Data: `ImperialCommander2/Assets/Resources/Languages/En/tactical_*.json`
+- Data: `ImperialAdmiral/Assets/Resources/Languages/En/tactical_*.json`
 - Tests/verification: `tools/TacticalAiHarness/` (parity harness), `Assets/Tests/` (NUnit)
 - Player-facing doc: `docs/WIKI_tactical_ai.md`
 
@@ -415,7 +415,7 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   shipped in this PR (the harness SKIPs them; they regenerate on request).
 - **NUnit**: 45 tests in `Assets/Tests/TacticalAI/Editor/` (fairness invariants above,
   settings/badge cycling, hook isolation, vector mirrors).
-- Run locally: `dotnet run --project tools/TacticalAiHarness -- ImperialCommander2/Assets/Tests/Fixtures/tacai`
+- Run locally: `dotnet run --project tools/TacticalAiHarness -- ImperialAdmiral/Assets/Tests/Fixtures/tacai`
 
 ## 15. Known limits (honest list)
 

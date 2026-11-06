@@ -191,7 +191,7 @@
       },
       {
         "id": "mode",
-        "helpText": "Basculer entre les missions officielles (créées par l'équipe d'Imperial Commander 2 et incluses dans l'application) et les missions personnalisées créées par l'utilisateur."
+        "helpText": "Basculer entre les missions officielles (créées par l'équipe d'Imperial Admiral et incluses dans l'application) et les missions personnalisées créées par l'utilisateur."
       },
       {
         "id": "start",
@@ -285,7 +285,7 @@
     "helpItems": [
       {
         "id": "tutorials",
-        "helpText": "<b>Imperial Commander 2</b> propose trois tutoriels destinés aux joueurs qui n'ont jamais joué à Assaut sur l'Empire. Ces tutoriels expliquent comment jouer au jeu et utiliser l'application.\n\nSélectionnez le tutoriel dans le menu déroulant."
+        "helpText": "<b>Imperial Admiral</b> propose trois tutoriels destinés aux joueurs qui n'ont jamais joué à Assaut sur l'Empire. Ces tutoriels expliquent comment jouer au jeu et utiliser l'application.\n\nSélectionnez le tutoriel dans le menu déroulant."
       },
       {
         "id": "tutorialStart",
@@ -309,7 +309,7 @@
       },
       {
         "id": "menu",
-        "helpText": "C'est le menu principal. Vous pouvez démarrer une nouvelle campagne ou mission ici, charger une campagne existante ou continuer à partir d'une mission enregistrée en cours.\n\n<b>Imperial Commander 2</b> sauvegarde automatiquement l'état du jeu après chaque tour, une fois que tous les déploiements ont été résolus. Cliquez / appuyez sur Continuer pour charger l'état du jeu enregistré."
+        "helpText": "C'est le menu principal. Vous pouvez démarrer une nouvelle campagne ou mission ici, charger une campagne existante ou continuer à partir d'une mission enregistrée en cours.\n\n<b>Imperial Admiral</b> sauvegarde automatiquement l'état du jeu après chaque tour, une fois que tous les déploiements ont été résolus. Cliquez / appuyez sur Continuer pour charger l'état du jeu enregistré."
       },
       {
         "id": "wiki",

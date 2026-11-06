@@ -118,7 +118,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "El andador se estrella contra el suelo envuelto en llamas. Algunos de los manifestantes más valientes salen de su cobertura para subirse a los restos y alzar sus voces en desafío una vez más. Os marcháis con la seguridad de que el espíritu de la Rebelión se ha fortalecido aquí hoy.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los Héroes reciben la carta de Recompensa \"Apoyo popular\". Esta carta de recompensa fuciona de manera diferente jugando con <b>Imperial Commander</b>. Visita la sección <b>Rules Change</b> de la documentación de la wiki para obtener más detalles.\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por héroe.",
+      "eventText": "El andador se estrella contra el suelo envuelto en llamas. Algunos de los manifestantes más valientes salen de su cobertura para subirse a los restos y alzar sus voces en desafío una vez más. Os marcháis con la seguridad de que el espíritu de la Rebelión se ha fortalecido aquí hoy.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los Héroes reciben la carta de Recompensa \"Apoyo popular\". Esta carta de recompensa fuciona de manera diferente jugando con <b>Imperial Admiral</b>. Visita la sección <b>Rules Change</b> de la documentación de la wiki para obtener más detalles.\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por héroe.",
       "eventActions": []
     },
     {

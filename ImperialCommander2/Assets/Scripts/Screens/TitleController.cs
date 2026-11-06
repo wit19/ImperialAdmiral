@@ -369,12 +369,15 @@ public class TitleController : MonoBehaviour
 
 	public void OnDonate()
 	{
-		Application.OpenURL( "https://paypal.me/glowpuff" );
+		// Renamed project (06.11.): the GlowPuff donation link is gone -
+		// money must not flow to the upstream team under OUR name. The
+		// button is hidden at init (InitTexts); this handler stays as a
+		// harmless no-op because the scene's OnClick still references it.
 	}
 
 	public void OnWikiDocs()
 	{
-		Application.OpenURL( "https://github.com/wit19/ImperialCommander2/blob/main/docs/WIKI_tactical_ai.md" );
+		Application.OpenURL( "https://github.com/wit19/ImperialAdmiral/blob/main/docs/WIKI_tactical_ai.md" );
 	}
 
 	public void OnVersionPopup()
@@ -443,6 +446,11 @@ public class TitleController : MonoBehaviour
 
 		uiExpansionsBtn.text = ui.expansions;
 		donateText.text = ui.supportUC;
+		// Renamed project (06.11.): the "Help Support The App" button led to
+		// GlowPuff's PayPal - under our own name that is wrong twice over.
+		// Retire the control (handler is a no-op as well, see OnDonate).
+		var donateBtn = donateText.GetComponentInParent<Button>();
+		if ( donateBtn != null ) donateBtn.gameObject.SetActive( false );
 		docsText.text = ui.docsUC;
 
 		newCampaignTitle.text = DataStore.uiLanguage.uiTitle.newCampaign;
@@ -646,7 +654,7 @@ public class TitleController : MonoBehaviour
 		// /repos/{owner}/{repo}/releases - OUR fork (wit19), see the fork
 		// update law on OnDownloadLatest: a green icon means "current for
 		// THIS tree", upstream releases are irrelevant to us.
-		var web = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialCommander2/releases/latest" );
+		var web = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialAdmiral/releases/latest" );
 		yield return web.SendWebRequest();
 		if ( web.result == UnityWebRequest.Result.ConnectionError )
 		{

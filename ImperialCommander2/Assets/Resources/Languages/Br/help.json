@@ -463,7 +463,7 @@
       },
       {
         "id": "mode",
-        "helpText": "Alterne entre Missões Oficiais (feitas pela equipe Imperial Commander e incluídas no aplicativo) e Missões personalizadas feitas pelo usuário."
+        "helpText": "Alterne entre Missões Oficiais (feitas pela equipe Imperial Admiral e incluídas no aplicativo) e Missões personalizadas feitas pelo usuário."
       },
       {
         "id": "start",
@@ -500,7 +500,7 @@
       },
       {
         "id": "menu",
-        "helpText": "Este é o menu principal. Você pode iniciar uma nova Campanha ou Missão aqui, carregar uma Campanha existente ou continuar a partir de uma Missão salva em andamento.\n\n<b>O Imperial Commander</b> salva automaticamente o estado do jogo após cada rodada, depois que todas as implantações forem resolvidas. Clique / toque em Continuar para carregar o estado do jogo salvo."
+        "helpText": "Este é o menu principal. Você pode iniciar uma nova Campanha ou Missão aqui, carregar uma Campanha existente ou continuar a partir de uma Missão salva em andamento.\n\n<b>O Imperial Admiral</b> salva automaticamente o estado do jogo após cada rodada, depois que todas as implantações forem resolvidas. Clique / toque em Continuar para carregar o estado do jogo salvo."
       },
       {
         "id": "mode",
@@ -516,7 +516,7 @@
       },
       {
         "id": "tutorials",
-        "helpText": "<b>Imperial Commander</b> apresenta três tutoriais voltados para jogadores que nunca jogaram Imperial Assault antes. Esses tutoriais explicam como jogar e usar o aplicativo.\n\nSelecione o tutorial no menu suspenso."
+        "helpText": "<b>Imperial Admiral</b> apresenta três tutoriais voltados para jogadores que nunca jogaram Imperial Assault antes. Esses tutoriais explicam como jogar e usar o aplicativo.\n\nSelecione o tutorial no menu suspenso."
       },
       {
         "id": "version",

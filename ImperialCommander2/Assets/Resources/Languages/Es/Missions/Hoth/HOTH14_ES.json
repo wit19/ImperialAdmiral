@@ -252,7 +252,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Las tropas Imperiales restantes se retiran hacia Mos Eisley, olvidándose de la finca. Llorando de alegría los granjeros supervivientes os expresan su más profunda gratitud por vuestra ayuda.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los Héroes reciben la Carta de Recompensa “Resurgimiento”. (Esta carta de Recompensa funciona de manera distinta cuando se juega con <b>Imperial Commander</b>. Revisa la sección <b>Cambios a las Reglas</b> de la wiki de documentación para más detalles.)\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por Héroe.\r\n{-} El Imperio descarta la carta de Recompensa “Ventaja Constante”.",
+      "eventText": "Las tropas Imperiales restantes se retiran hacia Mos Eisley, olvidándose de la finca. Llorando de alegría los granjeros supervivientes os expresan su más profunda gratitud por vuestra ayuda.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los Héroes reciben la Carta de Recompensa “Resurgimiento”. (Esta carta de Recompensa funciona de manera distinta cuando se juega con <b>Imperial Admiral</b>. Revisa la sección <b>Cambios a las Reglas</b> de la wiki de documentación para más detalles.)\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por Héroe.\r\n{-} El Imperio descarta la carta de Recompensa “Ventaja Constante”.",
       "eventActions": []
     },
     {

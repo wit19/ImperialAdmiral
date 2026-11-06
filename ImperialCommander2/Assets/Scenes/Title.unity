@@ -5338,7 +5338,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: commander
+  m_Text: admiral
 --- !u!222 &131093658
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -60464,7 +60464,7 @@ MonoBehaviour:
   ambientSource: {fileID: 1464068252}
   clips:
   - {fileID: 8300000, guid: 131dd8fdbf01a4c4686d9a0bd915e174, type: 3}
-  - {fileID: 8300000, guid: d08171b25a5c02c4ea1342da9bb9ab6c, type: 3}
+  - {fileID: 0}
   - {fileID: 8300000, guid: 2fc7ea5e70f8a834487a520a5392851a, type: 3}
   - {fileID: 8300000, guid: 067311000b2d1e248965ceb5fbdba6de, type: 3}
   - {fileID: 8300000, guid: 228a5ba20d10a2c4780d6ff554a75bad, type: 3}

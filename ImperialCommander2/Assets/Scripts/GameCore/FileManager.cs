@@ -16,13 +16,26 @@ namespace Saga
 		/// <summary>
 		/// Creates default folders and sets up folder path properties
 		/// </summary>
+		// Rename law (Thomas 06.11., project became "Imperial Admiral"):
+		// choose the data root by what is actually THERE. An existing
+		// 'ImperialCommander' folder (any older install) keeps being used
+		// as-is - no migration, no orphaned saves. Fresh installs get the
+		// new 'ImperialAdmiral' folder under Documents.
+		private static string DocumentsBase()
+		{
+			string docs = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
+			string legacy = Path.Combine( docs, "ImperialCommander" );
+			return Directory.Exists( legacy ) ? legacy : Path.Combine( docs, "ImperialAdmiral" );
+		}
+
 		public static bool SetupDefaultFolders()
 		{
 			Debug.Log( "SETTING UP DEFAULT FOLDERS" );
 			//Application.persistentDataPath for different OSes
-			//Android: storage/emulated/<userid>/Android/data/com.GlowPuff.ImperialCommander2.tacai/files
-			//MacOS: ~/Library/Application Support/GlowPuff/Imperial Commander 2
-			//Windows: %localappdata%low\GlowPuff\Imperial Commander 2
+			//Android: storage/emulated/<userid>/Android/data/<packageId>/files
+			//         (packageId = Player Settings > Other Settings, wit19 project)
+			//MacOS: ~/Library/Application Support/<companyName>/<productName>
+			//Windows: %localappdata%low\<companyName>\<productName>
 			//Linux: $XDG_CONFIG_HOME/unity3d or $HOME/.config/unity3d
 
 			campaignPath = Path.Combine( Application.persistentDataPath, "SagaCampaigns" );
@@ -38,10 +51,10 @@ namespace Saga
 			importedCharactersPath = Path.Combine( Application.persistentDataPath, "ImportedCharacters" );
 			customCampaignPath = Path.Combine( Application.persistentDataPath, "CustomCampaigns" );
 #else
-			baseDocumentFolder = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ), "ImperialCommander" );
-			customMissionPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ), "ImperialCommander", "CustomMissions" );
-			importedCharactersPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ), "ImperialCommander", "ImportedCharacters" );
-			customCampaignPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ), "ImperialCommander", "CustomCampaigns" );
+			baseDocumentFolder = DocumentsBase();
+			customMissionPath = Path.Combine( baseDocumentFolder, "CustomMissions" );
+			importedCharactersPath = Path.Combine( baseDocumentFolder, "ImportedCharacters" );
+			customCampaignPath = Path.Combine( baseDocumentFolder, "CustomCampaigns" );
 #endif
 
 			try

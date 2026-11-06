@@ -97,7 +97,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Chewbacca ryczy triumfalnie, gdy imperialne oddziały zostają zmuszone do odwrotu. Biegniecie do oszołomionych Wookieech i zaczynacie aplikować im stympakiety - najszybciej jak potraficie.\r\n\r\n{-} Bohaterowie wygrali misję!\r\n{-} Gracze Rebelii wybierają jednego bohatera. Dostaje kartę nagrody “Zastraszenie”. (Ta karta ma inne działanie podczas gry w aplikacji <b>Imperial Commander</b>. Zużyj tę kartę, kiedy pokonałeś ostatnią figurkę w grupie. Do końca tej misji, jeśli ta grupa zostanie ponownie rozstawiona, wszystkie jej ataki zadają -1 {H} do wyników ataku. Szczegóły znajdują się w sekcji <b>Zmiany zasad</b> w dokumentacji wiki.)\r\n{-} Każdy gracz dostaje 1 PD. Bohaterowie dostają 100 kredytów za każdego bohatera w grze.",
+      "eventText": "Chewbacca ryczy triumfalnie, gdy imperialne oddziały zostają zmuszone do odwrotu. Biegniecie do oszołomionych Wookieech i zaczynacie aplikować im stympakiety - najszybciej jak potraficie.\r\n\r\n{-} Bohaterowie wygrali misję!\r\n{-} Gracze Rebelii wybierają jednego bohatera. Dostaje kartę nagrody “Zastraszenie”. (Ta karta ma inne działanie podczas gry w aplikacji <b>Imperial Admiral</b>. Zużyj tę kartę, kiedy pokonałeś ostatnią figurkę w grupie. Do końca tej misji, jeśli ta grupa zostanie ponownie rozstawiona, wszystkie jej ataki zadają -1 {H} do wyników ataku. Szczegóły znajdują się w sekcji <b>Zmiany zasad</b> w dokumentacji wiki.)\r\n{-} Każdy gracz dostaje 1 PD. Bohaterowie dostają 100 kredytów za każdego bohatera w grze.",
       "eventActions": []
     },
     {

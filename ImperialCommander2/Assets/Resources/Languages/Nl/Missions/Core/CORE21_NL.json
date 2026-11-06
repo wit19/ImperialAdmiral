@@ -409,7 +409,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "De shuttle schiet de hangar uit en de ruimte in. De berekeningen voor hyperspace zijn snel gemaakt en nog voordat de vijandelijke jagers kunnen reageren, ben je verdwenen.\n\n{-} De rebellen winnen de missie!\n{-} De rebellenspelers kiezen één held die de beloningskaart ''Allied Operations\" ontvangt. (Deze belongingskaart werkt anders als je speelt met <b>Imperial Commander</b>. Raadpleeg de <b>Rules Change</b> sectie van de wiki documentatie voor meer informatie).\n{-} Elke held ontvangt 1 XP. De helden ontvangen 100 credits per held.",
+      "eventText": "De shuttle schiet de hangar uit en de ruimte in. De berekeningen voor hyperspace zijn snel gemaakt en nog voordat de vijandelijke jagers kunnen reageren, ben je verdwenen.\n\n{-} De rebellen winnen de missie!\n{-} De rebellenspelers kiezen één held die de beloningskaart ''Allied Operations\" ontvangt. (Deze belongingskaart werkt anders als je speelt met <b>Imperial Admiral</b>. Raadpleeg de <b>Rules Change</b> sectie van de wiki documentatie voor meer informatie).\n{-} Elke held ontvangt 1 XP. De helden ontvangen 100 credits per held.",
       "eventActions": []
     },
     {

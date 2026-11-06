@@ -34,7 +34,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Witamy w samouczku <b>Imperial Commander</b>! \r\n\r\nTa seria ma na celu nauczyć podstaw gry <b>Imperium Atakuje</b> z nieoficjalną apką. Nie jest wymagana żadna znajomość <b>Imperium Atakuje</b>, ale należy pamiętać, że samouczki zawierają tylko podstawowe informacje. Jeśli chcecie pogłębić wiedzę lub macie jakieś pytania, zajrzyjcie do instrukcji \"Zasady wprowadzające\" i \"Kompletny podręcznik zasad\" znajdujących się w pudełku z grą.</color>",
+          "tbText": "<color=\"yellow\">Witamy w samouczku <b>Imperial Admiral</b>! \r\n\r\nTa seria ma na celu nauczyć podstaw gry <b>Imperium Atakuje</b> z nieoficjalną apką. Nie jest wymagana żadna znajomość <b>Imperium Atakuje</b>, ale należy pamiętać, że samouczki zawierają tylko podstawowe informacje. Jeśli chcecie pogłębić wiedzę lub macie jakieś pytania, zajrzyjcie do instrukcji \"Zasady wprowadzające\" i \"Kompletny podręcznik zasad\" znajdujących się w pudełku z grą.</color>",
           "GUID": "9e3e8682-8ca5-4965-b0ab-6946f2c3697d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -175,7 +175,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Leia wydaje teraz 4 punkty ruchu i porusza się, aż znajdzie się w pobliżu terminala.\r\n\r\nNależy pamiętać, że <b>Imperial Commander</b> zazwyczaj nie śledzi pozycji figurek. Tutaj jest to po prostu zrobione dla celów demonstracyjnych.</color>",
+          "tbText": "<color=\"yellow\">Leia wydaje teraz 4 punkty ruchu i porusza się, aż znajdzie się w pobliżu terminala.\r\n\r\nNależy pamiętać, że <b>Imperial Admiral</b> zazwyczaj nie śledzi pozycji figurek. Tutaj jest to po prostu zrobione dla celów demonstracyjnych.</color>",
           "GUID": "2f173ba6-4c1a-43f9-9543-5ba682be6c30",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -920,7 +920,7 @@
       "eventText": "Po wybuchu ostatniego robota Leia nagradza was krótkimi brawami. \"Dobra robota!\", mówi, uśmiechając się. \"Wygląda na to, że wyszliście z tego bałaganu cało. Moglibyśmy naprawdę u-\"\r\n\r\nPrzerywa jej comlink. \"Wasza wysokość\", głos trzeszczy w głośniku. \"Właśnie otrzymaliśmy sygnał alarmowy z Indu. Siły imperialne zbliżają się do naszej kryjówki. Sygnał wzywa o pomoc. Żaden inny statek Sojuszu nie jest tak blisko jak my.\"\r\n\r\nOczy Leii rozszerzają się, po czym na jej twarzy pojawia się grymas determinacji. \"Powiedz im, żeby się trzymali. Obrać kurs na Indu\", woła do komunikatora, a potem patrzy na was.",
       "eventActions": [
         {
-          "tbText": "\"Możecie potrzebować tej broni wcześniej niż myśleliśmy. Chciałam wam powiedzieć, że przydadzą nam się ludzie o waszych umiejętnościach i zapytać, czy rozważylibyście dołączenie do nas.\"\r\n\r\nKiedy widzi, że przygotowujecie broń, uśmiecha się do was. \"Witamy w Sojuszu Rebeliantów.\"\r\n\r\n<color=\"yellow\">To kończy 1 samouczek w apce <b>Imperial Commander</b>. W części 2 czeka was coś innego niż walka z robotami szkoleniowymi.</color>",
+          "tbText": "\"Możecie potrzebować tej broni wcześniej niż myśleliśmy. Chciałam wam powiedzieć, że przydadzą nam się ludzie o waszych umiejętnościach i zapytać, czy rozważylibyście dołączenie do nas.\"\r\n\r\nKiedy widzi, że przygotowujecie broń, uśmiecha się do was. \"Witamy w Sojuszu Rebeliantów.\"\r\n\r\n<color=\"yellow\">To kończy 1 samouczek w apce <b>Imperial Admiral</b>. W części 2 czeka was coś innego niż walka z robotami szkoleniowymi.</color>",
           "GUID": "9fff3167-309f-4bc2-a78f-4c6cadfc8deb",
           "eventActionType": 16,
           "eaName": "Text Box"

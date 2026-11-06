@@ -22,7 +22,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Welkom bij de derde tutorial voor <b>Imperial Commander</b>. In deze tutorial leer je de resterende regels die in de eerste en tweede tutorial niet aan bod zijn gekomen.\n\nZoals altijd kun je de Rules Reference Guide of de wiki-documentatie raadplegen als je vragen hebt.</color>",
+          "tbText": "<color=\"yellow\">Welkom bij de derde tutorial voor <b>Imperial Admiral</b>. In deze tutorial leer je de resterende regels die in de eerste en tweede tutorial niet aan bod zijn gekomen.\n\nZoals altijd kun je de Rules Reference Guide of de wiki-documentatie raadplegen als je vragen hebt.</color>",
           "GUID": "323f7e6d-44ba-4957-964d-4976156bd76b",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -221,7 +221,7 @@
     {
       "eventName": "Open Crate 1",
       "GUID": "84137c98-52d5-49e1-8982-5c2a59195a13",
-      "eventText": "Je wrikt het krat open en het deksel valt op de grond. Binnenin zie je een paar nuttige dingen.\r\n\r\n<color=\"yellow\">Het openen van een krat geeft de held, die het krat opende, een voorraadkaart. Verzamel alle voorraadkaarten en verwijder de kaart <i>Troop Data</i>; deze kaart wordt niet gebruikt in <b>Imperial Commander</b>. Schudt daarna de kaarten en trek 1 willekeurige kaart. De held die de kist heeft geopend, plaatst dit voorwerp in zijn speelveld.\r\n\r\nVoorraadkaarten zijn niet overdraagbaar tussen missies. Ze worden na afloop van de missie weer in de stapel geschud, dus zorg ervoor dat je ze gebruikt.</color>",
+      "eventText": "Je wrikt het krat open en het deksel valt op de grond. Binnenin zie je een paar nuttige dingen.\r\n\r\n<color=\"yellow\">Het openen van een krat geeft de held, die het krat opende, een voorraadkaart. Verzamel alle voorraadkaarten en verwijder de kaart <i>Troop Data</i>; deze kaart wordt niet gebruikt in <b>Imperial Admiral</b>. Schudt daarna de kaarten en trek 1 willekeurige kaart. De held die de kist heeft geopend, plaatst dit voorwerp in zijn speelveld.\r\n\r\nVoorraadkaarten zijn niet overdraagbaar tussen missies. Ze worden na afloop van de missie weer in de stapel geschud, dus zorg ervoor dat je ze gebruikt.</color>",
       "eventActions": [
         {
           "tbText": "Onder de voorraden vind je nog een medpac die er bruikbaar uitziet.\n\n<color=\"yellow\">Plaats 1 forceertoken ergens in het speelveld van de rebellen. Dit is een medpac. Medpacs zijn een gedeelde bron en alle spelers hebben er toegang toe. Spelers beginnen elke missie met 1 medpac en kunnen er meer vinden door kratten te openen tijdens missies. Als je een medpac vindt, leg je nog een forceertoken in het speelveld. Als je een medpac gebruikt, leg je 1 van deze forceertokens af.\n\nNet als voorraadkaarten zijn medpacs niet overdraagbaar tussen missies. Medpacs zijn schaars voor het Rebellenverbond.</color>",
@@ -425,7 +425,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Let op dat de condities <i><color=\"red\">verdoofd</color></i> en <i><color=\"red\">bloedend</color></i> anders werken op keizerlijke figuren dan omschreven staat in de Rules Reference Guide als je <b>Imperial Commander</b> gebruikt. Raadpleeg de wiki-documentatie voor meer informatie.</color>",
+          "tbText": "<color=\"yellow\">Let op dat de condities <i><color=\"red\">verdoofd</color></i> en <i><color=\"red\">bloedend</color></i> anders werken op keizerlijke figuren dan omschreven staat in de Rules Reference Guide als je <b>Imperial Admiral</b> gebruikt. Raadpleeg de wiki-documentatie voor meer informatie.</color>",
           "GUID": "1d0ac2fa-b402-4c0a-ae38-d7945acf9338",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -792,7 +792,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\" >Dit is het einde van de laatste tutorial voor <b>Imperial Commander</b>. Als het goed is weet je nu alle regels die je nodig hebt en hopelijk had je een leuke tijd tijdens het leren. Voor verdere details kijk je in de Rules Reference Guide of de wiki documentatie voor <b>Imperial Commander</b>.\n\nAls je er klaar voor bent kun je de missie <i>Aftermath</i> van het core spel starten, dit is de eerste echte <b>Imperial Assault</b> missie.\n\nDe tutorials behandelden niets over campagnestructuur en voortgang. Daarover kun je alles vinden in de Learn to Play gids en de wiki documentatie, of je kunt het lezen aan het einde van deze tutorial. Dit is echter niet interactief, alleen een hulp om je door het proces te leiden.</color>",
+          "tbText": "<color=\"yellow\" >Dit is het einde van de laatste tutorial voor <b>Imperial Admiral</b>. Als het goed is weet je nu alle regels die je nodig hebt en hopelijk had je een leuke tijd tijdens het leren. Voor verdere details kijk je in de Rules Reference Guide of de wiki documentatie voor <b>Imperial Admiral</b>.\n\nAls je er klaar voor bent kun je de missie <i>Aftermath</i> van het core spel starten, dit is de eerste echte <b>Imperial Assault</b> missie.\n\nDe tutorials behandelden niets over campagnestructuur en voortgang. Daarover kun je alles vinden in de Learn to Play gids en de wiki documentatie, of je kunt het lezen aan het einde van deze tutorial. Dit is echter niet interactief, alleen een hulp om je door het proces te leiden.</color>",
           "GUID": "251b6baa-71fc-4800-88ea-c032e553787d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -875,7 +875,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Aan het einde van elke ronde krijgt het Keizerrijk {D} (dreiging), een valuta die door het Rijk gebruikt kan worden om nieuwe groepen en figuren in te zetten. <b>Imperial Commander</b> beslist automatisch of en wat er wordt ingezet. Waar ze geplaatst moeten worden wordt ook aangegeven door de app.\n\nDe app kan nieuwe groepen inzetten, maar ook <i>bestaande groepen versterken</i>. Dit betekent dat de app een groep uitkiest waarvan een aantal figuren is verslagen en die groep weer aanvult. Als dat gebeurt, plaats je de nieuwe figuren zo dicht mogelijk bij de andere figuren van die groep.\n\nVanaf nu neemt {D} aan het einde van elke ronde toe en kunnen er meer figuren worden ingezet.</color>",
+          "tbText": "<color=\"yellow\">Aan het einde van elke ronde krijgt het Keizerrijk {D} (dreiging), een valuta die door het Rijk gebruikt kan worden om nieuwe groepen en figuren in te zetten. <b>Imperial Admiral</b> beslist automatisch of en wat er wordt ingezet. Waar ze geplaatst moeten worden wordt ook aangegeven door de app.\n\nDe app kan nieuwe groepen inzetten, maar ook <i>bestaande groepen versterken</i>. Dit betekent dat de app een groep uitkiest waarvan een aantal figuren is verslagen en die groep weer aanvult. Als dat gebeurt, plaats je de nieuwe figuren zo dicht mogelijk bij de andere figuren van die groep.\n\nVanaf nu neemt {D} aan het einde van elke ronde toe en kunnen er meer figuren worden ingezet.</color>",
           "GUID": "267d705a-c8e1-4da3-8fb9-49b8c3d8f587",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -990,7 +990,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Dit is hoe je kunt kiezen welke missie je wilt spelen:\n\n{-} <b>Verhaalmissies:</b> Nadat een verhaalmissie eindigd zal <b>Imperial Commander</b> aangeven welke verhaalmissiekaarten in het spel komen. Dat zijn de <i>actieve</i> verhaalmissies. De volgende keer dat de campagne aangeeft dat er een verhaalmissie gespeeld gaat worden, kiezen de spelers er één van de actieve verhaalmissiekaarten en leggen ze de andere actieve af. Daarna openen ze <b>Imperial Commander</b>, kiezen de missie die ze willen spelen, kiezen het dreigingsniveau, de helden, bondgenoten en schurken, en beginnen met spelen.\n\n{-} <b>Zijmissies:</b> Nadat de \"Introductie\" missie is afgerond schudden de spelers het zijmissiedeck en trekken twee zijmissiekaarten. Dat zijn de <i>actieve</i> zijmissies. Als het campagnelogboek zegt dat de spelers een zijmissie gaan spelen, kiezen ze één van de actieve zijmissies om te spelen. Na het uitspelen van die zijmissie trekken ze een nieuwe zijmissiekaart, zodat er altijd 2 zijmissiekaarten in het spel zijn.",
+          "tbText": "Dit is hoe je kunt kiezen welke missie je wilt spelen:\n\n{-} <b>Verhaalmissies:</b> Nadat een verhaalmissie eindigd zal <b>Imperial Admiral</b> aangeven welke verhaalmissiekaarten in het spel komen. Dat zijn de <i>actieve</i> verhaalmissies. De volgende keer dat de campagne aangeeft dat er een verhaalmissie gespeeld gaat worden, kiezen de spelers er één van de actieve verhaalmissiekaarten en leggen ze de andere actieve af. Daarna openen ze <b>Imperial Admiral</b>, kiezen de missie die ze willen spelen, kiezen het dreigingsniveau, de helden, bondgenoten en schurken, en beginnen met spelen.\n\n{-} <b>Zijmissies:</b> Nadat de \"Introductie\" missie is afgerond schudden de spelers het zijmissiedeck en trekken twee zijmissiekaarten. Dat zijn de <i>actieve</i> zijmissies. Als het campagnelogboek zegt dat de spelers een zijmissie gaan spelen, kiezen ze één van de actieve zijmissies om te spelen. Na het uitspelen van die zijmissie trekken ze een nieuwe zijmissiekaart, zodat er altijd 2 zijmissiekaarten in het spel zijn.",
           "GUID": "fb0cb8b1-110b-4fdb-937e-9896e5fa2663",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1002,7 +1002,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "In de wiki documentatie kun je een voorbeeld vinden van de structuur en voortgang van een campagne. Klik op de link op het startscherm van <b>Imperial Commander</b>.",
+          "tbText": "In de wiki documentatie kun je een voorbeeld vinden van de structuur en voortgang van een campagne. Klik op de link op het startscherm van <b>Imperial Admiral</b>.",
           "GUID": "6f6ee613-e241-48d1-b3dc-8abb7bad69ea",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1021,7 +1021,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Het Keizerrijk kan ook beloningen verdienen. <b>Imperial Commander</b> geeft aan welke beloningen het Rijk krijgt, maar dit kan afwijken van wat er in de campagnegids of op de missiekaart staat, omdat veel keizerlijke beloningskaarten niet worden gebruikt in <b>Imperial Commander</b>. Dit zijn de algemene regels:\n\n{-} <b>Verdiende vijanden:</b> als de keizerlijke speler een <i>vijand (villain)</i> verdient, leg dan die kaart opzij. De volgende keer dat je een missie speelt, selecteer je die vijand als <i>verdiend</i> in het missie-instellingenscherm. Verworven vijanden blijven gedurende de hele campagne.\n{-} <b>Andere keizerlijke beloningen:</b> als de keizerlijke speler een andere willekeurige beloningskaart zou krijgen, krijgt het Keizerrijk die beloningskaart niet. In plaats daarvan wordt het dreigingsniveau van de volgende missie (en alleen de volgende missie) verhoogd met 1. Tijdens de Rebel Upgrade-fase kunnen de rebellen spelers beslissen om 50 credits per held uit te geven om dit te voorkomen.\n{-} <b>Geforceerde missies:</b> als de rebellen spelers een geforceerde missie verliezen wordt het dreigingsniveau van de volgende missie (en alleen de volgende missie) verhoogd met 2. Tijdens de Rebel Upgrade-fase kunnen de rebellen spelers beslissen om 100 credits per held uit te geven om dit te voorkomen.\n\nJe hoeft dit niet allemaal te onthouden, de app geeft aan wat er gaat gebeuren.",
+          "tbText": "Het Keizerrijk kan ook beloningen verdienen. <b>Imperial Admiral</b> geeft aan welke beloningen het Rijk krijgt, maar dit kan afwijken van wat er in de campagnegids of op de missiekaart staat, omdat veel keizerlijke beloningskaarten niet worden gebruikt in <b>Imperial Admiral</b>. Dit zijn de algemene regels:\n\n{-} <b>Verdiende vijanden:</b> als de keizerlijke speler een <i>vijand (villain)</i> verdient, leg dan die kaart opzij. De volgende keer dat je een missie speelt, selecteer je die vijand als <i>verdiend</i> in het missie-instellingenscherm. Verworven vijanden blijven gedurende de hele campagne.\n{-} <b>Andere keizerlijke beloningen:</b> als de keizerlijke speler een andere willekeurige beloningskaart zou krijgen, krijgt het Keizerrijk die beloningskaart niet. In plaats daarvan wordt het dreigingsniveau van de volgende missie (en alleen de volgende missie) verhoogd met 1. Tijdens de Rebel Upgrade-fase kunnen de rebellen spelers beslissen om 50 credits per held uit te geven om dit te voorkomen.\n{-} <b>Geforceerde missies:</b> als de rebellen spelers een geforceerde missie verliezen wordt het dreigingsniveau van de volgende missie (en alleen de volgende missie) verhoogd met 2. Tijdens de Rebel Upgrade-fase kunnen de rebellen spelers beslissen om 100 credits per held uit te geven om dit te voorkomen.\n\nJe hoeft dit niet allemaal te onthouden, de app geeft aan wat er gaat gebeuren.",
           "GUID": "63466ba8-891a-499f-91ef-a9289d3ddf16",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1051,7 +1051,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "In de wiki documentatie kun je een voorbeeld vinden van de structuur en voortgang van een campagne. Klik op de link op het startscherm van <b>Imperial Commander</b>.",
+          "tbText": "In de wiki documentatie kun je een voorbeeld vinden van de structuur en voortgang van een campagne. Klik op de link op het startscherm van <b>Imperial Admiral</b>.",
           "GUID": "6ee497f1-8af0-456c-9185-ada06cf92774",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1106,7 +1106,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "In de wiki documentatie kun je een voorbeeld vinden van de structuur en voortgang van een campagne. Klik op de link op het startscherm van <b>Imperial Commander</b>.",
+          "tbText": "In de wiki documentatie kun je een voorbeeld vinden van de structuur en voortgang van een campagne. Klik op de link op het startscherm van <b>Imperial Admiral</b>.",
           "GUID": "015faa6e-b6c0-4e77-bb29-16a1011edea2",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1116,13 +1116,13 @@
     {
       "eventName": "End Mission",
       "GUID": "28558464-eceb-465a-9e61-d1fea3d80d9b",
-      "eventText": "<color=\"yellow\">Moge de Kracht met je zijn en veel plezier met <b>Imperial Commander</b>!</color>",
+      "eventText": "<color=\"yellow\">Moge de Kracht met je zijn en veel plezier met <b>Imperial Admiral</b>!</color>",
       "eventActions": []
     },
     {
       "eventName": "Campaign Preparation",
       "GUID": "bc396ce9-64ea-4f94-958d-1afd11ebbfd5",
-      "eventText": "Als je een nieuwe campagne wilt beginnen in <b>Imperial Commander</b>, moet je een reeks stappen doorlopen.",
+      "eventText": "Als je een nieuwe campagne wilt beginnen in <b>Imperial Admiral</b>, moet je een reeks stappen doorlopen.",
       "eventActions": [
         {
           "tbText": "<b>Stap 1: voorraad klaarzetten</b>\nPlaats de dobbelstenen, conditiekaarten en de schade, forceer- en conditietokens binnen handbereik van alle spelers. Leg de referentiekaarten binnen handbereik van alle spelers. Verwijder de kaart \" Troop Data\" van de stapel voorraadkaarten en leg die terug in de doos. Schud vervolgens de stapel met voorraadkaarten en leg ze met de achterkant naar boven binnen handbereik van alle spelers.",
@@ -1155,13 +1155,13 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<b>Stap 6: start introductie missie</b>\nStart een nieuwe campagne in <b>Imperial Commander</b>. Kies de campagne die je wilt spelen en geeft het een naam. Selecteer de helden in het campagneoverzicht en klik/tik op de groene pijl naast de <b>introductie</b> missie. Kies de moeilijkheidsgraad en start de missie.",
+          "tbText": "<b>Stap 6: start introductie missie</b>\nStart een nieuwe campagne in <b>Imperial Admiral</b>. Kies de campagne die je wilt spelen en geeft het een naam. Selecteer de helden in het campagneoverzicht en klik/tik op de groene pijl naast de <b>introductie</b> missie. Kies de moeilijkheidsgraad en start de missie.",
           "GUID": "f5985ce2-44da-4aa4-b254-732c4ec03493",
           "eventActionType": 16,
           "eaName": "Text Box"
         },
         {
-          "tbText": "Sommige campagne worden iets anders opgezet. Je kunt hier meer over vinden (en extra details) in de campagnegids of de campagneinfo (klik/tik het info icoon in het campagneoverzicht) of in de wiki documentatie (klik/tik op de link in het startscherm van <b>Imperial Commander</b>).",
+          "tbText": "Sommige campagne worden iets anders opgezet. Je kunt hier meer over vinden (en extra details) in de campagnegids of de campagneinfo (klik/tik het info icoon in het campagneoverzicht) of in de wiki documentatie (klik/tik op de link in het startscherm van <b>Imperial Admiral</b>).",
           "GUID": "452eae82-5e41-4880-b005-f56dfa357a69",
           "eventActionType": 16,
           "eaName": "Text Box"

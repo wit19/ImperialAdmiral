@@ -285,7 +285,7 @@
     "helpItems": [
       {
         "id": "tutorials",
-        "helpText": "<b>Imperial Commander</b> enthält drei Tutorials, die sich an Spieler richten, die Imperial Assault noch nie gespielt haben. Diese Tutorials erklären, wie man das Spiel spielt und die App benutzt.\n\nWähle das Tutorial aus dem Dropdown-Menü."
+        "helpText": "<b>Imperial Admiral</b> enthält drei Tutorials, die sich an Spieler richten, die Imperial Assault noch nie gespielt haben. Diese Tutorials erklären, wie man das Spiel spielt und die App benutzt.\n\nWähle das Tutorial aus dem Dropdown-Menü."
       },
       {
         "id": "tutorialStart",
@@ -309,7 +309,7 @@
       },
       {
         "id": "menu",
-        "helpText": "Dies ist das Hauptmenü. Du kannst hier eine neue Kampagne oder einen neuen Einsatz beginnen, eine bestehende Kampagne laden oder mit einem gespeicherten Einsatz fortfahren.\n\n<b>Imperial Commander</b> speichert den Spielstand automatisch nach jeder Runde, nachdem alle Aufstellungen abgehandelt wurden. Klicke / tippe auf Weiter, um den gespeicherten Spielstand zu laden."
+        "helpText": "Dies ist das Hauptmenü. Du kannst hier eine neue Kampagne oder einen neuen Einsatz beginnen, eine bestehende Kampagne laden oder mit einem gespeicherten Einsatz fortfahren.\n\n<b>Imperial Admiral</b> speichert den Spielstand automatisch nach jeder Runde, nachdem alle Aufstellungen abgehandelt wurden. Klicke / tippe auf Weiter, um den gespeicherten Spielstand zu laden."
       },
       {
         "id": "wiki",

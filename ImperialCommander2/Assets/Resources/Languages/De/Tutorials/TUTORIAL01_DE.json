@@ -34,7 +34,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Willkommen zum Tutorial für <b>Imperial Commander</b>! \n\nDiese Reihe von Tutorials soll euch die Grundlagen des Spiels <b>Imperial Assault</b> mit der inoffiziellen Begleit-App vermitteln. Ihr benötigt keinerlei Vorkenntnisse über <b>Imperial Assault</b>, aber denkt daran, dass die Tutorials nur grundlegende Informationen vermitteln. Wenn ihr tiefer eintauchen wollt oder Fragen habt, solltet ihr euch die Spielregeln und das Referenzhandbuch ansehen, die dem Spiel beiliegen.</color>",
+          "tbText": "<color=\"yellow\">Willkommen zum Tutorial für <b>Imperial Admiral</b>! \n\nDiese Reihe von Tutorials soll euch die Grundlagen des Spiels <b>Imperial Assault</b> mit der inoffiziellen Begleit-App vermitteln. Ihr benötigt keinerlei Vorkenntnisse über <b>Imperial Assault</b>, aber denkt daran, dass die Tutorials nur grundlegende Informationen vermitteln. Wenn ihr tiefer eintauchen wollt oder Fragen habt, solltet ihr euch die Spielregeln und das Referenzhandbuch ansehen, die dem Spiel beiliegen.</color>",
           "GUID": "9e3e8682-8ca5-4965-b0ab-6946f2c3697d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -175,7 +175,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Leia wendet jetzt 4 Bewegungspunkte auf und bewegt sich, bis sie benachbart zu dem Terminal ist.\n\n<b>Imperial Commander</b> erfasst die Position einer Figur normalerweise nicht. Dies geschieht nur zu Demonstrationszwecken.</color>",
+          "tbText": "<color=\"yellow\">Leia wendet jetzt 4 Bewegungspunkte auf und bewegt sich, bis sie benachbart zu dem Terminal ist.\n\n<b>Imperial Admiral</b> erfasst die Position einer Figur normalerweise nicht. Dies geschieht nur zu Demonstrationszwecken.</color>",
           "GUID": "2f173ba6-4c1a-43f9-9543-5ba682be6c30",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -920,7 +920,7 @@
       "eventText": "Nachdem die letzte Trainingsdrohne explodiert ist, klatscht Leia kurz Beifall. \"Gut gemacht!\", sagt sie und lächelt. \"Sieht aus, als wärt ihr gut aus diesem Schlamassel herausgekommen. Wir könnten wirklich U-\"\n\nSie wird von ihrem Comlink unterbrochen. \"Eure Hoheit\", knistert eine Stimme durch den Lautsprecher. \"Wir haben gerade ein Notsignal von Indu erhalten. Imperiale Truppen nähern sich unserem Rückzugsort dort. Unsere Leute rufen um Hilfe. Kein anderes Schiff der Allianz ist so nah wie wir.\"\n\nLeias Augen werden groß, dann tritt grimmige Entschlossenheit auf ihr Gesicht. \"Sagt ihnen, sie sollen durchhalten. Setzt Kurs auf Indu\", ruft sie in ihr Comlink und sieht euch dann an.",
       "eventActions": [
         {
-          "tbText": "\"Ihr braucht diese Waffen vielleicht schneller, als wir dachten. Ich wollte euch gerade sagen, dass wir Leute mit euren Fähigkeiten gebrauchen könnten und euch fragen, ob ihr euch uns anschließen wollt.\"\n\nAls sie sieht, dass ihr eure Waffen bereit macht, schenkt sie euch ein Lächeln. \"Willkommen bei der Rebellenallianz.\"\n\n<color=\"yellow\">Damit ist Teil 1 des <b>Imperial Commander</b>-Tutorials abgeschlossen. In Teil 2 werdet ihr es mit anderen Dingen als Trainingsdrohnen zu tun haben.</color>",
+          "tbText": "\"Ihr braucht diese Waffen vielleicht schneller, als wir dachten. Ich wollte euch gerade sagen, dass wir Leute mit euren Fähigkeiten gebrauchen könnten und euch fragen, ob ihr euch uns anschließen wollt.\"\n\nAls sie sieht, dass ihr eure Waffen bereit macht, schenkt sie euch ein Lächeln. \"Willkommen bei der Rebellenallianz.\"\n\n<color=\"yellow\">Damit ist Teil 1 des <b>Imperial Admiral</b>-Tutorials abgeschlossen. In Teil 2 werdet ihr es mit anderen Dingen als Trainingsdrohnen zu tun haben.</color>",
           "GUID": "9fff3167-309f-4bc2-a78f-4c6cadfc8deb",
           "eventActionType": 16,
           "eaName": "Text Box"

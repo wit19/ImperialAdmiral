@@ -103,7 +103,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Nach einem zermürbenden Aufstieg und schweren Kämpfen dringt ihr in den Stützpunkt ein und stehlt die imperialen Pläne aus der zentralen Konsole, um hoffentlich alle imperialen Verschwörungen zu vereiteln.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Helden erhalten die Belohnungskarte \"Partner\". (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Commander</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).",
+      "eventText": "Nach einem zermürbenden Aufstieg und schweren Kämpfen dringt ihr in den Stützpunkt ein und stehlt die imperialen Pläne aus der zentralen Konsole, um hoffentlich alle imperialen Verschwörungen zu vereiteln.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Helden erhalten die Belohnungskarte \"Partner\". (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Admiral</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).",
       "eventActions": [
         {
           "mainText": "Habt ihr diesen Einsatz als Teil der Minikampagne \"Im Schatten der Zwillingssonnen\" gespielt?",

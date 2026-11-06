@@ -124,7 +124,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "En flammes, le marcheur s'effondre. De courageux contestataires sortent de leur abri pour escalader l'épave et crier leur défiance. Vous quittez les lieux, certains que ces événements ont renforcé la Rébellion.\r\n\r\n{-} Les Rebelles remportent la mission !\r\n{-} Les héros reçoivent la carte Récompense « Soutien populiste ». (Cette carte Récompense fonctionne différemment lorsque vous jouez avec <b>Imperial Commander 2</b>. Reportez-vous à la section « Changement de règles » de la documentation du wiki pour plus de détails.)\r\n{-} Chaque héros reçoit 1 XP. Les héros reçoivent 100 crédits par héros.",
+      "eventText": "En flammes, le marcheur s'effondre. De courageux contestataires sortent de leur abri pour escalader l'épave et crier leur défiance. Vous quittez les lieux, certains que ces événements ont renforcé la Rébellion.\r\n\r\n{-} Les Rebelles remportent la mission !\r\n{-} Les héros reçoivent la carte Récompense « Soutien populiste ». (Cette carte Récompense fonctionne différemment lorsque vous jouez avec <b>Imperial Admiral</b>. Reportez-vous à la section « Changement de règles » de la documentation du wiki pour plus de détails.)\r\n{-} Chaque héros reçoit 1 XP. Les héros reçoivent 100 crédits par héros.",
       "eventActions": []
     },
     {

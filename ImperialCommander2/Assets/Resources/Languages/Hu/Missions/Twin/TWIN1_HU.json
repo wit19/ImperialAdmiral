@@ -103,7 +103,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Fárasztó mászás és nehéz harcok után beszivárogtok a bázisra, és egy központi konzolról letöltve ellopjátok a Birodalom terveit, remélve, hogy meghiúsíthatjátok a Birodalom pusztító műveleteit.\r\n\r\n{-} A lázadók megnyerték a küldetést!\r\n{-} A hősök megszerzik a  \"Counterparts\" jutalom kártyát. (Ez a kártya másképpen működik a <b>Imperial Commander-ben</b>. Nézd meg a <b>Rules Change</b> section of the wiki documentation for details.)",
+      "eventText": "Fárasztó mászás és nehéz harcok után beszivárogtok a bázisra, és egy központi konzolról letöltve ellopjátok a Birodalom terveit, remélve, hogy meghiúsíthatjátok a Birodalom pusztító műveleteit.\r\n\r\n{-} A lázadók megnyerték a küldetést!\r\n{-} A hősök megszerzik a  \"Counterparts\" jutalom kártyát. (Ez a kártya másképpen működik a <b>Imperial Admiral-ben</b>. Nézd meg a <b>Rules Change</b> section of the wiki documentation for details.)",
       "eventActions": [
         {
           "mainText": "A \"Twin Shadows\" mini kampány részeként játszottad a küldetést? ",

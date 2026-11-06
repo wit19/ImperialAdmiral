@@ -191,7 +191,7 @@
 			},
 			{
 				"id": "mode",
-				"helpText": "Switch between Official Missions (made by the Imperial Commander team and included in the app) and custom user-made Missions."				
+				"helpText": "Switch between Official Missions (made by the Imperial Admiral team and included in the app) and custom user-made Missions."				
 			},
 			{
 				"id": "start",
@@ -285,7 +285,7 @@
 		"helpItems": [
 			{
 				"id": "tutorials",
-				"helpText": "<b>Imperial Commander</b> features three tutorials aimed at players who have never played Imperial Assault before. These tutorials explain how to play the game and use the app.\n\nSelect the tutorial from the dropdown menu."
+				"helpText": "<b>Imperial Admiral</b> features three tutorials aimed at players who have never played Imperial Assault before. These tutorials explain how to play the game and use the app.\n\nSelect the tutorial from the dropdown menu."
 			},
 			{
 				"id": "tutorialStart",
@@ -309,7 +309,7 @@
 			},
 			{
 				"id": "menu",
-				"helpText": "This is the main menu. You can start a new Campaign or Mission here, load an existing Campaign, or continue from a saved Mission in progress.\n\n<b>Imperial Commander</b> automatically saves the game state after each round, after all deployments have been resolved. Click / tap Continue to load the saved game state."
+				"helpText": "This is the main menu. You can start a new Campaign or Mission here, load an existing Campaign, or continue from a saved Mission in progress.\n\n<b>Imperial Admiral</b> automatically saves the game state after each round, after all deployments have been resolved. Click / tap Continue to load the saved game state."
 			},
 			{
 				"id": "wiki",

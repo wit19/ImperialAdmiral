@@ -124,7 +124,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Der Läufer kracht brennend zu Boden. Einige der mutigeren Demonstranten kommen aus ihrer Deckung, klettern auf das Wrack und erheben noch einmal ihre Stimme zum Protest. Ihr seid davon überzeugt, dass der Geist der Rebellion heute stärker geworden ist.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Helden erhalten die Belohnungskarte \"Unterstützung aus der Bevölkerung\". (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Commander</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).\n{-} Jeder Held erhält 1 EP. Die Helden erhalten 100 Credits pro Held.",
+      "eventText": "Der Läufer kracht brennend zu Boden. Einige der mutigeren Demonstranten kommen aus ihrer Deckung, klettern auf das Wrack und erheben noch einmal ihre Stimme zum Protest. Ihr seid davon überzeugt, dass der Geist der Rebellion heute stärker geworden ist.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Helden erhalten die Belohnungskarte \"Unterstützung aus der Bevölkerung\". (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Admiral</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).\n{-} Jeder Held erhält 1 EP. Die Helden erhalten 100 Credits pro Held.",
       "eventActions": []
     },
     {

@@ -109,7 +109,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "La lanzadera sale disparada del hangar rumbo al espacio abierto. Los cálculos para el hiperespacio se realizan rápidamente y antes de que los cazas puedan salir a vuestro encuentro, ya os habéis marchado.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los jugadores Rebeldes eligen qué Héroe recibe la Carta de Recompensa \"Operaciones Aliadas\". (Esta Carta de Recopensa funciona de manera diferente cuando se juega con <b>Imperial Commander</b>. Revisa la sección de <b>Cambios a las Reglas</b> de la wiki de documentación.)\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por Héroe.",
+      "eventText": "La lanzadera sale disparada del hangar rumbo al espacio abierto. Los cálculos para el hiperespacio se realizan rápidamente y antes de que los cazas puedan salir a vuestro encuentro, ya os habéis marchado.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los jugadores Rebeldes eligen qué Héroe recibe la Carta de Recompensa \"Operaciones Aliadas\". (Esta Carta de Recopensa funciona de manera diferente cuando se juega con <b>Imperial Admiral</b>. Revisa la sección de <b>Cambios a las Reglas</b> de la wiki de documentación.)\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por Héroe.",
       "eventActions": []
     },
     {

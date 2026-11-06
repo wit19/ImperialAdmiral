@@ -252,7 +252,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Die verbliebenen imperialen Truppen ziehen sich nach Mos Eisley zurück und lassen die Farm in Frieden. Die überlebenden Farmer weinen vor Freude und sind euch zutiefst dankbar für eure Hilfe.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Helden erhalten die Belohnungskarte \"Neuer Mut\". (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Commander</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).\n{-} Jeder Held erhält 1 EP. Die Helden erhalten 100 Credits pro Held.\n{-} Das Imperium legt die Belohnungskarte \"Immer im Vorteil\" ab.",
+      "eventText": "Die verbliebenen imperialen Truppen ziehen sich nach Mos Eisley zurück und lassen die Farm in Frieden. Die überlebenden Farmer weinen vor Freude und sind euch zutiefst dankbar für eure Hilfe.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Helden erhalten die Belohnungskarte \"Neuer Mut\". (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Admiral</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).\n{-} Jeder Held erhält 1 EP. Die Helden erhalten 100 Credits pro Held.\n{-} Das Imperium legt die Belohnungskarte \"Immer im Vorteil\" ab.",
       "eventActions": []
     },
     {

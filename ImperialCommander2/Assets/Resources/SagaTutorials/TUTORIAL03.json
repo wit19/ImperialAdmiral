@@ -733,7 +733,7 @@
           "displayName": "Map Management"
         },
         {
-          "theText": "<color=\"yellow\">Welcome to the third tutorial for <b>Imperial Commander</b>. This tutorial aims to teach you the remaining rules not covered by the first and second tutorials.\r\n\r\nAs before, refer to the Rules Reference Guide or the wiki documentation if you have any questions.</color>",
+          "theText": "<color=\"yellow\">Welcome to the third tutorial for <b>Imperial Admiral</b>. This tutorial aims to teach you the remaining rules not covered by the first and second tutorials.\r\n\r\nAs before, refer to the Rules Reference Guide or the wiki documentation if you have any questions.</color>",
           "GUID": "323f7e6d-44ba-4957-964d-4976156bd76b",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -1076,7 +1076,7 @@
       "GUID": "84137c98-52d5-49e1-8982-5c2a59195a13",
       "isGlobal": true,
       "name": "Open Crate 1",
-      "eventText": "You pry the crate open, and the lid crashes to the ground. Inside, you can see a few useful things.\r\n\r\n<color=\"yellow\">Opening a crate usually gives the hero who opened it a Supply card. Gather all Supply cards and remove the card <i>Troop Data</i>; this card is not used when using <b>Imperial Commander</b>. Then shuffle the cards and randomly draw 1 of the cards. The hero who opened the crate places this Supply item in the player's play area.\r\n\r\nSupply items do not carry over between missions. They are shuffled back into the deck after the mission ends, so make sure to use them.</color>",
+      "eventText": "You pry the crate open, and the lid crashes to the ground. Inside, you can see a few useful things.\r\n\r\n<color=\"yellow\">Opening a crate usually gives the hero who opened it a Supply card. Gather all Supply cards and remove the card <i>Troop Data</i>; this card is not used when using <b>Imperial Admiral</b>. Then shuffle the cards and randomly draw 1 of the cards. The hero who opened the crate places this Supply item in the player's play area.\r\n\r\nSupply items do not carry over between missions. They are shuffled back into the deck after the mission ends, so make sure to use them.</color>",
       "allyDefeated": "A001",
       "heroWounded": "H1",
       "heroWithdraws": "H1",
@@ -1604,7 +1604,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "<color=\"yellow\">Note that the conditions <i><color=\"red\">Stunned</color></i> and <i><color=\"red\">Bleeding</color></i> on Imperial figures work differently from how they are described in the Rules Reference Guide when using <b>Imperial Commander</b>. Refer to the wiki documentation for details.</color>",
+          "theText": "<color=\"yellow\">Note that the conditions <i><color=\"red\">Stunned</color></i> and <i><color=\"red\">Bleeding</color></i> on Imperial figures work differently from how they are described in the Rules Reference Guide when using <b>Imperial Admiral</b>. Refer to the wiki documentation for details.</color>",
           "GUID": "1d0ac2fa-b402-4c0a-ae38-d7945acf9338",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -2434,7 +2434,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "<color=\"yellow\">This wraps up the final tutorial for <b>Imperial Commander</b>. You should know all the rules required to find your way around now, and hopefully even had some fun learning them. For details, refer to the Rules Reference Guide provided with the game, and the wiki documentation for <b>Imperial Commander</b>.\r\n\r\nWhen you're ready to go ahead, start the mission <i>Aftermath</i> from the core game, the first real <b>Imperial Assault</b> mission.\r\n\r\nThe tutorials did not cover anything about campaign structure and progress. You can find all about that in the Learn to Play guide and the wiki documentation, or you can go ahead and read it at the end of this tutorial. This will not be interactive, though, just a help to guide you through the process.</color>",
+          "theText": "<color=\"yellow\">This wraps up the final tutorial for <b>Imperial Admiral</b>. You should know all the rules required to find your way around now, and hopefully even had some fun learning them. For details, refer to the Rules Reference Guide provided with the game, and the wiki documentation for <b>Imperial Admiral</b>.\r\n\r\nWhen you're ready to go ahead, start the mission <i>Aftermath</i> from the core game, the first real <b>Imperial Assault</b> mission.\r\n\r\nThe tutorials did not cover anything about campaign structure and progress. You can find all about that in the Learn to Play guide and the wiki documentation, or you can go ahead and read it at the end of this tutorial. This will not be interactive, though, just a help to guide you through the process.</color>",
           "GUID": "251b6baa-71fc-4800-88ea-c032e553787d",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -2904,7 +2904,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "<color=\"yellow\">At the end of each round, the Empire earns {D} (threat), a currency it can spend on deploying new groups and figures. <b>Imperial Commander</b> automatically decides if and what to deploy. It also indicates where to deploy them.\r\n\r\nThe app can deploy new groups, but it can also <i>reinforce</i> existing groups. This means that it picks a group that has had some figures defeated and deploys more figures for that group. If that happens, place the new figures as close as possible to other figures of that group.\r\n\r\nFrom now on, {D} increases at the end of each round, and there may be more deployments.</color>",
+          "theText": "<color=\"yellow\">At the end of each round, the Empire earns {D} (threat), a currency it can spend on deploying new groups and figures. <b>Imperial Admiral</b> automatically decides if and what to deploy. It also indicates where to deploy them.\r\n\r\nThe app can deploy new groups, but it can also <i>reinforce</i> existing groups. This means that it picks a group that has had some figures defeated and deploys more figures for that group. If that happens, place the new figures as close as possible to other figures of that group.\r\n\r\nFrom now on, {D} increases at the end of each round, and there may be more deployments.</color>",
           "GUID": "267d705a-c8e1-4da3-8fb9-49b8c3d8f587",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -3280,7 +3280,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "Here's how to choose which mission to play next:\r\n\r\n{-} <b>Story Missions:</b> After a story mission ends, <b>Imperial Commander</b> will tell the players what Story Mission cards to put into play. They are the <i>active</i> story missions. The next time the campaign log tells the players to play a story mission, they choose one of the active Story Mission cards to play, then discard all remaining Story Mission cards in play. Then they open <b>Imperial Commander</b>, select the mission to play, choose threat level, heroes, allies and villains, and play.\r\n\r\n{-} <b>Side Missions:</b> After the \"Introduction\" mission is resolved, the players shuffle the side mission deck and draw 2 side mission cards. They are the <i>active</i> side missions. When the campaign log tells the players to play a side mission, they choose one of the active side missions to play. After they resolve the side mission, they draw a new side mission card, so that there are always 2 side mission cards in play.",
+          "theText": "Here's how to choose which mission to play next:\r\n\r\n{-} <b>Story Missions:</b> After a story mission ends, <b>Imperial Admiral</b> will tell the players what Story Mission cards to put into play. They are the <i>active</i> story missions. The next time the campaign log tells the players to play a story mission, they choose one of the active Story Mission cards to play, then discard all remaining Story Mission cards in play. Then they open <b>Imperial Admiral</b>, select the mission to play, choose threat level, heroes, allies and villains, and play.\r\n\r\n{-} <b>Side Missions:</b> After the \"Introduction\" mission is resolved, the players shuffle the side mission deck and draw 2 side mission cards. They are the <i>active</i> side missions. When the campaign log tells the players to play a side mission, they choose one of the active side missions to play. After they resolve the side mission, they draw a new side mission card, so that there are always 2 side mission cards in play.",
           "GUID": "fb0cb8b1-110b-4fdb-937e-9896e5fa2663",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -3292,7 +3292,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "In the wiki documentation, you can find a specific example for campaign structure and progress. Just click the link on the start screen of <b>Imperial Commander</b>.",
+          "theText": "In the wiki documentation, you can find a specific example for campaign structure and progress. Just click the link on the start screen of <b>Imperial Admiral</b>.",
           "GUID": "6f6ee613-e241-48d1-b3dc-8abb7bad69ea",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -3340,7 +3340,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "The Empire can also earn rewards. <b>Imperial Commander</b> will tell you what rewards the Empire gets, but they might differ from what is written in the campaign guide or on the Mission card, because many Imperial reward cards are not used in <b>Imperial Commander</b>. Here are the general rules:\r\n\r\n{-} <b>Earned Villains:</b> If the Imperial player gains a <i>villain</i> as a reward, set its card aside. Next time when playing a mission, select that villain as <i>earned</i> in the mission setup screen. Earned villains stay earned for the entire campaign.\r\n{-} <b>Other Imperial Rewards:</b> If the Imperial player would gain any other reward card, the Empire does not gain that reward card. Instead, increase the threat level of the next mission (and only the next mission) by 1. During the Rebel Upgrade stage, the Rebel players can decide to spend 50 credits per hero to prevent this.\r\n{-} <b>Forced Missions:</b> If the Rebel players lose a Forced Mission, increase the threat level of the next mission (and only the next mission) by 2. During the Rebel Upgrade stage, the Rebel players can decide to spend 100 credits per hero to prevent this.\r\n\r\nYou don't need to keep all this in mind, the app is going to tell you what happens.",
+          "theText": "The Empire can also earn rewards. <b>Imperial Admiral</b> will tell you what rewards the Empire gets, but they might differ from what is written in the campaign guide or on the Mission card, because many Imperial reward cards are not used in <b>Imperial Admiral</b>. Here are the general rules:\r\n\r\n{-} <b>Earned Villains:</b> If the Imperial player gains a <i>villain</i> as a reward, set its card aside. Next time when playing a mission, select that villain as <i>earned</i> in the mission setup screen. Earned villains stay earned for the entire campaign.\r\n{-} <b>Other Imperial Rewards:</b> If the Imperial player would gain any other reward card, the Empire does not gain that reward card. Instead, increase the threat level of the next mission (and only the next mission) by 1. During the Rebel Upgrade stage, the Rebel players can decide to spend 50 credits per hero to prevent this.\r\n{-} <b>Forced Missions:</b> If the Rebel players lose a Forced Mission, increase the threat level of the next mission (and only the next mission) by 2. During the Rebel Upgrade stage, the Rebel players can decide to spend 100 credits per hero to prevent this.\r\n\r\nYou don't need to keep all this in mind, the app is going to tell you what happens.",
           "GUID": "63466ba8-891a-499f-91ef-a9289d3ddf16",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -3370,7 +3370,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "In the wiki documentation, you can find a specific example for campaign structure and progress. Just click the link on the start screen of <b>Imperial Commander</b>.",
+          "theText": "In the wiki documentation, you can find a specific example for campaign structure and progress. Just click the link on the start screen of <b>Imperial Admiral</b>.",
           "GUID": "6ee497f1-8af0-456c-9185-ada06cf92774",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -3454,7 +3454,7 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "In the wiki documentation, you can find more about how to setup and play missions. Just click the link on the start screen of <b>Imperial Commander</b>.",
+          "theText": "In the wiki documentation, you can find more about how to setup and play missions. Just click the link on the start screen of <b>Imperial Admiral</b>.",
           "GUID": "015faa6e-b6c0-4e77-bb29-16a1011edea2",
           "eventActionType": 16,
           "displayName": "Text Box"
@@ -3471,7 +3471,7 @@
       "GUID": "28558464-eceb-465a-9e61-d1fea3d80d9b",
       "isGlobal": true,
       "name": "End Mission",
-      "eventText": "<color=\"yellow\">May the Force be with you, and have fun with <b>Imperial Commander</b>!</color>",
+      "eventText": "<color=\"yellow\">May the Force be with you, and have fun with <b>Imperial Admiral</b>!</color>",
       "allyDefeated": "A001",
       "heroWounded": "H1",
       "heroWithdraws": "H1",
@@ -3512,7 +3512,7 @@
       "GUID": "bc396ce9-64ea-4f94-958d-1afd11ebbfd5",
       "isGlobal": true,
       "name": "Campaign Preparation",
-      "eventText": "When starting a new campaign in <b>Imperial Commander</b>, you need to perform a few steps.",
+      "eventText": "When starting a new campaign in <b>Imperial Admiral</b>, you need to perform a few steps.",
       "allyDefeated": "A001",
       "heroWounded": "H1",
       "heroWithdraws": "H1",
@@ -3567,13 +3567,13 @@
           "displayName": "Text Box"
         },
         {
-          "theText": "<b>Step 6: Start Introduction Mission</b>\r\nStart a new campaign in <b>Imperial Commander</b>. Choose the campaign you want to play and give it a name. Select the chosen heroes in the campaign overview, then click the green arrow next to the <b>Introduction</b> mission. Choose the difficulty level and start the mission.",
+          "theText": "<b>Step 6: Start Introduction Mission</b>\r\nStart a new campaign in <b>Imperial Admiral</b>. Choose the campaign you want to play and give it a name. Select the chosen heroes in the campaign overview, then click the green arrow next to the <b>Introduction</b> mission. Choose the difficulty level and start the mission.",
           "GUID": "f5985ce2-44da-4aa4-b254-732c4ec03493",
           "eventActionType": 16,
           "displayName": "Text Box"
         },
         {
-          "theText": "Some campaigns require a slightly different setup. You can find more about this (and more details) in campaign guide or the respective campaign info (click the info icon in the campaign overview) or in the wiki documentation (click the link on the start screen of <b>Imperial Commander</b>).",
+          "theText": "Some campaigns require a slightly different setup. You can find more about this (and more details) in campaign guide or the respective campaign info (click the info icon in the campaign overview) or in the wiki documentation (click the link on the start screen of <b>Imperial Admiral</b>).",
           "GUID": "452eae82-5e41-4880-b005-f56dfa357a69",
           "eventActionType": 16,
           "displayName": "Text Box"

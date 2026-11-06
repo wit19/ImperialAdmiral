@@ -103,7 +103,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Tras una agotadora escalada y un duro combate, os infiltráis en la base y robáis los planes imperiales de la consola central, lo que con suerte frustrará las intenciones del Imperio.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los Héroes reciben la carta de Recompensa \"Complementos''. (Esta carta de Recompensa funciona de manera distinta cuanco se juega con <b>Imperial Commander</b>. Revisa la sección de <b>Cambios a las Reglas</b> de la wiki de documentación para más detalles.)",
+      "eventText": "Tras una agotadora escalada y un duro combate, os infiltráis en la base y robáis los planes imperiales de la consola central, lo que con suerte frustrará las intenciones del Imperio.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los Héroes reciben la carta de Recompensa \"Complementos''. (Esta carta de Recompensa funciona de manera distinta cuanco se juega con <b>Imperial Admiral</b>. Revisa la sección de <b>Cambios a las Reglas</b> de la wiki de documentación para más detalles.)",
       "eventActions": [
         {
           "mainText": "¿Se ha jugado esta misión como parte de la mini campaña \"Sombras Gemelas\"?",

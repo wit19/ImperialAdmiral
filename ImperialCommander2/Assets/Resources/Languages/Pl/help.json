@@ -191,7 +191,7 @@
 			},
 			{
 				"id": "mode",
-				"helpText": "Przełączaj się między oficjalnymi misjami (stworzonymi przez zespół Imperial Commander i zawartymi w aplikacji) a niestandardowymi misjami stworzonymi przez użytkowników."				
+				"helpText": "Przełączaj się między oficjalnymi misjami (stworzonymi przez zespół Imperial Admiral i zawartymi w aplikacji) a niestandardowymi misjami stworzonymi przez użytkowników."				
 			},
 			{
 				"id": "start",
@@ -285,7 +285,7 @@
 		"helpItems": [
 			{
 				"id": "tutorials",
-				"helpText": "<b>Imperial Commander</b> zawiera trzy samouczki przeznaczone dla graczy, którzy nigdy wcześniej nie grali w Imperium Atakuje. Te samouczki wyjaśniają, jak grać w grę i korzystać z aplikacji.\n\nWybierz samouczek z listy."
+				"helpText": "<b>Imperial Admiral</b> zawiera trzy samouczki przeznaczone dla graczy, którzy nigdy wcześniej nie grali w Imperium Atakuje. Te samouczki wyjaśniają, jak grać w grę i korzystać z aplikacji.\n\nWybierz samouczek z listy."
 			},
 			{
 				"id": "tutorialStart",
@@ -309,7 +309,7 @@
 			},
 			{
 				"id": "menu",
-				"helpText": "To jest menu główne. Można tu rozpocząć nową kampanię lub misję, wczytać istniejącą kampanię lub kontynuować zapisaną misję w toku.\n\n<b>Imperial Commander</b> automatycznie zapisuje stan gry po każdej rundzie, po rozstrzygnięciu wszystkich aktywacji. Kliknij / dotknij Kontynuuj, aby załadować zapisany stan gry."
+				"helpText": "To jest menu główne. Można tu rozpocząć nową kampanię lub misję, wczytać istniejącą kampanię lub kontynuować zapisaną misję w toku.\n\n<b>Imperial Admiral</b> automatycznie zapisuje stan gry po każdej rundzie, po rozstrzygnięciu wszystkich aktywacji. Kliknij / dotknij Kontynuuj, aby załadować zapisany stan gry."
 			},
 			{
 				"id": "wiki",

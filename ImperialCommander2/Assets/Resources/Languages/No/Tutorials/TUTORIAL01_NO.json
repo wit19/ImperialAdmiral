@@ -34,7 +34,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Velkommen til opplæringen for <b>Imperial Commander</b>! \r\n\r\nDenne serien med opplæringsspill er designet for å lære deg det grunnleggende for å kunne spille <b>Imperial Assault</b> med den uoffisielle appen. Du trenger ingen forkunnskap om <b>Imperial Assault</b>, men husk at veiledningene bare gir grunnleggende informasjon. Hvis du vil fordype deg mer eller har noen spørsmål, se \"Lær å spille\"-guiden og \"Regelreferanseveiledningen\" som følger med spillet.</color>",
+          "tbText": "<color=\"yellow\">Velkommen til opplæringen for <b>Imperial Admiral</b>! \r\n\r\nDenne serien med opplæringsspill er designet for å lære deg det grunnleggende for å kunne spille <b>Imperial Assault</b> med den uoffisielle appen. Du trenger ingen forkunnskap om <b>Imperial Assault</b>, men husk at veiledningene bare gir grunnleggende informasjon. Hvis du vil fordype deg mer eller har noen spørsmål, se \"Lær å spille\"-guiden og \"Regelreferanseveiledningen\" som følger med spillet.</color>",
           "GUID": "9e3e8682-8ca5-4965-b0ab-6946f2c3697d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -175,7 +175,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Leia bruker nå 4 bevegelsespoeng og beveger seg til hun er ved siden av terminalen.\r\n\r\nMerk at <b>Imperial Commander</b> vanligvis ikke har oversikt over figurenes posisjoner. Dette gjøres kun som en demonstrasjon i dette opplæringsspillet.</color>",
+          "tbText": "<color=\"yellow\">Leia bruker nå 4 bevegelsespoeng og beveger seg til hun er ved siden av terminalen.\r\n\r\nMerk at <b>Imperial Admiral</b> vanligvis ikke har oversikt over figurenes posisjoner. Dette gjøres kun som en demonstrasjon i dette opplæringsspillet.</color>",
           "GUID": "2f173ba6-4c1a-43f9-9543-5ba682be6c30",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -920,7 +920,7 @@
       "eventText": "Etter at den siste treningsdronen detonerer, gir Leia deg en kort applaus. «Godt jobbet!», sier hun og smiler. \"Det virker som du deg ut av den smørja, helt fint. Vi kunne virkelig t-\"\r\n\r\nHun blir avbrutt av comlinken hennes. «Deres Høyhet», sprekker en stemme gjennom høyttaleren. \"Vi har nettopp mottatt et nødsignal fra Indu. Imperiestyrker nærmer seg gjemmestedet vårt der. De signaliserer om hjelp. Ingen andre Allianseskip er så nærme som oss.\"\r\n\r\nLeias øyne blir store, så dukker en dyster besluttsomhet opp i ansiktet hennes. \"Be dem holde ut. Sett kursen mot Indu\", roper hun inn i comlinken sin, og ser så på deg.",
       "eventActions": [
         {
-          "tbText": "\"Dere kan få behov for disse våpnene tidligere enn vi trodde. Jeg skulle akkurat til å si at vi kunne ha trengt folk med deres ferdigheter og spørre dere om dere kunne tenke dere å bli med.\"\r\n\r\nNår hun ser dere klargjøre våpnene deres, smiler hun til dere. \"Velkommen til Opprørsalliansen.\"\r\n\r\n<color=\"yellow\">Dette avslutter del 1 av <b>Imperial Commander</b>-opplæringen. I del 2 vil du møte andre ting enn treningsdroner.</color>",
+          "tbText": "\"Dere kan få behov for disse våpnene tidligere enn vi trodde. Jeg skulle akkurat til å si at vi kunne ha trengt folk med deres ferdigheter og spørre dere om dere kunne tenke dere å bli med.\"\r\n\r\nNår hun ser dere klargjøre våpnene deres, smiler hun til dere. \"Velkommen til Opprørsalliansen.\"\r\n\r\n<color=\"yellow\">Dette avslutter del 1 av <b>Imperial Admiral</b>-opplæringen. I del 2 vil du møte andre ting enn treningsdroner.</color>",
           "GUID": "9fff3167-309f-4bc2-a78f-4c6cadfc8deb",
           "eventActionType": 16,
           "eaName": "Text Box"

@@ -33,7 +33,11 @@ public class Sound : MonoBehaviour
 	{
 		if ( PlayerPrefs.GetInt( "sound" ) == 1 )
 			if ( clipIndex <= clips.Length - 1 )
-				source.PlayOneShot( clips[clipIndex] );
+				// Renamed project (06.11.): clips[1] ("Welcome to Imperial
+				// Commander", title intro) is detached in Title.unity - a
+				// retired slot stays legal: null = silence, indices intact.
+				if ( clips[clipIndex] != null )
+					source.PlayOneShot( clips[clipIndex] );
 	}
 
 	public void PlayDefeatedSound()

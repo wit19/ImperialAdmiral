@@ -22,7 +22,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Bienvenido al tercer tutorial de <b>Imperial Commander</b>. Este tutorial os enseñará las reglas restantes que no cubrieron los dos tutoriales anteriores.\r\n\r\nComo anteriormente, comprueba la Guía de Referencia o la Wiki de documentación de <b>Imperial Commander</b> si tienes alguna duda.</color>",
+          "tbText": "<color=\"yellow\">Bienvenido al tercer tutorial de <b>Imperial Admiral</b>. Este tutorial os enseñará las reglas restantes que no cubrieron los dos tutoriales anteriores.\r\n\r\nComo anteriormente, comprueba la Guía de Referencia o la Wiki de documentación de <b>Imperial Admiral</b> si tienes alguna duda.</color>",
           "GUID": "323f7e6d-44ba-4957-964d-4976156bd76b",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -221,7 +221,7 @@
     {
       "eventName": "Open Crate 1",
       "GUID": "84137c98-52d5-49e1-8982-5c2a59195a13",
-      "eventText": "Fuerzas el contenedor para abrirlo, y la tapa cae al suelo. Dentro puedes ver algunas cosas útiles.\r\n\r\n<color=\"yellow\">Abrir un contenedor normalmente le otorga al Héroe que lo hace una carta de suministro. Coge las cartas de suministro y quita la carta <i>Información sobre tropas</i>; esta carta no se usa cuando se juega con <b>Imperial Commander</b>. Luego mezcla el mazo de suministro y roba 1 carta. El Héroe que abrió el contenedor coloca este suministro en la zona de los jugadores.\r\n\r\nLos suministros no se conservan de una misión a otra. Se vuelven a mezclar en el mazo al final de la misión, así que asegúrate de usarlos.</color>",
+      "eventText": "Fuerzas el contenedor para abrirlo, y la tapa cae al suelo. Dentro puedes ver algunas cosas útiles.\r\n\r\n<color=\"yellow\">Abrir un contenedor normalmente le otorga al Héroe que lo hace una carta de suministro. Coge las cartas de suministro y quita la carta <i>Información sobre tropas</i>; esta carta no se usa cuando se juega con <b>Imperial Admiral</b>. Luego mezcla el mazo de suministro y roba 1 carta. El Héroe que abrió el contenedor coloca este suministro en la zona de los jugadores.\r\n\r\nLos suministros no se conservan de una misión a otra. Se vuelven a mezclar en el mazo al final de la misión, así que asegúrate de usarlos.</color>",
       "eventActions": [
         {
           "tbText": "Bajo los suministros, encuentras un medpac que parece utilizable.\r\n\r\n<color=\"yellow\">Coloca una ficha de Tensión en algún lugar de la zona de juego de los Rebeldes. Esto representa un medpac. Los medpacs son un recurso compartido, todos los jugadores tienen acceso a ellos. Los jugadores comienzan cada misión con 1 medpac, y pueden encontrar más al abrir contenedores durante las misiones. Cuando encuentres uno, coloca otra ficha de Tensión en la zona de juego. Cuando uses un medpac, descarta una de las fichas.\r\n\r\nAl igual que los suministros, los medpac no se conservan tras las misiones. Son un suministro escaso en la Alianza Rebelde.</color>",
@@ -425,7 +425,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Ten en cuenta que en <b>Imperial Commander</b>, los estados <i><color=\"red\">Aturdimiento</color></i> y <i><color=\"red\">Hemorragia</color></i> sobre las figuras Imperiales funcionan de diferente manera a como se describen en la Guía de Referencia. Revisa la wiki de documentación para más detalles. </color>",
+          "tbText": "<color=\"yellow\">Ten en cuenta que en <b>Imperial Admiral</b>, los estados <i><color=\"red\">Aturdimiento</color></i> y <i><color=\"red\">Hemorragia</color></i> sobre las figuras Imperiales funcionan de diferente manera a como se describen en la Guía de Referencia. Revisa la wiki de documentación para más detalles. </color>",
           "GUID": "1d0ac2fa-b402-4c0a-ae38-d7945acf9338",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -792,7 +792,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Esto completa el último tutorial para <b>Imperial Commander</b>. Ahora deberías conocer todas las reglas necesarias para desenvolverte en el juego, y con suerte, te habrás divertido un poco mientras las aprendías. Para más detalles, consulta la Referencia de Reglas que se suministra con el juego, y la wiki de documentación para <b>Imperial Commander</b>.\r\n\r\nCuando estés listo para seguir, empieza la misión <i>Secuelas</i> del juego base, la primera misión real de <b>Imperial Assault</b>.\r\n\r\nLos tutoriales no han cubierto la estructura y progreso durante las campañas. Puedes encontrar todo lo relativo a eso en la guía de Aprende a Jugar y en la wiki de documentación, o puedes leerlo al final de este tutorial. No será interactivo, solamente una ayuda para guiarte por el proceso.</color>",
+          "tbText": "<color=\"yellow\">Esto completa el último tutorial para <b>Imperial Admiral</b>. Ahora deberías conocer todas las reglas necesarias para desenvolverte en el juego, y con suerte, te habrás divertido un poco mientras las aprendías. Para más detalles, consulta la Referencia de Reglas que se suministra con el juego, y la wiki de documentación para <b>Imperial Admiral</b>.\r\n\r\nCuando estés listo para seguir, empieza la misión <i>Secuelas</i> del juego base, la primera misión real de <b>Imperial Assault</b>.\r\n\r\nLos tutoriales no han cubierto la estructura y progreso durante las campañas. Puedes encontrar todo lo relativo a eso en la guía de Aprende a Jugar y en la wiki de documentación, o puedes leerlo al final de este tutorial. No será interactivo, solamente una ayuda para guiarte por el proceso.</color>",
           "GUID": "251b6baa-71fc-4800-88ea-c032e553787d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -875,7 +875,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Al final de cada ronda, el Imperio gana {D} (amenaza), una moneda que puede gastar para desplegar nuevos grupos y figuras. <b>Imperial Commander</b> decide automáticamente si desplegar y qué desplegar. También te indica dónde desplegar esos refuerzos.\r\n\r\nLa app puede desplegar nuevos grupos, pero también puede <i>reforzar</i> los grupos existentes. Esto significa que elige un grupo con alguna figura derrotada y despliega más figuras de ese grupo. Si eso sucede, coloca las nuevas figuras tan cerca como sea posible del resto de figuras del grupo.\r\n\r\nA partir de ahora, la {D} se incrementa al final de cada ronda, y podría haber más despliegues.</color>",
+          "tbText": "<color=\"yellow\">Al final de cada ronda, el Imperio gana {D} (amenaza), una moneda que puede gastar para desplegar nuevos grupos y figuras. <b>Imperial Admiral</b> decide automáticamente si desplegar y qué desplegar. También te indica dónde desplegar esos refuerzos.\r\n\r\nLa app puede desplegar nuevos grupos, pero también puede <i>reforzar</i> los grupos existentes. Esto significa que elige un grupo con alguna figura derrotada y despliega más figuras de ese grupo. Si eso sucede, coloca las nuevas figuras tan cerca como sea posible del resto de figuras del grupo.\r\n\r\nA partir de ahora, la {D} se incrementa al final de cada ronda, y podría haber más despliegues.</color>",
           "GUID": "267d705a-c8e1-4da3-8fb9-49b8c3d8f587",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -990,7 +990,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Así se elgie la siguiente misión que se juega:\r\n\r\n{-} <b>Misiones de Historia:</b> Al final de una misión de historia, <b>Imperial Commander</b> le dirá a los jugadores que cartas de Misión de Historia poner en juego. Son las misiones de historia <i>activas</i>. La siguiente vez que el registro de campaña les diga a los jugadores que deben jugar una misión de historia, eligen una de las cartas activas de Misión de Historia para jugarla, y descartan las restantes. Luego abren <b>Imperial Commander</b>, eligen la misión, el nivel de amenaza, los Héroes, los Aliados y Villanos, y a jugar.\r\n\r\n{-} <b>Misiones secundarias:</b> Después de resolver la misión de \"introducción\", los jugadores mezclan el mazo de misiones secundarias y roban 2 cartas. Estas son las misiones secundarias <i>activas</i>. Cuando el registro de campaña indique que los jugadores deben jugar una misión secundaria, eligen una de las misiones activas. Una vez que resuelvan la misión, roban otra carta de misión secundaria, de forma que siempre hay 2 cartas de misión secundaria en juego.",
+          "tbText": "Así se elgie la siguiente misión que se juega:\r\n\r\n{-} <b>Misiones de Historia:</b> Al final de una misión de historia, <b>Imperial Admiral</b> le dirá a los jugadores que cartas de Misión de Historia poner en juego. Son las misiones de historia <i>activas</i>. La siguiente vez que el registro de campaña les diga a los jugadores que deben jugar una misión de historia, eligen una de las cartas activas de Misión de Historia para jugarla, y descartan las restantes. Luego abren <b>Imperial Admiral</b>, eligen la misión, el nivel de amenaza, los Héroes, los Aliados y Villanos, y a jugar.\r\n\r\n{-} <b>Misiones secundarias:</b> Después de resolver la misión de \"introducción\", los jugadores mezclan el mazo de misiones secundarias y roban 2 cartas. Estas son las misiones secundarias <i>activas</i>. Cuando el registro de campaña indique que los jugadores deben jugar una misión secundaria, eligen una de las misiones activas. Una vez que resuelvan la misión, roban otra carta de misión secundaria, de forma que siempre hay 2 cartas de misión secundaria en juego.",
           "GUID": "fb0cb8b1-110b-4fdb-937e-9896e5fa2663",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1002,7 +1002,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "En la wiki de documentación puedes encontrar un ejemplo de la estructura y progreso de una campaña. Pulsa sobre el enlace en la pantalla inicial de <b>Imperial Commander</b>.",
+          "tbText": "En la wiki de documentación puedes encontrar un ejemplo de la estructura y progreso de una campaña. Pulsa sobre el enlace en la pantalla inicial de <b>Imperial Admiral</b>.",
           "GUID": "6f6ee613-e241-48d1-b3dc-8abb7bad69ea",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1015,13 +1015,13 @@
       "eventText": "Cuando los jugadores completan misiones y avanzan en la campaña, tienen que llevar a cabo varios pasos tras resolver cada una de las misiones. Tras eso, consultan el registro de campaña para determinar la siguiente misión.",
       "eventActions": [
         {
-          "tbText": "Algunas misiones (normalmente las misiones secundarias, pero también algunas de historia) otorgan a los Héroes <b>recompensas</b> por completarlas.\r\n\r\n{-} <b>Cartas de Recompensa:</b>Muchas recompensas se otorgan en forma de Cartas de Recompensa que le dan habilidades a los héroes. La mayoría funcionan tal y como aparecen en la carta. Algunas, sin embargo, requieren modificaciones para jugar en el Modo Saga de <i>Imperial Commander</i>. En la wiki de documentación hay un listado. \r\n\r\n{-} <b>Aliados:</b> Las misiones secundarias de color verde otorgan Aliados como recompensa para los Héroes. Una vez que los jugadores han obtenido un Aliado, pueden decidir incluirlo en las siguientes misiones. Simplemente seleccionalos en la pantalla de configuración de la misión. Sin embargo, incluir un Aliado incrementa la amenaza que el Imperio obtiene al comienzo de la misión, por lo que los jugadores deben evaluar los riesgos y beneficios de incluir aliados. Los aliados que se obtienen permanecen disponibles durante toda la campaña.",
+          "tbText": "Algunas misiones (normalmente las misiones secundarias, pero también algunas de historia) otorgan a los Héroes <b>recompensas</b> por completarlas.\r\n\r\n{-} <b>Cartas de Recompensa:</b>Muchas recompensas se otorgan en forma de Cartas de Recompensa que le dan habilidades a los héroes. La mayoría funcionan tal y como aparecen en la carta. Algunas, sin embargo, requieren modificaciones para jugar en el Modo Saga de <i>Imperial Admiral</i>. En la wiki de documentación hay un listado. \r\n\r\n{-} <b>Aliados:</b> Las misiones secundarias de color verde otorgan Aliados como recompensa para los Héroes. Una vez que los jugadores han obtenido un Aliado, pueden decidir incluirlo en las siguientes misiones. Simplemente seleccionalos en la pantalla de configuración de la misión. Sin embargo, incluir un Aliado incrementa la amenaza que el Imperio obtiene al comienzo de la misión, por lo que los jugadores deben evaluar los riesgos y beneficios de incluir aliados. Los aliados que se obtienen permanecen disponibles durante toda la campaña.",
           "GUID": "c08ee8d8-73f3-4440-b755-45f4853fca12",
           "eventActionType": 16,
           "eaName": "Text Box"
         },
         {
-          "tbText": "El Imperio también puede obtener recompensas. <b>Imperial Commander</b> te dirá que recompensa obtiene el Imperio, pero podrían ser distintas de las que aparecen en las guías de campaña o Cartas de Misión, porque las Cartas de Recompensa Imperial no se usan en <b>Imperial Commander</b>. Estas son las reglas generales: \r\n\r\n{-} <b>Villanos obtenidos:</b> Si el Imperio obtiene un <i>Villano</i> como recompensa, aparta su carta. En la próxima misión, selecciona el villano como <i>obtenido</i> en la pantalla de configuración de la misión. Los Villanos obtenidos permanecen disponibles durante toda la campaña.\r\n{-} <b>Otras Recompensas Imperiales:</b> Si el jugador Imperial debería obtener alguna otra Carta de Recompensa, el Imperio no obtiene esa recompensa. En su lugar, incrementa el nivel de amenaza para la siguiente misión (y solo para la siguiente) en 1. Durante la etapa de Mejora Rebelde, los jugadores pueden decidir gastar 50 créditos por Héroe para evitar este incremento de la amenaza.\r\n{-} <b>Misiones Obligatorias:</b> Si los jugadores Rebeldes pierden una misión obligatoria, incrementa el nivel de amenaza para la siguiente misión (y solo para la siguiente) en 2. Durante la etapa de Mejora Rebelde, los jugadores pueden decidir gastar 100 créditos por Héroe para evitar este incremento de la amenaza. \r\n\r\nNo es necesario que memorices todo esto, la app te irá diciendo qué hacer.",
+          "tbText": "El Imperio también puede obtener recompensas. <b>Imperial Admiral</b> te dirá que recompensa obtiene el Imperio, pero podrían ser distintas de las que aparecen en las guías de campaña o Cartas de Misión, porque las Cartas de Recompensa Imperial no se usan en <b>Imperial Admiral</b>. Estas son las reglas generales: \r\n\r\n{-} <b>Villanos obtenidos:</b> Si el Imperio obtiene un <i>Villano</i> como recompensa, aparta su carta. En la próxima misión, selecciona el villano como <i>obtenido</i> en la pantalla de configuración de la misión. Los Villanos obtenidos permanecen disponibles durante toda la campaña.\r\n{-} <b>Otras Recompensas Imperiales:</b> Si el jugador Imperial debería obtener alguna otra Carta de Recompensa, el Imperio no obtiene esa recompensa. En su lugar, incrementa el nivel de amenaza para la siguiente misión (y solo para la siguiente) en 1. Durante la etapa de Mejora Rebelde, los jugadores pueden decidir gastar 50 créditos por Héroe para evitar este incremento de la amenaza.\r\n{-} <b>Misiones Obligatorias:</b> Si los jugadores Rebeldes pierden una misión obligatoria, incrementa el nivel de amenaza para la siguiente misión (y solo para la siguiente) en 2. Durante la etapa de Mejora Rebelde, los jugadores pueden decidir gastar 100 créditos por Héroe para evitar este incremento de la amenaza. \r\n\r\nNo es necesario que memorices todo esto, la app te irá diciendo qué hacer.",
           "GUID": "63466ba8-891a-499f-91ef-a9289d3ddf16",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1051,7 +1051,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "En la wiki de documentación puedes encontrar un ejemplo específico de la estructura y progreso de campaña. Pulsa en el link en la pantalla inicial de <b>Imperial Commander</b>.",
+          "tbText": "En la wiki de documentación puedes encontrar un ejemplo específico de la estructura y progreso de campaña. Pulsa en el link en la pantalla inicial de <b>Imperial Admiral</b>.",
           "GUID": "6ee497f1-8af0-456c-9185-ada06cf92774",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1106,7 +1106,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "En la wiki de documentación puedes encontrar más información sobre como configurar y jugar una misión. Pusla en el link en la pantalla inicial de <b>Imperial Commander</b>.",
+          "tbText": "En la wiki de documentación puedes encontrar más información sobre como configurar y jugar una misión. Pusla en el link en la pantalla inicial de <b>Imperial Admiral</b>.",
           "GUID": "015faa6e-b6c0-4e77-bb29-16a1011edea2",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1116,13 +1116,13 @@
     {
       "eventName": "End Mission",
       "GUID": "28558464-eceb-465a-9e61-d1fea3d80d9b",
-      "eventText": "<color=\"yellow\">¡Que la Fuerza te acompañe, y te diviertas con <b>Imperial Commander</b>!</color>",
+      "eventText": "<color=\"yellow\">¡Que la Fuerza te acompañe, y te diviertas con <b>Imperial Admiral</b>!</color>",
       "eventActions": []
     },
     {
       "eventName": "Campaign Preparation",
       "GUID": "bc396ce9-64ea-4f94-958d-1afd11ebbfd5",
-      "eventText": "Cuando comienzas una nueva campaña en <b>Imperial Commander</b>, debes llevar a cabo varios pasos.",
+      "eventText": "Cuando comienzas una nueva campaña en <b>Imperial Admiral</b>, debes llevar a cabo varios pasos.",
       "eventActions": [
         {
           "tbText": "<b>Paso 1: Prepara el suministro común</b>\r\nColoca los dados, Cartas de Estado, y las fichas de daño, tensión y estado al alcance de todos los jugadores. Coloca las también las cartas de referencia en un lugar accesible. Retira la carta \"Información sobre Tropas\" del Mazo de Suministro y devuélvela a la caja. Luego mezcla el mazo y colócalo boca abajo al alcance de los jugadores.",
@@ -1155,13 +1155,13 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<b>Paso 6: Empieza la misión de introducción</b>\r\nEmpieza una nueva campaña en <b>Imperial Commander</b>. Elige la campaña que quieres jugar y dale un nombre. Escoge a los Héroes en la pantalla general de la campaña, y luego pulsa sobra la flecha verde junto a la misión de <b>Introducción</b>. Elige el nivel de dificultad, y comienza la misión.",
+          "tbText": "<b>Paso 6: Empieza la misión de introducción</b>\r\nEmpieza una nueva campaña en <b>Imperial Admiral</b>. Elige la campaña que quieres jugar y dale un nombre. Escoge a los Héroes en la pantalla general de la campaña, y luego pulsa sobra la flecha verde junto a la misión de <b>Introducción</b>. Elige el nivel de dificultad, y comienza la misión.",
           "GUID": "f5985ce2-44da-4aa4-b254-732c4ec03493",
           "eventActionType": 16,
           "eaName": "Text Box"
         },
         {
-          "tbText": "Algunas campañas requieren una preparación ligeramente diferente. Puedes encontrar más detalles en las guías de campaña, en la información de la campaña en la app (pulsa el icono de info en la pantalla general de la campaña) o en la wiki de documentación (pulsa en el link en la pantalla inicial de <b>Imperial Commander</b>.)",
+          "tbText": "Algunas campañas requieren una preparación ligeramente diferente. Puedes encontrar más detalles en las guías de campaña, en la información de la campaña en la app (pulsa el icono de info en la pantalla general de la campaña) o en la wiki de documentación (pulsa en el link en la pantalla inicial de <b>Imperial Admiral</b>.)",
           "GUID": "452eae82-5e41-4880-b005-f56dfa357a69",
           "eventActionType": 16,
           "eaName": "Text Box"

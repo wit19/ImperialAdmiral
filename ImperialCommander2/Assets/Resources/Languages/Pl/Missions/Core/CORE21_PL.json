@@ -109,7 +109,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Opuszczacie hangar na pokładzie statku i wylatujecie w przestrzeń kosmiczną. Dokonujecie pospiesznych obliczeń współrzędnych skoku - i nim zostają za wami wysłane myśliwce, nie ma po was śladu.\r\n\r\n{-} Bohaterowie wygrali misję!\r\n{-} Gracze Rebelii wybierają jednego bohatera. Dostaje on kartę nagrody \"Działania sojusznicze\". (Ta karta ma inne działanie podczas gry w aplikacji <b>Imperial Commander</b>. Kiedy zabierasz opcjonalnego SOJUSZNIKA na misję, możesz ZUŻYĆ tę kartę na początku misji, aby natychmiast pokonać figurkę z opcjonalnego rozstawienia o koszcie figurki 2 lub mniejszym. Szczegóły znajdują się w sekcji <b>Zmiany zasad</b> w dokumentacji wiki.)\r\n{-} Każdy gracz dostaje 1 PD. Bohaterowie dostają 100 kredytów za każdego bohatera w grze.",
+      "eventText": "Opuszczacie hangar na pokładzie statku i wylatujecie w przestrzeń kosmiczną. Dokonujecie pospiesznych obliczeń współrzędnych skoku - i nim zostają za wami wysłane myśliwce, nie ma po was śladu.\r\n\r\n{-} Bohaterowie wygrali misję!\r\n{-} Gracze Rebelii wybierają jednego bohatera. Dostaje on kartę nagrody \"Działania sojusznicze\". (Ta karta ma inne działanie podczas gry w aplikacji <b>Imperial Admiral</b>. Kiedy zabierasz opcjonalnego SOJUSZNIKA na misję, możesz ZUŻYĆ tę kartę na początku misji, aby natychmiast pokonać figurkę z opcjonalnego rozstawienia o koszcie figurki 2 lub mniejszym. Szczegóły znajdują się w sekcji <b>Zmiany zasad</b> w dokumentacji wiki.)\r\n{-} Każdy gracz dostaje 1 PD. Bohaterowie dostają 100 kredytów za każdego bohatera w grze.",
       "eventActions": []
     },
     {

@@ -715,7 +715,7 @@
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
       "isGlobal": true,
       "name": "End of Mission - Rebels win",
-      "eventText": "After a grueling climb and heavy combat, you infiltrate the base and steal Imperial plans from the central console, hopefully foiling any Imperial plots.\r\n\r\n{-} The Rebels win the mission!\r\n{-} Heroes receive the \"Counterparts\" Reward card. (This Reward card works differently when playing with <b>Imperial Commander</b>. Refer to the <b>Rules Change</b> section of the wiki documentation for details.)",
+      "eventText": "After a grueling climb and heavy combat, you infiltrate the base and steal Imperial plans from the central console, hopefully foiling any Imperial plots.\r\n\r\n{-} The Rebels win the mission!\r\n{-} Heroes receive the \"Counterparts\" Reward card. (This Reward card works differently when playing with <b>Imperial Admiral</b>. Refer to the <b>Rules Change</b> section of the wiki documentation for details.)",
       "allyDefeated": "A001",
       "heroWounded": "H1",
       "heroWithdraws": "H1",

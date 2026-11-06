@@ -1161,7 +1161,7 @@
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
       "isGlobal": true,
       "name": "End of Mission - Rebels win",
-      "eventText": "The remaining Imperial troops retreat back toward Mos Eisley, leaving the homestead in peace. Weeping with joy, the surviving farmers express profound gratitude to you for your assistance.\r\n\r\n{-} The Rebels win the mission!\r\n{-} Heroes receive the “Resurgence” Reward card. (This Reward card works differently when playing with <b>Imperial Commander</b>. Refer to the <b>Rules Change</b> section of the wiki documentation for details.)\r\n{-} Each hero receives 1 XP. Heroes receive 100 credits per hero.\r\n{-} The Empire discards the “Constant Advantage” Reward card.",
+      "eventText": "The remaining Imperial troops retreat back toward Mos Eisley, leaving the homestead in peace. Weeping with joy, the surviving farmers express profound gratitude to you for your assistance.\r\n\r\n{-} The Rebels win the mission!\r\n{-} Heroes receive the “Resurgence” Reward card. (This Reward card works differently when playing with <b>Imperial Admiral</b>. Refer to the <b>Rules Change</b> section of the wiki documentation for details.)\r\n{-} Each hero receives 1 XP. Heroes receive 100 credits per hero.\r\n{-} The Empire discards the “Constant Advantage” Reward card.",
       "allyDefeated": "A001",
       "heroWounded": "H1",
       "heroWithdraws": "H1",

@@ -97,7 +97,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Chewbacca ruge triunfante mientras las tropas Imperiales se ven obligadas a retirarse. Corréis hacia los wookiees envenenados y empezáis a aplicar inyectores de estimulantes tan rápido como podéis.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los jugadores del bando Rebelde eligen un Héroe para que reciba la carta de Recompensa “Intimidación”. (Esta Carta de Recopensa funciona de manera diferente cuando se juega con <b>Imperial Commander</b>. Revisa la sección de <b>Cambios a las Reglas</b> de la wiki de documentación.)\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por Héroe.",
+      "eventText": "Chewbacca ruge triunfante mientras las tropas Imperiales se ven obligadas a retirarse. Corréis hacia los wookiees envenenados y empezáis a aplicar inyectores de estimulantes tan rápido como podéis.\r\n\r\n{-} ¡Los Rebeldes ganan la misión!\r\n{-} Los jugadores del bando Rebelde eligen un Héroe para que reciba la carta de Recompensa “Intimidación”. (Esta Carta de Recopensa funciona de manera diferente cuando se juega con <b>Imperial Admiral</b>. Revisa la sección de <b>Cambios a las Reglas</b> de la wiki de documentación.)\r\n{-} Cada Héroe recibe 1 PE. Los Héroes reciben 100 créditos por Héroe.",
       "eventActions": []
     },
     {

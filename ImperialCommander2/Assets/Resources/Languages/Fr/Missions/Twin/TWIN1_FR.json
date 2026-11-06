@@ -103,7 +103,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Après une escalade éreintante doublée d'un combat épique, vous vous infiltrez dans la base et dérobez les plans dans la console centrale, en espérant que cette opération permettra de déjouer les desseins des Impériaux.\r\n\r\n{-} Les Rebelles remportent la mission !\r\n{-} Les héros reçoivent la carte Récompense « Homologues ». (Cette carte Récompense fonctionne différemment lorsque vous jouez avec <b>Imperial Commander 2</b>. Reportez-vous à la section « Changement de règles » de la documentation du wiki pour plus de détails.)",
+      "eventText": "Après une escalade éreintante doublée d'un combat épique, vous vous infiltrez dans la base et dérobez les plans dans la console centrale, en espérant que cette opération permettra de déjouer les desseins des Impériaux.\r\n\r\n{-} Les Rebelles remportent la mission !\r\n{-} Les héros reçoivent la carte Récompense « Homologues ». (Cette carte Récompense fonctionne différemment lorsque vous jouez avec <b>Imperial Admiral</b>. Reportez-vous à la section « Changement de règles » de la documentation du wiki pour plus de détails.)",
       "eventActions": [
         {
           "mainText": "Avez-vous joué cette mission dans le cadre de la mini-campagne « Ombres Jumelles » ?",

@@ -252,7 +252,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Les dernières troupes Impériales quittent la ferme et battent en retraite vers Mos Eisley. Les yeux remplis de larmes de joie, les fermiers survivants vous expriment leur profonde gratitude pour l'aide que vous leur avez apportée.\r\n\r\n{-} Les Rebelles remportent la mission !\r\n{-} Les héros reçoivent la carte Récompense « Renaissance ». (Cette carte Récompense fonctionne différemment lorsque vous jouez avec <b>Imperial Commander 2</b>. Reportez-vous à la section « Changement de règles » de la documentation du wiki pour plus de détails.)\r\n{-} Chaque héros reçoit 1 XP. Les héros reçoivent 100 crédits par héros.\r\n{-} L'Empire défausse la carte Récompense « Avantage permanent ».",
+      "eventText": "Les dernières troupes Impériales quittent la ferme et battent en retraite vers Mos Eisley. Les yeux remplis de larmes de joie, les fermiers survivants vous expriment leur profonde gratitude pour l'aide que vous leur avez apportée.\r\n\r\n{-} Les Rebelles remportent la mission !\r\n{-} Les héros reçoivent la carte Récompense « Renaissance ». (Cette carte Récompense fonctionne différemment lorsque vous jouez avec <b>Imperial Admiral</b>. Reportez-vous à la section « Changement de règles » de la documentation du wiki pour plus de détails.)\r\n{-} Chaque héros reçoit 1 XP. Les héros reçoivent 100 crédits par héros.\r\n{-} L'Empire défausse la carte Récompense « Avantage permanent ».",
       "eventActions": []
     },
     {

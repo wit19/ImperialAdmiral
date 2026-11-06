@@ -1,7 +1,7 @@
 # Android builds — how-to for this project
 
 Project facts (verified in `ProjectSettings/`): Unity **2020.3.49f1**,
-Android app id `com.GlowPuff.ImperialCommander2.tacai` (test builds, see
+Android app id `com.GlowPuff.ImperialAdmiral.tacai` (test builds, see
 below), minSdk **22** (Android 5.1+), targetSdk **30**, architectures
 ARMv7+ARM64, scripting backend **IL2CPP** (`scriptingBackend: Android: 1`
 in `ProjectSettings.asset` — already IL2CPP in the upstream original, so the
@@ -49,7 +49,7 @@ other build target — nothing to activate per platform.
 
 ## 3. App id — why it is `.tacai` (and why NOT reusing the original)
 
-Test builds from this repository ship as `com.GlowPuff.ImperialCommander2.tacai`
+Test builds from this repository ship as `com.GlowPuff.ImperialAdmiral.tacai`
 (commit `252147a`). Same id as the official store app is not usable in
 practice: the Play Store re-signs apps with its own key, so our test APK
 (signed with our keystore) hitting an installed store version gives
@@ -74,9 +74,9 @@ this is why there is no in-game "import saves" button and never will be
 one. **adb can**, and that is the supported migration:
 
 ```sh
-adb pull /sdcard/Android/data/com.GlowPuff.ImperialCommander2/files ./ic2_saves
+adb pull /sdcard/Android/data/com.GlowPuff.ImperialAdmiral/files ./ic2_saves
 # keep the 'files' subfolders, push them into the new app:
-adb push ./ic2_saves/. /sdcard/Android/data/com.GlowPuff.ImperialCommander2.tacai/files/
+adb push ./ic2_saves/. /sdcard/Android/data/com.GlowPuff.ImperialAdmiral.tacai/files/
 ```
 
 Start the `.tacai` build once before the push so the target folder exists.
@@ -96,7 +96,7 @@ The keystore file itself is **git-ignored** (`*.keystore`, `*.pass`): the
 private key must never enter the repository.
 
 - File location per machine: drop the keystore file as
-  `<repo>/ImperialCommander2/ProjectSettings/user.keystore`.
+  `<repo>/ImperialAdmiral/ProjectSettings/user.keystore`.
   Master copy on the build box: `~/work/ia-ai/keys/ic2-tacai.keystore`
   (+ `ic2-tacai-keystore.pass` with the password, mode 600). **Copy both to
   a second medium immediately** (NAS backup): a lost signing key means no

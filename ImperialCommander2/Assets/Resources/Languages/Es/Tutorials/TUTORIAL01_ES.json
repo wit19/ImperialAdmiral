@@ -34,7 +34,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">¡Bienvenido al tutorial de <b>Imperial Commander</b>!\r\n\r\nEsta serie de tutoriales está diseñada para enseñarte los fundamentos para jugar <b>Imperial Assault</b> con la app compañera no oficial Imperial Commander. No necesitas conocimientos previos de <b>Imperial Assault</b>, pero ten en cuenta que el tutorial solo proporciona información básica. Si quieres profundizar más o tienes dudas, consulta las guías Aprende a Jugar y Referencia de Reglas que se suministran con el juego.</color>",
+          "tbText": "<color=\"yellow\">¡Bienvenido al tutorial de <b>Imperial Admiral</b>!\r\n\r\nEsta serie de tutoriales está diseñada para enseñarte los fundamentos para jugar <b>Imperial Assault</b> con la app compañera no oficial Imperial Admiral. No necesitas conocimientos previos de <b>Imperial Assault</b>, pero ten en cuenta que el tutorial solo proporciona información básica. Si quieres profundizar más o tienes dudas, consulta las guías Aprende a Jugar y Referencia de Reglas que se suministran con el juego.</color>",
           "GUID": "9e3e8682-8ca5-4965-b0ab-6946f2c3697d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -175,7 +175,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Leia gasta 4 puntos de movimiento y se mueve hasta estar adyacente al terminal.\r\n\r\nTen en cuenta que <b>Imperial Commander</b> no sigue la posición de las figuras en las misiones normales. Esto se hace solo para la demostración de este tutorial.</color>",
+          "tbText": "<color=\"yellow\">Leia gasta 4 puntos de movimiento y se mueve hasta estar adyacente al terminal.\r\n\r\nTen en cuenta que <b>Imperial Admiral</b> no sigue la posición de las figuras en las misiones normales. Esto se hace solo para la demostración de este tutorial.</color>",
           "GUID": "2f173ba6-4c1a-43f9-9543-5ba682be6c30",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -920,7 +920,7 @@
       "eventText": "Cuando el último droide de entrenamiento explota, Leia os dedica unos aplausos. - ¡Bien hecho!- dice, sonriente. - Parece que habéis salido bien de ese lio. Realmente podríamos us...\r\n\r\nEl comunicador la interrumpe. -Alteza - una voz crepita a través del altavoz -Acabamos de recibir una señal de emergencia de Indu. Fuerzas Imperiales se aproximan a nuestra base secreta allí. Están pidiendo ayuda. Ninguna otra nave Rebelde está tan cerca como nosotros. \r\n\r\nLos ojos de Leia se abren más, y una determinación sombría se refleja en su rostro. -Dígales que aguanten. Ponga rumbo a Idu - ordena por el comunicador, y luego mira hacia vosotros.",
       "eventActions": [
         {
-          "tbText": "Puede que necesitéis esas armas más pronto de lo que pensábamos. Estaba a punto de deciros que nos vendría bien gente con vuestras habilidades y preguntaros si consideraríais uniros a nosotros. \r\n\r\nCuando ve que preparáis vuestras armas, os dedica una sonrisa. -Bienvenidos a la Alianza Rebelde.\r\n\r\n<color=\"yellow\">Esto completa la parte 1 de los tutoriales de <b>Imperial Commander</b>. En la parte 2, os enfrentaréis a otras cosas que no son droides de entrenamiento.</color>",
+          "tbText": "Puede que necesitéis esas armas más pronto de lo que pensábamos. Estaba a punto de deciros que nos vendría bien gente con vuestras habilidades y preguntaros si consideraríais uniros a nosotros. \r\n\r\nCuando ve que preparáis vuestras armas, os dedica una sonrisa. -Bienvenidos a la Alianza Rebelde.\r\n\r\n<color=\"yellow\">Esto completa la parte 1 de los tutoriales de <b>Imperial Admiral</b>. En la parte 2, os enfrentaréis a otras cosas que no son droides de entrenamiento.</color>",
           "GUID": "9fff3167-309f-4bc2-a78f-4c6cadfc8deb",
           "eventActionType": 16,
           "eaName": "Text Box"

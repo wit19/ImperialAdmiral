@@ -109,7 +109,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Das Shuttle verlässt den Hangar und fliegt hinaus ins offene All. Die Berechnungen für den Hyperraum sind schnell gemacht, und bevor irgendwelche Raumjäger reagieren können, seid ihr schon weg.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Spieler der Rebellen wählen einen Helden aus, der die Belohnungskarte \"Alliierte\" erhält. (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Commander</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).\n{-} Jeder Held erhält 1 EP. Die Helden erhalten 100 Credits pro Held.",
+      "eventText": "Das Shuttle verlässt den Hangar und fliegt hinaus ins offene All. Die Berechnungen für den Hyperraum sind schnell gemacht, und bevor irgendwelche Raumjäger reagieren können, seid ihr schon weg.\n\n{-} Die Rebellen gewinnen den Einsatz!\n{-} Die Spieler der Rebellen wählen einen Helden aus, der die Belohnungskarte \"Alliierte\" erhält. (Diese Belohnungskarte funktioniert anders, wenn man mit <b>Imperial Admiral</b> spielt. Siehe den Abschnitt <b>Rules Change</b> in der Wiki-Dokumentation für Details).\n{-} Jeder Held erhält 1 EP. Die Helden erhalten 100 Credits pro Held.",
       "eventActions": []
     },
     {

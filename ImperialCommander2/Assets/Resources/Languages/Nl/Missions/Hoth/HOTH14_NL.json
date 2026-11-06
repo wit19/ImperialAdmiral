@@ -19,7 +19,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "De overgebleven keizerlijke troepen trekken zich terug in de richting van Mos Eisley en laten de boerderij eindelijk met rust. Met tranen van vreugde bedanken de overlevende boeren je uitvoerig voor je hulp.\n\n{-} De rebellen winnen de missie!\n{-} Helden krijgen de beloningskaart \"Resurgence\". (De beloningskaart werkt anders wanneer je speelt met <b>Imperial Commander</b>. Lees de <b>Rules Change</b> sectie van de wiki-documentatie voor meer details.)\n{-} Elke held krijgt 1 XP. De helden krijgen 100 credits per held.\n{-} Het Keizerrijk legt de beloningskaart \"Constant Advantage\" af.",
+      "eventText": "De overgebleven keizerlijke troepen trekken zich terug in de richting van Mos Eisley en laten de boerderij eindelijk met rust. Met tranen van vreugde bedanken de overlevende boeren je uitvoerig voor je hulp.\n\n{-} De rebellen winnen de missie!\n{-} Helden krijgen de beloningskaart \"Resurgence\". (De beloningskaart werkt anders wanneer je speelt met <b>Imperial Admiral</b>. Lees de <b>Rules Change</b> sectie van de wiki-documentatie voor meer details.)\n{-} Elke held krijgt 1 XP. De helden krijgen 100 credits per held.\n{-} Het Keizerrijk legt de beloningskaart \"Constant Advantage\" af.",
       "eventActions": []
     },
     {

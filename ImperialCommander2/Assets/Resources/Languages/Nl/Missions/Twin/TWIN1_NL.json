@@ -83,7 +83,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Na een slopende klim en hevige gevechten infiltreer je de basis en steel je keizerlijke plannen van de centrale console, in de hoop daarmee alle keizerlijke complotten te dwarsbomen.\n\n{-} De rebellen winnen de missie!\n{-} De helden krijgen de \"Counterparts\" beloningskaart. (Deze beloningskaart werkt anders wanneer je speelt met <b>Imperial Commander</b>. Raadpleeg de <b>Rules Change</b> sectie van de wiki-documentatie voor meer informatie).",
+      "eventText": "Na een slopende klim en hevige gevechten infiltreer je de basis en steel je keizerlijke plannen van de centrale console, in de hoop daarmee alle keizerlijke complotten te dwarsbomen.\n\n{-} De rebellen winnen de missie!\n{-} De helden krijgen de \"Counterparts\" beloningskaart. (Deze beloningskaart werkt anders wanneer je speelt met <b>Imperial Admiral</b>. Raadpleeg de <b>Rules Change</b> sectie van de wiki-documentatie voor meer informatie).",
       "eventActions": [
         {
           "mainText": "Heb je deze missie gespeeld als onderdeel van de minicampagne \"Twin Shadows\"?",

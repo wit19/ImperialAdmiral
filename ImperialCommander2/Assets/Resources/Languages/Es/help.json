@@ -191,7 +191,7 @@
       },
       {
         "id": "mode",
-        "helpText": "Cambia entre las Misiones Oficiales (adaptadas por el equipo de Imperial Commander e incorporadas en la app) y las Misiones Personalizadas."
+        "helpText": "Cambia entre las Misiones Oficiales (adaptadas por el equipo de Imperial Admiral e incorporadas en la app) y las Misiones Personalizadas."
       },
       {
         "id": "start",
@@ -285,7 +285,7 @@
     "helpItems": [
       {
         "id": "tutorials",
-        "helpText": "<b>Imperial Commander</b> incluye tres tutoriales diseñados para los jugadores que no han jugado antes a Imperial Assault. Estos tutoriales enseñan a jugar al juego y a usar la app.\n\nSelecciona el tutorial en el menú desplegable."
+        "helpText": "<b>Imperial Admiral</b> incluye tres tutoriales diseñados para los jugadores que no han jugado antes a Imperial Assault. Estos tutoriales enseñan a jugar al juego y a usar la app.\n\nSelecciona el tutorial en el menú desplegable."
       },
       {
         "id": "tutorialStart",
@@ -309,7 +309,7 @@
       },
       {
         "id": "menu",
-        "helpText": "Este es el menú principal. Aquí puedes comenzar una nueva Campaña o Misión, cargar una Campaña existente, o continuar una misión guardada.\n\n<b>Imperial Commander</b> guarda automáticamente el estado del juego después de cada ronda, una vez que se han resuelto todos los despliegues. Pulsa sobre Continuar para cargar el estado de juego guardado."
+        "helpText": "Este es el menú principal. Aquí puedes comenzar una nueva Campaña o Misión, cargar una Campaña existente, o continuar una misión guardada.\n\n<b>Imperial Admiral</b> guarda automáticamente el estado del juego después de cada ronda, una vez que se han resuelto todos los despliegues. Pulsa sobre Continuar para cargar el estado de juego guardado."
       },
       {
         "id": "wiki",

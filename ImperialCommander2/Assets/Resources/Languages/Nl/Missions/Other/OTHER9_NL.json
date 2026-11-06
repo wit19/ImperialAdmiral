@@ -71,7 +71,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "Chewbacca brult triomfantelijk terwijl de keizerlijke troepen zich terugtrekken. Je rent naar de verdoofde Wookiees en begint hen zo snel mogelijk stimpacks toe te dienen.\r\n\r\n{-} De rebellen winnen de missie!\r\n{-} Rebellenspelers kiezen één held die de beloningskaart \"Intimidatie\" krijgt. (Deze beloningskaart werkt anders wanneer je met <b>Imperial Commander</b> speelt. Raadpleeg het gedeelte <b>Rules Change</b> van de wikidocumentatie voor meer informatie.)\r\n{-} Elke held krijgt 1 XP. De helden krijgen 100 credits per held.",
+      "eventText": "Chewbacca brult triomfantelijk terwijl de keizerlijke troepen zich terugtrekken. Je rent naar de verdoofde Wookiees en begint hen zo snel mogelijk stimpacks toe te dienen.\r\n\r\n{-} De rebellen winnen de missie!\r\n{-} Rebellenspelers kiezen één held die de beloningskaart \"Intimidatie\" krijgt. (Deze beloningskaart werkt anders wanneer je met <b>Imperial Admiral</b> speelt. Raadpleeg het gedeelte <b>Rules Change</b> van de wikidocumentatie voor meer informatie.)\r\n{-} Elke held krijgt 1 XP. De helden krijgen 100 credits per held.",
       "eventActions": []
     },
     {

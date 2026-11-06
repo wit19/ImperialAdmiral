@@ -22,7 +22,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Willkommen zum dritten Tutorial für <b>Imperial Commander</b>. In diesem Tutorial lernt ihr die restlichen Regeln, die im ersten und zweiten Tutorial nicht behandelt wurden.\n\nWie immer könnt ihr im Referenzhandbuch oder in der Wiki-Dokumentation nachschlagen, wenn ihr Fragen habt.</color>",
+          "tbText": "<color=\"yellow\">Willkommen zum dritten Tutorial für <b>Imperial Admiral</b>. In diesem Tutorial lernt ihr die restlichen Regeln, die im ersten und zweiten Tutorial nicht behandelt wurden.\n\nWie immer könnt ihr im Referenzhandbuch oder in der Wiki-Dokumentation nachschlagen, wenn ihr Fragen habt.</color>",
           "GUID": "323f7e6d-44ba-4957-964d-4976156bd76b",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -221,7 +221,7 @@
     {
       "eventName": "Open Crate 1",
       "GUID": "84137c98-52d5-49e1-8982-5c2a59195a13",
-      "eventText": "Du hebelst die Kiste auf, und der Deckel kracht auf den Boden. Im Inneren kannst du ein paar nützliche Dinge sehen.\n\n<color=\"yellow\">Wenn eine Kiste geöffnet wird, erhält der Held, der sie geöffnet hat, normalerweise eine Versorgungskarte. Nehmt alle Versorgungskarten und entfernt die Karte <i>Truppendaten</i>. Diese Karte wird bei <b>Imperial Commander</b> nicht verwendet. Mischt dann die Karten und zieht zufällig 1 Karte. Der Held, der die Kiste geöffnet hat, platziert diese Versorgungskarte im Spielbereich des Spielers.\n\nVersorgungsgegenstände können nicht von einem Einsatz zum nächsten mitgenommen werden. Sie werden nach dem Ende des Einsatzes wieder in den Stapel gemischt, also stellt sicher, dass ihr sie benutzt.</color>",
+      "eventText": "Du hebelst die Kiste auf, und der Deckel kracht auf den Boden. Im Inneren kannst du ein paar nützliche Dinge sehen.\n\n<color=\"yellow\">Wenn eine Kiste geöffnet wird, erhält der Held, der sie geöffnet hat, normalerweise eine Versorgungskarte. Nehmt alle Versorgungskarten und entfernt die Karte <i>Truppendaten</i>. Diese Karte wird bei <b>Imperial Admiral</b> nicht verwendet. Mischt dann die Karten und zieht zufällig 1 Karte. Der Held, der die Kiste geöffnet hat, platziert diese Versorgungskarte im Spielbereich des Spielers.\n\nVersorgungsgegenstände können nicht von einem Einsatz zum nächsten mitgenommen werden. Sie werden nach dem Ende des Einsatzes wieder in den Stapel gemischt, also stellt sicher, dass ihr sie benutzt.</color>",
       "eventActions": [
         {
           "tbText": "Unter den Vorräten findest du ein Medpac, das noch brauchbar zu sein scheint.\n\n<color=\"yellow\">Platziere 1 Erschöpfungsmarker irgendwo im Spielbereich der Rebellen. Dies ist ein Medpac. Medpacs sind eine gemeinsame Ressource, zu der alle Spieler Zugang haben. Die Spieler beginnen jeden Einsatz mit 1 Medpac und können weitere finden, wenn sie während des Einsatzes Kisten öffnen. Wenn ihr ein Medpac findet, platziert einen weiteren Erschöpfungsmarker im Spielbereich. Wenn ihr ein Medpac benutzt, legt ihr 1 dieser Erschöpfungsmarker ab.\n\nGenau wie die Versorgungskarten lassen sich die Medpacs nicht von Einsatz zu Einsatz mitnehmen. Sie sind eine wertvolle Ressource für die Rebellenallianz.</color>",
@@ -425,7 +425,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Beachtet, dass bei Verwendung von <b>Imperial Commander</b> die Zustände <i><color=\"red\">Betäubt</color></i> und <i><color=\"red\">Blutend</color></i> bei imperialen Figuren anders funktionieren als im Referenzhandbuch beschrieben. Details dazu findet ihr in der Wiki-Dokumentation.</color>",
+          "tbText": "<color=\"yellow\">Beachtet, dass bei Verwendung von <b>Imperial Admiral</b> die Zustände <i><color=\"red\">Betäubt</color></i> und <i><color=\"red\">Blutend</color></i> bei imperialen Figuren anders funktionieren als im Referenzhandbuch beschrieben. Details dazu findet ihr in der Wiki-Dokumentation.</color>",
           "GUID": "1d0ac2fa-b402-4c0a-ae38-d7945acf9338",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -792,7 +792,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Damit ist das letzte Tutorial für <b>Imperial Commander</b> abgeschlossen. Ihr solltet jetzt alle Regeln kennen, die ihr braucht, um euch zurechtzufinden, und hoffentlich hat es sogar Spaß gemacht, sie zu lernen. Weitere Informationen findet ihr im beiliegenden Referenzhandbuch und in der Wiki-Dokumentation für <b>Imperial Commander</b>.\n\nWenn ihr bereit seid, richtig loszulegen, startet den Einsatz <i>Nachspiel</i> aus dem Grundspiel, den ersten tatsächlichen <b>Imperial Assault</b>-Einsatz.\n\nIn den Tutorials wurde nichts über die Struktur und das Voranschreiten einer Kampagne erklärt. Alles darüber findet ihr in der Spielanleitung und in der Wiki-Dokumentation, oder ihr könnt es am Ende dieses Tutorials nachlesen. Dies ist allerdings nicht interaktiv, sondern nur eine Hilfe, um euch durch den Ablauf zu führen.</color>",
+          "tbText": "<color=\"yellow\">Damit ist das letzte Tutorial für <b>Imperial Admiral</b> abgeschlossen. Ihr solltet jetzt alle Regeln kennen, die ihr braucht, um euch zurechtzufinden, und hoffentlich hat es sogar Spaß gemacht, sie zu lernen. Weitere Informationen findet ihr im beiliegenden Referenzhandbuch und in der Wiki-Dokumentation für <b>Imperial Admiral</b>.\n\nWenn ihr bereit seid, richtig loszulegen, startet den Einsatz <i>Nachspiel</i> aus dem Grundspiel, den ersten tatsächlichen <b>Imperial Assault</b>-Einsatz.\n\nIn den Tutorials wurde nichts über die Struktur und das Voranschreiten einer Kampagne erklärt. Alles darüber findet ihr in der Spielanleitung und in der Wiki-Dokumentation, oder ihr könnt es am Ende dieses Tutorials nachlesen. Dies ist allerdings nicht interaktiv, sondern nur eine Hilfe, um euch durch den Ablauf zu führen.</color>",
           "GUID": "251b6baa-71fc-4800-88ea-c032e553787d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -875,7 +875,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Am Ende jeder Runde erhält das Imperium {D} (Bedrohung), eine Währung, die es für das Aufstellen neuer Gruppen und Figuren ausgeben kann. <b>Imperial Commander</b> entscheidet automatisch, ob und was aufgestellt wird. Die App zeigt auch an, wo neue Gruppen aufgestellt werden sollen.\n\nDie App kann neue Gruppen aufstellen, aber sie kann auch vorhandene Gruppen <i>verstärken</i>. Das bedeutet, dass eine Gruppe ausgewählt wird, in der bereits einige Figuren besiegt wurden, und neue Figuren für diese Gruppe aufgestellt werden. Wenn das passiert, platziere die neuen Figuren so nah wie möglich an anderen Figuren dieser Gruppe.\n\nVon nun an erhöht sich {D} am Ende jeder Runde, und es kann zu weiteren Aufstellungen kommen.</color>",
+          "tbText": "<color=\"yellow\">Am Ende jeder Runde erhält das Imperium {D} (Bedrohung), eine Währung, die es für das Aufstellen neuer Gruppen und Figuren ausgeben kann. <b>Imperial Admiral</b> entscheidet automatisch, ob und was aufgestellt wird. Die App zeigt auch an, wo neue Gruppen aufgestellt werden sollen.\n\nDie App kann neue Gruppen aufstellen, aber sie kann auch vorhandene Gruppen <i>verstärken</i>. Das bedeutet, dass eine Gruppe ausgewählt wird, in der bereits einige Figuren besiegt wurden, und neue Figuren für diese Gruppe aufgestellt werden. Wenn das passiert, platziere die neuen Figuren so nah wie möglich an anderen Figuren dieser Gruppe.\n\nVon nun an erhöht sich {D} am Ende jeder Runde, und es kann zu weiteren Aufstellungen kommen.</color>",
           "GUID": "267d705a-c8e1-4da3-8fb9-49b8c3d8f587",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -990,7 +990,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "So wählst du aus, welchen Einsatz du als nächstes spielen willst:\n\n{-} <b>Haupteinsätze:</b> Wenn ein Haupteinsatz endet, teilt <b>Imperial Commander</b> den Spielern mit, welche Haupteinsatzkarten sie ins Spiel bringen sollen. Dies sind die <i>aktiven</i> Haupteinsätze. Wenn das Kampagnenlogbuch den Spielern anzeigt, dass sie den nächsten Haupteinsatz spielen sollen, wählen sie eine der aktiven Haupteinsatzkarten aus und legen dann alle anderen Haupteinsatzkarten ab, die noch im Spiel sind. Dann öffnen sie <b>Imperial Commander</b>, wählen den zu spielenden Einsatz, den Bedrohungsgrad, die Helden, Verbündeten und Schurken und spielen.\n\n{-} <b>Nebeneinsätze:</b> Nachdem der \"Einführung\"-Einsatz befolgt wurde, mischen die Spieler den Nebeneinsatz-Stapel und ziehen 2 Nebeneinsatz-Karten. Dies sind die <i>aktiven</i> Nebeneinsätze. Wenn das Kampagnenlogbuch den Spielern anzeigt, dass sie einen Nebeneinsatz spielen sollen, wählen sie einen der aktiven Nebeneinsätze aus, den sie spielen. Nachdem sie den Nebeneinsatz gespielt haben, ziehen sie eine neue Nebeneinsatz-Karte, so dass immer 2 Nebeneinsatz-Karten im Spiel sind.",
+          "tbText": "So wählst du aus, welchen Einsatz du als nächstes spielen willst:\n\n{-} <b>Haupteinsätze:</b> Wenn ein Haupteinsatz endet, teilt <b>Imperial Admiral</b> den Spielern mit, welche Haupteinsatzkarten sie ins Spiel bringen sollen. Dies sind die <i>aktiven</i> Haupteinsätze. Wenn das Kampagnenlogbuch den Spielern anzeigt, dass sie den nächsten Haupteinsatz spielen sollen, wählen sie eine der aktiven Haupteinsatzkarten aus und legen dann alle anderen Haupteinsatzkarten ab, die noch im Spiel sind. Dann öffnen sie <b>Imperial Admiral</b>, wählen den zu spielenden Einsatz, den Bedrohungsgrad, die Helden, Verbündeten und Schurken und spielen.\n\n{-} <b>Nebeneinsätze:</b> Nachdem der \"Einführung\"-Einsatz befolgt wurde, mischen die Spieler den Nebeneinsatz-Stapel und ziehen 2 Nebeneinsatz-Karten. Dies sind die <i>aktiven</i> Nebeneinsätze. Wenn das Kampagnenlogbuch den Spielern anzeigt, dass sie einen Nebeneinsatz spielen sollen, wählen sie einen der aktiven Nebeneinsätze aus, den sie spielen. Nachdem sie den Nebeneinsatz gespielt haben, ziehen sie eine neue Nebeneinsatz-Karte, so dass immer 2 Nebeneinsatz-Karten im Spiel sind.",
           "GUID": "fb0cb8b1-110b-4fdb-937e-9896e5fa2663",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1002,7 +1002,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "In der Wiki-Dokumentation findet ihr ein konkretes Beispiel für Aufbau und Fortschritt einer Kampagne. Klickt einfach auf den Link auf dem Startbildschirm von <b>Imperial Commander</b>.",
+          "tbText": "In der Wiki-Dokumentation findet ihr ein konkretes Beispiel für Aufbau und Fortschritt einer Kampagne. Klickt einfach auf den Link auf dem Startbildschirm von <b>Imperial Admiral</b>.",
           "GUID": "6f6ee613-e241-48d1-b3dc-8abb7bad69ea",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1021,7 +1021,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Auch das Imperium kann Belohnungen erhalten. <b>Imperial Commander</b> teilt euch mit, welche Belohnungen das Imperium erhält. Die Belohnungen können jedoch von dem abweichen, was im Kampagnenhandbuch oder auf der Einsatzkarte steht, denn viele imperiale Belohnungskarten werden bei <b>Imperial Commander</b> nicht verwendet. Hier sind die allgemeinen Regeln:\n\n{-} <b>Erhaltene Schurken:</b> Wenn der imperiale Spieler einen <i>Schurken</i> als Belohnung erhält, legt dessen Karte beiseite. Wenn ihr das nächste Mal einen Einsatz spielt, wählt ihr diesen Schurken als <i>verdient</i> im Einsatz-Einstellungsfenster aus. Verdiente Schurken bleiben für die gesamte Kampagne erhalten.\n{-} <b>Andere imperiale Belohnungen:</b> Wenn der imperiale Spieler eine andere Belohnungskarte erhalten würde, erhält das Imperium diese Belohnungskarte nicht. Stattdessen wird der Bedrohungsgrad des nächsten Einsatzes (und nur des nächsten Einsatzes) um 1 erhöht. In der Phase \"Aufrüstung der Rebellen\" können die Spieler der Rebellen beschließen, 50 Credits pro Held aufzuwenden, um dies zu verhindern.\n{-} <b>Erzwungene Einsätze:</b> Wenn die Rebellen einen erzwungenen Einsatz verlieren, erhöhe den Bedrohungsgrad des nächsten Einsatzes (und nur des nächsten Einsatzes) um 2. In der Phase \"Aufrüstung der Rebellen\" können die Spieler der Rebellen beschließen, 100 Credits pro Held aufzuwenden, um dies zu verhindern.\n\nIhr müsst das nicht alles im Kopf behalten, die App wird euch sagen, was passiert.",
+          "tbText": "Auch das Imperium kann Belohnungen erhalten. <b>Imperial Admiral</b> teilt euch mit, welche Belohnungen das Imperium erhält. Die Belohnungen können jedoch von dem abweichen, was im Kampagnenhandbuch oder auf der Einsatzkarte steht, denn viele imperiale Belohnungskarten werden bei <b>Imperial Admiral</b> nicht verwendet. Hier sind die allgemeinen Regeln:\n\n{-} <b>Erhaltene Schurken:</b> Wenn der imperiale Spieler einen <i>Schurken</i> als Belohnung erhält, legt dessen Karte beiseite. Wenn ihr das nächste Mal einen Einsatz spielt, wählt ihr diesen Schurken als <i>verdient</i> im Einsatz-Einstellungsfenster aus. Verdiente Schurken bleiben für die gesamte Kampagne erhalten.\n{-} <b>Andere imperiale Belohnungen:</b> Wenn der imperiale Spieler eine andere Belohnungskarte erhalten würde, erhält das Imperium diese Belohnungskarte nicht. Stattdessen wird der Bedrohungsgrad des nächsten Einsatzes (und nur des nächsten Einsatzes) um 1 erhöht. In der Phase \"Aufrüstung der Rebellen\" können die Spieler der Rebellen beschließen, 50 Credits pro Held aufzuwenden, um dies zu verhindern.\n{-} <b>Erzwungene Einsätze:</b> Wenn die Rebellen einen erzwungenen Einsatz verlieren, erhöhe den Bedrohungsgrad des nächsten Einsatzes (und nur des nächsten Einsatzes) um 2. In der Phase \"Aufrüstung der Rebellen\" können die Spieler der Rebellen beschließen, 100 Credits pro Held aufzuwenden, um dies zu verhindern.\n\nIhr müsst das nicht alles im Kopf behalten, die App wird euch sagen, was passiert.",
           "GUID": "63466ba8-891a-499f-91ef-a9289d3ddf16",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1051,7 +1051,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "In der Wiki-Dokumentation findet ihr ein konkretes Beispiel für Struktur und Fortschritt einer Kampagne. Klickt einfach auf den Link auf dem Startbildschirm von <b>Imperial Commander</b>.",
+          "tbText": "In der Wiki-Dokumentation findet ihr ein konkretes Beispiel für Struktur und Fortschritt einer Kampagne. Klickt einfach auf den Link auf dem Startbildschirm von <b>Imperial Admiral</b>.",
           "GUID": "6ee497f1-8af0-456c-9185-ada06cf92774",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1106,7 +1106,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "In der Wiki-Dokumentation wird näher beschrieben, wie man Einsätze aufbaut und spielt. Klickt einfach auf den Link auf dem Startbildschirm von <b>Imperial Commander</b>.",
+          "tbText": "In der Wiki-Dokumentation wird näher beschrieben, wie man Einsätze aufbaut und spielt. Klickt einfach auf den Link auf dem Startbildschirm von <b>Imperial Admiral</b>.",
           "GUID": "015faa6e-b6c0-4e77-bb29-16a1011edea2",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1116,13 +1116,13 @@
     {
       "eventName": "End Mission",
       "GUID": "28558464-eceb-465a-9e61-d1fea3d80d9b",
-      "eventText": "<color=\"yellow\">Möge die Macht mit euch sein, und viel Spaß mit <b>Imperial Commander</b>!</color>",
+      "eventText": "<color=\"yellow\">Möge die Macht mit euch sein, und viel Spaß mit <b>Imperial Admiral</b>!</color>",
       "eventActions": []
     },
     {
       "eventName": "Campaign Preparation",
       "GUID": "bc396ce9-64ea-4f94-958d-1afd11ebbfd5",
-      "eventText": "Wenn ihr eine neue Kampagne in <b>Imperial Commander</b> startet, müsst ihr ein paar Schritte durchführen.",
+      "eventText": "Wenn ihr eine neue Kampagne in <b>Imperial Admiral</b> startet, müsst ihr ein paar Schritte durchführen.",
       "eventActions": [
         {
           "tbText": "<b>Schritt 1: Vorrat vorbereiten</b>\nPlaziert die Würfel, die Zustands-Karten und die Schaden-, Erschöpfungs- und Zustandsmarker für alle Spieler gut erreichbar. Platziert die Referenzkarten so, dass sie für alle Spieler gut erreichbar sind. Entfernt die Karte \"Truppendaten\" aus dem Versorgungskartenstapel und legt sie zurück in die Spielschachtel. Dann mischt ihr den Versorgungskartenstapel und platziert ihn verdeckt in Reichweite aller Spieler.",
@@ -1155,13 +1155,13 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<b>Schritt 6: Einführungs-Einsatz starten</b>\nStartet eine neue Kampagne in <b>Imperial Commander</b>. Wählt die Kampagne, die ihr spielen wollt, und gebt ihr einen Namen. Wählt die verwendeten Helden in der Kampagnenübersicht aus und klickt dann auf den grünen Pfeil neben dem <b>Einführungs</b>-Einsatz. Wählt den Schwierigkeitsgrad und startet den Einsatz.",
+          "tbText": "<b>Schritt 6: Einführungs-Einsatz starten</b>\nStartet eine neue Kampagne in <b>Imperial Admiral</b>. Wählt die Kampagne, die ihr spielen wollt, und gebt ihr einen Namen. Wählt die verwendeten Helden in der Kampagnenübersicht aus und klickt dann auf den grünen Pfeil neben dem <b>Einführungs</b>-Einsatz. Wählt den Schwierigkeitsgrad und startet den Einsatz.",
           "GUID": "f5985ce2-44da-4aa4-b254-732c4ec03493",
           "eventActionType": 16,
           "eaName": "Text Box"
         },
         {
-          "tbText": "Einige Kampagnen erfordern einen etwas anderen Aufbau. Mehr dazu (und weitere Details) findet ihr im Kampagnenhandbuch oder in der jeweiligen Kampagneninfo (klicke auf das Infosymbol in der Kampagnenübersicht) oder in der Wiki-Dokumentation (klicke auf den Link auf dem Startbildschirm von <b>Imperial Commander</b>).",
+          "tbText": "Einige Kampagnen erfordern einen etwas anderen Aufbau. Mehr dazu (und weitere Details) findet ihr im Kampagnenhandbuch oder in der jeweiligen Kampagneninfo (klicke auf das Infosymbol in der Kampagnenübersicht) oder in der Wiki-Dokumentation (klicke auf den Link auf dem Startbildschirm von <b>Imperial Admiral</b>).",
           "GUID": "452eae82-5e41-4880-b005-f56dfa357a69",
           "eventActionType": 16,
           "eaName": "Text Box"

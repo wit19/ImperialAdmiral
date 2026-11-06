@@ -31,7 +31,7 @@
     {
       "eventName": "End of Mission - Rebels win",
       "GUID": "69b80fad-5e0e-46cd-a70e-defa45de4db6",
-      "eventText": "De walker stort in vlammen neer. Enkele van de moedigere demonstranten komen uit hun schuilplaatsen tevoorschijn, beklimmen het wrak en verheffen opnieuw hun stem in verzet. Je vertrekt in de overtuiging dat de geest van het Verzet vandaag sterker is geworden.\n\n{-} De rebellen winnen de missie!\n{-} Helden ontvangen de beloningskaart \"Populist Support\". (Deze beloningskaart werkt anders wanneer je speelt met <b>Imperial Commander</b>. Raadpleeg het gedeelte <b>Rules Change</b> in de wiki-documentatie voor meer informatie.)\n{-} Elke held ontvangt 1 XP. De helden ontvangen 100 credits per held.",
+      "eventText": "De walker stort in vlammen neer. Enkele van de moedigere demonstranten komen uit hun schuilplaatsen tevoorschijn, beklimmen het wrak en verheffen opnieuw hun stem in verzet. Je vertrekt in de overtuiging dat de geest van het Verzet vandaag sterker is geworden.\n\n{-} De rebellen winnen de missie!\n{-} Helden ontvangen de beloningskaart \"Populist Support\". (Deze beloningskaart werkt anders wanneer je speelt met <b>Imperial Admiral</b>. Raadpleeg het gedeelte <b>Rules Change</b> in de wiki-documentatie voor meer informatie.)\n{-} Elke held ontvangt 1 XP. De helden ontvangen 100 credits per held.",
       "eventActions": []
     },
     {

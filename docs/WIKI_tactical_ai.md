@@ -1,6 +1,6 @@
 # Tactical AI — The Fair Imperial AI
 
-**Tactical AI** turns the Imperial side of Imperial Commander from a random
+**Tactical AI** turns the Imperial side of Imperial Admiral from a random
 automation into a *deterministic, rule-following opponent*. The printed game's own
 activation law carries over: every Imperial figure acts every round — the plan is
 always a permutation, never a selection. What changes is the ORDER and the choices
@@ -118,7 +118,7 @@ Options window → **UI** tab, bottom section — exactly **five rows**:
 
 | Row | Values | What it does |
 |---|---|---|
-| **TACTICAL AI** | OFF / ON (**default: ON**) | Master switch. OFF = the app behaves exactly as classic Imperial Commander, including the random activation draw — bit for bit. |
+| **TACTICAL AI** | OFF / ON (**default: ON**) | Master switch. OFF = the app behaves exactly as classic Imperial Admiral, including the random activation draw — bit for bit. |
 | **DIFFICULTY** | Recruit → Stormtrooper → Veteran → Commandant → Thrawn (**default: Thrawn**) | How well the Imperials *choose* between their legal actions. It never changes stats, ranges, action counts or dice — only decisions. |
 | **EXPLAIN** | NONE (**default**) / FULL | The AI's reasoning texts: FULL prints the "why" lines (target ranking, risk posture, focus change) on the activation pop-ups; NONE keeps the pop-ups purely operational. |
 | **INFO TEXT** | ON (default) / OFF | The short rules reminder under the action texts on every pop-up (one attack per activation; opening a door costs an action; guard pop-ups additionally define the guard zone). |
@@ -762,11 +762,11 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 Tactical AI only changes *how the Imperial side is run*. Everything else — installs,
 mission play, the campaign manager, the editor — is documented upstream:
 
-- **IC2 Wiki (Home):** <https://github.com/GlowPuff/ImperialCommander2/wiki>
+- **IC2 Wiki (Home):** <https://github.com/GlowPuff/ImperialAdmiral/wiki>
 - **Getting Started & Basic Settings:**
-  <https://github.com/GlowPuff/ImperialCommander2/wiki/0.-Getting-Started-and-Basic-Settings>
-- **FAQ:** <https://github.com/GlowPuff/ImperialCommander2/wiki/7.-FAQ>
-- **Tips & Tricks:** <https://github.com/GlowPuff/ImperialCommander2/wiki/8.-Tips-and-Tricks>
+  <https://github.com/GlowPuff/ImperialAdmiral/wiki/0.-Getting-Started-and-Basic-Settings>
+- **FAQ:** <https://github.com/GlowPuff/ImperialAdmiral/wiki/7.-FAQ>
+- **Tips & Tricks:** <https://github.com/GlowPuff/ImperialAdmiral/wiki/8.-Tips-and-Tricks>
 - **Editor documentation:** <https://github.com/GlowPuff/ICEditor/wiki>
 
 Within this fork: the mechanics reference

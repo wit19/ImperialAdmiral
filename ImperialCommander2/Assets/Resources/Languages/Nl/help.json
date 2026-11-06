@@ -491,7 +491,7 @@
       },
       {
         "id": "mode",
-        "helpText": "Schakel tussen officiële missies (gemaakt door het Imperial Commander-team en inbegrepen in de app) en aangepaste, door gebruikers gemaakte missies."
+        "helpText": "Schakel tussen officiële missies (gemaakt door het Imperial Admiral-team en inbegrepen in de app) en aangepaste, door gebruikers gemaakte missies."
       },
       {
         "id": "start",
@@ -528,7 +528,7 @@
       },
       {
         "id": "menu",
-        "helpText": "Dit is het hoofdmenu. Hier kun je een nieuwe campagne of missie starten, een bestaande campagne laden of doorgaan met een opgeslagen lopende missie.\n\n<b>Imperial Commander</b> slaat de spelstatus automatisch op na elke ronde, nadat alle inzetten zijn afgehandeld. Klik / tik op doorgaan om de opgeslagen spelstatus te laden."
+        "helpText": "Dit is het hoofdmenu. Hier kun je een nieuwe campagne of missie starten, een bestaande campagne laden of doorgaan met een opgeslagen lopende missie.\n\n<b>Imperial Admiral</b> slaat de spelstatus automatisch op na elke ronde, nadat alle inzetten zijn afgehandeld. Klik / tik op doorgaan om de opgeslagen spelstatus te laden."
       },
       {
         "id": "mode",
@@ -544,7 +544,7 @@
       },
       {
         "id": "tutorials",
-        "helpText": "<b>Imperial Commander</b> bevat drie tutorials voor spelers die nog nooit Imperial Assault hebben gespeeld. Deze tutorials leggen uit hoe je het spel en de app gebruikt.\n\nSelecteer de tutorial via het keuzemenu."
+        "helpText": "<b>Imperial Admiral</b> bevat drie tutorials voor spelers die nog nooit Imperial Assault hebben gespeeld. Deze tutorials leggen uit hoe je het spel en de app gebruikt.\n\nSelecteer de tutorial via het keuzemenu."
       },
       {
         "id": "version",

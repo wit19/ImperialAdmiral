@@ -22,7 +22,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Witamy w trzecim samouczku <b>Imperial Commander</b>. Ten samouczek ma na celu nauczyć pozostałych zasad, które nie zostały omówione w pierwszym i drugim samouczku.\r\n\r\nTak jak poprzednio, w razie pytań zapoznaj się z Kompletnym Podręcznikiem Zasad lub dokumentacją aplikacji</color>",
+          "tbText": "<color=\"yellow\">Witamy w trzecim samouczku <b>Imperial Admiral</b>. Ten samouczek ma na celu nauczyć pozostałych zasad, które nie zostały omówione w pierwszym i drugim samouczku.\r\n\r\nTak jak poprzednio, w razie pytań zapoznaj się z Kompletnym Podręcznikiem Zasad lub dokumentacją aplikacji</color>",
           "GUID": "323f7e6d-44ba-4957-964d-4976156bd76b",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -221,7 +221,7 @@
     {
       "eventName": "Open Crate 1",
       "GUID": "84137c98-52d5-49e1-8982-5c2a59195a13",
-      "eventText": "Otwierasz skrzynię, a wieko rozbija się na ziemi. W środku możesz zobaczyć kilka przydatnych rzeczy.\r\n\r\n<color=\"yellow\">Otwarcie skrzyni zazwyczaj daje bohaterowi, który ją otworzył, kartę zaopatrzenia. Należy wziąć wszystkie karty zaopatrzenia i usunąć kartę <i>Dane wojskowe</i>; tej karty nie używa się podczas korzystania z <b>Imperial Commandera</b>. Następnie potasuj karty i losowo dobierz 1 z nich. Bohater, który otworzył skrzynię, umieszcza tę kartę zaopatrzenia na swoim obszarze gry.\r\n\r\nPrzedmioty zaopatrzenia nie zachowują się pomiędzy misjami. Są one wtasowywane z powrotem do talii po zakończeniu misji, więc upewnij się, że je wykorzystasz.</color>",
+      "eventText": "Otwierasz skrzynię, a wieko rozbija się na ziemi. W środku możesz zobaczyć kilka przydatnych rzeczy.\r\n\r\n<color=\"yellow\">Otwarcie skrzyni zazwyczaj daje bohaterowi, który ją otworzył, kartę zaopatrzenia. Należy wziąć wszystkie karty zaopatrzenia i usunąć kartę <i>Dane wojskowe</i>; tej karty nie używa się podczas korzystania z <b>Imperial Admirala</b>. Następnie potasuj karty i losowo dobierz 1 z nich. Bohater, który otworzył skrzynię, umieszcza tę kartę zaopatrzenia na swoim obszarze gry.\r\n\r\nPrzedmioty zaopatrzenia nie zachowują się pomiędzy misjami. Są one wtasowywane z powrotem do talii po zakończeniu misji, więc upewnij się, że je wykorzystasz.</color>",
       "eventActions": [
         {
           "tbText": "Pod zapasami znajdujesz medpak, który nadal wygląda na zdatny do użytku.\r\n\r\n<color=\"yellow\">Należy położyć 1 żeton zmęczenia na obszarze gry bohaterów. To jest medpak. Medpaki są wspólnym zasobem i wszyscy gracze mają do nich dostęp. Gracze rozpoczynają każdą misję z 1 medpakiem i mogą znaleźć więcej, otwierając skrzynie podczas misji. Kiedy znajdujesz medpak, umieść kolejny żeton zmęczenia na obszarze gry bohaterów. Kiedy używasz medpak, odrzuć 1 z tych żetonów.\r\n\r\nPodobnie jak karty zaopatrzenia, medpaki nie są zachowywane na kolejne misje. Są rzadkim źródłem zaopatrzenia dla Sojuszu Rebeliantów.</color>",
@@ -425,7 +425,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Zauważ, że stany  <i>Ogłuszenie</i> i <i>Krwawienie</i> na figurkach Imperium działają inaczej niż opisano to w Kompletnym Podręczniku Zasad, ponieważ korzystasz z <b>Imperial Commandera</b>. Szczegółowe informacje znajdują się w dokumentacji wiki.</color>",
+          "tbText": "<color=\"yellow\">Zauważ, że stany  <i>Ogłuszenie</i> i <i>Krwawienie</i> na figurkach Imperium działają inaczej niż opisano to w Kompletnym Podręczniku Zasad, ponieważ korzystasz z <b>Imperial Admirala</b>. Szczegółowe informacje znajdują się w dokumentacji wiki.</color>",
           "GUID": "1d0ac2fa-b402-4c0a-ae38-d7945acf9338",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -792,7 +792,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">To kończy ostatni samouczek w <b>Imperial Commander</b>. Powinieneś już znać wszystkie zasady potrzebne do poruszania się po grze, a mam nadzieję, że także dobrze się bawiłeś ucząc się ich. Szczegóły znajdziesz w Kompletnym Podręczniku Zasad dołączonym do gry oraz w dokumentacji wiki dla <b>Imperial Commandera</b>.\r\n\r\nKiedy będziesz gotowy, rozpocznij misję <i>Następstwa</i> z gry podstawowej, pierwszą prawdziwą misję w <b>Imperium Atakuje</b>.\r\n\r\nSamouczek nie mówił nic o strukturze i postępach w kampanii. Wszystko to znajdziesz w instrukcji Zasady wprowadzające i dokumentacji wiki, możesz też przeczytać to na końcu tego samouczka. Nie będzie to jednak interaktywne, a jedynie pomoże ci przejść przez ten etap.</color>",
+          "tbText": "<color=\"yellow\">To kończy ostatni samouczek w <b>Imperial Admiral</b>. Powinieneś już znać wszystkie zasady potrzebne do poruszania się po grze, a mam nadzieję, że także dobrze się bawiłeś ucząc się ich. Szczegóły znajdziesz w Kompletnym Podręczniku Zasad dołączonym do gry oraz w dokumentacji wiki dla <b>Imperial Admirala</b>.\r\n\r\nKiedy będziesz gotowy, rozpocznij misję <i>Następstwa</i> z gry podstawowej, pierwszą prawdziwą misję w <b>Imperium Atakuje</b>.\r\n\r\nSamouczek nie mówił nic o strukturze i postępach w kampanii. Wszystko to znajdziesz w instrukcji Zasady wprowadzające i dokumentacji wiki, możesz też przeczytać to na końcu tego samouczka. Nie będzie to jednak interaktywne, a jedynie pomoże ci przejść przez ten etap.</color>",
           "GUID": "251b6baa-71fc-4800-88ea-c032e553787d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -875,7 +875,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Na końcu każdej rundy Imperium zdobywa {D} (zagrożenie), walutę, którą może wydać na rozstawienie nowych grup i figurek. <b>Imperial Commander</b> automatycznie decyduje, czy i co należy rozstawić. Wskazuje również, gdzie należy je rozstawić.\r\n\r\nAplikacja może rozstawić nowe grupy, ale może też <i>wspierać</i> istniejące grupy. Oznacza to, że wybiera grupę, w której niektóre figurki zostały pokonane i rozmieszcza więcej figurek dla tej grupy. Jeśli tak się stanie, umieść nowe figurki jak najbliżej innych figurek z tej grupy.\r\n\r\nOd tej pory {D} wzrasta na końcu każdej rundy i może pojawić się więcej wrogów.</color>",
+          "tbText": "<color=\"yellow\">Na końcu każdej rundy Imperium zdobywa {D} (zagrożenie), walutę, którą może wydać na rozstawienie nowych grup i figurek. <b>Imperial Admiral</b> automatycznie decyduje, czy i co należy rozstawić. Wskazuje również, gdzie należy je rozstawić.\r\n\r\nAplikacja może rozstawić nowe grupy, ale może też <i>wspierać</i> istniejące grupy. Oznacza to, że wybiera grupę, w której niektóre figurki zostały pokonane i rozmieszcza więcej figurek dla tej grupy. Jeśli tak się stanie, umieść nowe figurki jak najbliżej innych figurek z tej grupy.\r\n\r\nOd tej pory {D} wzrasta na końcu każdej rundy i może pojawić się więcej wrogów.</color>",
           "GUID": "267d705a-c8e1-4da3-8fb9-49b8c3d8f587",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -990,7 +990,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Oto jak wybrać, którą misję rozegrać w następnej kolejności:\r\n\r\n{-} <b>Misja fabularna:</b> Po zakończeniu misji fabularnej, <b>Imperial Commander</b>powie graczom, jakie karty misji fabularnych należy umieścić w grze. Są to <i>aktywne</i> misje fabularne. Następnym razem, kiedy dziennik kampanii każe graczom zagrać misję fabularną, wybierają oni jedną z aktywnych kart misji fabularnych do zagrania, a następnie odrzucają wszystkie pozostałe w grze karty misji fabularnych. Następnie otwórz <b>Imperial Commandera</b>, wybierz misję do rozegrania, wybierz poziom zagrożenia, bohaterów, sojuszników i przeciwników, i możesz grać.\r\n\r\n{-} <b>Misje poboczne:</b> Po rozegraniu misji \"Wprowadzenie\" Po rozegraniu misji Wprowadzenie gracze tasują talię misji pobocznych i dobierają 2 karty misji pobocznych. Są one <i>aktywnymi</i> misjami pobocznymi. Kiedy dziennik kampanii każe graczom rozegrać misję poboczną, wybierają oni jedną z aktywnych misji pobocznych do rozegrania. Po rozegraniu misji pobocznej, dobierają nową kartę misji pobocznej, tak aby w grze zawsze były 2 karty misji pobocznych.",
+          "tbText": "Oto jak wybrać, którą misję rozegrać w następnej kolejności:\r\n\r\n{-} <b>Misja fabularna:</b> Po zakończeniu misji fabularnej, <b>Imperial Admiral</b>powie graczom, jakie karty misji fabularnych należy umieścić w grze. Są to <i>aktywne</i> misje fabularne. Następnym razem, kiedy dziennik kampanii każe graczom zagrać misję fabularną, wybierają oni jedną z aktywnych kart misji fabularnych do zagrania, a następnie odrzucają wszystkie pozostałe w grze karty misji fabularnych. Następnie otwórz <b>Imperial Admirala</b>, wybierz misję do rozegrania, wybierz poziom zagrożenia, bohaterów, sojuszników i przeciwników, i możesz grać.\r\n\r\n{-} <b>Misje poboczne:</b> Po rozegraniu misji \"Wprowadzenie\" Po rozegraniu misji Wprowadzenie gracze tasują talię misji pobocznych i dobierają 2 karty misji pobocznych. Są one <i>aktywnymi</i> misjami pobocznymi. Kiedy dziennik kampanii każe graczom rozegrać misję poboczną, wybierają oni jedną z aktywnych misji pobocznych do rozegrania. Po rozegraniu misji pobocznej, dobierają nową kartę misji pobocznej, tak aby w grze zawsze były 2 karty misji pobocznych.",
           "GUID": "fb0cb8b1-110b-4fdb-937e-9896e5fa2663",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1002,7 +1002,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "W dokumentacji wiki można znaleźć konkretny przykład struktury i przebiegu kampanii. Wystarczy kliknąć w link na ekranie startowym <b>Imperial Commandera</b>.",
+          "tbText": "W dokumentacji wiki można znaleźć konkretny przykład struktury i przebiegu kampanii. Wystarczy kliknąć w link na ekranie startowym <b>Imperial Admirala</b>.",
           "GUID": "6f6ee613-e241-48d1-b3dc-8abb7bad69ea",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1021,7 +1021,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Imperium może również zdobywać nagrody. <b>Imperial Commander</b> powie ci, jakie nagrody dostaje Imperium, ale mogą się one różnić od tego, co jest napisane w podręczniku kampanii lub na karcie misji, ponieważ wiele kart nagród Imperium nie jest wykorzystywanych w <b>Imperial Commanderze</b>. Oto ogólne zasady:\r\n\r\n{-} <b>Zdobyci przeciwnicy:</b> Jeśli Imperium zdobędzie jako nagrodę <i>przeciwnika</i>, odłóż jego kartę na bok. Następnym razem podczas rozgrywania misji, wybierz tego przeciwnika jako <i>zdobytego</i> na ekranie ustawień misji. Zdobyci przeciwnicy pozostają zdobyci przez całą kampanię.\r\n{-} <b>Inne nagrody Imperium:</b> Jeśli gracz imperialny miałby zdobyć jakąkolwiek inną kartę nagrody, nie otrzymuje tej karty nagrody. Zamiast tego zwiększ poziom zagrożenia następnej misji (i tylko następnej misji) o 1. Podczas etapu ulepszeń Rebelii gracze Rebelii mogą zdecydować się wydać 50 kredytów na bohatera, aby temu zapobiec.\r\n{-} <b>Misje przymusowe:</b> Jeśli gracze Rebelii przegrają misję przymusową, zwiększ poziom zagrożenia następnej misji (i tylko następnej misji) o 2. Podczas etapu ulepszeń Rebelii gracze Rebelii mogą zdecydować się wydać 100 kredytów na bohatera, aby temu zapobiec.\r\n\r\nNie musisz o tym wszystkim pamiętać, aplikacja sama poinformuje o tym.",
+          "tbText": "Imperium może również zdobywać nagrody. <b>Imperial Admiral</b> powie ci, jakie nagrody dostaje Imperium, ale mogą się one różnić od tego, co jest napisane w podręczniku kampanii lub na karcie misji, ponieważ wiele kart nagród Imperium nie jest wykorzystywanych w <b>Imperial Admiralze</b>. Oto ogólne zasady:\r\n\r\n{-} <b>Zdobyci przeciwnicy:</b> Jeśli Imperium zdobędzie jako nagrodę <i>przeciwnika</i>, odłóż jego kartę na bok. Następnym razem podczas rozgrywania misji, wybierz tego przeciwnika jako <i>zdobytego</i> na ekranie ustawień misji. Zdobyci przeciwnicy pozostają zdobyci przez całą kampanię.\r\n{-} <b>Inne nagrody Imperium:</b> Jeśli gracz imperialny miałby zdobyć jakąkolwiek inną kartę nagrody, nie otrzymuje tej karty nagrody. Zamiast tego zwiększ poziom zagrożenia następnej misji (i tylko następnej misji) o 1. Podczas etapu ulepszeń Rebelii gracze Rebelii mogą zdecydować się wydać 50 kredytów na bohatera, aby temu zapobiec.\r\n{-} <b>Misje przymusowe:</b> Jeśli gracze Rebelii przegrają misję przymusową, zwiększ poziom zagrożenia następnej misji (i tylko następnej misji) o 2. Podczas etapu ulepszeń Rebelii gracze Rebelii mogą zdecydować się wydać 100 kredytów na bohatera, aby temu zapobiec.\r\n\r\nNie musisz o tym wszystkim pamiętać, aplikacja sama poinformuje o tym.",
           "GUID": "63466ba8-891a-499f-91ef-a9289d3ddf16",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1051,7 +1051,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "W dokumentacji wiki można znaleźć konkretny przykład struktury i przebiegu kampanii. Wystarczy kliknąć w link na ekranie startowym <b>Imperial Commander</b>.",
+          "tbText": "W dokumentacji wiki można znaleźć konkretny przykład struktury i przebiegu kampanii. Wystarczy kliknąć w link na ekranie startowym <b>Imperial Admiral</b>.",
           "GUID": "6ee497f1-8af0-456c-9185-ada06cf92774",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1106,7 +1106,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "W dokumentacji wiki można znaleźć więcej o tym, jak skonfigurować i grać w misje. Wystarczy kliknąć na link na ekranie startowym <b>Imperial Commandera</b>.",
+          "tbText": "W dokumentacji wiki można znaleźć więcej o tym, jak skonfigurować i grać w misje. Wystarczy kliknąć na link na ekranie startowym <b>Imperial Admirala</b>.",
           "GUID": "015faa6e-b6c0-4e77-bb29-16a1011edea2",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -1116,13 +1116,13 @@
     {
       "eventName": "End Mission",
       "GUID": "28558464-eceb-465a-9e61-d1fea3d80d9b",
-      "eventText": "<color=\"yellow\">Niech Moc będzie z tobą, i baw się dobrze z <b>Imperial Commanderem</b>!</color>",
+      "eventText": "<color=\"yellow\">Niech Moc będzie z tobą, i baw się dobrze z <b>Imperial Admiralem</b>!</color>",
       "eventActions": []
     },
     {
       "eventName": "Campaign Preparation",
       "GUID": "bc396ce9-64ea-4f94-958d-1afd11ebbfd5",
-      "eventText": "Podczas rozpoczynania nowej kampanii w <b>Imperial Commander</b> musisz wykonać kilka kroków.",
+      "eventText": "Podczas rozpoczynania nowej kampanii w <b>Imperial Admiral</b> musisz wykonać kilka kroków.",
       "eventActions": [
         {
           "tbText": "<b>Krok 1: Przygotuj kości, karty i inne żetony</b>\r\nUmieść wszystkie kości, karty stanu i talię zaopatrzenia, żetony obrażeń, żetony zmęczenia i żetony stanu blisko wszystkich graczy. Umieść karty pomocy w zasięgu wszystkich graczy. Usuń kartę \"Dane wojskowe\" z talii kart zaopatrzenia i odłóż ją do pudełka z grą. Następnie potasuj talię zaopatrzenia i umieść ją zakrytą w zasięgu wszystkich graczy.",
@@ -1155,13 +1155,13 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<b>Krok 6: Rozpocznij misję wprowadzającą</b>\r\nRozpocznij nową kampanię w <b>Imperial Commanderze</b>. Wybierz kampanię, którą chcesz rozegrać i wprowadź jej nazwę. Wybierz bohaterów w oknie kampanii, a następnie kliknij zieloną strzałkę obok misji <b>Wprowadzenie</b>. Wybierz poziom trudności i rozpocznij misję.",
+          "tbText": "<b>Krok 6: Rozpocznij misję wprowadzającą</b>\r\nRozpocznij nową kampanię w <b>Imperial Admiralze</b>. Wybierz kampanię, którą chcesz rozegrać i wprowadź jej nazwę. Wybierz bohaterów w oknie kampanii, a następnie kliknij zieloną strzałkę obok misji <b>Wprowadzenie</b>. Wybierz poziom trudności i rozpocznij misję.",
           "GUID": "f5985ce2-44da-4aa4-b254-732c4ec03493",
           "eventActionType": 16,
           "eaName": "Text Box"
         },
         {
-          "tbText": "Niektóre kampanie wymagają nieco innej konfiguracji. Możesz znaleźć więcej na ten temat (i więcej szczegółów) w przewodniku kampanii zawierającym informacje na temat przygotowania odpowiedniej kampanii (kliknij ikonę informacji w widoku kampanii) lub w dokumentacji wiki. Wystarczy kliknąć na link na ekranie startowym <b>Imperial Commandera</b>.",
+          "tbText": "Niektóre kampanie wymagają nieco innej konfiguracji. Możesz znaleźć więcej na ten temat (i więcej szczegółów) w przewodniku kampanii zawierającym informacje na temat przygotowania odpowiedniej kampanii (kliknij ikonę informacji w widoku kampanii) lub w dokumentacji wiki. Wystarczy kliknąć na link na ekranie startowym <b>Imperial Admirala</b>.",
           "GUID": "452eae82-5e41-4880-b005-f56dfa357a69",
           "eventActionType": 16,
           "eaName": "Text Box"

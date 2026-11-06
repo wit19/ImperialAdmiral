@@ -34,7 +34,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Bienvenue dans le tutoriel d'<b>Imperial Commander 2</b>! \r\n\r\nCette série de tutoriels est conçue pour vous apprendre les bases du jeu <b>Assaut sur l'Empire</b> avec l'application non officielle. Vous n'avez pas besoin de connaissances préalables du jeu <b>Assault sur l'Empire</b>, mais gardez à l'esprit que les tutoriels ne fournissent que des informations de base. Si vous souhaitez approfondir vos connaissances ou si vous avez des questions, consultez le Livret d'Initiation et le Guide de Référence fournis avec le jeu.</color>",
+          "tbText": "<color=\"yellow\">Bienvenue dans le tutoriel d'<b>Imperial Admiral</b>! \r\n\r\nCette série de tutoriels est conçue pour vous apprendre les bases du jeu <b>Assaut sur l'Empire</b> avec l'application non officielle. Vous n'avez pas besoin de connaissances préalables du jeu <b>Assault sur l'Empire</b>, mais gardez à l'esprit que les tutoriels ne fournissent que des informations de base. Si vous souhaitez approfondir vos connaissances ou si vous avez des questions, consultez le Livret d'Initiation et le Guide de Référence fournis avec le jeu.</color>",
           "GUID": "9e3e8682-8ca5-4965-b0ab-6946f2c3697d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -175,7 +175,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Leia dépense maintenant 4 points de déplacement et se déplace jusqu'à ce qu'elle soit adjacente au terminal.\r\n\r\nNotez qu'<b>Imperial Commander 2</b> ne suit généralement pas la position des figurines. Cela est fait ici uniquement à des fins de démonstration.</color>",
+          "tbText": "<color=\"yellow\">Leia dépense maintenant 4 points de déplacement et se déplace jusqu'à ce qu'elle soit adjacente au terminal.\r\n\r\nNotez qu'<b>Imperial Admiral</b> ne suit généralement pas la position des figurines. Cela est fait ici uniquement à des fins de démonstration.</color>",
           "GUID": "2f173ba6-4c1a-43f9-9543-5ba682be6c30",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -920,7 +920,7 @@
       "eventText": "Après l'explosion du dernier drône d'entraînement, Leia vous félicite brièvement. Bien joué!, dit-elle en souriant. Vous vous en êtes bien sortis. Nous pourrions vraiment utiliser...\n\nElle est interrompue par son comlink. Votre Altesse, une voix crépite dans le haut-parleur. Nous venons de recevoir un signal d'urgence d'Indu. Les forces impériales se rapprochent de notre repaire là-bas. Ils demandent de l'aide. Aucun autre vaisseau de l'Alliance n'est aussi proche que le nôtre.\n\nLes yeux de Leia s'écarquillent, puis une détermination sévère apparaît sur son visage. Dites-leur de tenir bon. Mettez le cap sur Indu, dit-elle dans son comlink, puis elle vous regarde.",
       "eventActions": [
         {
-          "tbText": "Vous pourriez avoir besoin de ces armes plus tôt que nous le pensions. J'étais justement sur le point de vous dire que des personnes avec vos compétences nous seraient bien utiles et de vous demander si vous envisageriez de nous rejoindre.\n\nQuand elle vous voit préparer vos armes, elle vous sourit. Bienvenue dans l'Alliance Rebelle.\r\n\r\n<color=\"yellow\">Ceci conclut la partie 1 des tutoriels d'<b>Imperial Commander 2</b>. Dans la partie 2, vous serez confrontés à autre chose que de simples drônes d'entraînement.</color>",
+          "tbText": "Vous pourriez avoir besoin de ces armes plus tôt que nous le pensions. J'étais justement sur le point de vous dire que des personnes avec vos compétences nous seraient bien utiles et de vous demander si vous envisageriez de nous rejoindre.\n\nQuand elle vous voit préparer vos armes, elle vous sourit. Bienvenue dans l'Alliance Rebelle.\r\n\r\n<color=\"yellow\">Ceci conclut la partie 1 des tutoriels d'<b>Imperial Admiral</b>. Dans la partie 2, vous serez confrontés à autre chose que de simples drônes d'entraînement.</color>",
           "GUID": "9fff3167-309f-4bc2-a78f-4c6cadfc8deb",
           "eventActionType": 16,
           "eaName": "Text Box"

@@ -69,7 +69,7 @@ public struct Point
 	}
 }
 
-[AddComponentMenu( "GlowPuff/Hooks/UpdateEventHooks" )]
+[AddComponentMenu( "ImperialAdmiral/Hooks/UpdateEventHooks" )]
 public class UpdateEventHooks : MonoBehaviour
 {
 	public event System.EventHandler UpdateHook;

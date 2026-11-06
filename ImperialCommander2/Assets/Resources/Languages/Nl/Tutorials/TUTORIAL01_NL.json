@@ -34,7 +34,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Welkom bij de tutorial van <b>Imperial Commander</b>! \r\n\r\nDeze reeks tutorials zijn ontworpen om je de beginselen van <b>Imperial Assault</b> bij te brengen in combinatie met de onofficiële companion app. Je hebt geen voorkennis van <b>Imperial Assault</b> nodig, maar houdt er rekening mee dat deze tutotials alleen basis informatie bevatten. Als je er dieper in wilt duiken of vragen hebt, kijk dan in de \"Learn to Play\" gids en de \"Rules Reference Guide\" die bij het spel zitten.</color>",
+          "tbText": "<color=\"yellow\">Welkom bij de tutorial van <b>Imperial Admiral</b>! \r\n\r\nDeze reeks tutorials zijn ontworpen om je de beginselen van <b>Imperial Assault</b> bij te brengen in combinatie met de onofficiële companion app. Je hebt geen voorkennis van <b>Imperial Assault</b> nodig, maar houdt er rekening mee dat deze tutotials alleen basis informatie bevatten. Als je er dieper in wilt duiken of vragen hebt, kijk dan in de \"Learn to Play\" gids en de \"Rules Reference Guide\" die bij het spel zitten.</color>",
           "GUID": "9e3e8682-8ca5-4965-b0ab-6946f2c3697d",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -175,7 +175,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "<color=\"yellow\">Leia spendeert nu 4 verplaatspunten en verplaats totdat ze naast de console staat.\r\n\r\nHoud er rekening mee dat <b>Imperial Commander</b> normaal de positie van figuren niet bijhoudt. Dit is puur ter demonstratie.</color>",
+          "tbText": "<color=\"yellow\">Leia spendeert nu 4 verplaatspunten en verplaats totdat ze naast de console staat.\r\n\r\nHoud er rekening mee dat <b>Imperial Admiral</b> normaal de positie van figuren niet bijhoudt. Dit is puur ter demonstratie.</color>",
           "GUID": "2f173ba6-4c1a-43f9-9543-5ba682be6c30",
           "eventActionType": 16,
           "eaName": "Text Box"
@@ -920,7 +920,7 @@
       "eventText": "Nadat de laatste training remote ontploft is geeft Leia je een applaus. \"Goed gedaan!\", zegt ze, glimlachend.\r\n\"Je hebt je goed verweerd. Personen als jullie kunnen we goed g-\"\r\n\r\nZe wordt onderbroken door haar comlink. \"Hoogheid\", kraakt een stem door de luidspreker. \"We hebben net een noodsignaal ontvangen van Indu, keizerlijke troepen naderen onze schuilplaats. Ze vragen om hulp en wij zijn het dichtst bij van alle Alliantie schepen.\"\r\n\r\nLeia d'r ogen worden groot, haar gezicht plooit in een starre vastberadenheid. \"Laat ze stand houden. Plot een route naar Indu\", roept ze in de comlink terwijl ze naar je kijkt.",
       "eventActions": [
         {
-          "tbText": "\"Je zult die wapens eerder nodig hebben dan ik dacht. Ik was je aan het vertellen dat we personen van jullie kaliber nodig hebben en ik wilde weten of jullie je bij ons willen aansluiten.\"\r\n\r\nJe heft je wapens op en Leia glimlacht. \"Welkom bij het Rebellenverbond.\"\r\n\r\n<color=\"yellow\">Dit is het einde van deel 1 van de <b>Imperial Commander</b> tutorials. In deel 2 ga je andere dingen dan training remotes te lijf.</color>",
+          "tbText": "\"Je zult die wapens eerder nodig hebben dan ik dacht. Ik was je aan het vertellen dat we personen van jullie kaliber nodig hebben en ik wilde weten of jullie je bij ons willen aansluiten.\"\r\n\r\nJe heft je wapens op en Leia glimlacht. \"Welkom bij het Rebellenverbond.\"\r\n\r\n<color=\"yellow\">Dit is het einde van deel 1 van de <b>Imperial Admiral</b> tutorials. In deel 2 ga je andere dingen dan training remotes te lijf.</color>",
           "GUID": "9fff3167-309f-4bc2-a78f-4c6cadfc8deb",
           "eventActionType": 16,
           "eaName": "Text Box"

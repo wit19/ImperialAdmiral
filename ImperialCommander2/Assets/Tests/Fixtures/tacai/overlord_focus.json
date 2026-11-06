@@ -2142,6 +2142,234 @@
      "wounded": false
     }
    ]
+  },
+  {
+   "name": "m22_supporter_chip_first",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Han Solo",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Han Solo",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "MHD-19",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "MHD-19",
+      "row": 1,
+      "wounded": false
+     }
+   ],
+   "expect": [
+     {
+      "basis": "chip",
+      "hero": "MHD-19",
+      "marked": false,
+      "threat": "1",
+      "threat_econ": "1",
+      "wounded": false
+     },
+     {
+      "basis": "chip",
+      "hero": "Han Solo",
+      "marked": false,
+      "threat": "7/2",
+      "threat_econ": "7/2",
+      "wounded": false
+     }
+    ]
+  },
+  {
+   "name": "m22_diala_supporter_pin",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Han Solo",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Han Solo",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Diala Passil",
+      "loadout": {
+       "items": [],
+       "skills": [
+        "diala02"
+       ]
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Diala Passil",
+      "row": 1,
+      "wounded": false
+     }
+   ],
+   "expect": [
+     {
+      "basis": "chip",
+      "hero": "Diala Passil",
+      "marked": false,
+      "threat": "2",
+      "threat_econ": "2",
+      "wounded": false
+     },
+     {
+      "basis": "chip",
+      "hero": "Han Solo",
+      "marked": false,
+      "threat": "7/2",
+      "threat_econ": "7/2",
+      "wounded": false
+     }
+    ]
+  },
+  {
+   "name": "m22_diala_support_inert",
+   "posture": "eliminate",
+   "counter": "woundAll",
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Han Solo",
+      "loadout": {
+       "items": [],
+       "skills": []
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Han Solo",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Diala Passil",
+      "loadout": {
+       "items": [],
+       "skills": [
+        "diala04"
+       ]
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Diala Passil",
+      "row": 1,
+      "wounded": false
+     }
+   ],
+   "expect": [
+     {
+      "basis": "chip",
+      "hero": "Han Solo",
+      "marked": false,
+      "threat": "7/2",
+      "threat_econ": "7/2",
+      "wounded": false
+     },
+     {
+      "basis": "chip",
+      "hero": "Diala Passil",
+      "marked": false,
+      "threat": "2",
+      "threat_econ": "2",
+      "wounded": false
+     }
+    ]
+  },
+  {
+   "name": "m22_diala_speed_pin",
+   "posture": "protect",
+   "counter": null,
+   "heroes": [
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Diala Passil",
+      "loadout": {
+       "items": [],
+       "skills": [
+        "diala05"
+       ]
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Diala Passil",
+      "row": 0,
+      "wounded": false
+     },
+    {
+      "attack_dice": 2,
+      "health": 6,
+      "hero": "Diala Passil",
+      "loadout": {
+       "items": [],
+       "skills": [
+        "diala05"
+       ]
+      },
+      "marked_round": 0,
+      "marks": 0,
+      "profile": "Diala Passil",
+      "row": 1,
+      "wounded": true
+     }
+   ],
+   "expect": [
+     {
+      "basis": "card",
+      "best_pool": "Green+Yellow",
+      "hero": "Diala Passil",
+      "marked": false,
+      "threat": "85",
+      "threat_band": "3",
+      "threat_damage": "2",
+      "threat_econ": "85",
+      "threat_range": "2",
+      "wounded": false
+     },
+     {
+      "basis": "card",
+      "best_pool": "Green+Yellow",
+      "hero": "Diala Passil",
+      "marked": false,
+      "threat": "72",
+      "threat_band": "2",
+      "threat_damage": "2",
+      "threat_econ": "72",
+      "threat_range": "2",
+      "wounded": true
+     }
+    ]
   }
  ]
 }

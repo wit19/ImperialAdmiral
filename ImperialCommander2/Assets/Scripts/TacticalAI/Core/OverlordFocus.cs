@@ -362,7 +362,13 @@ namespace TacticalAI.Core
                     ? HeroThreatModelV2.PartsOf(c.Card, table, c.Profile, c.Wounded,
                                                 posture, defenderDefense, engage)
                     : null,
-                Chip = woundAll && c.Profile != null ? c.Profile.ChipKey() : null,
+                // M22: the woundAll chip sees the printed supporter pin of
+                // the CARD (identity or chosen support skill id), not just
+                // the trait-derived profile column.
+                Chip = woundAll && c.Profile != null
+                    ? c.Profile.ChipKey(c.Card != null &&
+                        c.Card.SupporterEffektiv(c.Profile.LoadoutSkills))
+                    : null,
             }).ToList();
 
             // R-D REAKTION key (concept v1.2 §2.3, Thomas-Punkt 3a): mark-style

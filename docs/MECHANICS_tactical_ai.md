@@ -173,9 +173,20 @@ announced publicly at round start (and re-ranked each activation from the same k
    hold-posture increment of half the printed value in damage-EV terms
    (`1/2 × H × 2/6 per round` — Fenn: 1H healthy, 2H once his printed upgrade card
    `fenn07` is equipped); tempo cards (`fenn01` "Taktisches Vorrücken") raise the
-   band tempo in the healthy AND the wounded state (speed 5 / 4). Unknown skill ids
+   hero's band tempo in the healthy AND the wounded state (speed 5 / 4; since
+   M22 also `diala05` "Kunst der Bewegung" for Diala Passil). Unknown skill ids
    never match — an absent `effekte` block is the null law, every pre-M21 hero
    parses bit-identical. Both summands print as their own EXPLAIN clause.
+   Since M22 (Thomas ruling, 06.11.) the same block can print a SUPPORTER
+   role: `supporter.always` pins identity (Davith Elso the commander, MHD-19),
+   `supporter.skills` pins chosen cards — Diala Passil is a supporter while she
+   carries `diala02` "Machtadept" (friendly reroll) or `diala03`
+   "Kampfmeditation" (friendly Focused); her `diala05` "Kunst der Bewegung"
+   ("Apply +1 Speed") rides the tempo-pin law (72→85 healthy, 58→72 wounded).
+   The supporter flag is read ONLY by the woundAll chip law (supporters are
+   chipped first — `HeroCard.SupporterEffektiv` into `ChipKey`); it never
+   moves a threat number: eliminate stays pure dice (findings 06.11. §1).
+   Schema `tacai.hero_cards/3`.
    Campaign purchases still count twice: the bought weapon moves the score
    (M17), the XP-ability index stays the economic basis (M4) — the hero who is
    really strongest on THIS campaign, not from a tier list.

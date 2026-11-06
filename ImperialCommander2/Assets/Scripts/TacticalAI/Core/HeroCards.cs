@@ -64,6 +64,14 @@ namespace TacticalAI.Core
         public int ExplosionsWert;                                    // printed blast H
         public List<HeroSkillPin> ExplosionsUpgrades = new List<HeroSkillPin>(); // skill -> new WERT (absorbs)
         public List<HeroSkillPin> TempoPins = new List<HeroSkillPin>();          // skill -> tempo DELTA
+        // M22 (Thomas ruling 06.11.): the printed SUPPORTER role. Identity
+        // pins: Davith Elso (the commander) and MHD-19 always; Diala Passil
+        // only while she carries diala02 "Machtadept" (friendly reroll) or
+        // diala03 "Kampfmeditation" (friendly Focused). Consumer is the
+        // woundAll chip law ONLY (supporter chipped first) - it never moves
+        // a threat number: eliminate stays pure dice (findings 06.11. §1).
+        public bool SupporterImmer;
+        public List<string> SupporterSkills = new List<string>();
 
         /// <summary>M21: effective printed blast value with the hero's
         /// chosen skill cards (Rebel Elite fenn07 ABSORBS the base value,
@@ -87,6 +95,18 @@ namespace TacticalAI.Core
             foreach (var p in TempoPins)
                 if (p.Skill != null && skills.Contains(p.Skill)) d += p.Delta;
             return d;
+        }
+
+        /// <summary>M22: is this hero a SUPPORTER with the chosen skill
+        /// cards? Identity pin (always) or one of the printed support skill
+        /// ids. Unknown ids never match - the pin stays inert.</summary>
+        public bool SupporterEffektiv(IList<string> skills)
+        {
+            if (SupporterImmer) return true;
+            if (skills == null || SupporterSkills.Count == 0) return false;
+            foreach (var s in SupporterSkills)
+                if (s != null && skills.Contains(s)) return true;
+            return false;
         }
 
 
@@ -281,6 +301,15 @@ namespace TacticalAI.Core
                             Skill = Json.AsStr(Json.Get(pd, "skill", null)),
                             Delta = Json.AsInt(Json.Get(pd, "delta", 0)),
                         });
+                    }
+                    // M22: the printed supporter role (identity or skill ids).
+                    var sup = Json.Get(ef, "supporter", null);
+                    if (sup != null)
+                    {
+                        var sd = Json.AsDict(sup);
+                        c.SupporterImmer = (bool)Json.Get(sd, "always", false);
+                        foreach (var rawS in Json.AsList(Json.Get(sd, "skills", new List<object>())))
+                            c.SupporterSkills.Add(Json.AsStr(rawS));
                     }
                 }
                 if (!string.IsNullOrEmpty(c.Name)) t._byName[c.Name] = c;

@@ -59,13 +59,20 @@ namespace TacticalAI.Core
         /// woundAll-Chip: Nicht-Heiler/Support vor Heiler, dann
         /// mobility x rangeMax, dann evDamagePerRound.
         /// [int (0 healer | 1 non-healer), int runner, Rational ev]
-        public List<object> ChipKey()
+        /// M22 (Thomas-Ruling 06.11.): supporterPin = gedruckter Supporter
+        /// ueber Identitaets-/Skill-ID-Pin (HeroCard.SupporterEffektiv, z.B.
+        /// Davith, MHD-19, Diala mit diala02/diala03). Er zaehlt wie die
+        /// kuratierte "support"-Spalte - gelesen wird je HELD nur in der
+        /// woundAll-Chip-Reihenfolge, nie in einer Bedrohungszahl.
+        public List<object> ChipKey(bool supporterPin = false)
         {
             return new List<object>
             {
-                // FINAL-QA audit #5: SUPPORT ranks first among NON-healers
-                // (concept 3.3.1a chip_key); healer still leads overall.
-                Role == "healer" ? 0 : Role == "support" ? 2 : 1,
+                // FINAL-QA audit #5 + Vektor-Wahrheit (woundall_chip_law:
+                // Fenns Zeile fuehrt trotz niedrigerer Bedrohung): der
+                // Compare liest ABSTEIGEND - SUPPORT (2) wird zuerst
+                // gechippt, dann das normale Volk (1), Heiler zuletzt (0).
+                Role == "healer" ? 0 : (Role == "support" || supporterPin) ? 2 : 1,
                 RunnerValue,
                 EvDamagePerRound,
             };

@@ -13,11 +13,11 @@ Star Wars, the Star Wars logo, and all other logos, characters, artwork, stories
 
 ## This fork: Tactical AI
 
-*The intro above is the original README text of [GlowPuff/ImperialAdmiral](https://github.com/GlowPuff/ImperialAdmiral), kept word for word. Everything below describes this fork; upstream's manual and video links sit at the bottom.*
+*The intro above is the original README text of [GlowPuff/ImperialCommander2](https://github.com/GlowPuff/ImperialCommander2), kept word for word. Everything below describes this fork; upstream's manual and video links sit at the bottom.*
 
 **Goal.** An optional Tactical AI for the Imperial side that plays by the printed rules and plays fair. It reads only what is already on the table (mission data, entered damage wheels, public objective state), never buffs figures and never holds dice. Difficulty means decision quality: five levels, Recruit to Thrawn, all choosing among the identical set of legal moves. The AI commands and the human at the table acts: every figure receives a concrete if-then order, and every targeting decision stays re-computable from the formula the app itself prints.
 
-**Status.** Playable end to end and in active weekly playtests. This fork follows the playtests, not a fixed roadmap: each playtest session ships as a tranche of fixes and refinements, and every release documents itself in its release notes. Releases carry the upstream version plus a build number (upstream `v.X.Y.Z`, ours adds `#N`); the newest one always sits behind the download link below. Live today:
+**Status.** Playable end to end and in active weekly playtests. This fork follows the playtests, not a fixed roadmap: each playtest session ships as a tranche of fixes and refinements, and every release documents itself in its release notes. Since the rename we version independently, starting at `v1.0.0`; every tagged build sits in the tag list and the newest release behind the download link below is what we recommend. Live today:
 
 - Tactical AI mode, ON by default in this fork; switching it off (globally or per mission) restores the original app's behavior bit for bit
 - Skill levels Recruit / Stormtrooper / Veteran / Commandant / Thrawn, changing selection quality only, never stats
@@ -26,7 +26,7 @@ Star Wars, the Star Wars logo, and all other logos, characters, artwork, stories
 - A section-space picture of where the fight is likely, built with zero new inputs from the players; deterministic seeds: same seed, mission and level give identical orders
 - UI texts in German and English (the other shipped languages currently mirror English); a parity harness of tens of thousands of automated checks plus build gates stands in front of every release
 
-**Why a fork and not a pull request?** It started as one: [PR #194](https://github.com/GlowPuff/ImperialAdmiral/pull/194). The upstream maintainers preferred the idea to mature on a fork first, with a standing invitation to return once it is ready - so that is what this repo does, and the door stays open. The base app and its donation link belong to GlowPuff; all credit for it stays with them.
+**Why a fork and not a pull request?** It started as one: [PR #194](https://github.com/GlowPuff/ImperialCommander2/pull/194). The upstream maintainers preferred the idea to mature on a fork first, with a standing invitation to return once it is ready - so that is what this repo does, and the door stays open. The base app and its donation link belong to GlowPuff; all credit for it stays with them.
 
 ### Downloads and docs for this fork
 [Latest fork release](https://github.com/wit19/ImperialAdmiral/releases/latest)<br>
@@ -37,5 +37,5 @@ Like upstream, this fork is a non-commercial fan project in no way affiliated wi
 ---
 
 ## Manual and Documentation (upstream base app)
-[Full documentation](https://github.com/GlowPuff/ImperialAdmiral/wiki)<br>
+[Full documentation](https://github.com/GlowPuff/ImperialCommander2/wiki)<br>
 [YouTube channel](https://www.youtube.com/channel/UC8mzMnsLZPgzQW2X2EkCR-Q)

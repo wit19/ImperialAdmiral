@@ -762,11 +762,11 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 Tactical AI only changes *how the Imperial side is run*. Everything else — installs,
 mission play, the campaign manager, the editor — is documented upstream:
 
-- **IC2 Wiki (Home):** <https://github.com/GlowPuff/ImperialAdmiral/wiki>
+- **IC2 Wiki (Home):** <https://github.com/GlowPuff/ImperialCommander2/wiki>
 - **Getting Started & Basic Settings:**
-  <https://github.com/GlowPuff/ImperialAdmiral/wiki/0.-Getting-Started-and-Basic-Settings>
-- **FAQ:** <https://github.com/GlowPuff/ImperialAdmiral/wiki/7.-FAQ>
-- **Tips & Tricks:** <https://github.com/GlowPuff/ImperialAdmiral/wiki/8.-Tips-and-Tricks>
+  <https://github.com/GlowPuff/ImperialCommander2/wiki/0.-Getting-Started-and-Basic-Settings>
+- **FAQ:** <https://github.com/GlowPuff/ImperialCommander2/wiki/7.-FAQ>
+- **Tips & Tricks:** <https://github.com/GlowPuff/ImperialCommander2/wiki/8.-Tips-and-Tricks>
 - **Editor documentation:** <https://github.com/GlowPuff/ICEditor/wiki>
 
 Within this fork: the mechanics reference

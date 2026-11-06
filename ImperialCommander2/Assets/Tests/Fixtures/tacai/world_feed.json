@@ -1957,6 +1957,174 @@
     "seq": 3,
     "threat": 0
    }
+  },
+  {
+   "name": "m23_empire_destroy_clock",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Destroy the crates (&Crates destroyed&/5) within 6 rounds",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "empire16",
+      "missionType": "Side",
+      "objectiveForEmpire": 1
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|m23_empire_destroy_clock\nround=1\nposture=eliminate\nobjective=Destroy the crates (&Crates destroyed&/5) within 6 rounds\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=1\n",
+    "hash": "071b9e44a371926f1e9748c268316741d593da998a5df2dea08ccabe030e77f3",
+    "objective": "Destroy the crates (&Crates destroyed&/5) within 6 rounds",
+    "objective_actor": "",
+    "posture": "eliminate",
+    "round": 1,
+    "seq": 1,
+    "threat": 0
+   }
+  },
+  {
+   "name": "m23_rebel_side_destroy_clock_unchanged",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Destroy the crates (&Crates destroyed&/5) within 6 rounds",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "core2",
+      "missionType": "Side"
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|m23_rebel_side_destroy_clock_unchanged\nround=1\nposture=stall\nobjective=Destroy the crates (&Crates destroyed&/5) within 6 rounds\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=1\n",
+    "hash": "e48cf3508ae403bcc186d0676a26ef52f5450a866cbcec97993f9a509e6b554f",
+    "objective": "Destroy the crates (&Crates destroyed&/5) within 6 rounds",
+    "objective_actor": "",
+    "posture": "stall",
+    "round": 1,
+    "seq": 1,
+    "threat": 0
+   }
+  },
+  {
+   "name": "m23_empire_de_zerstort",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Zerst\u00f6rt 5 Nachschubkisten",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "empire_side_de",
+      "missionType": "Side",
+      "objectiveForEmpire": 1
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|m23_empire_de_zerstort\nround=1\nposture=eliminate\nobjective=Zerst\u00f6rt 5 Nachschubkisten\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=1\n",
+    "hash": "5022371b3f821234a67276b5d5714084717abaed9c2b405284457a5f082f3abc",
+    "objective": "Zerst\u00f6rt 5 Nachschubkisten",
+    "objective_actor": "",
+    "posture": "eliminate",
+    "round": 1,
+    "seq": 1,
+    "threat": 0
+   }
+  },
+  {
+   "name": "m23_empire_protect_beats_attack",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Protect the civilians. Civilians escaped or defeated: &Civilians&/9",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "empire13",
+      "missionType": "Story",
+      "objectiveForEmpire": 1
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|m23_empire_protect_beats_attack\nround=1\nposture=protect\nobjective=Protect the civilians. Civilians escaped or defeated: &Civilians&/9\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=1\n",
+    "hash": "b739e2931eed36305040216e99971e9fb22fbfaf1b589225ffda1ef9fe19d796",
+    "objective": "Protect the civilians. Civilians escaped or defeated: &Civilians&/9",
+    "objective_actor": "",
+    "posture": "protect",
+    "round": 1,
+    "seq": 1,
+    "threat": 0
+   }
+  },
+  {
+   "name": "m23_empire_verbless_clock_stays_stall",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Interrogate the informants (&informants&/2)",
+      "priorityTarget": "Rebel",
+      "roundLimit": 6,
+      "mission": "empire2",
+      "missionType": "Story",
+      "objectiveForEmpire": 1
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|m23_empire_verbless_clock_stays_stall\nround=1\nposture=stall\nobjective=Interrogate the informants (&informants&/2)\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=1\n",
+    "hash": "0f0b1998fb215a4accf646f9233f709e144ed9a15e19c54dc6c653861bcddd60",
+    "objective": "Interrogate the informants (&informants&/2)",
+    "objective_actor": "",
+    "posture": "stall",
+    "round": 1,
+    "seq": 1,
+    "threat": 0
+   }
+  },
+  {
+   "name": "m23_empire_clock_late_keeps_eliminate",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Find and destroy the control terminals (&Terminals&/2)",
+      "priorityTarget": "Rebel",
+      "roundLimit": -1,
+      "mission": "empire16b",
+      "missionType": "Side",
+      "objectiveForEmpire": 1
+     }
+    },
+    {
+     "kind": "RoundLimitChanged",
+     "round": 3,
+     "payload": {
+      "roundLimit": 6
+     }
+    }
+   ],
+   "expect": {
+    "canon": "mission=vector|m23_empire_clock_late_keeps_eliminate\nround=3\nposture=eliminate\nobjective=Find and destroy the control terminals (&Terminals&/2)\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=2\n",
+    "hash": "6b81c7f179fc9f1ac3bf364b76973750c3df1dc3ed4ad56c22be45f879dde830",
+    "objective": "Find and destroy the control terminals (&Terminals&/2)",
+    "objective_actor": "",
+    "posture": "eliminate",
+    "round": 3,
+    "seq": 2,
+    "threat": 0
+   }
   }
  ]
 }

@@ -130,6 +130,7 @@ namespace TacticalAI
         // NEVER at setting==0). Emitting the start snapshot anyway gave the
         // planner a stall posture with a clock that will never run.
         long _lastRoundLimit = -2;      // -2 = never read yet
+        bool _objectiveForEmpire;       // M23: recomputed at session start
         bool _runtimeDirty;             // event rewired the clock mid-mission
 
         /// <summary>M8/F5 seam: MissionEventHandler calls this when a
@@ -151,6 +152,28 @@ namespace TacticalAI
             long rt = gv != null ? gv.roundLimit : -1;
             if (rt >= 0) return rt;
             return mp != null && mp.roundLimit >= 0 ? mp.roundLimit : -1;
+        }
+
+        /// <summary>M23 (Thomas ruling "A", 06.11): does the CURRENT campaign
+        /// author its objective line as the IMPERIAL task list? Only the
+        /// Empire expansion's campaign is played from the imperial side (its
+        /// hero roster - Drokkatta, Kelvin, Feralo - fights as the Empire);
+        /// every other shipped campaign writes objectives as the rebel task.
+        /// Public table knowledge (the chosen campaign is on the table), no
+        /// hidden read. No live campaign (skirmish/custom) or any failure ->
+        /// false = the legacy reading, behaviour unchanged.</summary>
+        static bool ObjectiveIsImperialDirective()
+        {
+            try
+            {
+                var guid = Saga.RunningCampaign.sagaCampaignGUID;
+                if (guid == Guid.Empty) return false;
+                var camp = Saga.SagaCampaign.LoadCampaignState(guid);
+                return camp != null
+                       && string.Equals(camp.campaignExpansionCode, "Empire",
+                                        StringComparison.OrdinalIgnoreCase);
+            }
+            catch { return false; }
         }
 
         const float PollInterval = 0.25f;    // seconds; UI-speed state, no game coupling
@@ -447,6 +470,7 @@ namespace TacticalAI
             _round = Math.Max(1, sd.gameVars.round);
             _threat = sd.gameVars.currentThreat;
             _lastRoundLimit = EffectiveRoundLimit(sd.gameVars, mp);
+            _objectiveForEmpire = ObjectiveIsImperialDirective();
             Append("MissionStart", _round, new Dictionary<string, object>
             {
                 { "objective", objective },
@@ -457,6 +481,10 @@ namespace TacticalAI
                 { "roundLimit", _lastRoundLimit },
                 { "mission", mission },
                 { "missionType", mp != null ? mp.missionType.ToString() : "Story" },
+                // M23 (Thomas ruling "A"): the Empire campaign authored its
+                // objective line as the IMPERIAL task list - a fact the
+                // table itself states (chosen campaign), not a hidden read.
+                { "objectiveForEmpire", _objectiveForEmpire ? 1L : 0L },
             });
             _objective = objective;   // MissionStart is the objective baseline;
                                       // ObjectiveChange only fires on real change.
@@ -940,6 +968,8 @@ namespace TacticalAI
                 { "roundLimit", EffectiveRoundLimit(sd != null ? sd.gameVars : null, mp) },
                 { "mission", mission },
                 { "missionType", mp != null ? mp.missionType.ToString() : "Story" },
+                // M23: re-log must state the perspective the GAME authors by.
+                { "objectiveForEmpire", ObjectiveIsImperialDirective() ? 1L : 0L },
                 { "resync", true },
             }));
             int seq = 2;

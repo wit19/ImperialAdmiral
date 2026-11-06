@@ -143,6 +143,13 @@ namespace TacticalAI.Core
             "group", "figure", "wheel", "health", "hero", "zone", "tile",
             "objective", "focus", "balance", "roundLimit", "priorityTarget",
             "mission", "missionType", "resync", "size",
+            // M23 (Thomas 06.11): the Empire campaign authored its objective
+            // text as the IMPERIAL task list ("Find and destroy the control
+            // terminals") - every other campaign writes it as the rebel task.
+            // The producer states the perspective (0/1) as a public fact
+            // (campaign expansion code); the posture law reads it. Absent = 0
+            // = the legacy reading (attack verbs belong to the enemy).
+            "objectiveForEmpire",
             // Player-19: the group's DISPLAY NAME on Spawn (the same name the
             // table reads on the deployment card - public). The designation
             // law needs it to catch name collisions (Ivan Talos / Verena

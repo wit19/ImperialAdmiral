@@ -665,7 +665,10 @@ and `stall` side by side in the same round — different layers, not a
 misclassification.
 
 Posture is derived per round from public feed state, not chosen secretly:
-the bridge's doctrine phase rule (defend → hunt phase flip,
+the objective-verb law (`WorldEventVector.DerivePosture`: protect words win,
+then — since M23 — imperial attack verbs, then the round clock, then stall
+verbs, fallback eliminate) sets the stance; the bridge's doctrine phase rule
+(defend → hunt phase flip,
 TacticalAIBridge.cs "Punkt-2") feeds `ClassifyPattern`, which assigns each
 card a pattern and discloses the roll in the EXPLAIN / Debug channel as
 `pattern|drawPct|dist` tokens (bridge `_patternRoll`) — "what did the AI

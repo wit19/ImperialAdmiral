@@ -22,6 +22,12 @@ namespace TacticalAI.Core
         public string MissionKey = "solo";
         public int Round;
         public string Posture = "eliminate";
+        // M23 (Thomas 06.11): feed-stated perspective of the objective text
+        // (Empire campaign: the authored task line belongs to the IMPERIAL
+        // side). Derived-only, never planner-direct; NOT in Canon() (the
+        // derivation is a pure function of the events, existing vectors
+        // must stay hash-stable).
+        public bool ObjectiveForEmpire = false;
         public string Objective = "";
         // M10b: hero credited with the LAST objective progress (public
         // activation-order attribution, "" = unknown/none). Event-derived,
@@ -415,9 +421,13 @@ namespace TacticalAI.Core
                         v.Objective = e.Str("objective") ?? "";
                         v.PriorityTarget = e.Str("priorityTarget") ?? "";
                         v.RoundLimit = e.Long("roundLimit", -1);
+                        // M23: perspective fact (absent = legacy rebel-side
+                        // reading); set BEFORE the derivation reads it.
+                        v.ObjectiveForEmpire = e.Long("objectiveForEmpire", 0) != 0;
                         v.Posture = DerivePosture(e.Str("objective"),
                                                   e.Str("priorityTarget"),
-                                                  e.Long("roundLimit", -1));
+                                                  e.Long("roundLimit", -1),
+                                                  v.ObjectiveForEmpire);
                         ApplyDesignation(v, v.Objective, e.Round);   // initial public designation
                         v.ObjectiveChanged = false;
                         v.ObjectiveSinceRound = e.Round;   // Player-21-b: phase clock
@@ -509,7 +519,8 @@ namespace TacticalAI.Core
                         // the MissionStart priority target, exactly the way a
                         // fresh MissionStart would decide.
                         v.RoundLimit = e.Long("roundLimit", -1);
-                        v.Posture = DerivePosture(v.Objective, v.PriorityTarget, v.RoundLimit);
+                        v.Posture = DerivePosture(v.Objective, v.PriorityTarget, v.RoundLimit,
+                                                  v.ObjectiveForEmpire);
                         break;
                     case "ThreatSpend":
                         v.ThreatBalance = e.Long("balance");
@@ -773,8 +784,22 @@ namespace TacticalAI.Core
         static readonly string[] StallKeywords =
             { "escape", "flee", "survive", "reach", "activate", "recover",
               "steal", "deliver", "evacuate" };
+        // M23 (Thomas ruling "A", 06.11, Nebenauftrag-Belagerung): the clock
+        // law below silently treated EVERY round-limited mission as "the
+        // enemy races the clock, we hold" - true only when the authored
+        // objective belongs to the REBEL side (every campaign except Empire).
+        // In the Empire campaign the SAME line is the imperial task list, so
+        // an attack verb ("Destroy the crates in 6 rounds") must flip the
+        // posture to eliminate BEFORE the clock law speaks. Word-prefix law
+        // exactly like ProtectKeywords; DE token rides along because custom
+        // missions may be authored in German (the shipped feed text is EN -
+        // ui.json localizes later). Empirical anchor: an imperial guard was
+        // garrisoning for six rounds instead of storming the crates.
+        static readonly string[] AttackKeywords =
+            { "destroy", "assault", "zerstör" };
 
-        public static string DerivePosture(string objective, string priorityTarget, long roundLimit)
+        public static string DerivePosture(string objective, string priorityTarget, long roundLimit,
+                                           bool objectiveForEmpire = false)
         {
             var words = ((objective ?? "") + " " + (priorityTarget ?? "")).ToLowerInvariant()
                         .Split(new[] { ' ', '\t', '\n', '\r', '-', ',', ';', ':', '.', '!', '?' },
@@ -782,6 +807,10 @@ namespace TacticalAI.Core
             foreach (var k in ProtectKeywords)
                 foreach (var w in words)
                     if (w.StartsWith(k, StringComparison.Ordinal)) return "protect";
+            if (objectiveForEmpire)
+                foreach (var k in AttackKeywords)
+                    foreach (var w in words)
+                        if (w.StartsWith(k, StringComparison.Ordinal)) return "eliminate";
             if (roundLimit >= 0) return "stall";
             foreach (var k in StallKeywords)
                 foreach (var w in words)

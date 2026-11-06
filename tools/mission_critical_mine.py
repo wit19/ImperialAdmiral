@@ -15,7 +15,17 @@
 #                                      ModifyMapEntity action inside an event
 #                                      body that ALSO carries a MapManagement
 #                                      or ChangeObjective action (concept 5.3
-#                                      co-occurrence law, mechanical).
+#                                      co-occurrence law, mechanical), OR
+#       reason "objective-variable"  - same sourceGUID law, but the event
+#                                      carries a ModifyVariable action
+#                                      (Thomas 06.11 DP-anchor coverage gap:
+#                                      interaction objectives like saga
+#                                      clue tokens are CLAIMED via
+#                                      ModifyMapEntity(isActive:false) +
+#                                      ModifyVariable in one event - the two
+#                                      laws above never saw them, so whole
+#                                      clue-bearing sections carried no
+#                                      deployment anchor).
 #   * sectionHypotheses: every event body that carries BOTH a section-
 #     activation (MapManagement.mapSection != empty - the exact lane the app
 #     itself runs, MissionEventHandler.cs MapManagement branch) AND entity
@@ -59,6 +69,7 @@ ENTITY_TYPES = {0: "Tile", 1: "Terminal", 2: "Crate", 3: "DeploymentPoint",
                 4: "Token", 5: "Highlight", 6: "Door"}
 # EventActionConverter.cs lane numbers (mirror, not memory):
 A_CHANGE_OBJECTIVE = 2
+A_MODIFY_VARIABLE = 3
 A_MAP_MANAGEMENT = 14
 A_MODIFY_MAP_ENTITY = 15
 
@@ -87,13 +98,16 @@ def mine(path):
     activate_targets = Counter()  # "Type->active" -> authored command count
     orphan_refs = 0           # sourceGUIDs not in this mission's mapEntities
     hypotheses = []
+    objvar_guids = set()   # ModifyMapEntity + ModifyVariable co-occurrence law
     for e in events_of(m):
         acts = e.get("eventActions") or []
-        mm_sections, has_objective, refs = [], False, []
+        mm_sections, has_objective, has_variable, refs = [], False, False, []
         for a in acts:
             t = a.get("eventActionType")
             if t == A_CHANGE_OBJECTIVE:
                 has_objective = True
+            elif t == A_MODIFY_VARIABLE:
+                has_variable = True
             elif t == A_MAP_MANAGEMENT:
                 s = a.get("mapSection") or ""
                 if s and s != ZERO:
@@ -131,6 +145,10 @@ def mine(path):
                                       ent_by_guid.get(r, {}).get("entityType"), "")}
                                  for r in dict.fromkeys(refs)],
                 })
+        if has_variable and refs:
+            # interaction-objective law: claiming this entity changes the
+            # mission variable economy -> objective-critical (see header).
+            objvar_guids.update(dict.fromkeys(refs))
 
     # --- critical entities (concept 5.3 law) ------------------------------
     critical = []
@@ -143,6 +161,8 @@ def mine(path):
             reason = "terminal"
         elif e["GUID"] in obj_event_guids:
             reason = "objective-event"
+        elif e["GUID"] in objvar_guids:
+            reason = "objective-variable"
         if reason is None or e["GUID"] in seen_guids:
             continue
         seen_guids.add(e["GUID"])
@@ -188,7 +208,7 @@ def main():
     edges_with_section = 0
     swapped_members = 0
     sec_counts = []
-    crit_terminal = crit_objevent = 0
+    crit_terminal = crit_objevent = crit_objvar = 0
     door_edges = 0
     activate_total = Counter()
     orphan_total = 0
@@ -208,6 +228,7 @@ def main():
         swapped_members += sum(1 for c in row["criticalEntities"] if c["runtimeSwapped"])
         crit_terminal += sum(1 for c in row["criticalEntities"] if c["reason"] == "terminal")
         crit_objevent += sum(1 for c in row["criticalEntities"] if c["reason"] == "objective-event")
+        crit_objvar += sum(1 for c in row["criticalEntities"] if c["reason"] == "objective-variable")
         door_edges += sum(1 for h in row["sectionHypotheses"] for en in h["entities"]
                           if en["entityType"] == "Door")
         sec_counts.append(nsec)
@@ -238,7 +259,11 @@ def main():
                      "terminal = printed console semantics; reason objective-event = "
                      "ModifyMapEntity target inside an event body that also carries "
                      "MapManagement or ChangeObjective - concept positionierung v1 "
-                     "5.3, mechanical) plus sectionHypotheses: entity<->section "
+                     "5.3, mechanical; reason objective-variable = ModifyMapEntity "
+                     "target inside an event body that also carries ModifyVariable - "
+                     "interaction objectives whose claim mutates the mission variable "
+                     "economy (saga clue tokens), Thomas 06.11 coverage fix for the "
+                     "DP-anchor mining) plus sectionHypotheses: entity<->section "
                      "hypothesis edges mined from event bodies whose MapManagement "
                      "activates a section (app precedent MissionEventHandler "
                      "MapManagement branch). HYPOTHESIS NEVER WALL (Grundgesetz): a "
@@ -264,7 +289,8 @@ def main():
     print("terminals total:          %d in %d/138 missions" % (total_term, missions_with_terminals))
     print("missions whose terminals are EVER referenced by a ModifyMapEntity "
           "action (flip-capable): %d/138" % missions_terminal_flip_capable)
-    print("critical rows:            %d terminal + %d objective-event" % (crit_terminal, crit_objevent))
+    print("critical rows:            %d terminal + %d objective-event + %d objective-variable" %
+          (crit_terminal, crit_objevent, crit_objvar))
     print("hypothesis edges:         %d total, %d section-bearing, %d door-entity" %
           (total_edges, edges_with_section, door_edges))
     print("runtimeSwapped critical:  %d" % swapped_members)

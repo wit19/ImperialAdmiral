@@ -3,7 +3,7 @@
   "file": "tactical_mission_critical.json",
   "schema": "tacai.mission_critical/1",
   "generated_by": "tools/mission_critical_mine.py - regenerate, never hand-edit",
-  "note": "PUBLIC reviewable data (fairness rule, format law like tactical_pattern_weights.json): per mission, the entities the Missionskritisch-Heuristik treats as mission-critical (reason terminal = printed console semantics; reason objective-event = ModifyMapEntity target inside an event body that also carries MapManagement or ChangeObjective - concept positionierung v1 5.3, mechanical) plus sectionHypotheses: entity<->section hypothesis edges mined from event bodies whose MapManagement activates a section (app precedent MissionEventHandler MapManagement branch). HYPOTHESIS NEVER WALL (Grundgesetz): a missing edge keeps everything through-pass. runtimeSwapped = entityGroups member, ConfigureEntityGroups swaps its section at load - the authored section here is NOT runtime truth, the live EntityInteract feed reads the live object and is correct. Hole law: GUIDs and app-authored names only, no coordinates."
+  "note": "PUBLIC reviewable data (fairness rule, format law like tactical_pattern_weights.json): per mission, the entities the Missionskritisch-Heuristik treats as mission-critical (reason terminal = printed console semantics; reason objective-event = ModifyMapEntity target inside an event body that also carries MapManagement or ChangeObjective - concept positionierung v1 5.3, mechanical; reason objective-variable = ModifyMapEntity target inside an event body that also carries ModifyVariable - interaction objectives whose claim mutates the mission variable economy (saga clue tokens), Thomas 06.11 coverage fix for the DP-anchor mining) plus sectionHypotheses: entity<->section hypothesis edges mined from event bodies whose MapManagement activates a section (app precedent MissionEventHandler MapManagement branch). HYPOTHESIS NEVER WALL (Grundgesetz): a missing edge keeps everything through-pass. runtimeSwapped = entityGroups member, ConfigureEntityGroups swaps its section at load - the authored section here is NOT runtime truth, the live EntityInteract feed reads the live object and is correct. Hole law: GUIDs and app-authored names only, no coordinates."
  },
  "missions": [
   {
@@ -34,6 +34,15 @@
      "name": "Dead Drop",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "c085f4b4-d170-4bf5-ad23-5c21232a1895",
+     "name": "Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -198,6 +207,69 @@
      "section": "3e727d4e-8789-420d-89a0-4a8b69eccb41",
      "sectionName": "Section 2 - Cell NW",
      "runtimeSwapped": true
+    },
+    {
+     "entity": "fe3e8033-5deb-4ce2-988d-d20fad59a1c1",
+     "name": "Citizen 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "30bbf51f-f476-4953-bba2-05008390d748",
+     "sectionName": "Section 3 - Cell SW",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "63f5d133-08e9-4ad0-bcab-724f9a384803",
+     "name": "Citizen 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "602c7a45-5257-44fe-8860-b652cea4e69f",
+     "sectionName": "Section 4 - Cell SE",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "17ee93ff-57b7-44e8-8ccb-884bc46bc49e",
+     "name": "Citizen 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "7ab80052-0477-4dbf-94fa-b6c12065b55b",
+     "sectionName": "Section 5 - Cell NE",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "69d78adc-a9f9-4776-92ad-4ea65b56cf89",
+     "name": "Central Door NW",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "533f0014-c1ad-44e3-af7b-920bdb9e0acf",
+     "sectionName": "Section 6 - Doors",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "63d70509-8539-4c8e-a36d-42d3af41ab4a",
+     "name": "Central Door NE",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "533f0014-c1ad-44e3-af7b-920bdb9e0acf",
+     "sectionName": "Section 6 - Doors",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "7525f106-6124-4bf4-b4f8-7cf1b431697f",
+     "name": "Central Door SW",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "533f0014-c1ad-44e3-af7b-920bdb9e0acf",
+     "sectionName": "Section 6 - Doors",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "df120813-5168-4112-9dad-1e98b3d95469",
+     "name": "Central Door SE",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "533f0014-c1ad-44e3-af7b-920bdb9e0acf",
+     "sectionName": "Section 6 - Doors",
+     "runtimeSwapped": false
     }
    ],
    "sectionHypotheses": [
@@ -449,6 +521,33 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "01c44b0a-6c5a-4dbf-8f62-ab03874306bc",
+     "name": "Door North",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "fb5eeb50-1902-471f-81e6-bbb46630fb40",
+     "name": "Door East",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "ed97f0f2-a509-4c00-9171-b549e09b6615",
+     "name": "Door West",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "2401bc27-63d9-4393-93a3-d03b166e6ad1",
      "name": "Door Control",
      "entityType": "Terminal",
@@ -625,6 +724,33 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5c76ca0f-f85d-45b4-98c1-898fe5743e17",
+     "name": "Holocam 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "f5c8f7fc-65d7-41c4-9812-8c4798ed111a",
+     "sectionName": "Section 3 - Chamber",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e49b28c0-b9dd-4660-94d2-4860271004a7",
+     "name": "Holocam 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "f5c8f7fc-65d7-41c4-9812-8c4798ed111a",
+     "sectionName": "Section 3 - Chamber",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "b17bec04-547c-4b90-b912-98dd626bec48",
+     "name": "Holocam 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "f5ce4707-39e3-4bc6-aa3f-9fcfc38259b4",
+     "sectionName": "Section 2 - Office",
      "runtimeSwapped": false
     }
    ],
@@ -1320,6 +1446,60 @@
    ],
    "criticalEntities": [
     {
+     "entity": "0bec3438-0de0-4d5d-9806-266641b91f3b",
+     "name": "Explosive Yellow 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "c5e338e4-c85e-4a26-9024-0400af91b03a",
+     "name": "Explosive Yellow 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "300976af-f05e-44a5-a7cb-62cf9801cb55",
+     "name": "Explosive Red 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "f02c11ea-3c10-4ba8-af28-4e7a77ab1752",
+     "name": "Explosive Red 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "90c2e692-01c7-42f2-98dd-afc361e496b5",
+     "name": "Explosive Blue 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "aec6ab34-be74-41df-aaed-4a73669bc276",
+     "name": "Explosive Blue 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "bc0783a4-93f6-4750-9778-5177e29571f5",
      "name": "Explosive Crate Grey",
      "entityType": "Token",
@@ -1429,6 +1609,24 @@
    ],
    "criticalEntities": [
     {
+     "entity": "ef73d503-8f0e-4768-8b4b-3e1570c68d1f",
+     "name": "Outer Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "72b5929e-b47b-46c8-852f-2a82a12f67a2",
+     "name": "Inner Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "dd0d7fc1-f7a9-4321-9c5a-06918c372689",
      "name": "Terminal",
      "entityType": "Terminal",
@@ -1476,6 +1674,15 @@
      "name": "Hiding Place 3",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "e5b4b6b7-dcb4-4b5f-8c1e-75b209f82a4a",
+     "name": "Hiding Place 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": true
@@ -1894,6 +2101,33 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "de498fa4-ebc9-442d-8eff-e0cfabe5ff81",
+     "name": "Cannon Green",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e39a2739-5ed3-4019-8725-08bfcd218725",
+     "name": "Cannon Red",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "1462d72d-1876-42e3-8262-16fea1a7e124",
+     "name": "Cannon Yellow",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "3cad990b-11b4-439e-b870-6eb8e0a3af72",
      "name": "Terminal 1",
      "entityType": "Terminal",
@@ -2057,6 +2291,42 @@
     }
    ],
    "criticalEntities": [
+    {
+     "entity": "c96a2c5b-162d-443a-942b-6b7a1de2c296",
+     "name": "Door North 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "21e2e7b4-f220-494e-a57c-04b60132e5c2",
+     "name": "Door North 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "1e5d4fc4-4f40-4275-b2f0-5254ac0c9db1",
+     "name": "Door East 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "d6f9ff71-d855-4b6e-bbcc-018ec01babb0",
+     "name": "Door East 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
     {
      "entity": "372eda46-790d-413f-8868-fb957b83aa3b",
      "name": "Terminal 1",
@@ -2316,6 +2586,69 @@
    ],
    "criticalEntities": [
     {
+     "entity": "a2cdfd53-3f2a-4727-9b1b-9fb78fef9c71",
+     "name": "Remains 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "b2cde267-bb36-480b-bab9-7e29e5d1d100",
+     "sectionName": "Section 3 - Control",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "392fd57c-760b-4ede-952c-911b407a75fb",
+     "name": "Barrel 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "41222907-04dd-4976-987e-3362f2c5d28e",
+     "name": "Barrel 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "eca18e0a-ae87-49d9-b572-ad50bb187c84",
+     "name": "Barrel 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "8178d5df-3cb1-4816-b5de-25b7a746d830",
+     "sectionName": "Section 2 - Back Room",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "8c824486-edbf-48b7-bc7c-d0f30e1f5c37",
+     "name": "Barrel 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "8178d5df-3cb1-4816-b5de-25b7a746d830",
+     "sectionName": "Section 2 - Back Room",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "6d5599ba-7ab7-4645-8f41-b6aef20b73a0",
+     "name": "Barrel 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "8178d5df-3cb1-4816-b5de-25b7a746d830",
+     "sectionName": "Section 2 - Back Room",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "4c5b3640-8f9a-48ac-95bb-97a37d5ff452",
+     "name": "Barrel 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "8178d5df-3cb1-4816-b5de-25b7a746d830",
+     "sectionName": "Section 2 - Back Room",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "e3e3d735-2772-450d-8012-eb09f0d62f38",
      "name": "Door 1",
      "entityType": "Door",
@@ -2392,7 +2725,26 @@
      "invisibleUntilActivated": true
     }
    ],
-   "criticalEntities": [],
+   "criticalEntities": [
+    {
+     "entity": "595ecbe0-7bf4-40af-80c3-ef9c47b5c6df",
+     "name": "Northern Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "aaf59fb6-4eb2-4ded-8254-f1cf3d149dc3",
+     "name": "Southern Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    }
+   ],
    "sectionHypotheses": []
   },
   {
@@ -2407,7 +2759,80 @@
      "invisibleUntilActivated": false
     }
    ],
-   "criticalEntities": [],
+   "criticalEntities": [
+    {
+     "entity": "d5fded57-f50c-4a81-838e-bb74ed916653",
+     "name": "Supply Cache 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3d66200f-6445-41ec-866b-9d15f5ff8a1c",
+     "name": "Supply Cache 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "fb62fe2f-fd55-43d9-96e7-4949f399bfd4",
+     "name": "Supply Cache 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "325684ef-fb55-4681-9101-d82be4fa1f31",
+     "name": "Supply Cache 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "8e5321fc-bb27-4c03-85ef-1b4d89159b93",
+     "name": "Supply Cache 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "0967e7b3-bef1-4861-bb4e-91adcc734425",
+     "name": "Supply Cache 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3d1bfa4d-b1c3-46f1-b952-8c8918c8adfd",
+     "name": "Supply Cache 7",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e2f6237b-83f0-4881-abdd-f7c6d87cbca8",
+     "name": "Supply Cache 8",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    }
+   ],
    "sectionHypotheses": []
   },
   {
@@ -2664,6 +3089,15 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "64c7eae8-11c4-4909-9516-408f44999d60",
+     "name": "Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "b78a226e-2548-47fe-b34c-04995a16d377",
      "name": "Terminal 1",
      "entityType": "Terminal",
@@ -2747,6 +3181,15 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e73e2181-e662-4c71-9197-e26d2c5b8fe9",
+     "name": "Pilot",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "1958cb03-c90d-4500-93a2-a4691ae676cf",
+     "sectionName": "Section 3 - Outerior",
      "runtimeSwapped": false
     },
     {
@@ -2958,6 +3401,15 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3567293a-f305-4937-89c3-4cc92231d1fc",
+     "name": "Exit Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "c2ff4e5e-ba01-45ac-ae4f-b85200b49688",
+     "sectionName": "Section 2 - Office",
      "runtimeSwapped": false
     },
     {
@@ -3659,6 +4111,24 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "b37f53ed-319b-4565-b581-e25af0ac8d71",
+     "name": "CC Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "c049c11a-b878-4ce1-846e-b2df91ab740f",
+     "sectionName": "Section 3 - Hangar",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "6d427efc-3e26-4172-8d1b-4e39c3aeb9ae",
+     "name": "CC Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "c049c11a-b878-4ce1-846e-b2df91ab740f",
+     "sectionName": "Section 3 - Hangar",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "1446ce51-f99d-48b3-b56a-288bf2b0f469",
      "name": "DP Blue 1",
      "entityType": "DeploymentPoint",
@@ -3955,6 +4425,24 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "6c68ff60-fb04-4ca3-bde5-ecedb1544f67",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "978b0eb1-e487-4c9e-be86-73ebc82e7115",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "beb29c26-cd23-4e50-bc5f-ab8f5b87e4b4",
      "name": "Terminal 1",
      "entityType": "Terminal",
@@ -4054,6 +4542,24 @@
      "name": "Informant",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "2b83e333-e137-4183-830b-a69df1883ede",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "cf74e5b9-c772-4359-8265-c02b5e280e5a",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -5696,6 +6202,33 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "438f5870-7228-4791-a77b-811043dc35f9",
+     "name": "Protester 7",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "a939b77e-2d64-435c-9ea0-72e647b3270e",
+     "name": "Protester 8",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "40e7a655-a7aa-46d7-b2a0-cdce5fff0bad",
+     "name": "Protester 9",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "23629034-648d-45e6-bebc-fa15c1c437fc",
      "name": "Yellow DP UW 1",
      "entityType": "Highlight",
@@ -5747,6 +6280,69 @@
      "reason": "terminal",
      "section": "bf9d18de-1a4f-45cb-8f06-b692706b1014",
      "sectionName": "Section 4 - Hideaway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "6fffb171-78e3-4986-b82d-0f00ab998723",
+     "name": "Clue 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "7764ffba-52ea-4cc1-b200-45e5f0554544",
+     "sectionName": "L2",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "101b86fe-4104-4ff0-b55b-65ac2ec1b751",
+     "name": "Clue 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "397befa6-56fa-4138-aaed-0ed7c4db6ee5",
+     "sectionName": "L3",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3adc9007-ee8e-403f-a136-2e2eee8f368a",
+     "name": "Clue 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "bb0a3d52-23f8-4983-b5f5-a94d6e1f80f2",
+     "sectionName": "L4",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3311e881-c2d7-42da-80aa-468ed762d163",
+     "name": "Clue 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "bcc08799-21d2-451f-b47f-3463899da1ba",
+     "sectionName": "R4",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "243978aa-6c40-4a5f-b699-e0b82dfa8b27",
+     "name": "Clue 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "99f2d479-a4e5-4937-bca3-0635803f8850",
+     "sectionName": "Section 3 - Landing Platform",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "347a3d33-7175-4060-8abe-3824cb2132f6",
+     "name": "Clue 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "90a9daa5-80d2-4fbf-aef1-5e57cd438caf",
+     "sectionName": "M3",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "253735fe-01fb-457c-8a51-7ad6134104ca",
+     "name": "Clue 7",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "f1f2d247-1b81-4c4f-9530-dadfb67dd313",
+     "sectionName": "M6",
      "runtimeSwapped": false
     }
    ],
@@ -6326,6 +6922,24 @@
    ],
    "criticalEntities": [
     {
+     "entity": "c41a8bee-7837-4ddd-9d69-7ba67e601c34",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "fb4ceba3-e55e-4014-95c3-df6720f3246b",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "44386d9c-d8f2-45ea-8fa8-e0e092400a7d",
      "name": "Bardottan Shard",
      "entityType": "Token",
@@ -6359,6 +6973,15 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "b55fe172-4d75-406f-998d-a5c7ba13f5d4",
+     "name": "Hiding Place 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "5a6a42cb-7595-4289-a208-0e692d20682a",
+     "sectionName": "Section 2 - Back Hall",
      "runtimeSwapped": false
     }
    ],
@@ -6812,6 +7435,42 @@
      "section": "7ace746b-77ae-4915-b05e-3fa4b5ce23a3",
      "sectionName": "L3",
      "runtimeSwapped": false
+    },
+    {
+     "entity": "292ab4bd-0d04-4d3a-a2d1-c55f907ebd7d",
+     "name": "Captive 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "ce665507-6875-4f55-a08c-a828d96ef67b",
+     "sectionName": "M7-Cell",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "b45714d6-739e-417e-8799-905a27bb9015",
+     "name": "Captive 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "ce665507-6875-4f55-a08c-a828d96ef67b",
+     "sectionName": "M7-Cell",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "21a23a79-335c-4d14-a586-38b659afdf9f",
+     "name": "Captive 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "ce665507-6875-4f55-a08c-a828d96ef67b",
+     "sectionName": "M7-Cell",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "9073e27a-2794-425f-84e7-a97489442b1c",
+     "name": "Captive 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "ce665507-6875-4f55-a08c-a828d96ef67b",
+     "sectionName": "M7-Cell",
+     "runtimeSwapped": true
     },
     {
      "entity": "1675bb0d-f6c0-45db-9b86-6d243dd5768e",
@@ -9385,6 +10044,141 @@
    ],
    "criticalEntities": [
     {
+     "entity": "99d74855-c855-4f8e-8411-035f65bd02ce",
+     "name": "Warehouse Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "4d8727e8-a6ab-47c6-95b2-10b0a8a225c2",
+     "name": "Backyard Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "56116033-3cf0-4cbf-9a11-a5f9c4d049fc",
+     "name": "Recycling Plant Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "91bbfa48-b19c-410b-a0ea-abbdd955f40f",
+     "name": "Refugee WH1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "fe464d97-233b-4681-93cb-770a5f11a118",
+     "name": "Refugee WH2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "76be2c41-d4e5-4987-a72f-2985ea69c17e",
+     "name": "Refugee WH3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "137be0c8-0c18-4e89-8d7b-b19dcdf5f8a8",
+     "name": "Refugee WH4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "a54d9f45-d9b8-4c46-b612-be45ff782046",
+     "name": "Refugee BY1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e899be4a-8ec8-4c6a-a49d-65fbb9f36cfb",
+     "name": "Refugee BY2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "36aabe79-db50-4025-8501-8d6ffb534de5",
+     "name": "Refugee BY3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e4896005-da45-412c-8ac7-4962848a8791",
+     "name": "Refugee BY4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "97f8d153-5fb6-4faf-9225-da39bc2887fb",
+     "name": "Refugee RP1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "4e349aff-d1b1-4a34-8fbd-28576a7142ac",
+     "name": "Refugee RP2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "a4f98f1e-821e-404b-b1b4-2754fe6d26c8",
+     "name": "Refugee RP3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "99e6fd2b-a3cc-4b5a-b9b8-0ce81e3845bf",
+     "name": "Refugee RP4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "371ad553-1f7d-4774-9135-67bff95bb070",
      "name": "Empire Highlight",
      "entityType": "Highlight",
@@ -10531,6 +11325,78 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "74b163bf-c10e-45cd-a3f8-dfd4e40e57cd",
+     "name": "Refugee 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "1db2158a-9b10-4b91-ae78-d7f182f9d62b",
+     "name": "Refugee 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "56cbb07a-f31f-4653-bb3c-b501483ae5f5",
+     "name": "Refugee 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "094f4b59-d5b6-43f7-a1d6-93b59459b829",
+     "name": "Refugee 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "9c0c75d3-908e-4534-850c-5d947d1de552",
+     "name": "Refugee 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "35c95f36-37fc-486f-b07b-341c4aa0b1dc",
+     "name": "Refugee 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "1b0ad07f-f04b-4206-8b18-b37131d549a5",
+     "name": "Refugee 7",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3dfdcdd7-235f-43e4-8e2a-2d243a8dbb56",
+     "name": "Refugee 8",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "f4aa3585-3662-4c0a-8d81-e0dc17bf883d",
      "name": "DP Red 2",
      "entityType": "DeploymentPoint",
@@ -11048,6 +11914,24 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "97a9c8a8-9c68-454c-9f55-7d9780a0313f",
+     "name": "Door Facility 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5cb47ee7-2fb9-4155-8479-880899950e6b",
+     "name": "Door Facility 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "d94bde9a-e649-4bee-840a-fdcf8ff424a8",
      "name": "Door Interrogation Chamber",
      "entityType": "Door",
@@ -11470,10 +12354,37 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "fd9210e0-350b-4fae-ba06-0b098e54556c",
+     "name": "Power Station A1 ",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "9f0513a0-562d-463f-807d-f785c9c6cf25",
      "name": "Power Station IA 2",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "38e5c534-fa57-4b43-8426-f2094d87fd0d",
+     "name": "Power Station A2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "d1f7369c-c3ca-45d8-a8c8-059ff79fbacb",
+     "name": "Power Station A3",
+     "entityType": "Token",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -11492,6 +12403,15 @@
      "name": "Power Station IA 4",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "06600ed8-a883-4239-a13d-570e169222dc",
+     "name": "Power Station A4",
+     "entityType": "Token",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -11590,6 +12510,60 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "6c006a92-a39f-425a-984c-a2be1886fe7c",
+     "name": "DP Checkpoint Red",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "9a65d07d-608f-4a07-af91-66882a051876",
+     "name": "DP Checkpoint Green",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "c3da3ef9-bc65-42ad-a9d4-f34c1dbff81d",
+     "name": "DP Checkpoint Blue",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "beb9802c-49bc-40ec-9049-6e522f29380f",
+     "name": "Checkpoint Green Gone",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "6ebd408c-0b78-431c-b328-9617702f19f5",
+     "name": "Checkpoint Red Gone",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "b306e68f-0cd2-4544-ad09-efbd398e7a69",
+     "name": "Checkpoint Blue Gone",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "a575d3e8-7124-4e4d-ad53-73c21ac0897b",
      "name": "Siege Wall 1",
      "entityType": "Token",
@@ -11681,6 +12655,42 @@
      "name": "Gap SW",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "30631406-b1fb-48d8-ae3b-43bdbdb83eb0",
+     "name": "Door NE",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "12b2f0b8-04be-41c9-90d8-a4c0fd3bce27",
+     "name": "Door N",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "10df348c-9e47-4069-a964-df91f446dbbc",
+     "name": "Door S",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "7903bdc0-9bc9-412e-a3eb-da42641bd80c",
+     "name": "Door SE",
+     "entityType": "Door",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -12300,6 +13310,33 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "9737f1e5-5da0-4799-bc75-c5b44ba5f36c",
+     "name": "Support 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "1b0f8278-8324-408d-a065-353f614cb8c4",
+     "sectionName": "Section 1 - Beyond Swamp",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "2cda8b11-dfd9-4067-8768-afb60eccde15",
+     "name": "Support 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "d5e317dd-8644-4683-b21b-874e74f8884c",
+     "sectionName": "Section 2 - Stronghold",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "d14f3b91-ab7a-456c-af3e-24e7ad5175b2",
+     "name": "Support 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "d5e317dd-8644-4683-b21b-874e74f8884c",
+     "sectionName": "Section 2 - Stronghold",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "57bab15b-b8a6-4ff5-bb9a-995272ad98db",
      "name": "Swamp Highlight 1",
      "entityType": "Highlight",
@@ -12898,6 +13935,33 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "82e1f0e9-61b8-497f-b015-b5e619a5b2ad",
+     "name": "Cell Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "6ccd3ba0-a532-45f0-a249-95e76ad1bd6c",
+     "sectionName": "Section 2 - Cellar",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "121189a8-fd43-4b1d-ad1c-44939bfa59ef",
+     "name": "Cell Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "6ccd3ba0-a532-45f0-a249-95e76ad1bd6c",
+     "sectionName": "Section 2 - Cellar",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "8c4277e9-0eb2-4f36-ad9f-a0e1b45b71bf",
+     "name": "Cell Door 3",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "6ccd3ba0-a532-45f0-a249-95e76ad1bd6c",
+     "sectionName": "Section 2 - Cellar",
      "runtimeSwapped": false
     },
     {
@@ -14588,6 +15652,51 @@
      "reason": "objective-event",
      "section": "4b7fa932-692b-4905-8368-c3497bd0113c",
      "sectionName": "Section 2 - Outpost",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "2a412a61-5263-455a-96fb-c571846dbc68",
+     "name": "Explosive 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "a643226c-2c51-4d0f-8942-cd340cf14a91",
+     "sectionName": "Section 3 - Bunker",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "ff3d7c59-ad0d-43fa-8f56-befd0ce441d4",
+     "name": "Explosive 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "a643226c-2c51-4d0f-8942-cd340cf14a91",
+     "sectionName": "Section 3 - Bunker",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "47a09cca-de5f-44f2-8829-c0d8ebaa8d10",
+     "name": "Explosive 7",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "a643226c-2c51-4d0f-8942-cd340cf14a91",
+     "sectionName": "Section 3 - Bunker",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "ba14e3f4-69d8-4a9d-9c27-b03b8883a3b8",
+     "name": "Explosive 8",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "a643226c-2c51-4d0f-8942-cd340cf14a91",
+     "sectionName": "Section 3 - Bunker",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "895b80dc-6426-47e7-808b-89609da80098",
+     "name": "Explosive 9",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "a643226c-2c51-4d0f-8942-cd340cf14a91",
+     "sectionName": "Section 3 - Bunker",
      "runtimeSwapped": false
     },
     {
@@ -16677,6 +17786,24 @@
      "section": "50864bfe-7151-41e9-b3d4-7a16943a786c",
      "sectionName": "Section 2 - Transmission Center",
      "runtimeSwapped": false
+    },
+    {
+     "entity": "30993967-0bfc-4952-9ae9-affd21dff11e",
+     "name": "Relais Station 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "77a42f52-2a79-497e-a2a3-fd23da43b116",
+     "sectionName": "Section 3 - Small Room",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "4f1fc848-42ba-4f0b-b49b-1087e9bf34ff",
+     "name": "Relais Station 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "c1de7d6c-b94b-4aff-864a-b925fbfde5fd",
+     "sectionName": "Section 4 - Cabinet",
+     "runtimeSwapped": false
     }
    ],
    "sectionHypotheses": [
@@ -17545,6 +18672,15 @@
    ],
    "criticalEntities": [
     {
+     "entity": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+     "name": "DP Green 2",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "50c6a95e-11a4-44dc-9617-33702c2286b6",
      "name": "AT-ST",
      "entityType": "Highlight",
@@ -18129,6 +19265,24 @@
     }
    ],
    "criticalEntities": [
+    {
+     "entity": "3233e87f-eb6e-42c1-b0f5-4f918a307e44",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "f2db40c4-ecf1-4276-9e2c-93494baba335",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
     {
      "entity": "e6c7fda9-76b6-4044-b66d-bd3d9bf39444",
      "name": "Red Terminal",
@@ -19449,6 +20603,24 @@
    ],
    "criticalEntities": [
     {
+     "entity": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+     "name": "DP Green 1",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+     "name": "DP Green 2",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "f5cb4852-1ab0-4b20-a1fe-b8ce2e83d6ed",
      "name": "Door 2",
      "entityType": "Door",
@@ -19582,6 +20754,24 @@
      "name": "DP Green 2",
      "entityType": "DeploymentPoint",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "0c43b12e-eb1e-4e48-bd93-ee103634438b",
+     "name": "Operations Room Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "7b7d9243-0a16-478b-8b98-7edcc922bc44",
+     "name": "Storage Room Door",
+     "entityType": "Door",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -20366,6 +21556,141 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "4e976be5-fbdc-4131-a69e-77836608f1c8",
+     "name": "Cargo 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "9d5faa32-e9a3-43e8-a74f-70d2871a0ba5",
+     "name": "Cargo 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "95c4b2d2-79eb-41c8-a33a-153872cc59c7",
+     "name": "Cargo 4",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "f958f2eb-2eae-488e-bf71-397a8caf2388",
+     "name": "Cargo 5",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "63e5b3a9-1613-4f89-93bd-21259c68c392",
+     "name": "Cargo 6",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5f50e5fc-3cdd-403d-966b-bf6909f78f4c",
+     "name": "Cargo 7",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5523d467-3abc-4a25-b25b-74dc52c24e5e",
+     "name": "Cargo 8",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "43c498a6-5dfc-4351-a88a-816ea0e89fac",
+     "name": "Cargo 9",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "af87fd47-3d58-41e8-9760-7a0ffb02afd8",
+     "name": "Cargo 10",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "35dc4175-2267-49a5-9c3f-d9795db0d97e",
+     "name": "Cargo 11",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5f6fe8e4-1515-4edd-9d67-689d2d693998",
+     "name": "Cargo 12",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "0fed712e-cfa4-4891-acb5-1f713236f740",
+     "name": "Cargo 13",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "cadd22c1-78a2-47b5-83bc-9dd2fefa5ad6",
+     "name": "Cargo 14",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "ad9edf47-a424-4d80-9100-09196a94dae0",
+     "name": "Cargo 15",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "7c435df3-24a0-4b4c-a6a6-a8a4ff5a4400",
+     "name": "Cargo 16",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "05569a35-b8a5-4cf5-ba0e-195d7cf3ef4a",
      "name": "Terminal 1",
      "entityType": "Terminal",
@@ -20458,6 +21783,42 @@
     }
    ],
    "criticalEntities": [
+    {
+     "entity": "2e35c1c1-e257-4195-ae0a-0b94cbd3e374",
+     "name": "DP Green 4",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3f2d4f13-2db1-4eac-9704-fcf24c38f10c",
+     "name": "DP Red 1",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "751d0dd2-3d0f-4989-9415-c94067667fa8",
+     "name": "DP Red 2",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "f0299476-6ddb-4ef3-98b9-4245686c464b",
+     "name": "DP Red 3",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": true
+    },
     {
      "entity": "2555e3d6-3655-4b84-a9c0-0207f298f23f",
      "name": "Terminal 1",
@@ -20778,6 +22139,42 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "0b0fb958-d110-44fd-ae3b-3a870a22f0ab",
+     "name": "DP Blue 1",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "203fc4b4-2be1-41d9-a12d-f2dbddd2e4d4",
+     "name": "DP Blue 2",
+     "entityType": "DeploymentPoint",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": true
+    },
+    {
+     "entity": "2f72cb66-6e2c-48a0-97a2-4433aea409ff",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "1f81d7b7-f24e-4c1d-aa0e-a465aa8bf49e",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "7fb044f9-f44c-4af7-af8b-1acdb18369b5",
      "name": "Stabilizer 1",
      "entityType": "Token",
@@ -20800,6 +22197,33 @@
      "name": "Stabilizer 3",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3793731a-3b7d-4c45-8c95-fef727fc9edc",
+     "name": "Active Stabilizer 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "45082044-33e0-41e5-8d80-dc7d833f751b",
+     "name": "Active Stabilizer 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "7b19714a-6ee2-451f-82c8-613670acab1d",
+     "name": "Active Stabilizer 3",
+     "entityType": "Token",
+     "reason": "objective-variable",
      "section": "213d20de-54d2-4f63-84b3-39a670162c74",
      "sectionName": "Stabilizers",
      "runtimeSwapped": false
@@ -20829,6 +22253,132 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "029c8783-f8a1-4eb7-8cae-7cc41b149171",
+     "name": "Warning 4-1",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "fcd121c8-cb31-4133-87cb-aa74fa65cdb5",
+     "name": "Warning 5-1",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "37db0e0d-bf8c-4dc4-a93e-68cc46331c0d",
+     "name": "Warning 5-2",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "1f351109-255b-4611-bf29-506cd523babc",
+     "name": "Warning 5-3",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "7bf2d788-29a1-48fc-9660-20ab5ba1bb10",
+     "name": "Warning 6-1",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "a95caaf8-d096-4d90-bbd7-cf72a87a488d",
+     "name": "Warning 6-2",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "ef776976-c47f-4ff9-9605-c78b4359f290",
+     "name": "Warning 6-3",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "043a79e0-5578-4dd7-be4e-0568689dd9d8",
+     "name": "Cave-in 4-1",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "6923b3da-cd17-477b-877b-b7adbd81fcb7",
+     "name": "Cave-in 5-1",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "002c18b8-e255-4588-bb18-a643d9c62be8",
+     "name": "Cave-in 5-2",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "9a5dc95d-e536-4c71-8c11-c0760d1a71fc",
+     "name": "Cave-in 5-3",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "fad0f2b5-a3ba-4396-a63e-5a82a22f3f35",
+     "sectionName": "Hallway",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "0ea56a75-5217-4740-a394-5a86ac8a4184",
+     "name": "Cave-in 6-1",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "c6c295bc-e406-4acd-bed5-8a4b61eca22d",
+     "name": "Cave-in 6-2",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "c4c1f3dd-b3e3-4871-af0a-8b7bad0d2aa8",
+     "name": "Cave-in 6-3",
+     "entityType": "Highlight",
+     "reason": "objective-variable",
+     "section": "213d20de-54d2-4f63-84b3-39a670162c74",
+     "sectionName": "Stabilizers",
      "runtimeSwapped": false
     }
    ],
@@ -20956,6 +22506,33 @@
      "section": "fddb08fb-b1d0-4042-a544-ae70202d7441",
      "sectionName": "Section 2 - Center",
      "runtimeSwapped": false
+    },
+    {
+     "entity": "913a05bc-a3d8-44c0-abab-778c0ef408d0",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "9b3be61f-3036-461f-9b54-283288e9dd1e",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "4d881508-4a99-4af5-bf01-64a2aade1158",
+     "name": "Door 3",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
     }
    ],
    "sectionHypotheses": [
@@ -21045,6 +22622,15 @@
      "runtimeSwapped": false
     },
     {
+     "entity": "52390b98-cd49-4664-ac51-3e126f2f4dfa",
+     "name": "Door North",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "6c7f7168-98d8-47a7-8ea9-54667dcd4a40",
      "name": "Tunnel Red 1",
      "entityType": "Token",
@@ -21112,6 +22698,15 @@
      "name": "Tunnel Yellow 2",
      "entityType": "Token",
      "reason": "objective-event",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "fcccf1b2-bcc9-4218-ae8e-90c420e2abfa",
+     "name": "Door South",
+     "entityType": "Door",
+     "reason": "objective-variable",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
      "runtimeSwapped": false
@@ -21706,6 +23301,33 @@
    ],
    "criticalEntities": [
     {
+     "entity": "1368ddaa-5ea0-42dd-b0ad-76163539d64c",
+     "name": "Cantina Door N",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "be167455-9e12-45e7-a4d8-d6d429ea2f27",
+     "name": "Cantina Door W",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3896bc47-0b3d-43f1-88ec-8afebf9ef4ef",
+     "name": "Cantina Door S",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "924286a9-bb61-4478-86d8-55bf1a36509f",
      "name": "Storage Door",
      "entityType": "Door",
@@ -22257,6 +23879,24 @@
    ],
    "criticalEntities": [
     {
+     "entity": "0ca09bd1-c501-44f7-9351-a12f30d9ac06",
+     "name": "Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "24fc19c4-7fc1-40d0-b901-cb5bb9253702",
+     "name": "Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "7ba0b81b-866e-4b44-91f3-be4ded5f5f38",
      "name": "Weak Point",
      "entityType": "Token",
@@ -22318,7 +23958,152 @@
      "invisibleUntilActivated": false
     }
    ],
-   "criticalEntities": [],
+   "criticalEntities": [
+    {
+     "entity": "ac9f6be7-b084-43e7-8c45-4940e75c91cd",
+     "name": "Wookiee Blue 1 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "54286751-79aa-4e58-b77e-2f342f923b25",
+     "name": "Wookiee Blue 1 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "b00a6391-e342-4d6e-9130-4de2397e6997",
+     "name": "Wookiee Blue 2 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "82d70b80-88bd-4824-9297-f75afbdd5619",
+     "name": "Wookiee Blue 2 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "52bc756d-6981-40fb-80cc-f0ad9afa2ac7",
+     "name": "Wookiee Yellow 1 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "a7fc7fb9-cf6b-4a84-96c9-512202065c84",
+     "name": "Wookiee Yellow 1 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "f9573dce-ded4-44b2-9b2f-27601dc766bb",
+     "name": "Wookiee Yellow 2 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3bad6eeb-18d4-4e82-af69-f74922c81d1a",
+     "name": "Wookiee Yellow 2 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "29acbd27-f327-42b9-a233-348baf8e0ca6",
+     "name": "Wookiee Red 1 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "d47a58f8-1a2b-45b2-a1a7-17903289e3c0",
+     "name": "Wookiee Red 1 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "091ae164-b54a-4a13-9077-18463de61691",
+     "name": "Wookiee Red 2 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "5c9fb44c-26bd-4be1-ba44-c6cf2f993fcc",
+     "name": "Wookiee Red 2 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "686979ff-f1bf-4f67-8799-03911a739247",
+     "name": "Wookiee Green 1 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "f66bcf81-929d-445a-b19d-a84544eec8c9",
+     "name": "Wookiee Green 1 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e11619fd-e496-4ae5-a189-79affc26a16d",
+     "name": "Wookiee Green 2 Free",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "591ee771-b929-4dc3-9f40-5df502cc1a17",
+     "name": "Wookiee Green 2 Bound",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    }
+   ],
    "sectionHypotheses": []
   },
   {
@@ -22585,6 +24370,60 @@
    ],
    "criticalEntities": [
     {
+     "entity": "b64be74e-3048-4456-8e67-090e5fd5ad9a",
+     "name": "Cantina Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "8dbb677d-3a1f-43e8-9958-351c55e767a0",
+     "name": "Cantina Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "40aad4da-59a3-487e-af3a-7bb921d7f2a0",
+     "name": "Junk Shop Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "0f269c05-f810-4ed7-80f4-9359f0da0c4d",
+     "name": "Junk Shop Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "11111111-1111-1111-1111-111111111111",
+     "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "3617bea4-ea93-4b31-96c4-f7c1dcc42f9d",
+     "name": "Informant 2",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "9c74350f-618d-4f97-a6f5-2bbade7f6588",
+     "sectionName": "Section 2 - Cantina",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "ebd3d4e1-f0ac-4525-bd79-bf07939c262e",
+     "name": "Informant 1",
+     "entityType": "Token",
+     "reason": "objective-variable",
+     "section": "9c74350f-618d-4f97-a6f5-2bbade7f6588",
+     "sectionName": "Section 2 - Cantina",
+     "runtimeSwapped": false
+    },
+    {
      "entity": "e09c499e-b15e-4fef-bd51-ae653d4a6498",
      "name": "Terminal 1",
      "entityType": "Terminal",
@@ -22837,6 +24676,24 @@
      "reason": "objective-event",
      "section": "11111111-1111-1111-1111-111111111111",
      "sectionName": "Start Section",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "e217818a-ba5f-46eb-91e0-d386483a66a1",
+     "name": "Hangar Door 1",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "4a474607-d9d9-4568-a0ec-2d013df48929",
+     "sectionName": "Section 2 - Inner Ship",
+     "runtimeSwapped": false
+    },
+    {
+     "entity": "27fdcc89-7f7e-40bb-8818-14de1ed2f42e",
+     "name": "Hangar Door 2",
+     "entityType": "Door",
+     "reason": "objective-variable",
+     "section": "4a474607-d9d9-4568-a0ec-2d013df48929",
+     "sectionName": "Section 2 - Inner Ship",
      "runtimeSwapped": false
     },
     {

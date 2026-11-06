@@ -967,129 +967,64 @@ public static class DataStore
 	}
 
 	/// <summary>
-	/// Calculate and return a deployable group from the hand using "fuzzy" deployment, DOES NOT remove it from deployment hand, if Saga game also checks override if it CAN redeploy
+	/// <summary>
+	/// Calculate and return a deployable group from the deployment hand,
+	/// DOES NOT remove it.
+	/// TAC threat-economy law (Thomas 06.11): wir cheaten nicht - gekauft wird
+	/// exakt das, wofür die Bedrohung reicht, und dann aber alles davon.
+	/// The legacy app emulation "fuzzy deployment" is GONE:
+	///  (a) the tier-3 cost+3 OVERRUN bought elites with threat that does not
+	///     exist (the deduct then clamped the bill to zero - free power),
+	///  (b) the "ELITE DEPLOYMENT COIN FLIP" let hidden RNG decide elite vs.
+	///     regular whenever both were affordable.
+	/// Neither survives: (a) spends threat that was never earned, (b) makes
+	/// the purchase depend on a coin - both break the deterministic economy.
+	/// The coin flip was never a persona bonus: it is original clean-room app
+	/// code predating TAC-AI; personas ride the separate, public CostFor
+	/// discount and the elite_swap channel only (Delta-0 untouched).
+	/// New law, fully deterministic:
+	/// * candidates: deploymentHand minus deployed (same MinusDeployed law),
+	/// * affordable: DeployCost(card, isOnslaught) <= currentThreat - persona
+	///   discount FIRST, then the public onslaught reductions (tier2 -1,
+	///   tier3 -2), floored at 0, NO overrun,
+	/// * pick: highest DeployCost first - the threat must not rot while
+	///   something affordable is in hand; ties break on tier, name and id
+	///   Ordinal (no RNG, stable across reloads).
 	/// </summary>
 	public static DeploymentCard GetFuzzyDeployable( int currentThreat, bool isOnslaught = false )
 	{
-		/*
-		 If the app chooses to deploy a Tier III (=expensive) group, but does not have enough threat by up to 3 points, it still deploys the unit and reduces threat to 0. This way, the deployment of expensive units does not hinge on a tiny amount of missing threat, but doesn’t simply make them cheaper. Example: The app chooses to deploy an AT-ST (threat cost 14). It can deploy even if there is only 11, 12, or 13 threat left
-		*/
-
-		List<DeploymentCard> tier1Group = new List<DeploymentCard>();
-		List<DeploymentCard> tier2Group = new List<DeploymentCard>();
-		DeploymentCard tier3Group = null;
-		List<DeploymentCard> tier23Group = new List<DeploymentCard>();
-		DeploymentCard validEnemy = null;
-		int[] rnd;
-		int t2modifier = 0;
-		int t3modifier = 0;
-		if ( isOnslaught )
-		{
-			t2modifier = 1;
-			t3modifier = 2;
-		}
-
-		//get tier 1 affordable groups
-		if ( deploymentHand.Any( x =>
-			x.tier == 1 &&
-			x.cost <= currentThreat ) )
-		{
-			tier1Group = deploymentHand.Where( x => x.tier == 1 && x.cost <= currentThreat ).ToList();
-		}
-		//check for "canRedeploy" override and remove those cards if they can't
-		//this might be redundant now that exhausting an enemy will not add it back to the hand anyways
-		//if ( gameType == GameType.Saga && tier1Group.Count > 0 )
-		//{
-		//	for ( int i = tier1Group.Count - 1; i >= 0; i-- )
-		//	{
-		//		var ovrd = sagaSessionData.gameVars.GetDeploymentOverride( tier1Group[i].id );
-		//		if ( ovrd != null && tier1Group[i].hasDeployed && !ovrd.canRedeploy )
-		//			tier1Group.RemoveAt( i );
-		//	}
-		//}
-
-		//get tier 2 affordable groups
-		if ( deploymentHand.Any( x =>
-			x.tier == 2 &&
-			x.cost - t2modifier <= currentThreat ) )
-		{
-			tier2Group = deploymentHand.Where( x =>
-			x.tier == 2 &&
-			x.cost - t2modifier <= currentThreat )
+		var candidates = deploymentHand.MinusDeployed()
+			.Where( x => DeployCost( x, isOnslaught ) <= currentThreat )
 			.ToList();
-		}
-		//check for "canRedeploy" override and remove those cards if they can't
-		//if ( gameType == GameType.Saga && tier2Group.Count > 0 )
-		//{
-		//	for ( int i = tier2Group.Count - 1; i >= 0; i-- )
-		//	{
-		//		var ovrd = sagaSessionData.gameVars.GetDeploymentOverride( tier2Group[i].id );
-		//		if ( ovrd != null && tier2Group[i].hasDeployed && !ovrd.canRedeploy )
-		//			tier2Group.RemoveAt( i );
-		//	}
-		//}
+		if ( candidates.Count == 0 )
+			return null;
 
-		//concatenate the tier 1 and tier 2 groups
-		tier23Group = tier1Group.Concat( tier2Group ).ToList();
-		//filter list - minus deployed
-		tier23Group = tier23Group.MinusDeployed();
-		//now get ONE of them randomly IF there are any
-		if ( tier23Group.Count > 0 )
-		{
-			rnd = GlowEngine.GenerateRandomNumbers( tier23Group.Count );
-			validEnemy = tier23Group[rnd[0]];
-		}
+		var best = candidates
+			.OrderByDescending( x => DeployCost( x, isOnslaught ) )
+			.ThenBy( x => x.tier )
+			.ThenBy( x => x.name ?? "", StringComparer.Ordinal )
+			.ThenBy( x => x.id ?? "", StringComparer.Ordinal )
+			.First();
+		Debug.Log( "GetFuzzyDeployable()::" + best.name + "::cost=" + DeployCost( best, isOnslaught )
+			+ "::threat=" + currentThreat + " [deterministic, strict budget, no RNG]" );
+		return best;
+	}
 
-		//get a random tier 3 group from deployment hand with cost up to 3 over current threat and NOT DEPLOYED, if one exists
-		if ( deploymentHand.Any( x =>
-				x.tier == 3 &&
-				x.cost - t3modifier <= currentThreat + 3 &&
-				!deployedEnemies.ContainsCard( x )
-		) )
-		{
-			var t3 = deploymentHand.Where( x =>
-				x.tier == 3 &&
-				x.cost - t3modifier <= currentThreat + 3 &&
-				!deployedEnemies.ContainsCard( x )
-			).ToList();
-
-			//check for "canRedeploy" override and remove those cards if they can't
-			//if ( gameType == GameType.Saga && t3.Count > 0 )
-			//{
-			//	for ( int i = t3.Count - 1; i >= 0; i-- )
-			//	{
-			//		var ovrd = sagaSessionData.gameVars.GetDeploymentOverride( t3[i].id );
-			//		if ( ovrd != null && t3[i].hasDeployed && !ovrd.canRedeploy )
-			//			t3.RemoveAt( i );
-			//	}
-			//}
-
-			if ( t3.Count > 0 )
-			{
-				rnd = GlowEngine.GenerateRandomNumbers( t3.Count );
-				tier3Group = t3[rnd[0]];
-			}
-		}
-
-		//if there are valid tier 3 AND tier 1/2 groups, there is a 50/50 chance of either being returned
-		if ( validEnemy != null && tier3Group != null )
-		{
-			Debug.Log( "ELITE DEPLOYMENT COIN FLIP" );
-			if ( GlowEngine.RandomBool() )
-			{
-				return validEnemy;
-			}
-			else
-			{
-				return tier3Group;
-			}
-		}
-		//otherwise try to return the tier 3 group, if any picked
-		else if ( validEnemy == null && tier3Group != null )
-			return tier3Group;
-
-		//finally try to return the tier1/2 group, even if it's null
-		return validEnemy;
+	/// <summary>
+	/// Single truth for deployable purchases (Thomas 06.11): the affordability
+	/// check AND every ModifyThreat deduction call THIS - they can never
+	/// diverge again. Persona discount on the printed cost first (public
+	/// value, see PersonaState.CostFor), then the printed onslaught
+	/// reductions (tier1 unchanged, tier2 -1, tier3 -2), floored at 0.
+	/// </summary>
+	public static int DeployCost( DeploymentCard card, bool isOnslaught )
+	{
+		int cost = Mathf.Max( 0, TacticalAI.PersonaState.CostFor( card, card.cost ) );
+		if ( isOnslaught && card.tier == 2 )
+			cost = Mathf.Max( 0, cost - 1 );
+		else if ( isOnslaught && card.tier == 3 )
+			cost = Mathf.Max( 0, cost - 2 );
+		return cost;
 	}
 
 	/// <summary>

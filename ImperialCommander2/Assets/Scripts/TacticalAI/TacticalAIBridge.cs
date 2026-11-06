@@ -1557,7 +1557,12 @@ namespace TacticalAI
         /// after the table was mined, so the live IMapEntity is truth and no
         /// cache would stay fresh across it; a row the live map does not
         /// carry drops out entirely (data-exists: no live object, no
-        /// anchor). Any failure => empty list => the legacy DP line. No
+        /// anchor). M14d (Thomas 06.11): a row whose LIVE objective the
+        /// mission events switched off (entityProperties.isActive==false -
+        /// claimed clue, removed protester) drops out too - anchors move
+        /// WITH the mission phase; pure data filtering, never a penalty, so
+        /// rebels can never "enforce quiet" at a DP by standing near it.
+        /// Any failure => empty list => the legacy DP line. No
         /// entity NAME is read anywhere in this path - the anchor choice is
         /// language-neutral by construction.</summary>
         static List<Tac.DeployAnchor> MissionDpAnchors()
@@ -1571,18 +1576,37 @@ namespace TacticalAI
                     TacticalAIAssets.DpAnchorTableRoot, mission.fileName);
                 var list = new List<Tac.DeployAnchor>();
                 if (rows.Count == 0) return list;
+                //M14d (Thomas 06.11): live phase truth through the app's own
+                //entity resolver - MapEntityManager holds the objects the
+                //map prefabs mutate (fresh load AND restore), so authored
+                //rows are only a review copy. No manager (odd scene) =>
+                //through-pass: the authored row stands (hypothesis never a
+                //wall, and never a penalty - see the M14d law in the header).
+                var map = UnityEngine.Object
+                    .FindObjectOfType<Saga.MapEntityManager>();
                 foreach (var r in rows)
                 {
                     foreach (var e in mission.mapEntities)
                     {
                         if (e == null || !string.Equals(e.GUID.ToString(), r.EntityGuid,
                                 StringComparison.OrdinalIgnoreCase)) continue;
+                        var live = map != null ? map.GetEntity(e.GUID) : null;
+                        var ent = live ?? e;
+                        //M14d phase law: an objective anchors ONLY while it is
+                        //LIVE on the board (the mission's own events flip
+                        //entityProperties.isActive - protesters activate,
+                        //claimed clues deactivate). Not live right now =>
+                        //this row pulls nothing; the anchor set moves WITH the
+                        //mission phase. Data-only filter: rebels standing
+                        //near a DP can never "enforce quiet" at it.
+                        var props = ent.entityProperties;
+                        if (props != null && !props.isActive) break;
                         list.Add(new Tac.DeployAnchor
                         {
                             EntityGuid = e.GUID.ToString(),
-                            SectionGuid = e.mapSectionOwner.ToString(),
-                            X = e.entityPosition?.X ?? 0f,
-                            Y = e.entityPosition?.Y ?? 0f,
+                            SectionGuid = ent.mapSectionOwner.ToString(),
+                            X = ent.entityPosition?.X ?? 0f,
+                            Y = ent.entityPosition?.Y ?? 0f,
                         });
                         break;
                     }

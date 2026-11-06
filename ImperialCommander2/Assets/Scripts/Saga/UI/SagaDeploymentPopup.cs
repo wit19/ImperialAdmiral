@@ -40,6 +40,7 @@ namespace Saga
 		Action postAction;
 		DeploymentGroupOverride deploymentOverride;
 		bool acceptInput = true;
+		DeployMode lastMode;//TAC final-round dump: which mode this popup ran
 
 		//M13c/M13g: tactical optional deployment -> the chosen DP marker is
 		//revealed (Thomas 28.10: the marker IS the placement instruction for
@@ -123,6 +124,7 @@ namespace Saga
 			onslaughtRWarning.gameObject.SetActive( false );
 			onslaughtDWarning.gameObject.SetActive( false );
 
+			lastMode = mode;//TAC final-round dump
 			switch ( mode )
 			{
 				case DeployMode.Calm:
@@ -205,6 +207,29 @@ namespace Saga
 					};
 				}
 
+				//TAC threat economy (Thomas 06.11): FINAL-ROUND DUMP. Threat
+				//that survives the last round of the mission is dead value -
+				//Player-32 showed the empire saving instead of buying while
+				//the rebels ran out the clock. In the mission's last
+				//deployment round every group the strict budget still
+				//affords MUST be bought, so after this popup's groups are
+				//deployed a fresh, ordinary Landing popup chains in - open
+				//screen, Imperator places each group at the table. Not for
+				//Onslaught (that mode already loops until nothing affords).
+				//A chained popup re-enters this same check, so the chain
+				//runs until the strict budget affords nothing; every link
+				//removes a card from the hand AND bills its threat, so it
+				//terminates with the hand or the account, never beyond.
+				if ( lastMode != DeployMode.Onslaught && FinalRoundThreatDump() )
+				{
+					var prevDump = afterDeploy;
+					afterDeploy = () =>
+					{
+						Debug.Log( "SagaDeploymentPopup()::FINAL-ROUND THREAT DUMP: threat must not rot - extra Landing" );
+						Show( DeployMode.Landing, true, true, prevDump );
+					};
+				}
+
 				//update/deploy groups
 				if ( groupsToDeploy.Count > 0 )
 				{
@@ -232,6 +257,23 @@ namespace Saga
 				//save state
 				//DataStore.sagaSessionData.SaveSession( "Session" );
 			} );
+		}
+
+		/// <summary>
+		/// TAC threat economy (Thomas 06.11): true when this is the LAST
+		/// deployment round of a round-limited mission AND the strict budget
+		/// still affords a group from hand. A last round only exists when
+		/// the user enforces the limit (roundLimitToggle on/dangerous - the
+		/// same gate the DM gain-doubling reads in the mode handlers);
+		/// toggle OFF means endless rounds, no round is "last", nothing may
+		/// be dumped.
+		/// </summary>
+		bool FinalRoundThreatDump()
+		{
+			if ( PlayerPrefs.GetInt( "roundLimitToggle" ) == 0 ) return false;
+			var gv = DataStore.sagaSessionData.gameVars;
+			if ( gv.roundLimit == -1 || gv.round < gv.roundLimit ) return false;
+			return DataStore.GetFuzzyDeployable( gv.currentThreat ) != null;
 		}
 
 		public void HandleCalm()
@@ -299,6 +341,56 @@ namespace Saga
 			}
 
 			if ( r1 == null && r2 == null )
+			{
+				//TAC threat economy (Thomas 06.11): FAIL-OPEN rule. The
+				//Reinforcements mode used to END with a "nothing to
+				//reinforce" warning while affordable groups sat unbought in
+				//the hand and the threat rotted on the account. Now the mode
+				//falls open: with no reinforcement target the threat buys
+				//NEW groups instead (max 2, the same strict landing budget
+				//and the same override cost law as HandleLanding). Only if
+				//that also finds nothing does the warning show.
+				DeploymentCard f1 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
+				if ( f1 != null )
+				{
+					Debug.Log( "HandleReinforcements()::FAIL-OPEN: nothing to reinforce - buying new group instead" );
+					var f1Deploy = TacticalAI.PersonaState.SwapDeployCandidate( f1 );
+					f1Deploy.ResetWoundTracker();
+					topPanel.SetActive( true );
+					topR1.Init( f1Deploy, 3 );//full size card, as in Landing
+					groupsToDeploy.Add( f1Deploy );
+					DataStore.deploymentHand.Remove( f1 );
+					DataStore.deploymentHand.Remove( f1Deploy );
+					if ( deploymentOverride != null )
+					{
+						if ( deploymentOverride.useThreat )
+							DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( DataStore.DeployCost( f1, false ) + deploymentOverride.threatCost, 0, 100 )) );
+					}
+					else
+						DataStore.sagaSessionData.ModifyThreat( -DataStore.DeployCost( f1, false ) );
+				}
+
+				DeploymentCard f2 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
+				if ( f2 != null )
+				{
+					var f2Deploy = TacticalAI.PersonaState.SwapDeployCandidate( f2 );
+					f2Deploy.ResetWoundTracker();
+					bottomPanel.SetActive( true );
+					bottomR1.Init( f2Deploy, 3 );
+					groupsToDeploy.Add( f2Deploy );
+					DataStore.deploymentHand.Remove( f2 );
+					DataStore.deploymentHand.Remove( f2Deploy );
+					if ( deploymentOverride != null )
+					{
+						if ( deploymentOverride.useThreat )
+							DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( DataStore.DeployCost( f2, false ) + deploymentOverride.threatCost, 0, 100 )) );
+					}
+					else
+						DataStore.sagaSessionData.ModifyThreat( -DataStore.DeployCost( f2, false ) );
+				}
+			}
+
+			if ( r1 == null && r2 == null && groupsToDeploy.Count == 0 )
 			{
 				warning.gameObject.SetActive( true );
 				warning.text = DataStore.uiLanguage.uiMainApp.reinforceWarningUC;
@@ -484,12 +576,13 @@ namespace Saga
 					//remove it from dep hand (regular + consumed elite)
 					DataStore.deploymentHand.Remove( dep );
 					DataStore.deploymentHand.Remove( depDeploy );
-					if ( dep.tier == 1 )
-						DataStore.sagaSessionData.ModifyThreat( -dep.cost );
-					else if ( dep.tier == 2 )
-						DataStore.sagaSessionData.ModifyThreat( -(dep.cost - 1) );
-					else
-						DataStore.sagaSessionData.ModifyThreat( -(dep.cost - 2) );
+					//TAC threat economy (Thomas 06.11): the bill reads the
+					//SAME law the affordability check used -
+					//DataStore.DeployCost (persona discount first, printed
+					//onslaught reductions second, floored at 0). Check and
+					//bill can no longer diverge (the old lines ignored the
+					//persona discount entirely here).
+					DataStore.sagaSessionData.ModifyThreat( -DataStore.DeployCost( dep, true ) );
 				}
 			}
 			while ( dep != null );

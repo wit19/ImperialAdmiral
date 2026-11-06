@@ -382,8 +382,11 @@ public class TitleController : MonoBehaviour
 
 	public void OnVersionPopup()
 	{
-		if ( gitHubResponse != null )
-			versionPopup.Show( gitHubResponse.body );
+		// changelog text from the latest release, fallback: our own state
+		// (no release is the NORMAL case now - tags drive the update check)
+		versionPopup.Show( gitHubResponse != null
+			? gitHubResponse.body
+			: "Imperial Admiral " + DataStore.appVersion );
 	}
 
 	public void OnDownloadLatest()
@@ -651,10 +654,14 @@ public class TitleController : MonoBehaviour
 
 	private IEnumerator CheckVersion()
 	{
-		// /repos/{owner}/{repo}/releases - OUR fork (wit19), see the fork
+		// /repos/{owner}/{repo}/tags - OUR fork (wit19), see the fork
 		// update law on OnDownloadLatest: a green icon means "current for
 		// THIS tree", upstream releases are irrelevant to us.
-		var web = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialAdmiral/releases/latest" );
+		// Renamed project (06.11.): the check reads TAGS, not releases -
+		// every push tags v1.0.x while GitHub releases stay a manual act
+		// (Thomas), so releases/latest would freeze on the retired
+		// old-name builds and nag forever.
+		var web = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialAdmiral/git/matching-refs/tags/v?per_page=100" );
 		yield return web.SendWebRequest();
 		if ( web.result == UnityWebRequest.Result.ConnectionError )
 		{
@@ -665,18 +672,57 @@ public class TitleController : MonoBehaviour
 		}
 		else
 		{
-			//parse JSON response
-			gitHubResponse = JsonConvert.DeserializeObject<GitHubResponse>( web.downloadHandler.text );
-
-			if ( gitHubResponse.tag_name == DataStore.appVersion )
+			//pick the highest v<major>.<minor>.<patch> tag; anything that
+			//is not exactly three integers (old "v.2.2.16#1019" scheme)
+			//fails to parse and is ignored on purpose.
+			var refs = JsonConvert.DeserializeObject<List<GitHubRef>>( web.downloadHandler.text );
+			string latestTag = null;
+			int bestMaj = -1, bestMin = -1, bestPat = -1;
+			if ( refs != null )
+			{
+				foreach ( var r in refs )
+				{
+					string n = r != null ? r.@ref : null;
+					if ( string.IsNullOrEmpty( n ) || !n.StartsWith( "refs/tags/v" ) ) continue;
+					var parts = n.Substring( "refs/tags/v".Length ).Split( '.' );
+					if ( parts.Length != 3 ) continue;
+					int a, b, c;
+					if ( !int.TryParse( parts[0], out a ) || !int.TryParse( parts[1], out b ) || !int.TryParse( parts[2], out c ) ) continue;
+					if ( latestTag == null || a > bestMaj || ( a == bestMaj && b > bestMin ) || ( a == bestMaj && b == bestMin && c > bestPat ) )
+					{
+						bestMaj = a; bestMin = b; bestPat = c;
+						latestTag = "v" + a + "." + b + "." + c;
+					}
+				}
+			}
+			if ( latestTag == DataStore.appVersion )
 			{
 				networkStatus = NetworkStatus.UpToDate;
 				busyIconTF.GetComponent<Image>().color = new Color( 0, 1, 0 );
 			}
 			else
 			{
+				//also covers "repo has no tags" - honest orange, not green
 				networkStatus = NetworkStatus.WrongVersion;
 				busyIconTF.GetComponent<Image>().color = new Color( 1, 0.5586207f, 0 );
+			}
+
+			//popup changelog: from the latest RELEASE if one exists; a 404
+			//just means none published yet - the popup then shows our own
+			//version (see OnVersionPopup).
+			gitHubResponse = null;
+			var rel = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialAdmiral/releases/latest" );
+			yield return rel.SendWebRequest();
+			if ( rel.result == UnityWebRequest.Result.Success )
+			{
+				try
+				{
+					gitHubResponse = JsonConvert.DeserializeObject<GitHubResponse>( rel.downloadHandler.text );
+				}
+				catch ( Exception )
+				{
+					gitHubResponse = null;
+				}
 			}
 		}
 

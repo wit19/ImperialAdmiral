@@ -31,3 +31,13 @@ public class GitHubResponse
 	public string tag_name;
 	public string body;
 }
+
+// /repos/{repo}/tags entries - the version check reads TAGS (one per push),
+// releases are a manual act and may lag or be absent entirely.
+// The plain /tags list is NOT reliably ordered, so we use
+// /git/matching-refs/tags/v and pick the highest semver client-side;
+// legacy tags like "v.2.2.16#1019" fail the parse and drop out.
+public class GitHubRef
+{
+	public string @ref;
+}

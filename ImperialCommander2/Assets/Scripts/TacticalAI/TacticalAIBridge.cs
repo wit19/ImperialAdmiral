@@ -2791,7 +2791,24 @@ namespace TacticalAI
                 if (reactionHero != null || wachzoneHero != null ||
                     vergeltungHero != null || supporterTrustHero != null) return;
                 var b = dec.Basis ?? "";
-                if (b != "card" && b != "economy" && b != "basis" && b != "proxy") return;
+                // P36 (Thomas): objactor was missing here - and it LOCKS THE
+                // FEATURE OUT of exactly the mission it was built for. In
+                // EMPIRE3 the contested object IS the mission objective: a
+                // hero interacting with a protester fires the objactor rule
+                // in EVERY activation (Player-36: 21/21 decisions basis=
+                // objactor), so the whitelist {card, economy, basis, proxy}
+                // never let TryObjectTarget run once. The concept ladder P1
+                // says precisely that shape is the ATTACK case (Claim/Rescue
+                // button => Imperium greift das Objekt an), and the printed
+                // rule makes the protester attackable (Health 5, Defense
+                // None). objactor here therefore means "the object fight",
+                // not "a competing strong reason" - it opens the slot.
+                // Everything else keeps vetoing: the reaction/wachzone/
+                // vergeltung/mask checks above run FIRST, the pattern gate
+                // (hunter/aggressive only) stays, and the hero-focus ranking
+                // itself is untouched (focus= stays figures-only).
+                if (b != "card" && b != "economy" && b != "basis" && b != "proxy"
+                    && b != "objactor") return;
                 var hunt = view.HuntObjects();          // POLAR rows only
                 if (hunt.Count == 0) return;
                 string groupSec = LastSdZones != null ? LastSdZones.ZoneOf(cd.id) : null;

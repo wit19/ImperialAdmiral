@@ -1157,6 +1157,12 @@ namespace TacticalAI
                 if (_objectRowCanon.TryGetValue(key, out old) && old == row) continue;
                 _objectRowCanon[key] = row;
                 Append("MissionObject", round, new Dictionary<string, object>(p));
+                // P36: the separator alone made sb NEVER grow - the summary
+                // line below was dead code in dev.13/14 (the events were in
+                // the feed all along; Player-36's REPLAN trigger=MissionObject
+                // proves it while the log stayed silent). Feed the name.
+                object nmv;
+                sb.Append(p.TryGetValue("name", out nmv) ? nmv as string : key);
                 if (sb.Length > 0) sb.Append(" +");
             }
             if (sb.Length == 0) return;                    // nothing MOVED

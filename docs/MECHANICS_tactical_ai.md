@@ -1339,9 +1339,15 @@ times — measured dead (0 true rows in all 138 missions). Polarität values:
 **Consumers.** (1) *Plan target:* `TryObjectTarget` behind every gate — only
 the chase duties (hunter/aggressive), only when NO fact key spoke
 (reaktion/wachzone/vergeltung/maskenvertrauen all silent), and only when the
-DECIDING focus basis sits on the estimation side (`card|economy|basis|proxy` —
-`mark` stays king, `achse` outranks object wiring, `objactor`/`chip` keep the
-hero target). The slot reads `ziel=OBJEKT:<name>`; the GLOBAL `fokus=` stays
+DECIDING focus basis sits on the estimation side (`card|economy|basis|proxy`
+plus `objactor` — `mark` stays king, `achse` outranks object wiring, `chip`
+keeps the hero target). P36 correction: `objactor` WAS excluded — but in the
+protester shape (EMPIRE3) the contested object IS the mission objective, so
+every single activation decided with `basis=objactor` (Player-36: 21/21) and
+the slot could never open for the one mission it was built for; ladder P1
+(claim/rescue button ⇒ Imperium greift das Objekt an) overrules the old
+exclusion — `objactor` means "the object fight" here, not "a rival reason".
+The slot reads `ziel=OBJEKT:<name>`; the GLOBAL `fokus=` stays
 figures-only. Ordering: a hunt object that IS a door ON a shortest
 group→focus route rides FIRST (Tür sprengen as Weg-Alternative; visibly OPEN
 doors drop out — `DoorStateOfGuid` is the ONLY state read, no

@@ -1537,6 +1537,46 @@ namespace TacticalAI
             }
         }
 
+        // P33-H7 follow-up (H7 finding 1, card t_f7bec904): object polarity
+        // DISPLAY vocabulary. The fact token stays "jagt"/"schuetzt"/"neutral"
+        // everywhere (Core, logs, De display - byte-identical); only the
+        // player line of the other ten languages reads the ui.json word.
+        // Unknown token -> null -> the caller keeps the token itself
+        // (PhaseName law: never a wrong label).
+        static string PolarName(string polaritaet)
+        {
+            var L = UIx;
+            if (L == null || string.IsNullOrEmpty(polaritaet)) return null;
+            switch (polaritaet)
+            {
+                case "jagt":     return L.ordPolarJagt;
+                case "schuetzt": return L.ordPolarSchuetzt;
+                case "neutral":  return L.ordPolarNeutral;
+                default:         return null;
+            }
+        }
+
+        // The player-facing OBJEKT why line, localized via ui.json
+        // ({0}=printed Health, {1}=polarity word, {2}=derivation code
+        // P1..P4). Content law UNTOUCHED (raw-token law, card t_2ff1ba37):
+        // it names ONLY public mission-file data - never a damage counter,
+        // never "fast zerstoert". De renders byte-identical to the old raw
+        // line; a missing/malformed key falls back to that raw line
+        // verbatim (never raw braces, never a blank why - the
+        // apTreeOfficerNotfall belt law; UiCompletenessGate 11/11 is the
+        // shipped-assets belt over it).
+        static string BuildObjektWhy(UITacticalAI L,
+            Tac.FeedWorldView.MissionObjectFact fact)
+        {
+            string whyRaw = "Missionsobjekt laut Missionstext angreifbar (Health: "
+                            + fact.Health + "), Polaritaet " + fact.Polaritaet
+                            + " abgeleitet " + fact.Basis + " [public mission-file text]";
+            if (L == null || string.IsNullOrEmpty(L.ordExplainObjekt)) return whyRaw;
+            string polar = PolarName(fact.Polaritaet) ?? fact.Polaritaet;
+            string line = TF(L.ordExplainObjekt, fact.Health, polar, fact.Basis);
+            return string.IsNullOrEmpty(line) || line.IndexOf('{') >= 0 ? whyRaw : line;
+        }
+
         // FocusPick.Basis -> plain label (mark = defeated/wounded flip during
         // imperial activation, chip = woundAll counter chip, card = printed
         // conditioning, economy = wound-economy finish, proxy = printed
@@ -2636,15 +2676,20 @@ namespace TacticalAI
                                             supporterTrustHero, out objTarget, out objFact);
                             if (objTarget != null)
                             {
-                                heroName = "OBJEKT:" + objTarget;
-                                // Raw-token law (card: ui.json NOT touched):
-                                // the German why is a raw token until the
-                                // Controller follow-up localizes it; it
-                                // names ONLY public mission-file data, never
-                                // a damage counter, never "fast zerstoert".
-                                why = "Missionsobjekt laut Missionstext angreifbar (Health: "
-                                      + objFact.Health + "), Polaritaet " + objFact.Polaritaet
-                                      + " abgeleitet " + objFact.Basis + " [public mission-file text]";
+                                // P33-H7 follow-up (H7 finding 1, card
+                                // t_f7bec904): the target-field prefix and
+                                // the player-facing why line ride the
+                                // uiTacticalAI keys in ALL 11 languages
+                                // (De byte-identical to the raw-token line
+                                // it replaces). Raw-token law retired: the
+                                // follow-up localized them. The RAW log
+                                // line below stays language-neutral on
+                                // purpose (explain=full diagnostics + the
+                                // findings grep anchor 'ziel=OBJEKT:').
+                                string objPrefix = L0 != null && !string.IsNullOrEmpty(L0.ordTargetObjekt)
+                                    ? L0.ordTargetObjekt : "OBJEKT:";
+                                heroName = objPrefix + objTarget;
+                                why = BuildObjektWhy(L0, objFact);
                                 string objState = sdSpace != null && sdSpace.Graph != null
                                     ? sdSpace.Graph.DoorStateOfGuid(objFact.Guid) : "unknown";
                                 Debug.Log("TacticalAIBridge::OBJEKT ziel=OBJEKT:" + objTarget

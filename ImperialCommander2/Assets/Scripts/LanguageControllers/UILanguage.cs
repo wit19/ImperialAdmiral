@@ -208,6 +208,15 @@ public class UITacticalAI
 	// M14f Naehesuch: {0}=group, {1}=cleaned reaction-zone name; the Rel
 	// variant carries only {0} (junk name -> relative wording, §8.4 law).
 	public string ordExplainNahe, ordExplainNaheRel;
+	// P33-H7 follow-up (H7 finding 1, card t_f7bec904): the object-target
+	// player lines ride ui.json in ALL 11 languages - the target-field
+	// prefix (every explain level), the EXPLAIN why-line ({0}=printed
+	// Health, {1}=polarity word, {2}=derivation code P1..P4) and the three
+	// polarity display words. De renders byte-identical to the raw-token
+	// line it replaces (findings diffs stay clean); the internal
+	// ziel=OBJEKT:<name> log notation stays language-neutral.
+	public string ordTargetObjekt, ordExplainObjekt,
+		ordPolarJagt, ordPolarSchuetzt, ordPolarNeutral;
 	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
 	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }

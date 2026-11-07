@@ -1126,7 +1126,10 @@ Honest edges: the whole axis speaks only where the mission file's wiring is
 parseable — missions without it run the pre-November canon bit-identical
 (pinned by fixtures); the object texts are read from the canonical English
 mission files only (the ten other language files are display text, and display
-text never decides a law); and the `OBJEKT:` name plus its reason line are
-currently raw dev tokens — a follow-up pass moves them into the eleven
-language files like every other popup text (the internal `ziel=OBJEKT:<name>`
-notation itself stays a log/debug vocabulary, not player prose).
+text never decides a law); and the `OBJEKT:` prefix plus its reason line ship
+in the eleven language files like every other popup text (P33-H7 follow-up:
+`ordTargetObjekt`, `ordExplainObjekt` and the polarity words `ordPolar*`; De
+renders byte-identical to the original raw-token line, the ten non-De files
+carry the EN text per the tactical-AI convention) — while the internal
+`ziel=OBJEKT:<name>` notation itself stays a log/debug vocabulary, not player
+prose.

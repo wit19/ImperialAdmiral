@@ -471,8 +471,9 @@ namespace Saga
 		/// landing outfit - a pure reinforcement run keeps the native slots
 		/// with the +1 upgrade thumb exactly as the strict sequence renders
 		/// them; a mixed run puts both actions into the landing slots (the
-		/// reinforced veteran shows its CURRENT pips - the landing gear prints
-		/// no +1 optic, the BUDGET log line names every action). Empty run and
+		/// reinforced veteran shows its +1 thumb via Init(card, 1) - the
+		/// same optic the native slots print, P33-H7 follow-up; the BUDGET
+		/// log line names every action). Empty run and
 		/// no candidates => the ordinary warning. Empty run WITH candidates =>
 		/// the Spar-Regel held everything back ON PURPOSE: no warning, the
 		/// threat is kept for the next round (Player-33 deficit 2 "kein
@@ -545,8 +546,16 @@ namespace Saga
 					{
 						//mixed run: the landing gear carries both actions
 						PresentFallbackAsLanding();
-						if ( landingSlot == 0 ) { topLanding.SetActive( true ); landing1.Init( p.Card ); }
-						else { bottomLanding.SetActive( true ); landing2.Init( p.Card ); }
+						// P33-H7 follow-up (H7 finding 2, card t_f7bec904):
+						// the reinforced veteran shows the +1 thumb (Init
+						// add=1) - the SAME optic the native upgrade slots
+						// print (topR2/bottomR2.Init( card, 1 )). Before
+						// this the veteran landed plain while the BUDGET
+						// line named the reinforcement - presentation
+						// asymmetry, no rule effect. The increment below
+						// still happens AFTER Init (canon order).
+						if ( landingSlot == 0 ) { topLanding.SetActive( true ); landing1.Init( p.Card, 1 ); }
+						else { bottomLanding.SetActive( true ); landing2.Init( p.Card, 1 ); }
 						landingSlot++;
 					}
 					else if ( reinforceSlot == 0 )

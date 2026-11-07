@@ -1372,8 +1372,11 @@ FAILs (design corrected, fixtures NOT pulled). Vectors: `marker_object.json`
 + door-on-route before nearer, Sabotage+Schutzpflicht, neutral P4 unarmed,
 P2-priority, P3 both sides, P2-final-objective, guard/plantarget 9. Canon
 `object=` rows pin the Null-Law; all 35 pre-existing fixtures stay zahlgleich.
-The `OBJEKT:` prefix + why-line localization is the controller's follow-up
-line (raw-token law); the docs hop changed ZERO ui.json lines.
+The `OBJEKT:` prefix + why-line localization shipped on the P33-H7 follow-up
+card: 5 keys x 11 languages (`ordTargetObjekt`, `ordExplainObjekt`,
+`ordPolarJagt/Schuetzt/Neutral`), De byte-identical to the raw-token line it
+replaces, a missing/malformed key falls back to that raw line verbatim; the
+`ziel=OBJEKT:` log line stays language-neutral by law.
 
 **Chain QA (docs hop re-ran on the final tree).** Harness ALL PASS 46,241 =
 46,147 base + 94 `marker_object`, every earlier fixture count zahlgleich;
@@ -1471,8 +1474,9 @@ button flow) and the FINAL-ROUND-DUMP chain keep the strict line verbatim
 (P33-H1 extended): ANY bought group makes the popup wear the landing
 outfit (the player sees a landing when figures land); a pure
 reinforcement run keeps the native upgrade slots with the +1 thumb; a
-mixed run shows both actions in the landing slots (the veteran shows its
-CURRENT pips — the BUDGET log line names every action). The ranked path
+mixed run shows both actions in the landing slots, the reinforced veteran
+carrying the +1 thumb itself (`Init(card, 1)` — the same optic as the native
+slots, P33-H7 follow-up; the BUDGET log line names every action). The ranked path
 applies the documented reinforce law to EVERY returning figure (the
 strict Reinforcements branch resets only its first slot — a Legacy
 quirk; Onslaught and the printed law reset per returning figure).

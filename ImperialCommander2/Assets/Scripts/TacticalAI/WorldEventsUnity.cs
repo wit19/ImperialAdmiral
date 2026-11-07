@@ -599,6 +599,7 @@ namespace TacticalAI
             foreach (var d in MissionDoors())
                 _doors[d.GUID.ToString()] = d.doorOpen;
             Debug.Log("WorldEvents::session " + key + " mission=" + mission
+                      + " build=" + TacticalAiBuildStamp.Value
                       + " objective=\"" + objective + "\"");
         }
 

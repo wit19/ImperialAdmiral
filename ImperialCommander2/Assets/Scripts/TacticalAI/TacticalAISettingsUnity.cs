@@ -29,6 +29,7 @@ namespace TacticalAI
             Debug.Log($"TacticalAISettingsUnity::mode={TacticalAISettings.Mode}{(TacticalAISettings.HasModeOverride ? " (OVERRIDE)" : "")} enabled={TacticalAISettings.Enabled} " +
                       $"skill={TacticalAISettings.SkillLevel} " +
                       $"explain={TacticalAISettings.ExplainLevel}" +
+                      $" build={TacticalAiBuildStamp.Value}" +
                      $" info={TacticalAISettings.InfoText}" +
                      $" persona='{TacticalAISettings.PersonaDefault}'");
         }

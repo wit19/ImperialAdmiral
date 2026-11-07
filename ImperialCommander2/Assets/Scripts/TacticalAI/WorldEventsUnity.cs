@@ -101,6 +101,9 @@ namespace TacticalAI
         // M6s-B7: heroes whose end-of-turn checkbox flip is already in the
         // mission log (name#round) - the HUD flag poll must not double-count.
         readonly HashSet<string> _heroLoggedActivated = new HashSet<string>();
+        // M14e (CONCEPT_standort_ledger_v2): heroes whose ledger ENTRY has
+        // already been emitted as HeroDeployed (once per hero per mission).
+        readonly HashSet<string> _heroEntryEmitted = new HashSet<string>();
         // R-A: digital door state snapshot (door GUID -> last polled
         // doorOpen). Polling dedup = snapshot diff, the exact law of the
         // damage dials: one event per OBSERVED state change, never per frame
@@ -332,10 +335,47 @@ namespace TacticalAI
                 }
                 if (dpSections.Count == 0) return seeds;   // nothing readable: unseeded
                 var arr = dpSections.ToArray();
+                // M14e (CONCEPT_standort_ledger_v2): the honest REFINEMENT -
+                // a group with a ledger row is seeded with the SECTIONS OF
+                // ITS OWN entry DP(s) (authored pointList sets included -
+                // min-over-set thinking: the group can only be where it
+                // entered). Groups with no row (None placements) keep the
+                // old kandidatenmenge: every DP section, not a per-group
+                // claim, only a per-group CANDIDATE SET. Sections are
+                // resolved through the mission entity table (the authored
+                // owner) so this stays the pure data read it always was.
+                var sess = DataStore.sagaSessionData;
+                var secOf = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var me in ents)
+                {
+                    if (me == null) continue;
+                    try
+                    {
+                        if (me.mapSectionOwner != Guid.Empty)
+                            secOf[me.GUID.ToString()] = me.mapSectionOwner.ToString();
+                    }
+                    catch { }
+                }
                 foreach (var cd in DataStore.deployedEnemies)
                 {
                     if (cd == null || cd.isDummy || string.IsNullOrEmpty(cd.id)) continue;
-                    seeds[cd.id] = arr;   // kandidatenmenge, not a per-group claim
+                    Saga.DeployLedgerRow row;
+                    List<string> own = null;
+                    if (sess != null && sess.TryGetDeployEntry(cd.id, out row))
+                    {
+                        own = new List<string>();
+                        foreach (var g in row.dps)
+                        {
+                            string sec;
+                            if (secOf.TryGetValue(g, out sec) && !own.Contains(sec))
+                                own.Add(sec);
+                        }
+                        own.Sort(StringComparer.Ordinal);
+                    }
+                    // row present but no section resolvable => fall back to
+                    // the kandidatenmenge (absence of a resolvable section
+                    // is not knowledge of a section).
+                    seeds[cd.id] = own != null && own.Count > 0 ? own.ToArray() : arr;
                 }
             }
             catch { }
@@ -451,6 +491,7 @@ namespace TacticalAI
             _heroDefeated.Clear();
             _heroActivated.Clear();
             _heroLoggedActivated.Clear();
+            _heroEntryEmitted.Clear();
             _doors.Clear();
             // S-A: section/entity snapshots reset per session; their FIRST
             // readable poll claims the initial visible/hidden state as
@@ -622,11 +663,18 @@ namespace TacticalAI
 
         void PollGroups(int round)
         {
-            // R-B card point 3 asked whether the Spawn payload can carry the
-            // DEPLOY POINT ("dp") without new inputs. VERDICT: NO - the
-            // honest ceiling is "ist gespawnt (Runde r)" (+ the Core-side
-            // SpawnedInHeroWindow marker). Proof from the shipped deploy
-            // paths: there is NO group->DP ledger to read.
+            // Player-25 M14e (Thomas 07.11): the Spawn payload DOES carry
+            // the entry point now ("dp" + "section", ledger-backed) - the
+            // old Player-22 verdict ("there is NO group->DP ledger to read,
+            // so the dp key stays out until one exists") is SUPERSEDED:
+            // CONCEPT_standort_ledger_v2 built exactly the ledger it
+            // demanded - authored mission entries from round 0, Active
+            // runtime deploys, persisted across restores. Absence is still
+            // explicit: multi-DP authored sets and None placements carry NO
+            // dp key (no single claim), so the key never becomes a guessing
+            // surface; the set travels in the deploy-seed channel instead.
+            // ---- original verdict, kept for the record ----
+            // there is NO group->DP ledger to read.
             // GetActiveDeploymentPoint is a pure CHOOSE function and records
             // nothing (MapEntityManager.cs:501-534); the ONE recording is
             // DeploymentManager.lastActiveDPByCard, written ONLY on the
@@ -641,6 +689,7 @@ namespace TacticalAI
             // ("unreadable flow" vs "no DP") - a guessing surface for every
             // consumer. NIE RATEN: the key stays out of the vocabulary until
             // a real deploy-path ledger exists (own card).
+            // ---- end record ----
             foreach (var cd in DataStore.deployedEnemies)
             {
                 if (cd == null || cd.isDummy) continue;
@@ -658,7 +707,7 @@ namespace TacticalAI
                     // group - the others still get their first-seen event.
                     try
                     {
-                        Append("Spawn", round, new Dictionary<string, object>
+                        var spawnPayload = new Dictionary<string, object>
                         {
                             { "group", cd.id },
                             { "size", (long)Math.Max(1, cd.size) },
@@ -669,7 +718,36 @@ namespace TacticalAI
                             // Player-22: scenario-critical defeat wiring (see
                             // DeploymentCritical) - fact, always explicit.
                             { "critical", DeploymentCritical(cd.id) },
-                        });
+                        };
+                        // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2):
+                        // the entry DP this group came through, read from
+                        // the durable deploy ledger. The Player-22 verdict
+                        // below ("no group->DP ledger exists") is RETIRED:
+                        // the ledger now covers Active runtime deploys AND
+                        // authored mission entries; a multi-DP authored set
+                        // makes no single claim (no dp key - absence stays
+                        // honest, the seed channel carries the set), None
+                        // deployments carry no row at all.
+                        var sessLed = DataStore.sagaSessionData;
+                        Saga.DeployLedgerRow ledRow;
+                        if (sessLed != null && sessLed.TryGetDeployEntry(cd.id, out ledRow)
+                            && ledRow.dps.Count == 1)
+                        {
+                            spawnPayload["dp"] = ledRow.dps[0];
+                            var em = EntityManagerOrNull();
+                            Guid gid;
+                            if (em != null && Guid.TryParse(ledRow.dps[0], out gid))
+                            {
+                                var dpe = em.GetEntity(gid);
+                                if (dpe != null)
+                                {
+                                    var own = dpe.mapSectionOwner.ToString();
+                                    if (own != "00000000-0000-0000-0000-000000000000")
+                                        spawnPayload["section"] = own;
+                                }
+                            }
+                        }
+                        Append("Spawn", round, spawnPayload);
                     }
                     catch (Exception ex)
                     {
@@ -899,6 +977,38 @@ namespace TacticalAI
         {
             foreach (var cd in DataStore.deployedHeroes)
             {
+                // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2): the hero
+                // ENTRY - one HeroDeployed per blue entry field the ledger
+                // carries (multi-field mission => one event per field: the
+                // SET is the honest claim, SectionSpace decides single =>
+                // fact anchor, multi => hypothesis set). Emitted BEFORE any
+                // activation event of this hero so the entry anchor sits in
+                // the history ahead of the first window. Missions without a
+                // field (measured 5/138) record nothing at all.
+                if (cd != null && !string.IsNullOrEmpty(cd.id) && _heroEntryEmitted.Add(cd.id))
+                {
+                    var sessLed = DataStore.sagaSessionData;
+                    Saga.DeployLedgerRow ledRow;
+                    if (sessLed != null && sessLed.TryGetDeployEntry(cd.id, out ledRow))
+                    {
+                        var em = EntityManagerOrNull();
+                        foreach (var g in ledRow.dps)
+                        {
+                            Guid gid;
+                            if (em == null || !Guid.TryParse(g, out gid)) continue;
+                            var fe = em.GetEntity(gid);
+                            if (fe == null) continue;             // data-exists
+                            var own = fe.mapSectionOwner.ToString();
+                            if (own == "00000000-0000-0000-0000-000000000000") continue;
+                            Append("HeroDeployed", round, new Dictionary<string, object>
+                            {
+                                { "hero", cd.name ?? "" },
+                                { "dp", g },
+                                { "section", own },
+                            });
+                        }
+                    }
+                }
                 var hs = cd.heroState;
                 if (hs == null) continue;
                 var name = cd.name;

@@ -158,6 +158,7 @@ namespace TacticalAiHarness
             Run("section_consumers.json", SecFokuszone);
             Run("section_support.json", SecSectionSupport);
             Run("dp_anchors.json", SecDpAnchors);
+            Run("deploy_ledger.json", SecDeployLedger);
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

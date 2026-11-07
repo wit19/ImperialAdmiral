@@ -1,0 +1,1391 @@
+{
+ "schema": "tacai.hero_entry/2",
+ "law": "entityType==Highlight && blue (entityColor|deploymentColor) && ((theText ~ /deploy|place/i && theText ~ /hero|helden|rebel/i) || (theText empty && name=='Entrance')) (mined from the shipped EN mission JSON; runtime re-resolves GUIDs against the live map)",
+ "rows": [
+  {
+   "mission": "BESPIN1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "BESPIN2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "BESPIN3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "BESPIN4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "BESPIN5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "BESPIN6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE1.json",
+   "entries": [
+    {
+     "guid": "d20550ac-ae14-4a6e-b558-0a07eecc53e5",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE10.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE12.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE13.json",
+   "entries": [
+    {
+     "guid": "b90c42a8-c815-4adc-8c9c-266790342be0",
+     "name": "Entrace",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE14.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE15.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE16.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE17.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE18.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE19.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE2.json",
+   "entries": [
+    {
+     "guid": "f43f95ed-7316-4f00-b66c-d1f2d6ddf965",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE20.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE21.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE22.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE23.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE24.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE25.json",
+   "entries": [
+    {
+     "guid": "7f46a5c8-f0d7-4e86-9e09-7004e6a98b43",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE26.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE27.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE29.json",
+   "entries": [
+    {
+     "guid": "9c2b4f3a-c336-4a80-b015-7e27365a5326",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE30.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE31.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE32.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE7.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE8.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "CORE9.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "6edaaa47-afa5-4179-b7f5-6f07b18b9d39",
+     "name": "Entrance Command Centre",
+     "section": "88ad947e-8af3-4706-ae72-f75863bf6bbf"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE10.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE11.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE12.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE14.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE15.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE16.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "ef036438-50b0-4f57-ab8a-8b245d055bb7",
+     "name": "Entrance UW",
+     "section": "e90d986f-e99e-436a-aa25-eff1673a3614"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance 1",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "af39b8f5-dbf6-441c-b5e1-f221ab357918",
+     "name": "Entrance 2",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE7.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE8.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "EMPIRE9.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH10.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH11.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH12.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH13.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH14.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH15.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance 1",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "a42e9f5d-f076-4faa-a990-02757f2ce829",
+     "name": "Entrance 2",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH16.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH7.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH8.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "HOTH9.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA10.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA11.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance 1",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "4f18e869-1863-45db-a4af-0f38e0af8a71",
+     "name": "Entrance 2",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA12.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA13.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA14.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA15.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA16.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA4.json",
+   "entries": [
+    {
+     "guid": "af317ad4-b955-489e-8c33-86b3fe3f2c84",
+     "name": "Hangar Highlight 1",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "0f64a81f-31b6-4294-8157-0cab6e86698e",
+     "name": "Hangar Highlight 2",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "b541c901-a12a-4fd0-aecc-e38ce686e126",
+     "name": "Hangar Highlight 3",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA7.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance 1",
+     "section": "f0fc41a5-867d-44d4-b05e-73b8b065baff"
+    },
+    {
+     "guid": "b8924f79-3fd0-4852-913e-c37a069f7653",
+     "name": "Entrance 2",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA8.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "JABBA9.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "LOTHAL1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "LOTHAL2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "LOTHAL3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "LOTHAL4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "e9c17ee0-bfdb-4f41-9726-4403a61ddcfc"
+    }
+   ]
+  },
+  {
+   "mission": "LOTHAL5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "LOTHAL6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER10.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER12.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER13.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER14.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER15.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER16.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER17.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER18.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER19.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER20.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance 1",
+     "section": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+     "guid": "109f6d0b-6d8a-4936-934e-01565a0f4f64",
+     "name": "Entrance 2",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER21.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER22.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER23.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER24.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER25.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER26.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER27.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER28.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER29.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER30.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER31.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER32.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER33.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER34.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER35.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER36.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER37.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER38.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER39.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER40.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER7.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER8.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "OTHER9.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "TWIN1.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "TWIN2.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "TWIN3.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "TWIN4.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "TWIN5.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  },
+  {
+   "mission": "TWIN6.json",
+   "entries": [
+    {
+     "guid": "a343a128-3b10-48ff-878f-71c89176d776",
+     "name": "Entrance",
+     "section": "11111111-1111-1111-1111-111111111111"
+    }
+   ]
+  }
+ ]
+}

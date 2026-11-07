@@ -54,6 +54,32 @@ namespace Saga
 			cd.heroState = new HeroState();
 			cd.heroState.Init();// DataStore.sagaSessionData.MissionHeroes.Count );
 
+			// M14e (CONCEPT_standort_ledger_v2, Thomas 07.11): the hero
+			// ENTRY - the blue "Deploy the heroes here" field(s) of the
+			// mission (mined taktische_hero_entries table, file-name match).
+			// Only entries the LIVE map carries are kept (data-exists).
+			// Missions without a field (measured law v2: CORE11, CORE28,
+			// EMPIRE13, OTHER11) record nothing - no entry, no claim.
+			// A multi-field mission ("Deploy HALF of the heroes here" x2)
+			// stores the SET: a hypothesis of possible sections, never a
+			// point claim (Thomas 07.11).
+			var he = DataStore.sagaSessionData.heroEntryDps;
+			if ( he != null && he.Count > 0 && !string.IsNullOrEmpty( cd.id ) )
+			{
+				var em = FindObjectOfType<MapEntityManager>();
+				var live = new List<string>();
+				foreach ( var g in he )
+				{
+					Guid gid;
+					if ( !Guid.TryParse( g, out gid ) ) continue;
+					if ( em != null && em.GetEntity( gid ) == null ) continue;   // data-exists
+					if ( !live.Contains( g ) )
+						live.Add( g );
+				}
+				if ( live.Count > 0 )
+					DataStore.sagaSessionData.RecordDeployEntry( cd.id, live, "hero-entry" );
+			}
+
 			var go = Instantiate( hgPrefab, heroContainer );
 			go.GetComponent<SagaHGPrefab>().Init( cd );
 			if ( !DataStore.deployedHeroes.ContainsCard( cd ) )
@@ -330,6 +356,10 @@ namespace Saga
 						//M13f: record the DP this deploy really used - the
 						//optional-flow announce names THIS DP, never a re-roll.
 						lastActiveDPByCard[enemyToAdd.id] = adp;
+						// M14e (CONCEPT_standort_ledger_v2): durable ledger
+						// mirror - origin "active" (last write wins).
+						DataStore.sagaSessionData?.RecordDeployEntry(
+							enemyToAdd.id, new List<string> { adp.ToString() }, "active" );
 						FindObjectOfType<SagaEventManager>().toggleVisButton.SetActive( true );
 						//FindObjectOfType<SagaController>().ToggleNavAndEntitySelection( false );
 						FindObjectOfType<MapEntityManager>().ToggleHighlightDeploymentPoint( adp, true );
@@ -367,6 +397,24 @@ namespace Saga
 				else//multiple specific DPs
 				{
 					Debug.Log( "EnemyDeployment::MULTIPLE DPs" );
+					// M14e: Specific event deployments (463 shipped cases -
+					// the authored pointList lives on this override) never
+					// reached the old recorder; the ledger takes them at
+					// deploy time, same honest filters as ParseMission.
+					if ( ovrd.pointList != null )
+					{
+						var authored = new List<string>();
+						foreach ( var p in ovrd.pointList )
+						{
+							if ( p == null || p.GUID == Guid.Empty || p.GUID == Utils.GUIDOne )
+								continue;
+							var s = p.GUID.ToString();
+							if ( !authored.Contains( s ) )
+								authored.Add( s );
+						}
+						if ( authored.Count > 0 )
+							DataStore.sagaSessionData?.RecordDeployEntry( enemyToAdd.id, authored, "authored" );
+					}
 					DoMultipleDeployment( enemyToAdd, ovrd, callback );
 					//StartCoroutine( NavToDeployment( ovrd, callback ) );//also invokes callback when finished
 				}
@@ -383,6 +431,9 @@ namespace Saga
 					//the deterministic reinforcement priority finally sees the
 					//entry point of ALL groups, not just optional flows.
 					lastActiveDPByCard[enemyToAdd.id] = adp;
+					// M14e: durable ledger mirror - origin "active".
+					DataStore.sagaSessionData?.RecordDeployEntry(
+						enemyToAdd.id, new List<string> { adp.ToString() }, "active" );
 					FindObjectOfType<SagaEventManager>().toggleVisButton.SetActive( true );
 					//M13g: the deployment-mode row was removed entirely
 					//(Thomas 28.10: the app is only a companion to the board

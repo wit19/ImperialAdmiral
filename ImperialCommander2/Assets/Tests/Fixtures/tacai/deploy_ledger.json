@@ -1,0 +1,190 @@
+{
+  "comment": "M14e deploy-ledger vectors (CONCEPT_standort_ledger_v2, Thomas 07.11). reader_cases: hero-entry table law, hand-pinned. leash_cases: C4 friend leash pinned as law relations + recorded seed-chain pins (deploy_ledger_record.json). space_cases: HeroDeployed/Spawn-dp through the real feed path; dump/canon recorded for review, spatial claims hand-pinned.",
+
+  "reader_cases": [
+    {
+      "name": "exact_match_multi",
+      "comment": "Multi-field mission: both entries in table order, guid@section.",
+      "table": { "rows": [
+        { "mission": "EMPIRE4.json", "entries": [
+          { "guid": "ent-1", "section": "sec-north", "name": "Entrance 1" },
+          { "guid": "ent-2", "section": "sec-south", "name": "Entrance 2" }
+        ]},
+        { "mission": "OTHER.json", "entries": [ { "guid": "x", "section": "y", "name": "" } ] }
+      ]},
+      "missionFile": "EMPIRE4.json",
+      "expect": ["ent-1@sec-north", "ent-2@sec-south"]
+    },
+    {
+      "name": "case_insensitive_filename",
+      "table": { "rows": [
+        { "mission": "EMPIRE4.json", "entries": [ { "guid": "ent-1", "section": "sec-n", "name": "" } ] }
+      ]},
+      "missionFile": "empire4.JSON",
+      "expect": ["ent-1@sec-n"]
+    },
+    {
+      "name": "no_row_is_inert",
+      "table": { "rows": [
+        { "mission": "EMPIRE4.json", "entries": [ { "guid": "ent-1", "section": "sec-n", "name": "" } ] }
+      ]},
+      "missionFile": "CORE2.json",
+      "expect": []
+    },
+    {
+      "name": "junk_rows_and_blank_fields_fail_closed",
+      "comment": "A junk row drops the row; a blank guid or section drops the entry; one clean entry survives.",
+      "table": { "rows": [
+        "not-a-row",
+        { "mission": "M.json", "entries": [
+          { "guid": "", "section": "sec-x", "name": "no guid" },
+          { "guid": "ent-blanksec", "section": "  ", "name": "no section" },
+          { "guid": null, "section": null, "name": "nulls" },
+          { "guid": "ent-ok", "section": "sec-ok", "name": "Entrance" }
+        ]}
+      ]},
+      "missionFile": "M.json",
+      "expect": ["ent-ok@sec-ok"]
+    },
+    {
+      "name": "no_table_no_mission_file",
+      "table": null,
+      "missionFile": "EMPIRE4.json",
+      "expect": []
+    }
+  ],
+
+  "leash_cases": [
+    {
+      "name": "cross_section_tie_leash_wins",
+      "comment": "Both candidates tier 1 (anchor lives in a third section) -> cross-section tie -> the friendly section wins BEFORE the seed chain. Absolute no-leash winner is the recorded seed-chain pin.",
+      "seed": 4242424242, "round": 3,
+      "anchors": [ { "guid": "obj-9", "section": "sec-C", "x": 500, "y": 500 } ],
+      "cands": [
+        { "guid": "dp-A", "name": "DP Alpha", "section": "sec-A", "x": 10, "y": 10 },
+        { "guid": "dp-B", "name": "DP Bravo", "section": "sec-B", "x": 900, "y": 10 }
+      ],
+      "ownSections": ["sec-A"],
+      "expect": { "pick": "dp-A" }
+    },
+    {
+      "name": "tier_primat_anchor_beats_friend",
+      "comment": "Anchor section carries dp-A (tier 0, NOT own); dp-B is own but tier 1. The leash never crosses the anchor tier - dp-A wins with AND without the leash.",
+      "seed": 7, "round": 1,
+      "anchors": [ { "guid": "obj-1", "section": "sec-A", "x": 20, "y": 20 } ],
+      "cands": [
+        { "guid": "dp-A", "name": "DP Alpha", "section": "sec-A", "x": 30, "y": 20 },
+        { "guid": "dp-B", "name": "DP Bravo", "section": "sec-B", "x": 0, "y": 0 }
+      ],
+      "ownSections": ["sec-B"],
+      "expect": { "pick": "dp-A", "no_leash": "dp-A" }
+    },
+    {
+      "name": "intra_section_distance_outranks_leash",
+      "comment": "Same anchored section: closer dp-A wins on intra-section distance (tie never opens) even though the FRIENDLY group stands next to the far dp-B.",
+      "seed": 7, "round": 1,
+      "anchors": [ { "guid": "obj-1", "section": "sec-A", "x": 0, "y": 0 } ],
+      "cands": [
+        { "guid": "dp-A", "name": "DP Alpha", "section": "sec-A", "x": 5, "y": 0 },
+        { "guid": "dp-B", "name": "DP Bravo", "section": "sec-A", "x": 80, "y": 0 }
+      ],
+      "ownSections": ["sec-A"],
+      "expect": { "pick": "dp-A" }
+    },
+    {
+      "name": "leash_neutral_when_both_sections_own",
+      "comment": "Both candidates own -> the tie stays, the seed chain decides -> pick MUST equal the no-leash winner (recorded pin).",
+      "seed": 4242424242, "round": 3,
+      "anchors": [ { "guid": "obj-9", "section": "sec-C", "x": 500, "y": 500 } ],
+      "cands": [
+        { "guid": "dp-A", "name": "DP Alpha", "section": "sec-A", "x": 10, "y": 10 },
+        { "guid": "dp-B", "name": "DP Bravo", "section": "sec-B", "x": 900, "y": 10 }
+      ],
+      "ownSections": ["sec-A", "sec-B"],
+      "expect": { "pick_equals_no_leash": true }
+    },
+    {
+      "name": "empty_own_sections_is_the_legacy_line",
+      "comment": "ownSections present but EMPTY (no located friendlies): the leash is inert, pick equals the no-leash winner for every (seed, round).",
+      "seed": 99991, "round": 5,
+      "anchors": [ { "guid": "obj-9", "section": "sec-C", "x": 500, "y": 500 } ],
+      "cands": [
+        { "guid": "dp-A", "name": "DP Alpha", "section": "sec-A", "x": 10, "y": 10 },
+        { "guid": "dp-B", "name": "DP Bravo", "section": "sec-B", "x": 900, "y": 10 },
+        { "guid": "dp-D", "name": "DP Delta", "section": "sec-D", "x": 10, "y": 990 }
+      ],
+      "ownSections": [],
+      "expect": { "pick_equals_no_leash": true }
+    }
+  ],
+
+  "space_cases": [
+    {
+      "name": "m14e_entry_confirms_edge",
+      "comment": "THE payoff vector: single blue field anchors the hero at round 1 (printed setup fact). Round 2's window STARTS on that anchor; the first real observation in sec-B CONFIRMS the sec-A->sec-B edge. Without the entry (control case) the same history knows nothing.",
+      "hero": "Jyn", "secA": "sec-entry", "secB": "sec-canteen",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Hold the depot.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } },
+        { "kind": "HeroDeployed", "round": 1, "payload": { "hero": "Jyn", "dp": "ent-blue-1", "section": "sec-entry" } },
+        { "kind": "HeroActivationStart", "round": 2, "payload": { "hero": "Jyn" } },
+        { "kind": "EntityInteract", "round": 2, "payload": { "entity": "term-7", "name": "Comms Terminal", "section": "sec-canteen" } },
+        { "kind": "HeroActivated", "round": 2, "payload": { "hero": "Jyn" } }
+      ],
+      "expect_hand": { "hero_section": "sec-canteen", "hero_round": 2, "node_a": true, "node_b": true, "edge_kind_ab": "confirmed" }
+    },
+    {
+      "name": "m14e_control_no_entry_no_edge",
+      "comment": "Control: same window history WITHOUT the HeroDeployed event -> no anchor at window start -> no crossing -> no edge recorded. Pins that the confirmation in the case above really comes from the ledger entry.",
+      "hero": "Jyn", "secA": "sec-entry", "secB": "sec-canteen",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Hold the depot.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } },
+        { "kind": "HeroActivationStart", "round": 2, "payload": { "hero": "Jyn" } },
+        { "kind": "EntityInteract", "round": 2, "payload": { "entity": "term-7", "name": "Comms Terminal", "section": "sec-canteen" } },
+        { "kind": "HeroActivated", "round": 2, "payload": { "hero": "Jyn" } }
+      ],
+      "expect_hand": { "hero_section": "sec-canteen", "hero_round": 2, "node_a": false, "node_b": true, "edge_kind_ab": "" }
+    },
+    {
+      "name": "m14e_multi_field_set_no_claim",
+      "comment": "Two blue fields (\"half/half\"): both section NODES exist for belief math, but NO single-section anchor while the set has two members (Thomas decision 3).",
+      "hero": "Jyn", "secA": "sec-hangar-1", "secB": "sec-hangar-2",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Clear the hangar.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } },
+        { "kind": "HeroDeployed", "round": 1, "payload": { "hero": "Jyn", "dp": "ent-h1", "section": "sec-hangar-1" } },
+        { "kind": "HeroDeployed", "round": 1, "payload": { "hero": "Jyn", "dp": "ent-h2", "section": "sec-hangar-2" } }
+      ],
+      "expect_hand": { "hero_section": "", "hero_round": -1, "node_a": true, "node_b": true, "edge_kind_ab": "" }
+    },
+    {
+      "name": "m14e_set_collapses_to_one",
+      "comment": "Two fields in the SAME section: the distinct-section set has one member -> anchor allowed.",
+      "hero": "Jyn", "secA": "sec-hangar", "secB": null,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Clear the hangar.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } },
+        { "kind": "HeroDeployed", "round": 1, "payload": { "hero": "Jyn", "dp": "ent-h1", "section": "sec-hangar" } },
+        { "kind": "HeroDeployed", "round": 1, "payload": { "hero": "Jyn", "dp": "ent-h2", "section": "sec-hangar" } }
+      ],
+      "expect_hand": { "hero_section": "sec-hangar", "hero_round": 1, "node_a": true }
+    },
+    {
+      "name": "m14e_no_field_mission_inert",
+      "comment": "Mission without a blue field (measured 5/138): nothing is emitted, nothing is anchored - identical to the pre-M14e world.",
+      "hero": "Jyn", "secA": null, "secB": null,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Escape.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } }
+      ],
+      "expect_hand": { "hero_section": "", "hero_round": -1 }
+    },
+    {
+      "name": "m14e_spawn_dp_section_seed",
+      "comment": "Spawn with the ledger's dp+section: the group's belief seeds on ITS OWN entry section (not the kandidatenmenge). deploySeeds deliberately names a DIFFERENT section - the Spawn's own section payload outranks it (existing S-C priority law).",
+      "hero": null, "secA": "sec-spawn", "secB": null, "group": "STORM",
+      "deploySeeds": { "STORM": ["sec-elsewhere"] },
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Hold.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } },
+        { "kind": "Spawn", "round": 1, "payload": { "group": "STORM", "size": 2, "name": "Stormtroopers", "critical": false, "dp": "dp-1", "section": "sec-spawn" } }
+      ],
+      "expect_hand": { "hero_section": "", "hero_round": -1, "spawn_candidates": ["sec-spawn"], "spawn_round": 1 }
+    }
+  ]
+}

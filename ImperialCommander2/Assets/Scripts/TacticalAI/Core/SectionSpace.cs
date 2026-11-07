@@ -101,6 +101,12 @@ namespace TacticalAI.Core
         private readonly Dictionary<string, int> _heroInSectionRound =
             new Dictionary<string, int>(StringComparer.Ordinal);
 
+        // M14e: per-hero entry-field SET (distinct sections seen in
+        // HeroDeployed events). One member = a fact anchor is allowed;
+        // more = hypothesis set only, anchor retracted.
+        private readonly Dictionary<string, List<string>> _heroEntrySet =
+            new Dictionary<string, List<string>>(StringComparer.Ordinal);
+
         // All attributed interaction facta (hero, entity, section, round) -
         // the Wachzone rail reads these; the vector ledger anchors on the
         // identical law (SectionSpace never re-derives attribution rules).
@@ -273,6 +279,56 @@ namespace TacticalAI.Core
                 case "MissionStart":
                     IsResync = false;
                     break;
+
+                case "HeroDeployed":
+                {
+                    // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2): the
+                    // hero entered through the mission's printed blue ENTRY
+                    // field - table knowledge, not a position report.
+                    // SINGLE-entry mission: the entry section becomes the
+                    // hero's fact anchor (round-stamped like every anchor;
+                    // freshness-gated S-D consumers never mistake age for
+                    // now, the window law carries it as a starting anchor
+                    // so the first real observation later CONFIRMS graph
+                    // edges that were only hypotheses before).
+                    // MULTI-entry mission ("Deploy HALF of the heroes
+                    // here" x2, Thomas decision 3): the events form a SET
+                    // of possible sections - nodes exist for belief math,
+                    // but NO single-section claim is made while the set
+                    // has more than one member; a set that collapses to
+                    // one distinct section anchors like a single entry.
+                    var hero = S(e, "hero");
+                    var sec = S(e, "section");
+                    if (hero.Length == 0 || sec.Length == 0) break; // data-exists
+                    Graph.AddSection(sec);
+                    List<string> set;
+                    if (!_heroEntrySet.TryGetValue(hero, out set))
+                    { set = new List<string>(); _heroEntrySet[hero] = set; }
+                    if (!set.Contains(sec)) set.Add(sec);
+                    if (set.Count == 1)
+                    {
+                        string had;
+                        if (!_heroInSection.TryGetValue(hero, out had) || had.Length == 0
+                            || set.Contains(had))
+                        {   // nothing anchored yet, or only our own entry
+                            _heroInSection[hero] = sec;
+                            _heroInSectionRound[hero] = e.Round;
+                        }
+                    }
+                    else
+                    {
+                        // set grew beyond one: retract an anchor that came
+                        // from THIS entry set (never an observed fact), the
+                        // honest state is "one of these sections".
+                        string cur;
+                        if (_heroInSection.TryGetValue(hero, out cur) && set.Contains(cur))
+                        {
+                            _heroInSection.Remove(hero);
+                            _heroInSectionRound.Remove(hero);
+                        }
+                    }
+                    break;
+                }
 
                 case "SectionActivated":
                 {
@@ -829,6 +885,11 @@ namespace TacticalAI.Core
             };
             foreach (var kv in _heroInSection) s._heroInSection[kv.Key] = kv.Value;
             foreach (var kv in _heroInSectionRound) s._heroInSectionRound[kv.Key] = kv.Value;
+            // M14e: the entry SET rides the clone too - an incremental
+            // re-projection must still know a hero's entry field set when
+            // deciding whether an anchor came from the entry or from an
+            // observation.
+            foreach (var kv in _heroEntrySet) s._heroEntrySet[kv.Key] = new List<string>(kv.Value);
             s._interactions.AddRange(_interactions);
             foreach (var kv in _activatedByRound) s._activatedByRound[kv.Key] = new List<string>(kv.Value);
             foreach (var kv in _spawnsByGroup)

@@ -369,7 +369,45 @@ namespace Saga
 					ovrd.SetEnemyDeploymentOverride( g );
 					if ( card != null )
 						DataStore.sagaSessionData.MissionStarting.Add( card );
+					// M14e (CONCEPT_standort_ledger_v2, Thomas 07.11): the
+					// ENTRY LEDGER starts at round 0. The mission file's own
+					// pointList says exactly where the Imperator places this
+					// group (293 of 297 shipped start groups carry authored
+					// DPs - the old in-memory recorder never saw them, its
+					// Specific highlight flow records nothing). Honest
+					// filters: all-Empty pointList = the Active DP (entry is
+					// written by the runtime recorder at deploy) and
+					// GUIDOne = DeploymentSpot.None (Imperator places freely
+					// - NO row, no proximity claim, ever: Thomas 07.11).
+					if ( card != null && g.pointList != null )
+					{
+						var authored = new List<string>();
+						foreach ( var p in g.pointList )
+						{
+							if ( p == null || p.GUID == Guid.Empty || p.GUID == Utils.GUIDOne )
+								continue;
+							var s = p.GUID.ToString();
+							if ( !authored.Contains( s ) )
+								authored.Add( s );
+						}
+						if ( authored.Count > 0 )
+							DataStore.sagaSessionData.RecordDeployEntry( card.id, authored, "authored" );
+					}
 				}
+				// M14e: the HERO ENTRY fields of this mission (the blue
+				// "Deploy the heroes here" highlights). The text law that
+				// FINDS them is mined offline (tools/hero_entry_mine.py ->
+				// taktische_hero_entries.json) because SetMissionTranslation
+				// rewrites entity text per locale - a live text scan would be
+				// language-fragile. File-name row match, same law as the DP
+				// anchors; custom/embedded missions without a row => empty
+				// => every hero consumer inert (Null-Law).
+				DataStore.sagaSessionData.heroEntryDps =
+					TacticalAI.Core.DeploymentAnchors.HeroEntriesForMission(
+						TacticalAI.TacticalAIAssets.HeroEntryTableRoot,
+						DataStore.mission.fileName )
+						.ConvertAll( x => x.Guid );
+				Debug.Log( $"ParseMission()::M14e hero entries: {DataStore.sagaSessionData.heroEntryDps.Count} field(s), ledger rows: {DataStore.sagaSessionData.deployLedger?.Count ?? 0}" );
 				//reserved groups
 				foreach ( var g in DataStore.mission.reservedDeploymentGroups )
 				{

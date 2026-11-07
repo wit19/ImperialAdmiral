@@ -130,6 +130,17 @@ namespace TacticalAI.Core
             // clicked X right as the entity flag moved"). App-authored
             // button text is a legal anchor name (Loch-Gesetz: no coords).
             "PlayerSelection",
+            // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2): HeroDeployed
+            // - a hero/ally entered the mission through its blue ENTRY
+            // field. The entry field is PRINTED mission data (the mined
+            // taktische_hero_entries table), the placement itself is the
+            // printed setup step - this is table knowledge, not a position
+            // report: zero new input (the field is law, not a choice).
+            // Missions without a field emit nothing; multi-field missions
+            // emit ONE event per field the hero's ledger carries (the set
+            // is the honest claim, SectionSpace seeds all of them as
+            // possible sections, never a point).
+            "HeroDeployed",
             // M8/F5: mission clock re-wired at runtime (ModifyRndLimit event
             // or the roundLimitToggle flip) - public table info, the feed
             // gate re-derives posture from it.
@@ -176,6 +187,15 @@ namespace TacticalAI.Core
             // isActive state on EntityInteract (direction is data, not kind).
             // Loch-Gesetz holds: GUIDs and app names, never coordinates.
             "entity", "section", "active",
+            // M14e: the ENTRY-POINT identity (DP/highlight entity GUID
+            // string) on Spawn ("dp": the ledger's entry DP this group came
+            // through - the verdict comment in WorldEventsUnity is retired,
+            // the ledger IS the deploy-path ledger it demanded) and on
+            // HeroDeployed ("dp": the blue hero-entry field). "hero" is the
+            // existing key. Same law as "entity": identity GUID, never a
+            // coordinate; absence stays distinguishable from a value
+            // (Has()), no-claim deployments carry NO dp key.
+            "dp",
         };
 
         // Minimal per-kind shape guard (typos fail loud, not silently).
@@ -207,6 +227,10 @@ namespace TacticalAI.Core
             // entity's own mapSectionOwner is set - data-existence law).
             { "SectionActivated", new[] { "section" } },
             { "EntityInteract",   new[] { "entity" } },
+            // M14e: hero + entry field identity required; "section" is the
+            // live mapSectionOwner of that field (data-exists: the producer
+            // only emits when the map carries the entity).
+            { "HeroDeployed",     new[] { "hero", "dp" } },
             { "PlayerSelection",  new[] { "name" } },
             { "RoundEnd",         new string[0] },
             { "RoundLimitChanged", new[] { "roundLimit" } },

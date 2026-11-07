@@ -1516,8 +1516,15 @@ namespace TacticalAI
                         X = x.entityPosition?.X ?? 0f,
                         Y = x.entityPosition?.Y ?? 0f,
                     });
+                // M14e C4 FRIEND LEASH: sections holding own located groups
+                // (deploy ledger). Rides ONLY inside the anchor-law tie -
+                // tier and intra-section distance keep Primat. Empty list
+                // (no ledger, mission with None placements, any error) =>
+                // Choose runs bit-identical to pre-M14e (Null-Law).
+                var ownSecs = FriendlySectionsFor(card,
+                    UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>());
                 var pick = Tac.DeploymentAnchors.Choose(cands, anchors,
-                                                        SessionSeed(), CurrentRound());
+                                                        SessionSeed(), CurrentRound(), ownSecs);
                 if (pick != null && pick.Anchor != null &&
                     Guid.TryParse(pick.Candidate.Guid, out var anchorChosen))
                 {
@@ -1620,10 +1627,13 @@ namespace TacticalAI
         /// priority instead of the legacy random pick - CONCEPT_reinforce.md.
         /// Which wounded group gets the returning figure is a tactical
         /// decision; a coin flip is not one. Public-data law, no RNG, no
-        /// hidden state (CONCEPT_reinforce Sec.3):
-        /// (1) proximity to the mission objective: the group's last ENTRY
-        ///     point (DeploymentManager.lastActiveDPByCard - the DP that
-        ///     actually deployed it) measured to the LIVE anchor set (same
+        /// hidden state (CONCEPT_reinforce Sec.3, ledger upgrade M14e
+        /// CONCEPT_standort_ledger_v2):
+        /// (1) proximity to the mission objective: the group's ENTRY
+        ///     point(s) - the durable SagaSession.deployLedger (authored
+        ///     mission-file pointList from round 0 + the DP the Active
+        ///     choice really used, persisted across restores) measured to
+        ///     the LIVE anchor set (same
         ///     table + same M14d phase filter the DP choice uses; claimed
         ///     objectives no longer pull). Group sharing an anchor's section
         ///     ranks tier 0 (mirrors the DeploymentAnchors.Choose section
@@ -1650,23 +1660,50 @@ namespace TacticalAI
             {
                 if (candidates == null || candidates.Count < 2) return false;
                 if (!ActiveNow()) return false;
-                var dm = UnityEngine.Object.FindObjectOfType<Saga.DeploymentManager>();
                 var map = UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>();
-                if (dm == null || map == null) return false;
+                var session = global::DataStore.sagaSessionData;
+                if (map == null || session == null) return false;
                 var anchors = MissionDpAnchors();
 
                 var ranked = candidates.Select(c =>
                 {
                     int tier = 1; double dist = double.MaxValue;
+                    string origin = "none";
                     if (anchors.Count > 0)
                     {
-                        var dpGuid = dm.LastActiveDeploymentPoint(c.id);
-                        var dp = dpGuid != Guid.Empty ? map.GetEntity(dpGuid) : null;
-                        if (dp == null || dp.entityPosition == null)
+                        // M14e (CONCEPT_standort_ledger_v2, Thomas 07.11):
+                        // the durable deploy ledger replaces the in-memory
+                        // recorder read - start groups are locatable FROM
+                        // ROUND 1 (293/297 authored entries + runtime Active
+                        // rows) and a restored session keeps its ledger
+                        // (CONCEPT_reinforce Sec.6 gap closed). Multiple
+                        // authored DPs (pointList sets): MIN distance over
+                        // the whole set - the group could have entered
+                        // through any of them, the closest one is the
+                        // strongest honest claim (Thomas 07.11 decision 1).
+                        // No row at all (None deployments, restored pre-
+                        // M14e saves) => tier 2: no data, no proximity claim.
+                        Saga.DeployLedgerRow row;
+                        var dps = session.TryGetDeployEntry(c.id, out row) ? row.dps : null;
+                        origin = row != null ? row.origin : "none";
+                        List<Saga.IMapEntity> ents = null;
+                        if (dps != null)
+                        {
+                            ents = new List<Saga.IMapEntity>();
+                            foreach (var g in dps)
+                            {
+                                Guid gid;
+                                if (!Guid.TryParse(g, out gid)) continue;
+                                var e = map.GetEntity(gid);
+                                if (e != null && e.entityPosition != null) ents.Add(e);
+                            }
+                        }
+                        if (ents == null || ents.Count == 0)
                             tier = 2;   // unknown entry point - no proximity claim
                         else
                         {
                             double bestSame = double.MaxValue, bestAny = double.MaxValue;
+                            foreach (var dp in ents)
                             foreach (var a in anchors)
                             {
                                 double dx = (double)a.X - (double)dp.entityPosition.X;
@@ -1683,7 +1720,7 @@ namespace TacticalAI
                     }
                     return new
                     {
-                        Card = c, Tier = tier, Dist = dist,
+                        Card = c, Tier = tier, Dist = dist, Origin = origin,
                         Dice = c.attacks?.Length ?? 0,
                         Health = c.health,
                         Size = c.currentSize,
@@ -1702,6 +1739,7 @@ namespace TacticalAI
                 var w = ranked[0];
                 Debug.Log($"TacticalAIBridge::REINFORCE -> {w.Card.name} " +
                           $"[tier={w.Tier} dist={w.Dist.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)} " +
+                          $"origin={w.Origin} " +
                           $"dice={w.Dice} health={w.Health} size={w.Size} of {ranked.Count}, deterministic, no RNG]");
                 return true;
             }
@@ -1710,6 +1748,44 @@ namespace TacticalAI
                 pick = null;
                 return false;   // caller keeps the legacy RNG line
             }
+        }
+
+        /// <summary>M14e C4 input (CONCEPT_standort_ledger_v2): the sections
+        /// that already carry the Imperator's OWN located groups, read from
+        /// the durable deploy ledger (entry DP -> live mapSectionOwner,
+        /// data-exists). Deployed heroes are REBELS - never friendlies.
+        /// The card being deployed is excluded (its own old entry is not
+        /// support cover). Any error => empty list => the leash is inert
+        /// (Null-Law: Choose runs bit-identical to pre-M14e).</summary>
+        static List<string> FriendlySectionsFor(global::DeploymentCard card,
+                                                Saga.MapEntityManager map)
+        {
+            var secs = new List<string>();
+            try
+            {
+                var session = global::DataStore.sagaSessionData;
+                if (session == null || map == null) return secs;
+                foreach (var cd in global::DataStore.deployedEnemies)
+                {
+                    if (cd == null || cd.isDummy || string.IsNullOrEmpty(cd.id)) continue;
+                    if (card != null && string.Equals(cd.id, card.id, StringComparison.Ordinal))
+                        continue;   // the deploying group does not host itself
+                    Saga.DeployLedgerRow row;
+                    if (!session.TryGetDeployEntry(cd.id, out row)) continue;
+                    foreach (var g in row.dps)
+                    {
+                        Guid gid;
+                        if (!Guid.TryParse(g, out gid)) continue;
+                        var e = map.GetEntity(gid);
+                        if (e == null) continue;    // data-exists
+                        var s = e.mapSectionOwner.ToString();
+                        if (s != "00000000-0000-0000-0000-000000000000" && !secs.Contains(s))
+                            secs.Add(s);
+                    }
+                }
+            }
+            catch { secs.Clear(); }
+            return secs;
         }
 
         // ---------------------------------------------------------- targeting

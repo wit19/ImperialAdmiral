@@ -32,6 +32,61 @@ namespace Saga
 		public HashSet<string> AnyHeroWoundedEventDone;
 		public HashSet<string> AnyHeroWithdrawnEventDone;
 
+		/// <summary>
+		/// M14e (CONCEPT_standort_ledger_v2, Thomas 07.11): the ENTRY-POINT LEDGER -
+		/// per card id, the DP(s) a group or hero entered through, with origin.
+		/// Populated from THREE honest sources, last write wins (the current entry
+		/// is the physical truth):
+		///   "authored"  - ParseMission: the mission file's own pointList for every
+		///                 initialDeploymentGroups group (the file says exactly
+		///                 where the Imperator places them - Specific flows never
+		///                 reached the old in-memory recorder, 293/297 start groups
+		///                 were invisible to it) and the authored DPs of every
+		///                 Specific event deployment at deploy time.
+		///   "active"    - DeploymentManager.HandleMapDeployment: the DP the Active
+		///                 DP choice actually used (ovrd.Active and ovrd==null).
+		///   "hero-entry"- DeployHeroAlly: the mission's blue hero-entry field(s)
+		///                 (taktische_hero_entries table, re-resolved live).
+		/// A deployment-spot of None (Imperator places freely) gets NO row: honest
+		/// unknown, no proximity claim, ever. Survives save/load (unlike the old
+		/// in-memory map - the CONCEPT_reinforce Sec.6 restore gap is closed).
+		/// </summary>
+		public Dictionary<string, DeployLedgerRow> deployLedger;
+
+		/// <summary>
+		/// M14e: the live GUIDs of this mission's hero-entry highlight fields
+		/// (empty = the mission carries none = every hero consumer stays inert).
+		/// Resolved by SagaController from the mined taktische_hero_entries table.
+		/// </summary>
+		public List<string> heroEntryDps;
+
+		/// <summary>
+		/// Record the entry point(s) of a card; last write wins. Null-safe and
+		/// never throws (a ledger failure must never break a deployment).
+		/// </summary>
+		public void RecordDeployEntry( string cardId, List<string> dps, string origin )
+		{
+			try
+			{
+				if ( string.IsNullOrEmpty( cardId ) || dps == null || dps.Count == 0 )
+					return;
+				if ( deployLedger == null )
+					deployLedger = new Dictionary<string, DeployLedgerRow>();
+				deployLedger[cardId] = new DeployLedgerRow { dps = new List<string>( dps ), origin = origin };
+			}
+			catch ( System.Exception e )
+			{
+				UnityEngine.Debug.LogWarning( "RecordDeployEntry()::" + e.Message );
+			}
+		}
+
+		public bool TryGetDeployEntry( string cardId, out DeployLedgerRow row )
+		{
+			row = null;
+			return cardId != null && deployLedger != null && deployLedger.TryGetValue( cardId, out row ) && row != null
+				&& row.dps != null && row.dps.Count > 0;
+		}
+
 		public string missionStringified;
 
 		public SagaSession( SagaSetupOptions opts )
@@ -49,6 +104,8 @@ namespace Saga
 			CannotRedeployList = new HashSet<string>();
 			AnyHeroWoundedEventDone = new HashSet<string>();
 			AnyHeroWithdrawnEventDone = new HashSet<string>();
+			deployLedger = new Dictionary<string, DeployLedgerRow>();
+			heroEntryDps = new List<string>();
 			selectedAlly = null;
 			fixedAlly = null;
 			campaignGUID = Guid.Empty;
@@ -184,5 +241,18 @@ namespace Saga
 			else
 				Debug.Log( "SaveCampaignState()::NOT in a Campaign, skipped" );
 		}
+	}
+
+	/// <summary>
+	/// M14e: one ledger row - the DP(s) a card entered through and where the
+	/// knowledge came from ("authored" | "active" | "hero-entry"). GUIDs as
+	/// strings (the session save is Json.NET; Guid lists round-trip, strings
+	/// keep the format stable across saves - the Loch-Gesetz law of the feed
+	/// layer: identities, never coordinates).
+	/// </summary>
+	public class DeployLedgerRow
+	{
+		public List<string> dps = new List<string>();
+		public string origin = "";
 	}
 }

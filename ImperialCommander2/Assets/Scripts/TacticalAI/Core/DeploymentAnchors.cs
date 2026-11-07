@@ -64,6 +64,17 @@ namespace TacticalAI.Core
         public double Dist;
     }
 
+    /// <summary>M14e: one hero-entry field of the mined hero-entry table -
+    /// the blue "Deploy the heroes here" highlight: entity GUID + its
+    /// section (the spatial claim the app is allowed to make) + authored
+    /// name (log sugar only).</summary>
+    public sealed class HeroEntry
+    {
+        public string Guid;
+        public string SectionGuid;
+        public string Name;
+    }
+
     public static class DeploymentAnchors
     {
         /// <summary>FNV-1a string ordinal -> ulong. Byte-identical law to
@@ -159,6 +170,57 @@ namespace TacticalAI.Core
             return true;
         }
 
+        /// <summary>M14e (CONCEPT_standort_ledger_v2): the hero-entry table
+        /// row for ONE mission, matched on the mission JSON FILE NAME
+        /// OrdinalIgnoreCase (same law as RowsForMission). Table shape
+        /// { rows: [ { mission, entries:[ { guid, section, name } ] } ] }
+        /// (mine: tools/hero_entry_mine.py). Fail-closed everywhere: a
+        /// missing/blank guid or section drops the entry, a junk row drops
+        /// the row, no table/no match/no reader => empty list => every hero
+        /// consumer stays inert (data-exists, Null-Law). The name is audit
+        /// sugar for the log only - never a match key.</summary>
+        public static List<HeroEntry> HeroEntriesForMission(object tableRoot, string missionFile)
+        {
+            var list = new List<HeroEntry>();
+            var doc = tableRoot as Dictionary<string, object>;
+            if (doc == null || string.IsNullOrEmpty(missionFile)) return list;
+            object rowsRaw;
+            if (!doc.TryGetValue("rows", out rowsRaw)) return list;
+            var rows = rowsRaw as List<object>;
+            if (rows == null) return list;
+            foreach (var raw in rows)
+            {
+                var row = raw as Dictionary<string, object>;
+                if (row == null) continue;                        // junk row: absent
+                var file = Json.AsStr(Get(row, "mission")) ?? "";
+                if (!string.Equals(file, missionFile, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                var entries = Get(row, "entries") as List<object>;
+                if (entries == null) continue;
+                foreach (var eraw in entries)
+                {
+                    var e = eraw as Dictionary<string, object>;
+                    if (e == null) continue;
+                    var guid = (Json.AsStr(Get(e, "guid")) ?? "").Trim();
+                    var sec = (Json.AsStr(Get(e, "section")) ?? "").Trim();
+                    if (guid.Length == 0 || sec.Length == 0) continue;   // fail-closed
+                    list.Add(new HeroEntry
+                    {
+                        Guid = guid,
+                        SectionGuid = sec,
+                        Name = Json.AsStr(Get(e, "name")) ?? "",
+                    });
+                }
+            }
+            return list;
+        }
+
+        static object Get(Dictionary<string, object> d, string key)
+        {
+            object v;
+            return d.TryGetValue(key, out v) ? v : null;
+        }
+
         static double DistSq(DeployCandidate c, DeployAnchor a)
         {
             double dx = c.X - a.X, dy = c.Y - a.Y;
@@ -206,6 +268,26 @@ namespace TacticalAI.Core
             return best;
         }
 
+        // M14e friend-leash helper: -1 when c is own-section and best is
+        // not, +1 vice versa, 0 when both or neither (or no leash data -
+        // then the legacy seed chain decides, bit-identical pre-M14e).
+        static int OwnSectionCompare(string cSec, string bestSec, IList<string> ownSections)
+        {
+            if (ownSections == null || ownSections.Count == 0) return 0;
+            bool cOwn = OwnSectionHit(cSec, ownSections);
+            bool bOwn = OwnSectionHit(bestSec, ownSections);
+            if (cOwn == bOwn) return 0;
+            return cOwn ? -1 : 1;
+        }
+
+        static bool OwnSectionHit(string sec, IList<string> ownSections)
+        {
+            if (string.IsNullOrEmpty(sec)) return false;
+            for (int i = 0; i < ownSections.Count; i++)
+                if (SameGuid(sec, ownSections[i])) return true;
+            return false;
+        }
+
         /// <summary>Ranked choice over non-empty candidates. Ordering law
         /// (fixplan C2): (a) DP in an anchor section beats every DP outside;
         /// (b) inside one and the same section, the smaller distance to
@@ -222,10 +304,21 @@ namespace TacticalAI.Core
         /// deterministic even though the cross-section fallback (different
         /// anchor sections never compare distances) makes the pairwise
         /// relation non-transitive; the caller passes the app's DP list,
-        /// whose order is the map-entity order.</summary>
+        /// whose order is the map-entity order.
+        /// M14e FRIEND LEASH (Thomas 07.11, CONCEPT_standort_ledger_v2 C4):
+        /// ownSections = the sections carrying the group's OWN located
+        /// friendly figures (entry-DP sections from the deploy ledger). It
+        /// rides ONLY INSIDE the existing tie - anchor tier and intra-
+        /// section distance keep absolute Primat (the leash can never pull
+        /// a DP across sections or away from an anchor); when the anchor
+        /// law says equal, the section that already holds friendlies wins
+        /// (concentration instead of splitting the landing), then the
+        /// legacy seed chain decides as before. null/empty => bit-identical
+        /// pre-M14e behaviour (canon vectors unchanged).</summary>
         public static DeployChoice Choose(IList<DeployCandidate> cands,
                                           IList<DeployAnchor> anchors,
-                                          ulong sessionSeed, int round)
+                                          ulong sessionSeed, int round,
+                                          IList<string> ownSections = null)
         {
             if (cands == null || cands.Count == 0) return null;
             if (anchors == null) anchors = new DeployAnchor[0];
@@ -257,15 +350,22 @@ namespace TacticalAI.Core
                 else cmp = 0;    // different sections: world distance worthless
                 if (cmp == 0)
                 {
-                    ulong bestKey = TieKey(best.Candidate.Name, sessionSeed, round);
-                    if (key != bestKey) cmp = key < bestKey ? -1 : 1;
+                    // M14e friend leash: inside the anchor-law tie, the
+                    // own-section candidate wins before the seed chain.
+                    int ownCmp = OwnSectionCompare(c.SectionGuid, best.Candidate.SectionGuid, ownSections);
+                    if (ownCmp != 0) cmp = ownCmp;
                     else
                     {
-                        cmp = string.Compare(c.Name ?? "", best.Candidate.Name ?? "",
-                                             StringComparison.Ordinal);
-                        if (cmp == 0)
-                            cmp = string.Compare(c.Guid ?? "", best.Candidate.Guid ?? "",
+                        ulong bestKey = TieKey(best.Candidate.Name, sessionSeed, round);
+                        if (key != bestKey) cmp = key < bestKey ? -1 : 1;
+                        else
+                        {
+                            cmp = string.Compare(c.Name ?? "", best.Candidate.Name ?? "",
                                                  StringComparison.Ordinal);
+                            if (cmp == 0)
+                                cmp = string.Compare(c.Guid ?? "", best.Candidate.Guid ?? "",
+                                                     StringComparison.Ordinal);
+                        }
                     }
                 }
                 if (cmp < 0)

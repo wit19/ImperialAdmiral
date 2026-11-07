@@ -33,6 +33,12 @@ namespace TacticalAI
         // tools/dp_anchor_mine.py. Same plain-text public data law as the
         // two tables above; the reader is DeploymentAnchors.RowsForMission.
         const string DP_ANCHOR_PATH = "Data/taktische_mission_critical";
+        // M14e (CONCEPT_standort_ledger_v2): the hero-entry table mined by
+        // tools/hero_entry_mine.py from the shipped EN mission JSONs (the
+        // text law must never run on live text - the language overlay
+        // rewrites entity text per locale). Reader is
+        // DeploymentAnchors.HeroEntriesForMission.
+        const string HERO_ENTRY_PATH = "Data/taktische_hero_entries";
         const string CAMPAIGN_ITEMS_PATH = "Languages/En/CampaignData/items";
         const string CAMPAIGN_SKILLS_PATH = "Languages/En/CampaignData/skills";
 
@@ -51,6 +57,8 @@ namespace TacticalAI
         static bool _missionCriticalFailed;
         static object _dpAnchorRoot;
         static bool _dpAnchorFailed;
+        static object _heroEntryRoot;
+        static bool _heroEntryFailed;
         static object _campaignItemsRoot;
         static object _campaignSkillsRoot;
         static bool _lethalityFailed, _heroProfilesFailed,
@@ -201,6 +209,21 @@ namespace TacticalAI
                 if (_dpAnchorRoot == null && !_dpAnchorFailed)
                     _dpAnchorRoot = LoadJson(DP_ANCHOR_PATH, ref _dpAnchorFailed);
                 return _dpAnchorRoot;
+            }
+        }
+
+        /// <summary>M14e (Thomas 07.11): tacai.hero_entry/1 - the hero-entry
+        /// table (blue deploy fields mined by tools/hero_entry_mine.py).
+        /// Raw doc on purpose - DeploymentAnchors.HeroEntriesForMission is
+        /// the ONLY reader; missing/unparsable => null => no hero entries =>
+        /// every hero consumer stays inert (data-exists law).</summary>
+        public static object HeroEntryTableRoot
+        {
+            get
+            {
+                if (_heroEntryRoot == null && !_heroEntryFailed)
+                    _heroEntryRoot = LoadJson(HERO_ENTRY_PATH, ref _heroEntryFailed);
+                return _heroEntryRoot;
             }
         }
 

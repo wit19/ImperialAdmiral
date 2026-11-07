@@ -382,17 +382,34 @@ language-neutral, no names (the M14b trait-filter law holds for the whole DP pat
 At decision time `TacticalAIBridge.MissionDpAnchors()` resolves each row by GUID
 against the LIVE map entities — live position and live section owner are the truth,
 a row the live map does not carry drops (data-exists, never an invented anchor).
-Ranking is a sequential total order: (a) DP section == anchor section first; (b)
-distance to the nearest live anchor INSIDE that section (world distance across
-section borders is never compared — foreign DPs rank behind every (a) candidate);
-(c) every remaining tie falls onto the PRE-EXISTING seed chain
-(sessionSeed^round → name → GUID). An empty anchor list keeps the legacy chooser
-line bit-identical (harness pin `dp_anchors.json` D1); the winning anchor is logged
-(`[deterministic, anchor=<entity-GUID>/<section-GUID> dist=<n>]`). Fairness: the
-mission objective's position is public mission knowledge — the human knows it from
-the mission brief, so anchoring spawns near it adds no hidden information. The
-printed optional-deployment rule is honored for eligible cards. Deployment remains
-public: the human could have made the same choice with the same information.
+**P33-H4 (Thomas 08.11) extends the anchor set with the DYNAMIC ANKER-LAW**: every
+map section the mission activated per MapManagement event (the feed's
+`SectionActivated` fact without the resync baseline) anchors its WHOLE section
+while it is still live (`TileManager.IsMapSectionActive`, the same phase law as the
+mined rows); such a section anchor claims the tier but no position — coordinates of
+candidates inside it never leak into the ranking. The choice is now the ranked
+**DP-Score** (`Core.DeploymentAnchors.ChooseScored`, one stage ladder, decided
+sequentially): (a) DP section == anchor section first; (b) distance to the nearest
+live anchor INSIDE that section (world distance across section borders is still
+never compared); (c) battle-zone distance — `SectionGraph` hop lower bound from the
+DP's section toward the Kampfzone (anchor sections + the S-D threat/contest/ring
+zones; a recorded route beats no recorded route, absence is never a penalty); (d)
+the friend leash as a **Vollrecht** (own group's section wins after all spatial
+stages — concentration instead of splitting the landing); (e) DP-DIVERSITAET — a
+point the deploy ledger already recorded loses to an unused one (the Green-1 cluster
+of Player-33 §3; inert when every point is used); (f) every remaining tie falls onto
+the PRE-EXISTING seed chain (sessionSeed^round → name → GUID). With NO fact at all
+(no anchor, no zone, no ledger data) the legacy chooser line runs bit-identical
+(harness pin `dp_anchors.json` D1, live law gate `DpScoreGate`, vectors
+`dp_score.json`). Each choice logs one language-neutral line naming every
+candidate's score parts
+(`[dp-score tier=… anchor=<GUID>|<section-GUID>[/dyn] dist=<n> zone=<n>|— leash=0/1
+fresh=0/1 all=<rows>]`). Fairness: section activations, objectives, ledger points
+and zone beliefs are all public mission knowledge — the human knows them from the
+mission brief and the board, so anchoring spawns near them adds no hidden
+information. The printed optional-deployment rule is honored for eligible cards.
+Deployment remains public: the human could have made the same choice with the same
+information.
 
 ## 12. Integration hooks (the complete touch list)
 
@@ -721,10 +738,11 @@ information only:
 ### Posture and patterns (the "posture" half of the wiki line)
 
 Two posture vocabularies coexist **by design** and answer different questions.
-The **doctrine posture** (`hunt`/`defend`, Debug line `doctrines posture=…`) is
+The **doctrine posture** (`hunt`/`defend`, Debug lines `doctrines planPosture=…`
+and `patternRoll … planPosture=…`) is
 the structural mission state behind `ClassifyPattern`'s dice rows and the guard
 band (the "Punkt-2" phase rule); it has no word for stall. The **planner
-posture** (`eliminate`/`stall`/`protect`/`deny`, Debug line `posture=… round=N`)
+posture** (`eliminate`/`stall`/`protect`/`deny`, Debug line `feedPosture=… round=N`)
 is the round stance derived from the public feed and drives formation, focus
 measure and clamps. An escort/infiltration mission legitimately prints `hunt`
 and `stall` side by side in the same round — different layers, not a

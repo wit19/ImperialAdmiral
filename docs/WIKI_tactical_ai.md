@@ -532,10 +532,11 @@ Reading the table (full mechanics in `MECHANICS_tactical_ai.md` §6):
 
 Two honest notes from the shipped code:
 
-- **Two posture words, two layers (both public):** the doctrine dice layer runs on
-  a structural *hunt/defend* state (logged as `doctrines posture=…` in Debug),
+- **Two posture words, two layers (both public, both renamed P33-H4 so the log
+  never shows one word with two meanings):** the doctrine dice layer runs on
+  a structural *hunt/defend* state (logged as `doctrines planPosture=…` in Debug),
   the planner layer on a per-round *eliminate / stall /
-  protect / deny* stance derived from the feed (logged as `posture=… round=N`). A
+  protect / deny* stance derived from the feed (logged as `feedPosture=… round=N`). A
   escort/infiltration mission can therefore honestly show `hunt` on one line and
   `stall` on the other — same mission, different layers, no contradiction.
 - The **ambusher** is implemented (tree + planner weights) but currently unassigned:

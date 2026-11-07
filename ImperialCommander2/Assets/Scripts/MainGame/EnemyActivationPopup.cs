@@ -81,7 +81,7 @@ public class EnemyActivationPopup : MonoBehaviour
 		//handle wound tracker
 		//reset wound tracker
 		if ( hpTrackerContainer != null )
-			hpTrackerContainer.ResetTracker( cd );
+			hpTrackerContainer.ResetTracker( cd, "ShowSaga" );
 
 		//check for name override
 		modifierBox.SetActive( false );

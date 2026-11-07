@@ -1,0 +1,275 @@
+{
+ "_comment": [
+  "P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3, findings_Player-33 §3).",
+  "DP-Score stage ladder over (Karte, DP): anchor tier (mined live or dynamic",
+  "section anchor with hasPosition=false) -> intra-section distance -> battle-",
+  "zone SectionGraph hop distance (claim beats no claim; '-' = no recorded",
+  "route = NO claim, never 'far') -> friend leash (Vollrecht) -> DP diversity",
+  "-> legacy seed chain. RELATION vectors are hand-pilled; absolute winners",
+  "whose tie falls to the SEED CHAIN (dyn green-vs-green, all-used) were",
+  "produced by --record once and reviewed. null_law pins: with NO fact at all",
+  "the scored path lands bit-identically on the legacy XOR OrderBy line.",
+  "Rows are DpRow.Dump() in candidate input order."
+ ],
+ "score_cases": [
+  {
+   "name": "player33_fluchtzone_dyn_anchor",
+   "_why": "Player-33 §3 reproduction: mined anchor died by the M14d phase law (absent here), the mission ACTIVATED the flight zone (dynamic section anchor), own groups sit at the start. Choice must land on a Green DP in the activated zone - never the Red cluster.",
+   "seed": 403079, "round": 4,
+   "sections": ["SEC-START", "SEC-FLUCHT", "SEC-CONTAIN"],
+   "edges": [["SEC-START", "SEC-FLUCHT"], ["SEC-START", "SEC-CONTAIN"]],
+   "anchors": [{ "guid": "SEC-FLUCHT", "section": "SEC-FLUCHT", "x": 0, "y": 0, "hasPosition": false }],
+   "zones": ["SEC-FLUCHT", "SEC-START"],
+   "own": ["SEC-START"],
+   "cands": [
+    { "guid": "dp-green-1", "name": "Green 1", "section": "SEC-FLUCHT", "x": 0, "y": 0 },
+    { "guid": "dp-green-2", "name": "Green 2", "section": "SEC-FLUCHT", "x": 3, "y": 4 },
+    { "guid": "dp-red", "name": "Red", "section": "SEC-CONTAIN", "x": 10, "y": 10 }
+   ],
+   "expect": {
+    "_review": "winner from dp_score_record.json (record-reviewed 08.11): the two Green DPs tie by law (tier 0, sec-anchor, zone 0) and the legacy seed chain breaks the tie deterministically.",
+    "winner": "dp-green-1",
+    "winner_in": ["dp-green-1", "dp-green-2"],
+    "winner_not": "dp-red",
+    "anchor": "SEC-FLUCHT",
+    "dyn_anchor": true,
+    "rows": [
+     "Green 1|tier=0|anchor=sec|zone=0|own=0|fresh=1",
+     "Green 2|tier=0|anchor=sec|zone=0|own=0|fresh=1",
+     "Red|tier=1|anchor=-|zone=1|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "dyn_anchor_position_preserved",
+   "_why": "Section carries BOTH a dynamic section anchor and a positioned anchor: the positioned anchor keeps the intra-section precision (measured first); the whole-section claim never erases real coordinates.",
+   "seed": 9001, "round": 2,
+   "anchors": [
+    { "guid": "SEC-FLUCHT", "section": "SEC-FLUCHT", "x": 0, "y": 0, "hasPosition": false },
+    { "guid": "a-pos", "section": "SEC-FLUCHT", "x": 0, "y": 0 }
+   ],
+   "cands": [
+    { "guid": "dp-a", "name": "DP A", "section": "SEC-FLUCHT", "x": 3, "y": 4 },
+    { "guid": "dp-b", "name": "DP B", "section": "SEC-FLUCHT", "x": 0, "y": 1 }
+   ],
+   "expect": {
+    "winner": "dp-b",
+    "anchor": "a-pos",
+    "dyn_anchor": false,
+    "rows": [
+     "DP A|tier=0|anchor=5|zone=-|own=0|fresh=1",
+     "DP B|tier=0|anchor=1|zone=-|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "dyn_anchor_no_position_leak",
+   "_why": "Section-only anchor: candidate COORDINATES must not leak into the tier - both rows read anchor=sec although the DPs sit 9 units apart. Green tie falls to the seed chain (recorded winner).",
+   "seed": 777, "round": 3,
+   "anchors": [
+    { "guid": "SEC-FLUCHT", "section": "SEC-FLUCHT", "x": 0, "y": 0, "hasPosition": false }
+   ],
+   "cands": [
+    { "guid": "dp-a", "name": "DP A", "section": "SEC-FLUCHT", "x": 0, "y": 0 },
+    { "guid": "dp-b", "name": "DP B", "section": "SEC-FLUCHT", "x": 9, "y": 0 }
+   ],
+   "expect": {
+    "_review": "winner record-reviewed 08.11 (pure seed chain over the sec-anchor tie).",
+    "winner": "dp-b",
+    "winner_in": ["dp-a", "dp-b"],
+    "anchor": "SEC-FLUCHT",
+    "dyn_anchor": true,
+    "rows": [
+     "DP A|tier=0|anchor=sec|zone=-|own=0|fresh=1",
+     "DP B|tier=0|anchor=sec|zone=-|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "zone_claim_beats_none",
+   "_why": "Stage 3, Loch-Gesetz: a recorded route (zone=1) beats no recorded route (zone=-). Absence of knowledge is no claim and no penalty: the claimless DP simply cannot win this stage.",
+   "seed": 1, "round": 1,
+   "sections": ["SEC-A", "SEC-B", "SEC-ORPH"],
+   "edges": [["SEC-A", "SEC-B"]],
+   "zones": ["SEC-A"],
+   "cands": [
+    { "guid": "dp-near", "name": "DP Near", "section": "SEC-B", "x": 0, "y": 0 },
+    { "guid": "dp-loner", "name": "DP Loner", "section": "SEC-ORPH", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-near",
+    "anchor": "",
+    "rows": [
+     "DP Near|tier=1|anchor=-|zone=1|own=0|fresh=1",
+     "DP Loner|tier=1|anchor=-|zone=-|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "zone_farness_ranked",
+   "_why": "Stage 3 among known distances: nearest battle-zone hop wins (a DP INSIDE the zone section reads zone=0).",
+   "seed": 2, "round": 1,
+   "sections": ["SEC-1", "SEC-2", "SEC-3"],
+   "edges": [["SEC-1", "SEC-2"], ["SEC-2", "SEC-3"]],
+   "zones": ["SEC-3"],
+   "cands": [
+    { "guid": "dp-3", "name": "DP Three", "section": "SEC-3", "x": 0, "y": 0 },
+    { "guid": "dp-1", "name": "DP One", "section": "SEC-1", "x": 0, "y": 0 },
+    { "guid": "dp-2", "name": "DP Two", "section": "SEC-2", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-3",
+    "rows": [
+     "DP Three|tier=1|anchor=-|zone=0|own=0|fresh=1",
+     "DP One|tier=1|anchor=-|zone=2|own=0|fresh=1",
+     "DP Two|tier=1|anchor=-|zone=1|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "zone_equal_leash_decides",
+   "_why": "Equal zone distance -> stage 4: the friendly leash as Vollrecht (no anchor needed anymore - this is the P33-H4 upgrade over the M14e tie-only law).",
+   "seed": 3, "round": 1,
+   "sections": ["SEC-A", "SEC-B", "SEC-C"],
+   "edges": [["SEC-A", "SEC-B"], ["SEC-A", "SEC-C"]],
+   "zones": ["SEC-A"],
+   "own": ["SEC-B"],
+   "cands": [
+    { "guid": "dp-own", "name": "DP Own", "section": "SEC-B", "x": 0, "y": 0 },
+    { "guid": "dp-stranger", "name": "DP Stranger", "section": "SEC-C", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-own",
+    "rows": [
+     "DP Own|tier=1|anchor=-|zone=1|own=1|fresh=1",
+     "DP Stranger|tier=1|anchor=-|zone=1|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "zone_beats_leash",
+   "_why": "The leash can never out-rank a spatial claim: stage 3 decides BEFORE stage 4 (canon M14e law preserved: leash is last-but-two, never first).",
+   "seed": 4, "round": 1,
+   "sections": ["SEC-A", "SEC-B"],
+   "edges": [["SEC-A", "SEC-B"]],
+   "zones": ["SEC-A"],
+   "own": ["SEC-B"],
+   "cands": [
+    { "guid": "dp-closer", "name": "DP Closer", "section": "SEC-A", "x": 0, "y": 0 },
+    { "guid": "dp-own", "name": "DP Own", "section": "SEC-B", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-closer",
+    "rows": [
+     "DP Closer|tier=1|anchor=-|zone=0|own=0|fresh=1",
+     "DP Own|tier=1|anchor=-|zone=1|own=1|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "diversity_beats_seed",
+   "_why": "Stage 5: DP-DIVERSITAET - an unused point beats the seed chain (Green-1-Klumpen law); it never overrules a spatial or leash claim (see next case).",
+   "seed": 5, "round": 2,
+   "used": ["dp-stale"],
+   "cands": [
+    { "guid": "dp-stale", "name": "DP Stale", "section": "SEC-1", "x": 0, "y": 0 },
+    { "guid": "dp-fresh", "name": "DP Fresh", "section": "SEC-2", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-fresh",
+    "rows": [
+     "DP Stale|tier=1|anchor=-|zone=-|own=0|fresh=0",
+     "DP Fresh|tier=1|anchor=-|zone=-|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "leash_beats_fresh",
+   "_why": "Stage order proof: leash (4) decides BEFORE diversity (5) - concentration at the friendly section wins over a fresh point elsewhere.",
+   "seed": 6, "round": 2,
+   "own": ["SEC-1"],
+   "used": ["dp-stale-own"],
+   "cands": [
+    { "guid": "dp-stale-own", "name": "DP Stale Own", "section": "SEC-1", "x": 0, "y": 0 },
+    { "guid": "dp-fresh-stranger", "name": "DP Fresh Stranger", "section": "SEC-2", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-stale-own",
+    "rows": [
+     "DP Stale Own|tier=1|anchor=-|zone=-|own=1|fresh=0",
+     "DP Fresh Stranger|tier=1|anchor=-|zone=-|own=0|fresh=1"
+    ]
+   }
+  },
+  {
+   "name": "all_used_diversity_inert",
+   "_why": "Diversity never walls the choice: when EVERY point is recorded as used, all candidates are stale, the stage is inert and the legacy seed chain decides (recorded winner).",
+   "seed": 7, "round": 2,
+   "used": ["dp-x", "dp-y"],
+   "cands": [
+    { "guid": "dp-x", "name": "DP X", "section": "SEC-1", "x": 0, "y": 0 },
+    { "guid": "dp-y", "name": "DP Y", "section": "SEC-2", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "_review": "winner record-reviewed 08.11 (pure seed chain; the diversity stage is inert when nothing is fresh).",
+    "winner": "dp-y",
+    "winner_in": ["dp-x", "dp-y"],
+    "rows": [
+     "DP X|tier=1|anchor=-|zone=-|own=0|fresh=0",
+     "DP Y|tier=1|anchor=-|zone=-|own=0|fresh=0"
+    ]
+   }
+  },
+  {
+   "name": "tier_beats_zone_claim",
+   "_why": "Anker tier keeps absolute Primat (canon law): a DP in the anchor section wins over a battle-zone-nearer DP outside it, even with a bigger measured hop distance.",
+   "seed": 8, "round": 1,
+   "sections": ["SEC-FAR", "SEC-MID", "SEC-Z"],
+   "edges": [["SEC-FAR", "SEC-MID"], ["SEC-MID", "SEC-Z"]],
+   "anchors": [
+    { "guid": "a-far", "section": "SEC-FAR", "x": 0, "y": 0 }
+   ],
+   "zones": ["SEC-Z"],
+   "cands": [
+    { "guid": "dp-far", "name": "DP Far", "section": "SEC-FAR", "x": 3, "y": 4 },
+    { "guid": "dp-mid", "name": "DP Mid", "section": "SEC-MID", "x": 0, "y": 0 }
+   ],
+   "expect": {
+    "winner": "dp-far",
+    "anchor": "a-far",
+    "rows": [
+     "DP Far|tier=0|anchor=5|zone=2|own=0|fresh=1",
+     "DP Mid|tier=1|anchor=-|zone=1|own=0|fresh=1"
+    ]
+   }
+  }
+ ],
+ "null_law": [
+  {
+   "name": "hoth12_r4_no_facts",
+   "seed": 403079, "round": 4,
+   "cands": [
+    { "guid": "dp-green-1", "name": "Green 1", "section": "SEC-G", "x": 0, "y": 0 },
+    { "guid": "dp-green-2", "name": "Green 2", "section": "SEC-G", "x": 5, "y": 5 },
+    { "guid": "dp-red", "name": "Red", "section": "SEC-R", "x": 10, "y": 10 },
+    { "guid": "dp-blue-1", "name": "Blue 1", "section": "SEC-B", "x": 2, "y": 2 }
+   ]
+  },
+  {
+   "name": "plain_names",
+   "seed": 1337, "round": 1,
+   "cands": [
+    { "guid": "dp-alpha", "name": "DP Alpha", "section": "SEC-1", "x": 0, "y": 0 },
+    { "guid": "dp-beta", "name": "DP Beta", "section": "SEC-2", "x": 0, "y": 0 },
+    { "guid": "dp-gamma", "name": "DP Gamma", "section": "SEC-3", "x": 0, "y": 0 }
+   ]
+  },
+  {
+   "name": "single_candidate",
+   "seed": 99, "round": 5,
+   "cands": [
+    { "guid": "dp-only", "name": "DP Only", "section": "SEC-1", "x": 0, "y": 0 }
+   ]
+  }
+ ]
+}

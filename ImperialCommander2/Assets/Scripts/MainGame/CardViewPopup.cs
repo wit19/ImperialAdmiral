@@ -26,7 +26,7 @@ public class CardViewPopup : MonoBehaviour
 		//sync the damage wheels to THIS card - without this the wheels still
 		//hold the last card's numbers and OnOK would commit them onto the
 		//wrong card (Player-31 forensic: stale tracker cross-contamination)
-		trackerContainer?.ResetTracker( cd );
+		trackerContainer?.ResetTracker( cd, "CardView.Show" );
 		callback = action;
 
 		gameObject.SetActive( true );

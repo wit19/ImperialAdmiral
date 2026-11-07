@@ -38,6 +38,18 @@ namespace TacticalAI.Core
         public string SectionGuid;
         public double X;
         public double Y;
+
+        /// <summary>P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 1,
+        /// the DYNAMIC ANKER-LAW): a section-activated anchor (feed fact
+        /// "MapManagement activated this section, and it is STILL live")
+        /// claims its WHOLE section - it has no entity and therefore NO
+        /// position claim. HasPosition=false joins the tier law (a DP in that
+        /// section is tier 0) but never contributes a distance: candidates in
+        /// the section tie at this stage and the next law stage decides.
+        /// A section that also carries positioned anchors keeps its
+        /// positional precision (positioned anchors are measured first; a
+        /// section-only anchor is the fallback claim only).</summary>
+        public bool HasPosition = true;
     }
 
     /// <summary>One already-filtered DP candidate. Name participates ONLY
@@ -62,6 +74,47 @@ namespace TacticalAI.Core
         public DeployCandidate Candidate;
         public DeployAnchor Anchor;
         public double Dist;
+
+        /// <summary>P33-H4: the winner's scored facts (tier/zone/leash/diversity
+        /// parts) for the EXPLAIN line and the vectors; null only when the
+        /// caller used a path that does not score (never today).</summary>
+        public DpRow Score;
+    }
+
+    /// <summary>P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3):
+    /// one scored DP candidate - every public fact the ranked choice reads,
+    /// kept SEPARATE so the explain line can name the Score-Bestandteile and
+    /// the vectors can pin each stage without exposing the seed chain.
+    /// Dump format (harness row pin, input order):
+    /// "name|tier=N|anchor=(d | sec | -)|zone=(n | -)|own=0/1|fresh=0/1" -
+    /// "sec" = a section-only dynamic anchor claimed the section without a
+    /// position fact; "-" under zone = the recorded graph has no route to any
+    /// battle-zone section (NO claim, never "far").</summary>
+    public sealed class DpRow
+    {
+        public DeployCandidate Candidate;
+        public int Tier = 1;                 // 0 = DP sits in an anchor section
+        public bool HasAnchor;
+        public int AnchorIndex = -1;         // index into the anchor list
+        public double SecDistSq = double.PositiveInfinity; // intra-section, section-only => 0
+        public double AnchorDist = double.NaN;             // shown distance; NaN = section-only claim
+        public bool ZoneKnown;
+        public int ZoneDist = int.MaxValue;  // graph hops to the nearest battle zone
+        public bool Own;                     // friendly-leash fact (own group's section)
+        public bool Fresh = true;            // DP not used by the deploy ledger
+        public ulong Seed;                   // legacy tie key (last resort)
+
+        public string Dump()
+        {
+            var ci = System.Globalization.CultureInfo.InvariantCulture;
+            return (Candidate != null ? Candidate.Name : "?")
+                + "|tier=" + Tier
+                + "|anchor=" + (!HasAnchor ? "-"
+                    : (double.IsNaN(AnchorDist) ? "sec" : AnchorDist.ToString("0.##", ci)))
+                + "|zone=" + (ZoneKnown ? ZoneDist.ToString(ci) : "-")
+                + "|own=" + (Own ? "1" : "0")
+                + "|fresh=" + (Fresh ? "1" : "0");
+        }
     }
 
     /// <summary>M14e: one hero-entry field of the mined hero-entry table -
@@ -230,14 +283,29 @@ namespace TacticalAI.Core
         // Nearest anchor in the candidate's OWN section; -1 when that
         // section carries no anchor. Tie between equal-distance anchors ->
         // lower entity GUID (Ordinal), so the log line stays deterministic.
+        // P33-H4: POSITIONED anchors are measured first (unchanged law); a
+        // section-only anchor (HasPosition=false, the dynamic ANKER-LAW)
+        // never enters the distance measurement - it is the fallback claim
+        // when the section carries no positioned anchor, reported at
+        // distance 0 so every candidate in the section ties at this stage
+        // (a whole-section claim has no positional fact to prefer).
         static int SectionAnchorIndex(DeployCandidate c, IList<DeployAnchor> anchors, out double distSq)
         {
             int best = -1;
             distSq = double.PositiveInfinity;
+            int secOnly = -1;
             for (int i = 0; i < anchors.Count; i++)
             {
                 var a = anchors[i];
                 if (a == null || !SameGuid(a.SectionGuid, c.SectionGuid)) continue;
+                if (!a.HasPosition)
+                {
+                    if (secOnly < 0 ||
+                        string.Compare(a.EntityGuid ?? "", anchors[secOnly].EntityGuid ?? "",
+                                       StringComparison.Ordinal) < 0)
+                        secOnly = i;
+                    continue;
+                }
                 double d = DistSq(c, a);
                 if (d < distSq - 1e-9 ||
                     (Math.Abs(d - distSq) <= 1e-9 && best >= 0 &&
@@ -245,11 +313,15 @@ namespace TacticalAI.Core
                                     StringComparison.Ordinal) < 0))
                 { distSq = d; best = i; }
             }
+            if (best < 0 && secOnly >= 0) { best = secOnly; distSq = 0.0; }
             return best;
         }
 
         // Nearest anchor anywhere (log diagnostics for a section-foreign
-        // winner; never an ordering input across sections).
+        // winner; never an ordering input across sections). P33-H4: only
+        // POSITIONED anchors are measurable - a section-only dynamic anchor
+        // has no coordinates, so it never shows up as a "nearest anchor"
+        // for a foreign winner (its claim is a tier, printed by the row).
         static int NearestAnyIndex(DeployCandidate c, IList<DeployAnchor> anchors, out double distSq)
         {
             int best = -1;
@@ -257,7 +329,7 @@ namespace TacticalAI.Core
             for (int i = 0; i < anchors.Count; i++)
             {
                 var a = anchors[i];
-                if (a == null) continue;
+                if (a == null || !a.HasPosition) continue;
                 double d = DistSq(c, a);
                 if (d < distSq - 1e-9 ||
                     (Math.Abs(d - distSq) <= 1e-9 && best >= 0 &&
@@ -282,13 +354,13 @@ namespace TacticalAI.Core
 
         static bool OwnSectionHit(string sec, IList<string> ownSections)
         {
-            if (string.IsNullOrEmpty(sec)) return false;
+            if (string.IsNullOrEmpty(sec) || ownSections == null) return false;
             for (int i = 0; i < ownSections.Count; i++)
                 if (SameGuid(sec, ownSections[i])) return true;
             return false;
         }
 
-        /// <summary>Ranked choice over non-empty candidates. Ordering law
+                /// <summary>Ranked choice over non-empty candidates. Ordering law
         /// (fixplan C2): (a) DP in an anchor section beats every DP outside;
         /// (b) inside one and the same section, the smaller distance to
         /// that section's anchors wins - distances are NEVER compared
@@ -307,84 +379,181 @@ namespace TacticalAI.Core
         /// whose order is the map-entity order.
         /// M14e FRIEND LEASH (Thomas 07.11, CONCEPT_standort_ledger_v2 C4):
         /// ownSections = the sections carrying the group's OWN located
-        /// friendly figures (entry-DP sections from the deploy ledger). It
-        /// rides ONLY INSIDE the existing tie - anchor tier and intra-
-        /// section distance keep absolute Primat (the leash can never pull
-        /// a DP across sections or away from an anchor); when the anchor
-        /// law says equal, the section that already holds friendlies wins
-        /// (concentration instead of splitting the landing), then the
-        /// legacy seed chain decides as before. null/empty => bit-identical
-        /// pre-M14e behaviour (canon vectors unchanged).</summary>
+        /// friendly figures (entry-DP sections from the deploy ledger).
+        /// P33-H4 EVOLUTION (Thomas 08.11): the leash is now a VOLLRECHT -
+        /// it decides after ALL spatial stages (tier, intra-section distance,
+        /// battle-zone graph distance) and before the DP-diversity tie and
+        /// the seed chain, so it can pull a candidate across sections when
+        /// the spatial facts say "equal". It can still never out-rank a
+        /// spatial claim. null/empty => bit-identical pre-M14e behaviour.
+        /// P33-H4 is bit-compatible on every pre-P33 input: with graph and
+        /// zoneSections null (no battle-zone fact) and usedDps null the
+        /// stage ladder collapses to exactly the pre-P33 Choose law - the
+        /// canon dp_anchors.json and deploy_ledger.json vectors pin that.</summary>
         public static DeployChoice Choose(IList<DeployCandidate> cands,
                                           IList<DeployAnchor> anchors,
                                           ulong sessionSeed, int round,
                                           IList<string> ownSections = null)
         {
+            List<DpRow> ignored;
+            return ChooseScored(cands, anchors, null, null,
+                                sessionSeed, round, ownSections, null, out ignored);
+        }
+
+        /// <summary>P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3):
+        /// the DP-Score over the (Karte, DP)-Paar - the full stage ladder,
+        /// each stage a total pre-order over the still-tied candidates,
+        /// decided SEQUENTIALLY (first differing stage wins):
+        ///   1. ANKER-TIER: a DP in an anchor section (mined live anchor or
+        ///      dynamic section anchor, see DeployAnchor.HasPosition) beats
+        ///      every section-foreign DP. Null-Law: no anchor, no tier.
+        ///   2. intra-section anchor distance (same section only, positioned
+        ///      anchors only - the pre-P33 law, unchanged).
+        ///   3. BATTLE-ZONE graph distance: DpRow.ZoneDist = the SectionGraph
+        ///      hop lower bound from the DP's section to the nearest
+        ///      Kampfzone section (anchor sections + focus/reaction zones the
+        ///      caller passes). This is the honest CROSS-SECTION distance the
+        ///      world coordinates could never offer (Loch-Gesetz: an
+        ///      unrecorded route is NO CLAIM, never "far" - a candidate with
+        ///      a recorded route beats a claimless one, two claimless ones
+        ///      stay tied). graph null / zones empty => stage inert.
+        ///   4. FRIEND LEASH (ownSections): now a Vollrecht (see Choose doc).
+        ///   5. DP-DIVERSITAET (usedDps = the deploy-ledger points + the
+        ///      points this mission's bridge picks already chose): an UNUSED
+        ///      DP beats a used one (letzte Welle nicht auf denselben Punkt),
+        ///      but only among candidates every earlier stage called equal -
+        ///      it never out-ranks a spatial or leash claim. All used => all
+        ///      tied => the law never walls the choice. null/empty => inert.
+        ///   6. the LEGACY seed chain TieKey -> Name -> Guid, bit-identical.
+        /// Determinism: no RNG anywhere; the same inputs yield the same pick.
+        /// rows: every scored candidate in CALLER ORDER for the EXPLAIN line
+        /// and the vectors (may be null when the caller needs no parts).</summary>
+        public static DeployChoice ChooseScored(IList<DeployCandidate> cands,
+                                                IList<DeployAnchor> anchors,
+                                                SectionGraph graph,
+                                                IList<string> zoneSections,
+                                                ulong sessionSeed, int round,
+                                                IList<string> ownSections,
+                                                IList<string> usedDps,
+                                                out List<DpRow> rows)
+        {
+            rows = null;
             if (cands == null || cands.Count == 0) return null;
             if (anchors == null) anchors = new DeployAnchor[0];
 
-            DeployChoice best = null;
-            int bestAnchorIdx = -1;
-            double bestSecDistSq = double.PositiveInfinity;   // cached per candidate below
+            var scored = new List<DpRow>();
             foreach (var c in cands)
             {
                 if (c == null) continue;
                 double secDistSq;
                 int aIdx = SectionAnchorIndex(c, anchors, out secDistSq);
-                int tier = aIdx < 0 ? 1 : 0;
-                ulong key = TieKey(c.Name, sessionSeed, round);
-
-                if (best == null)
-                { best = new DeployChoice { Candidate = c }; bestAnchorIdx = aIdx; bestSecDistSq = secDistSq; continue; }
-
-                int cmp;
-                int bestTier = bestAnchorIdx < 0 ? 1 : 0;
-                if (tier != bestTier) cmp = tier - bestTier;
-                else if (tier == 0 && SameGuid(c.SectionGuid, best.Candidate.SectionGuid))
+                var row = new DpRow
                 {
-                    // same section, both anchored: intra-section distance decides
-                    if (secDistSq < bestSecDistSq - 1e-9) cmp = -1;
-                    else if (secDistSq > bestSecDistSq + 1e-9) cmp = 1;
-                    else cmp = 0;
-                }
-                else cmp = 0;    // different sections: world distance worthless
-                if (cmp == 0)
-                {
-                    // M14e friend leash: inside the anchor-law tie, the
-                    // own-section candidate wins before the seed chain.
-                    int ownCmp = OwnSectionCompare(c.SectionGuid, best.Candidate.SectionGuid, ownSections);
-                    if (ownCmp != 0) cmp = ownCmp;
-                    else
-                    {
-                        ulong bestKey = TieKey(best.Candidate.Name, sessionSeed, round);
-                        if (key != bestKey) cmp = key < bestKey ? -1 : 1;
-                        else
-                        {
-                            cmp = string.Compare(c.Name ?? "", best.Candidate.Name ?? "",
-                                                 StringComparison.Ordinal);
-                            if (cmp == 0)
-                                cmp = string.Compare(c.Guid ?? "", best.Candidate.Guid ?? "",
-                                                     StringComparison.Ordinal);
-                        }
-                    }
-                }
-                if (cmp < 0)
-                { best = new DeployChoice { Candidate = c }; bestAnchorIdx = aIdx; bestSecDistSq = secDistSq; }
+                    Candidate = c,
+                    AnchorIndex = aIdx,
+                    SecDistSq = secDistSq,
+                    Tier = aIdx < 0 ? 1 : 0,
+                    HasAnchor = aIdx >= 0,
+                    AnchorDist = aIdx >= 0 && anchors[aIdx].HasPosition
+                                 ? Math.Sqrt(secDistSq) : double.NaN,
+                    Own = OwnSectionHit(c.SectionGuid, ownSections),
+                    Fresh = !UsedHit(c.Guid, usedDps),
+                    Seed = TieKey(c.Name, sessionSeed, round),
+                };
+                bool zk; int zd;
+                ZoneDistance(graph, zoneSections, c.SectionGuid, out zk, out zd);
+                row.ZoneKnown = zk; row.ZoneDist = zd;
+                scored.Add(row);
             }
-            if (best == null) return null;
+            if (scored.Count == 0) return null;
+            rows = scored;
 
-            if (bestAnchorIdx >= 0)
+            // RESOLUTION LAW (unchanged): sequential challenge against the
+            // current best IN CALLER ORDER.
+            DpRow best = scored[0];
+            for (int i = 1; i < scored.Count; i++)
+                if (CompareScored(scored[i], best, ownSections) < 0) best = scored[i];
+
+            var choice = new DeployChoice { Candidate = best.Candidate, Score = best };
+            if (best.AnchorIndex >= 0)
             {
-                best.Anchor = anchors[bestAnchorIdx];
-                best.Dist = Math.Sqrt(bestSecDistSq);
+                choice.Anchor = anchors[best.AnchorIndex];
+                choice.Dist = double.IsNaN(best.AnchorDist) ? 0.0 : best.AnchorDist;
             }
             else
             {
                 double anyDistSq;
                 int any = NearestAnyIndex(best.Candidate, anchors, out anyDistSq);
-                if (any >= 0) { best.Anchor = anchors[any]; best.Dist = Math.Sqrt(anyDistSq); }
+                if (any >= 0) { choice.Anchor = anchors[any]; choice.Dist = Math.Sqrt(anyDistSq); }
             }
-            return best;
+            return choice;
+        }
+
+        // The stage ladder as a pairwise comparator (sequential challenge,
+        // caller order - same determinism law as the pre-P33 Choose).
+        static int CompareScored(DpRow c, DpRow b, IList<string> ownSections)
+        {
+            if (c.Tier != b.Tier) return c.Tier - b.Tier;
+            if (c.Tier == 0 && SameGuid(c.Candidate.SectionGuid, b.Candidate.SectionGuid))
+            {
+                // same section, both anchored: intra-section distance decides
+                if (c.SecDistSq < b.SecDistSq - 1e-9) return -1;
+                if (c.SecDistSq > b.SecDistSq + 1e-9) return 1;
+            }
+            // stage 3: battle-zone hop distance - a claim beats no claim
+            // (facts only RAISE a candidate), smaller beats larger, equal or
+            // both claimless falls through.
+            if (c.ZoneKnown || b.ZoneKnown)
+            {
+                if (c.ZoneKnown != b.ZoneKnown) return c.ZoneKnown ? -1 : 1;
+                if (c.ZoneDist != b.ZoneDist) return c.ZoneDist < b.ZoneDist ? -1 : 1;
+            }
+            // stage 4: friend leash as Vollrecht (0 when both/neither/no data)
+            int ownCmp = OwnSectionCompare(c.Candidate.SectionGuid, b.Candidate.SectionGuid, ownSections);
+            if (ownCmp != 0) return ownCmp;
+            // stage 5: DP diversity - unused beats used (both fresh or both
+            // used, or no ledger data: inert, falls through).
+            if (c.Fresh != b.Fresh) return c.Fresh ? -1 : 1;
+            // stage 6: the legacy seed chain, bit-identical
+            if (c.Seed != b.Seed) return c.Seed < b.Seed ? -1 : 1;
+            int cmp = string.Compare(c.Candidate.Name ?? "", b.Candidate.Name ?? "",
+                                     StringComparison.Ordinal);
+            if (cmp != 0) return cmp;
+            return string.Compare(c.Candidate.Guid ?? "", b.Candidate.Guid ?? "",
+                                  StringComparison.Ordinal);
+        }
+
+        // Hop lower bound from ONE section to the nearest battle zone over
+        // the recorded graph. DistanceLowerBound's NoKnowledge (-1) means
+        // "no recorded route" - per the Loch-Gesetz that is NO CLAIM
+        // (known=false), never distance infinity-as-penalty: an unmeasured
+        // candidate is not pushed behind other unmeasured ones and not
+        // rewarded either; it simply cannot win this stage.
+        static void ZoneDistance(SectionGraph graph, IList<string> zones,
+                                 string section, out bool known, out int dist)
+        {
+            known = false; dist = int.MaxValue;
+            if (graph == null || zones == null || zones.Count == 0) return;
+            if (string.IsNullOrEmpty(section)) return;
+            for (int i = 0; i < zones.Count; i++)
+            {
+                var z = zones[i];
+                if (string.IsNullOrEmpty(z)) continue;
+                int d = graph.DistanceLowerBound(section, z);
+                if (d < 0) continue;                    // no recorded route: no claim
+                if (!known || d < dist) { known = true; dist = d; }
+            }
+        }
+
+        // DP-diversity helper: true when this DP entity is recorded as used
+        // (deploy ledger + this mission's bridge picks). Null-Law: no ledger
+        // data => nothing is "used", the stage is inert.
+        static bool UsedHit(string guid, IList<string> usedDps)
+        {
+            if (string.IsNullOrEmpty(guid) || usedDps == null) return false;
+            for (int i = 0; i < usedDps.Count; i++)
+                if (SameGuid(guid, usedDps[i])) return true;
+            return false;
         }
     }
 }

@@ -161,6 +161,9 @@ namespace TacticalAiHarness
             Run("section_support.json", SecSectionSupport);
             Run("dp_anchors.json", SecDpAnchors);
             Run("deploy_ledger.json", SecDeployLedger);
+            Run("hero_deploy_anchor.json", SecHeroDeployAnchor);
+            Run("tracker_bind.json", SecTrackerBind);
+            Run("dp_score.json", SecDpScore);
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

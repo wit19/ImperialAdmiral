@@ -107,6 +107,17 @@ namespace TacticalAI.Core
         private readonly Dictionary<string, List<string>> _heroEntrySet =
             new Dictionary<string, List<string>>(StringComparer.Ordinal);
 
+        // P33-H2 (findings_Player-33 §1, Thomas 08.11): WHICH law anchored the
+        // hero - "deploy-fakt" (the printed blue start/entry field) vs
+        // "fenster-fakt" (an observed interaction inside the window). Last
+        // write wins, mirroring the anchor itself; the explain trail and the
+        // deploy-only dump line read this instead of blanket-claiming
+        // fenster-fakt, which made a start-deploy anchor LOOK like a window
+        // observation (Player-33: all four start heroes invisible, Draylen's
+        // entry anchor mislabeled).
+        private readonly Dictionary<string, string> _heroInSectionRule =
+            new Dictionary<string, string>(StringComparer.Ordinal);
+
         // All attributed interaction facta (hero, entity, section, round) -
         // the Wachzone rail reads these; the vector ledger anchors on the
         // identical law (SectionSpace never re-derives attribution rules).
@@ -313,6 +324,7 @@ namespace TacticalAI.Core
                         {   // nothing anchored yet, or only our own entry
                             _heroInSection[hero] = sec;
                             _heroInSectionRound[hero] = e.Round;
+                            _heroInSectionRule[hero] = "deploy-fakt";
                         }
                     }
                     else
@@ -325,6 +337,7 @@ namespace TacticalAI.Core
                         {
                             _heroInSection.Remove(hero);
                             _heroInSectionRound.Remove(hero);
+                            _heroInSectionRule.Remove(hero);
                         }
                     }
                     break;
@@ -433,6 +446,9 @@ namespace TacticalAI.Core
                             var hero = kv.Key;
                             _heroInSection[hero] = sec;
                             _heroInSectionRound[hero] = e.Round;
+                            // P33-H2: an observation outranks an entry claim -
+                            // the rule label follows the last writer.
+                            _heroInSectionRule[hero] = "fenster-fakt";
                             var win = kv.Value;
                             if (win.Sections.Count == 0
                                 || !string.Equals(win.Sections[win.Sections.Count - 1], sec, StringComparison.Ordinal))
@@ -806,8 +822,17 @@ namespace TacticalAI.Core
             var heroKeys = new List<string>(_heroInSection.Keys);
             heroKeys.Sort(StringComparer.Ordinal);
             foreach (var h in heroKeys)
+            {
+                // P33-H2 (findings_Player-33 §1): the trail names the REAL
+                // anchoring law - deploy-fakt for the printed blue field,
+                // fenster-fakt for an observed window fact (the old
+                // blanket fenster-fakt mislabeled start anchors).
+                string hr;
+                if (!_heroInSectionRule.TryGetValue(h, out hr) || hr.Length == 0)
+                    hr = "fenster-fakt";
                 lines.Add("explain hero " + h + " section=" + JoinSec(_heroInSection[h]) +
-                          " round=" + _heroInSectionRound[h] + " rule=fenster-fakt");
+                          " round=" + _heroInSectionRound[h] + " rule=" + hr);
+            }
             foreach (var t in _transits)
                 lines.Add("explain transit hero=" + t.Hero + " door=" + t.Door +
                           " section=" + JoinSec(t.Section) +
@@ -859,8 +884,17 @@ namespace TacticalAI.Core
             var heroKeys = new List<string>(_heroInSection.Keys);
             heroKeys.Sort(StringComparer.Ordinal);
             foreach (var h in heroKeys)
+            {
                 sb.Append("hero ").Append(h).Append(" section=").Append(_heroInSection[h])
-                  .Append(" round=").Append(_heroInSectionRound[h]).Append('\n');
+                  .Append(" round=").Append(_heroInSectionRound[h]);
+                // P33-H2: the rule suffix rides ONLY the deploy-fakt case -
+                // every pre-P33 dump (window-anchored heroes) stays
+                // byte-identical, same emission law as the S-C transit lines.
+                string hr;
+                if (_heroInSectionRule.TryGetValue(h, out hr) && hr == "deploy-fakt")
+                    sb.Append(" rule=deploy-fakt");
+                sb.Append('\n');
+            }
             foreach (var f in _interactions)
                 sb.Append("interact ").Append(f.Hero).Append(' ').Append(f.Entity)
                   .Append(" section=").Append(f.Section).Append(" round=").Append(f.Round).Append('\n');
@@ -885,6 +919,9 @@ namespace TacticalAI.Core
             };
             foreach (var kv in _heroInSection) s._heroInSection[kv.Key] = kv.Value;
             foreach (var kv in _heroInSectionRound) s._heroInSectionRound[kv.Key] = kv.Value;
+            // P33-H2: the anchoring RULE rides the clone too - an
+            // incremental re-projection must keep naming the right law.
+            foreach (var kv in _heroInSectionRule) s._heroInSectionRule[kv.Key] = kv.Value;
             // M14e: the entry SET rides the clone too - an incremental
             // re-projection must still know a hero's entry field set when
             // deciding whether an anchor came from the entry or from an

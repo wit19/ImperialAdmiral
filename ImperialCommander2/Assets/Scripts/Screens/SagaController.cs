@@ -497,6 +497,15 @@ namespace Saga
 			//initialize map entities, handle random entity groups
 			mapEntityManager.ConfigureEntityGroups();
 			mapEntityManager.InstantiateEntities( DataStore.mission.mapEntities, false );
+			// P33-H2 (findings_Player-33 §1, Fix A): the hero start-deploy ran
+			// a few lines above, BEFORE these entities existed, so its
+			// hero-entry write was dropped by the data-exists check. With the
+			// live map now present, replay it: every initial hero that
+			// entered through the printed blue field gets its
+			// DeployLedger::<hero> <- <field> (hero-entry) row and the
+			// existing HeroDeployed feed rail fires from the first poll.
+			// Missions without a field stay fully inert (Null-Law).
+			dgManager.ReplayHeroEntryRecords();
 			//after tiles load, activate first section and process starting Event
 			StartCoroutine( "WaitForTilesLoaded" );
 		}
@@ -662,6 +671,13 @@ namespace Saga
 			ApplyTacticalMedPacPolicy();
 			//restore deployed enemies and heroes/allies
 			dgManager.RestoreState();
+
+			// P33-H2: entities (restored above) and heroes now exist - replay
+			// the hero-entry law for rows an OLD save never recorded (the
+			// start-deploy fix landed after the save). heroEntryDps rides the
+			// session save itself; pre-M14e saves carry none -> the replay is
+			// inert there (Null-Law), rows that exist are kept untouched.
+			dgManager.ReplayHeroEntryRecords();
 
 			// TACTICAL AI resume re-anchor (Noldorion PR #194 bug 2.11: after
 			// reopening the app the current round still showed the legacy

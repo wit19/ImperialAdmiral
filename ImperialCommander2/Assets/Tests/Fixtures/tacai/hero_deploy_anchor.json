@@ -1,0 +1,530 @@
+{
+  "comment": "P33-H2 hero start-anchor vectors (findings_Player-33 §1, Fix A, Thomas 08.11). The START deploy of the initial heroes carries no window and (pre-fix) no ledger row - these cases pin the anchor channel that must light up in round 1: reader guards (junk payloads fail CLOSED in Core), the deploy-fakt rule label on anchor/explain/dump, ring+contest+threat fed by a start anchor with NO hero activation yet (round 1 the Imperials act first), the multi-field hypothesis set (no point claim), the retract on set growth, the fenster-fakt flip when a window fact overwrites the entry claim, and the freshness law (a stale start anchor is never reused as a position). expect blocks were recorded once via --record and reviewed; the expect_hand blocks are hand-pinned ground truth (the law IS the expectation). The HOTH12 case (p33_hoth12_four_starts) is the Player-33 reconstruction: 4 start heroes, one blue field section - the acceptance criterion of card t_db6814bb.",
+  "cases": [
+    {
+      "name": "p33_hoth12_four_starts",
+      "comment": "ACCEPTANCE (HOTH12-Konstellation): four start heroes enter through the single printed blue field of section sec-start (HOTH12: 'Entrance' - 'Deploy the heroes here.'). ALL FOUR get an anchor with round=1 and rule=deploy-fakt, and the ring/contest/threat channel lights up in round 1 BEFORE any hero has closed a turn - exactly what Player-33 missed the whole mission. No activation, no interact: the printed setup fact alone is the anchor.",
+      "critical": [
+        "sec-start"
+      ],
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escape the depot intact.",
+            "priorityTarget": "",
+            "roundLimit": 8,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Verena",
+            "dp": "ent-blue-1",
+            "section": "sec-start"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Jyn",
+            "dp": "ent-blue-1",
+            "section": "sec-start"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Loku",
+            "dp": "ent-blue-1",
+            "section": "sec-start"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "MHD-19",
+            "dp": "ent-blue-1",
+            "section": "sec-start"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "sec-start",
+            "name": "Start Section"
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "Jyn",
+            "section": "sec-start",
+            "round": 1,
+            "rule": "deploy-fakt"
+          },
+          {
+            "name": "Loku",
+            "section": "sec-start",
+            "round": 1,
+            "rule": "deploy-fakt"
+          },
+          {
+            "name": "MHD-19",
+            "section": "sec-start",
+            "round": 1,
+            "rule": "deploy-fakt"
+          },
+          {
+            "name": "Verena",
+            "section": "sec-start",
+            "round": 1,
+            "rule": "deploy-fakt"
+          }
+        ],
+        "explain_must": [
+          "explain hero Jyn section=sec-start(Start Section) round=1 rule=deploy-fakt",
+          "explain hero Verena section=sec-start(Start Section) round=1 rule=deploy-fakt"
+        ],
+        "rings": [
+          "sec-start"
+        ],
+        "contest": null,
+        "contest_with_crit": "sec-start",
+        "threat_s3": "sec-start",
+        "gate_s2": true,
+        "canon_must": [
+          "H|Jyn",
+          "H|Loku",
+          "H|MHD-19",
+          "H|Verena"
+        ]
+      },
+      "expect": {
+        "canon": "mission=vector|p33_hoth12_four_starts\nround=1\nposture=stall\nobjective=Escape the depot intact.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nH|Jyn|Jyn|0|0|0|0|0|0\nH|Loku|Loku|0|0|0|0|0|0\nH|MHD-19|MHD-19|0|0|0|0|0|0\nH|Verena|Verena|0|0|0|0|0|0\n",
+        "dump": "round=1 speedSectionsPerWindow=1\nsec sec-start name=Start Section\nhero Jyn section=sec-start round=1 rule=deploy-fakt\nhero Loku section=sec-start round=1 rule=deploy-fakt\nhero MHD-19 section=sec-start round=1 rule=deploy-fakt\nhero Verena section=sec-start round=1 rule=deploy-fakt\n",
+        "explain": [
+          "explain space round=1 speed=1 sections=1",
+          "explain hero Jyn section=sec-start(Start Section) round=1 rule=deploy-fakt",
+          "explain hero Loku section=sec-start(Start Section) round=1 rule=deploy-fakt",
+          "explain hero MHD-19 section=sec-start(Start Section) round=1 rule=deploy-fakt",
+          "explain hero Verena section=sec-start(Start Section) round=1 rule=deploy-fakt"
+        ],
+        "zones_s2": "ring sec-start\ncontest sec-start\n",
+        "zones_s3": "ring sec-start\ncontest -\nthreat sec-start\n",
+        "zones_s3_crit": "ring sec-start\ncontest sec-start\nthreat sec-start\n"
+      }
+    },
+    {
+      "name": "p33_junk_rows_fail_closed",
+      "comment": "READER GUARD: an empty hero designates nobody (no ghost '?', no anchor); a valid entry WITHOUT the section key is an honest presence fact - the hero enters the view but NO spatial claim is made. The boobytrap case 'GHOST' proves presence and position are separate channels: H|GHOST exists, hero GHOST and any explain/ring line do not.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escape the depot intact.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "",
+            "dp": "ent-junk-1",
+            "section": "sec-junk"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "GHOST",
+            "dp": "ent-junk-2"
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "",
+            "section": "",
+            "round": -1,
+            "rule": null
+          },
+          {
+            "name": "GHOST",
+            "section": "",
+            "round": -1,
+            "rule": null
+          }
+        ],
+        "explain_must_not": [
+          "explain hero",
+          "sec-junk"
+        ],
+        "dump_must_not": [
+          "hero ",
+          "sec-junk"
+        ],
+        "rings": [],
+        "contest": null,
+        "threat_s3": null,
+        "canon_must": [
+          "H|GHOST"
+        ],
+        "canon_must_not": [
+          "H||",
+          "sec-junk"
+        ]
+      },
+      "expect": {
+        "canon": "mission=vector|p33_junk_rows_fail_closed\nround=1\nposture=stall\nobjective=Escape the depot intact.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=3\nH|GHOST|GHOST|0|0|0|0|0|0\n",
+        "dump": "round=1 speedSectionsPerWindow=1\n",
+        "explain": [
+          "explain space round=1 speed=1 sections=0"
+        ],
+        "zones_s2": "ring -\ncontest -\n",
+        "zones_s3": "ring -\ncontest -\n",
+        "zones_s3_crit": "ring -\ncontest -\n"
+      }
+    },
+    {
+      "name": "p33_spread_two_sections_no_claim",
+      "comment": "SPREAD multi-field mission (measured: EMPIRE1, EMPIRE3, JABBA7): the entry SET has two members -> both nodes exist for belief math, no anchor, no ring. A hypothesis set is never a position.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Split the squad.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Verena",
+            "dp": "ent-half-1",
+            "section": "sec-half-1"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Verena",
+            "dp": "ent-half-2",
+            "section": "sec-half-2"
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "Verena",
+            "section": "",
+            "round": -1,
+            "rule": null
+          }
+        ],
+        "rings": [],
+        "contest": null,
+        "threat_s3": null,
+        "nodes": [
+          "sec-half-1",
+          "sec-half-2"
+        ]
+      },
+      "expect": {
+        "canon": "mission=vector|p33_spread_two_sections_no_claim\nround=1\nposture=eliminate\nobjective=Split the squad.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=3\nH|Verena|Verena|0|0|0|0|0|0\n",
+        "dump": "round=1 speedSectionsPerWindow=1\nsec sec-half-1\nsec sec-half-2\n",
+        "explain": [
+          "explain space round=1 speed=1 sections=2"
+        ],
+        "zones_s2": "ring -\ncontest -\n",
+        "zones_s3": "ring -\ncontest -\n",
+        "zones_s3_crit": "ring -\ncontest -\n"
+      }
+    },
+    {
+      "name": "p33_collapse_one_section_fact",
+      "comment": "COLLAPSE multi-field mission (measured: EMPIRE4, HOTH15, JABBA11, JABBA4, OTHER20): distinct-section set has ONE member -> fact anchor, rule=deploy-fakt, ring fires. The dump suffix appears on this class ONLY (window-anchored heroes keep the pre-P33 byte shape).",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Split the squad.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Verena",
+            "dp": "ent-a1",
+            "section": "sec-hall"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Verena",
+            "dp": "ent-a2",
+            "section": "sec-hall"
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "Verena",
+            "section": "sec-hall",
+            "round": 1,
+            "rule": "deploy-fakt"
+          }
+        ],
+        "rings": [
+          "sec-hall"
+        ],
+        "contest": null,
+        "threat_s3": "sec-hall",
+        "gate_s2": true
+      },
+      "expect": {
+        "canon": "mission=vector|p33_collapse_one_section_fact\nround=1\nposture=eliminate\nobjective=Split the squad.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=3\nH|Verena|Verena|0|0|0|0|0|0\n",
+        "dump": "round=1 speedSectionsPerWindow=1\nsec sec-hall\nhero Verena section=sec-hall round=1 rule=deploy-fakt\n",
+        "explain": [
+          "explain space round=1 speed=1 sections=1",
+          "explain hero Verena section=sec-hall round=1 rule=deploy-fakt"
+        ],
+        "zones_s2": "ring sec-hall\ncontest -\n",
+        "zones_s3": "ring sec-hall\ncontest -\nthreat sec-hall\n",
+        "zones_s3_crit": "ring sec-hall\ncontest -\nthreat sec-hall\n"
+      }
+    },
+    {
+      "name": "p33_retract_on_set_growth",
+      "comment": "A first entry anchors (single member); a second entry in ANOTHER section grows the set -> the anchor that came from THIS entry set is retracted (never an observed fact): honest state is 'one of these sections'. No hero line, no ring, no explain hero line after the growth.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Split the squad.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Loku",
+            "dp": "ent-x1",
+            "section": "sec-x"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Loku",
+            "dp": "ent-x2",
+            "section": "sec-y"
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "Loku",
+            "section": "",
+            "round": -1,
+            "rule": null
+          }
+        ],
+        "dump_must_not": [
+          "hero Loku"
+        ],
+        "explain_must_not": [
+          "explain hero"
+        ],
+        "rings": [],
+        "contest": null,
+        "threat_s3": null
+      },
+      "expect": {
+        "canon": "mission=vector|p33_retract_on_set_growth\nround=1\nposture=eliminate\nobjective=Split the squad.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=3\nH|Loku|Loku|0|0|0|0|0|0\n",
+        "dump": "round=1 speedSectionsPerWindow=1\nsec sec-x\nsec sec-y\n",
+        "explain": [
+          "explain space round=1 speed=1 sections=2"
+        ],
+        "zones_s2": "ring -\ncontest -\n",
+        "zones_s3": "ring -\ncontest -\n",
+        "zones_s3_crit": "ring -\ncontest -\n"
+      }
+    },
+    {
+      "name": "p33_window_fact_flips_rule",
+      "comment": "Round-1 entry anchors deploy-fakt; round-2's window fact (the same law that ran alone pre-P33) overwrites section, round AND rule label - and the dump line falls back to the byte-identical pre-P33 shape (no rule suffix), so every observed hero in every old fixture is untouched by construction.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Reach the relay.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Jyn",
+            "dp": "ent-blue-1",
+            "section": "sec-entry"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "Jyn"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "entity": "term-7",
+            "name": "Comms Terminal",
+            "section": "sec-relay"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "Jyn"
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "Jyn",
+            "section": "sec-relay",
+            "round": 2,
+            "rule": "fenster-fakt"
+          }
+        ],
+        "dump_must_not": [
+          "rule="
+        ],
+        "explain_must": [
+          "explain hero Jyn section=sec-relay round=2 rule=fenster-fakt"
+        ],
+        "rings": [
+          "sec-relay"
+        ],
+        "contest": null,
+        "threat_s3": "sec-relay"
+      },
+      "expect": {
+        "canon": "mission=vector|p33_window_fact_flips_rule\nround=2\nposture=stall\nobjective=Reach the relay.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nH|Jyn|Jyn|0|0|1|2|0|0\nseen=Jyn zone=sec:sec-relay kind=fact seq=4 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec sec-entry\nedge sec-entry sec-relay kind=confirmed\nsec sec-relay\nspeed Jyn round=2 crossings=1 touched=2\nhero Jyn section=sec-relay round=2\ninteract Jyn term-7 section=sec-relay round=2\n",
+        "explain": [
+          "explain space round=2 speed=1 sections=2",
+          "explain hero Jyn section=sec-relay round=2 rule=fenster-fakt"
+        ],
+        "zones_s2": "ring sec-relay\ncontest -\n",
+        "zones_s3": "ring sec-relay\ncontest -\nthreat sec-relay\n",
+        "zones_s3_crit": "ring sec-relay\ncontest -\nthreat sec-relay\n"
+      }
+    },
+    {
+      "name": "p33_stale_anchor_no_ring",
+      "comment": "Freshness law: the start anchor is a POSITION claim only while it is fresh (round-stamped at the reading round). Round 2 without any new hero fact reads ring - threat - : a stale deploy fact dilates the belief mask (its own law) but is never silently reused as where the hero stands. This is what keeps Fix A from freezing the whole empire on the entrance for the rest of the mission.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Escape the depot intact.",
+            "priorityTarget": "",
+            "roundLimit": -1,
+            "mission": "p33"
+          }
+        },
+        {
+          "kind": "HeroDeployed",
+          "round": 1,
+          "payload": {
+            "hero": "Jyn",
+            "dp": "ent-blue-1",
+            "section": "sec-start"
+          }
+        },
+        {
+          "kind": "RoundEnd",
+          "round": 1,
+          "payload": {}
+        },
+        {
+          "kind": "ThreatSpend",
+          "round": 2,
+          "payload": {
+            "balance": 24
+          }
+        }
+      ],
+      "expect_hand": {
+        "heroes": [
+          {
+            "name": "Jyn",
+            "section": "sec-start",
+            "round": 1,
+            "rule": "deploy-fakt"
+          }
+        ],
+        "rings": [],
+        "contest": null,
+        "threat_s3": null
+      },
+      "expect": {
+        "canon": "mission=vector|p33_stale_anchor_no_ring\nround=2\nposture=stall\nobjective=Escape the depot intact.\nobjective_actor=\nthreat=24\nthreatseen=1\nseq=4\nH|Jyn|Jyn|0|0|0|0|0|0\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec sec-start\nhero Jyn section=sec-start round=1 rule=deploy-fakt\n",
+        "explain": [
+          "explain space round=2 speed=1 sections=1",
+          "explain hero Jyn section=sec-start round=1 rule=deploy-fakt"
+        ],
+        "zones_s2": "ring -\ncontest -\n",
+        "zones_s3": "ring -\ncontest -\n",
+        "zones_s3_crit": "ring -\ncontest -\n"
+      }
+    }
+  ]
+}

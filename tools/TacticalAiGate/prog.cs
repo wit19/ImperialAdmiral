@@ -44,6 +44,7 @@ class P {
         SectionTextGate.Run();
         UiCompletenessGate.Run();
         DeploymentFilterGate.Run();
+        DpScoreGate.Run();
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }
 }

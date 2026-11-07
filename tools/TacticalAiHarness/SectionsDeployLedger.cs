@@ -13,9 +13,15 @@
 //      hypothesize - THAT is the precision gain the concept promised;
 //      multi-field missions keep the honest set, a collapsing set anchors,
 //      and a mission without a field changes NOTHING (Null-Law).
-// Canon accounting: no pre-existing fixture touched; WorldEventVector has
-// no HeroDeployed case, so every vector canon stays byte-identical by
-// construction - the dp/canon record files prove it for the new streams.
+// Canon accounting: no pre-existing fixture touched. P33-H2 CORRECTS the
+// M14e note: WorldEventVector now DOES have a HeroDeployed case (it
+// registers the living HeroView - the round-1 ring channel needs a hero in
+// view.Heroes BEFORE the first activation), so the two space_cases where
+// Jyn never activate gained an honest H|Jyn presence row, and the collapse
+// case's dump hero line carries the rule=deploy-fakt suffix. Both reviewed
+// via --record (deploy_ledger has no inline expects on space_cases, so no
+// fixture re-pin needed); every OTHER fixture stays byte-identical by the
+// suffix-emission law (window-anchored heroes print as before).
 using System;
 using System.Collections.Generic;
 using System.IO;

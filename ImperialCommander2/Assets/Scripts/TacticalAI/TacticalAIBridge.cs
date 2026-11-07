@@ -249,6 +249,9 @@ namespace TacticalAI
             _overlordNoticeShown = false;
             _postureLogRound = -1;
             _lastFeedView = null;
+            // P33-H4: DP-diversity memory is per-mission - a point taken in
+            // the previous mission never blocks the next one.
+            _dpChosenThisMission.Clear();
             LastSectionSpace = null;   // S-C: a stale belief never crosses
             // the session boundary either (same law as the feed view).
             // S-D: the consumer inputs ride the same law - a zone belief,
@@ -617,7 +620,13 @@ namespace TacticalAI
             if (feedView != null && _postureLogRound != roundNo)
             {
                 _postureLogRound = roundNo;
-                Debug.Log("TacticalAIBridge::posture=" + posture + " round=" + roundNo +
+                // P33-H4 (B2, Thomas 08.11, CONCEPT_drohungsbudget Sec.3): the
+                // log carried TWO meanings under one word "posture=" - this
+                // FEED-derived posture and the DOCTRINE posture the plan runs
+                // (Player-33: feed stall vs doctrine hunt read as a
+                // contradiction). The feed line is feedPosture= from now on;
+                // the doctrine lines print planPosture= (see below).
+                Debug.Log("TacticalAIBridge::feedPosture=" + posture + " round=" + roundNo +
                           " [feed seq=" + feedView.Seq + " hash=" +
                           (feedView.HistoryHash ?? "").Substring(0, Math.Min(12, (feedView.HistoryHash ?? "").Length)) +
                           " objective=\"" + feedView.Objective + "\"]");
@@ -1534,10 +1543,32 @@ namespace TacticalAI
             // Player-25 M14c-C2 (card t_15ea0fba, fixplan_Player-25_v2 C2):
             // ranked choice when the mission carries objective anchors - the
             // mined anchor table re-resolved against the LIVE map (see
-            // MissionDpAnchors). Empty anchor list => the legacy line below
-            // runs VERBATIM (bit-compat, legacy path unchanged).
+            // MissionDpAnchors). P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget
+            // Sec.2 Stufe 3 + Player-33 DP law): the anchor set now ALSO
+            // includes the DYNAMIC section anchors (feed fact "MapManagement
+            // activated this section, and it is still live"), and the choice
+            // runs the full DP-Score ladder (Core ChooseScored): anchor tier
+            // -> intra-section distance -> battle-zone graph distance ->
+            // friend leash (Vollrecht) -> DP diversity -> legacy seed chain.
+            // ANY public fact fires the scored path (anchor, zone, own
+            // sections or deploy ledger); with NO fact at all the legacy XOR
+            // line below runs VERBATIM (Null-Law, bit-identical fallback).
+            EnsureFeed();
             var anchors = MissionDpAnchors();
-            if (anchors.Count > 0)
+            // M14e C4 FRIEND LEASH: sections holding own located groups
+            // (deploy ledger). P33-H4: Vollrecht - it decides after the
+            // spatial stages, before diversity and the seed chain.
+            var ownSecs = FriendlySectionsFor(card,
+                UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>());
+            // P33-H4 DP-DIVERSITAET: every DP the ledger records as deployed
+            // (authored rows + Active picks) plus this mission's own picks.
+            var usedDps = UsedDeploymentGuids();
+            // P33-H4 Kampfzone: live anchor sections + the S-D zones (fresh
+            // projection - a section the mission activated after the last
+            // plan pull still counts for THIS purchase).
+            var zones = DpBattleZones(anchors);
+            if (anchors.Count > 0 || zones.Count > 0 ||
+                ownSecs.Count > 0 || usedDps.Count > 0)
             {
                 var cands = new List<Tac.DeployCandidate>();
                 foreach (var x in dps)
@@ -1549,25 +1580,45 @@ namespace TacticalAI
                         X = x.entityPosition?.X ?? 0f,
                         Y = x.entityPosition?.Y ?? 0f,
                     });
-                // M14e C4 FRIEND LEASH: sections holding own located groups
-                // (deploy ledger). Rides ONLY inside the anchor-law tie -
-                // tier and intra-section distance keep Primat. Empty list
-                // (no ledger, mission with None placements, any error) =>
-                // Choose runs bit-identical to pre-M14e (Null-Law).
-                var ownSecs = FriendlySectionsFor(card,
-                    UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>());
-                var pick = Tac.DeploymentAnchors.Choose(cands, anchors,
-                                                        SessionSeed(), CurrentRound(), ownSecs);
-                if (pick != null && pick.Anchor != null &&
-                    Guid.TryParse(pick.Candidate.Guid, out var anchorChosen))
+                List<Tac.DpRow> scoreRows;
+                var pick = Tac.DeploymentAnchors.ChooseScored(
+                    cands, anchors,
+                    LastSectionSpace != null ? LastSectionSpace.Graph : null,
+                    zones, SessionSeed(), CurrentRound(), ownSecs, usedDps,
+                    out scoreRows);
+                if (pick != null && pick.Candidate != null &&
+                    Guid.TryParse(pick.Candidate.Guid, out var scoreChosen))
                 {
-                    chosen = anchorChosen;
-                    // Language-neutral explanation: anchor GUIDs + the
-                    // measured distance, no names beyond what the old line
-                    // already printed.
+                    chosen = scoreChosen;
+                    // The point is now TAKEN for this mission (diversity
+                    // inside one mission even where the ledger write lands
+                    // later - optional deploys, H5 ordering).
+                    RememberChosenDp(pick.Candidate.Guid);
+                    // Requirement 4: the Score-Bestandteile of EVERY
+                    // candidate, one line per choice, always printed (the
+                    // breadcrumb law) and language-neutral: GUIDs, tiers,
+                    // measured hops - the human at the board needs no
+                    // internals, the playtest forensics reader needs no
+                    // guesswork. Thomas reads Player.log as his explain UI.
+                    var ci = System.Globalization.CultureInfo.InvariantCulture;
+                    var allRows = new System.Text.StringBuilder();
+                    if (scoreRows != null)
+                        for (int i = 0; i < scoreRows.Count; i++)
+                        {
+                            if (i > 0) allRows.Append(" ;; ");
+                            allRows.Append(scoreRows[i].Dump());
+                        }
+                    // (C#8 law: no line breaks inside interpolation holes -
+                    // Unity's Roslyn 3.5 rejects them, compile_check proves it)
+                    var anchorLabel = pick.Anchor == null ? "-"
+                        : pick.Anchor.EntityGuid + (pick.Anchor.HasPosition ? "" : "/dyn");
                     Debug.Log($"TacticalAIBridge::DP -> {pick.Candidate.Name} ({card?.name}) " +
-                              $"[deterministic, anchor={pick.Anchor.EntityGuid}/{pick.Anchor.SectionGuid} " +
-                              $"dist={pick.Dist.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}]");
+                              $"[dp-score tier={pick.Score.Tier} " +
+                              $"anchor={anchorLabel} " +
+                              $"dist={pick.Dist.ToString("0.##", ci)} " +
+                              $"zone={(pick.Score.ZoneKnown ? pick.Score.ZoneDist.ToString(ci) : "-")} " +
+                              $"leash={(pick.Score.Own ? 1 : 0)} fresh={(pick.Score.Fresh ? 1 : 0)} " +
+                              $"all={allRows}]");
                     return true;
                 }
                 // unresolvable pick (must not happen): fall through to the
@@ -1604,7 +1655,21 @@ namespace TacticalAI
         /// rebels can never "enforce quiet" at a DP by standing near it.
         /// Any failure => empty list => the legacy DP line. No
         /// entity NAME is read anywhere in this path - the anchor choice is
-        /// language-neutral by construction.</summary>
+        /// language-neutral by construction.
+        /// P33-H4 DYNAMIC ANKER-LAW (Thomas 08.11, CONCEPT_drohungsbudget
+        /// Sec.2 Stufe 1; Player-33 §3: the mined anchor died by the M14d
+        /// phase law and the flight zone - a section the mission ACTIVATED
+        /// per MapManagement event - was no anchor at all): every section
+        /// the feed saw activated by a mission EVENT (SectionActivated
+        /// without the resync baseline - the TileManager.ActivateMapSection
+        /// choke is the single writer of that fact) anchors while it is
+        /// STILL LIVE (the same phase law as the mined rows: the app's own
+        /// TileManager.IsMapSectionActive answers). Null-Law: start-visible
+        /// sections carry only the resync baseline => no MapManagement fact
+        /// => no tactical claim; after a restore the pre-restore activations
+        /// are honestly forgotten (they would re-emit as resync facts).
+        /// This rides BOTH consumers: the DP choice AND the M14d-R
+        /// reinforcement proximity rank (one anchor truth).</summary>
         static List<Tac.DeployAnchor> MissionDpAnchors()
         {
             try
@@ -1615,7 +1680,15 @@ namespace TacticalAI
                 var rows = Tac.DeploymentAnchors.RowsForMission(
                     TacticalAIAssets.DpAnchorTableRoot, mission.fileName);
                 var list = new List<Tac.DeployAnchor>();
-                if (rows.Count == 0) return list;
+                if (rows.Count == 0)
+                {
+                    // P33-H4: even with NO mined row the dynamic section
+                    // anchors apply (Player-33: the only mined anchor died
+                    // by the phase law - the activated flight zone is the
+                    // remaining live fact).
+                    AddDynamicSectionAnchors(list);
+                    return list;
+                }
                 //M14d (Thomas 06.11): live phase truth through the app's own
                 //entity resolver - MapEntityManager holds the objects the
                 //map prefabs mutate (fresh load AND restore), so authored
@@ -1651,9 +1724,131 @@ namespace TacticalAI
                         break;
                     }
                 }
+                AddDynamicSectionAnchors(list);
                 return list;
             }
             catch { return new List<Tac.DeployAnchor>(); }   // never break a deploy
+        }
+
+        /// <summary>P33-H4 (Thomas 08.11): append the DYNAMIC section anchors
+        /// (see MissionDpAnchors doc). Section-only claim: HasPosition=false,
+        /// EntityGuid = the section guid itself (it is the fact's carrier).
+        /// A section that already carries a live mined anchor is NOT
+        /// duplicated (identical tier, and the positioned anchor keeps the
+        /// intra-section precision). Feed/TileManager missing, tiles not
+        /// loaded, any error => list unchanged (Null-Law, fail-open).</summary>
+        static void AddDynamicSectionAnchors(List<Tac.DeployAnchor> anchors)
+        {
+            try
+            {
+                var feed = Feed;
+                if (feed == null) return;
+                var tm = UnityEngine.Object.FindObjectOfType<Saga.TileManager>();
+                if (tm == null || !tm.tilesLoaded) return;   // not readable yet
+                var known = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var a in anchors)
+                    if (!string.IsNullOrEmpty(a.SectionGuid)) known.Add(a.SectionGuid);
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var e in feed.Events)
+                {
+                    if (e.Kind != "SectionActivated") continue;
+                    // the resync baseline claims the START inventory as
+                    // current state - only an OBSERVED activation is a
+                    // MapManagement fact (Player-33 law).
+                    if (e.Bool("resync")) continue;
+                    var sec = e.Str("section");
+                    if (sec.Length == 0 || !seen.Add(sec)) continue;
+                    Guid sid;
+                    if (!Guid.TryParse(sec, out sid)) continue;
+                    // "SOLANGE sie live sind" - the same phase law as the
+                    // mined rows, read from the app's own live accessor.
+                    if (!tm.IsMapSectionActive(sid)) continue;
+                    if (known.Contains(sec)) continue;
+                    known.Add(sec);
+                    anchors.Add(new Tac.DeployAnchor
+                    {
+                        EntityGuid = sec,
+                        SectionGuid = sec,
+                        HasPosition = false,
+                    });
+                }
+            }
+            catch { /* Null-Law: no fact, no claim - legacy list stands */ }
+        }
+
+        /// <summary>P33-H4 Kampfzone for the DP-Score stage 3: the live
+        /// anchor sections PLUS the S-D proximity zones of a FRESH feed
+        /// projection (the last plan pull can predate this round's section
+        /// activations - the deployment popup IS the moment a mission often
+        /// activates its next section). ThreatZone + ContestZone + fresh
+        /// hero RingZones are all AppView facts (S-D rail), never hidden
+        /// info. Any failure => anchors-only (or empty): the scored ladder
+        /// simply loses the zone stage. PullFeedView keeps its documented
+        /// degradation: null view => Last* stay as they are.</summary>
+        static List<string> DpBattleZones(List<Tac.DeployAnchor> anchors)
+        {
+            var zones = new List<string>();
+            try
+            {
+                foreach (var a in anchors)
+                    if (!string.IsNullOrEmpty(a.SectionGuid) && !zones.Contains(a.SectionGuid))
+                        zones.Add(a.SectionGuid);
+                PullFeedView();
+                var z = LastSdZones;
+                if (z != null)
+                {
+                    if (!string.IsNullOrEmpty(z.ContestZone) && !zones.Contains(z.ContestZone))
+                        zones.Add(z.ContestZone);
+                    if (!string.IsNullOrEmpty(z.ThreatZone) && !zones.Contains(z.ThreatZone))
+                        zones.Add(z.ThreatZone);
+                    foreach (var r in z.RingZones)
+                        if (!zones.Contains(r)) zones.Add(r);
+                }
+            }
+            catch { /* Null-Law: what was collected so far is honest */ }
+            return zones;
+        }
+
+        /// <summary>P33-H4 DP-DIVERSITAET input: every deployment-point GUID
+        /// the durable deploy ledger records (authored mission-file rows +
+        /// the DPs the Active choice really used) PLUS this mission's own
+        /// bridge picks (the ledger write can land later than the next
+        /// purchase - optional deploys). Hero ENTRY fields (origin
+        /// "hero-entry", findings_Player-33 §1) are the HEROES' landing, not
+        /// an imperial DP choice - they never count as used. No ledger,
+        /// no picks => empty list => the diversity stage is inert
+        /// (Null-Law).</summary>
+        static List<string> UsedDeploymentGuids()
+        {
+            var used = new List<string>();
+            try
+            {
+                var session = DataStore.sagaSessionData;
+                if (session != null && session.deployLedger != null)
+                    foreach (var kv in session.deployLedger)
+                    {
+                        var row = kv.Value;
+                        if (row == null || row.dps == null) continue;
+                        if (string.Equals(row.origin, "hero-entry", StringComparison.Ordinal))
+                            continue;
+                        foreach (var g in row.dps)
+                            if (!string.IsNullOrEmpty(g) && !used.Contains(g)) used.Add(g);
+                    }
+                foreach (var g in _dpChosenThisMission)
+                    if (!used.Contains(g)) used.Add(g);
+            }
+            catch { /* Null-Law */ }
+            return used;
+        }
+
+        // P33-H4: DPs this mission's bridge already picked (in-memory,
+        // ResetSession clears - the ledger covers what survives a restore).
+        static readonly HashSet<string> _dpChosenThisMission =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        static void RememberChosenDp(string guid)
+        {
+            if (!string.IsNullOrEmpty(guid)) _dpChosenThisMission.Add(guid);
         }
 
         /// <summary>TAC M14d-R (Thomas 06.11): deterministic reinforcement
@@ -2682,7 +2877,7 @@ namespace TacticalAI
                         var rollLine = TF(UIx.ordPatternRoll, bits[1]);
                         line = (line == null ? "" : line + "\n") + rollLine;
                         Debug.Log("TacticalAIBridge::patternRoll " + groupId +
-                                  ": " + rolled + " posture=" + _doctrineEffective);
+                                  ": " + rolled + " planPosture=" + _doctrineEffective);
                     }
                 }
                 // Thomas 02.11 (request 1): the focus-target reasoning moved
@@ -2894,7 +3089,7 @@ namespace TacticalAI
                 }
                 catch (Exception e) { Debug.LogWarning("TacticalAIBridge::catalog skip " + cd.id + ": " + e.Message); }
             }
-            var sb = new System.Text.StringBuilder("TacticalAIBridge::doctrines posture=" + posture + ":");
+            var sb = new System.Text.StringBuilder("TacticalAIBridge::doctrines planPosture=" + posture + ":");
             foreach (var kv in _catalog) sb.Append(' ').Append(kv.Key).Append('=').Append(kv.Value.Pattern);
             Debug.Log(sb.ToString());
         }

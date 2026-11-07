@@ -634,6 +634,21 @@ namespace TacticalAI.Core
                                 shotPending[g.GroupId] = new[] { (long)e.Seq, (long)e.Round };
                             break;
                         }
+                    // P33-H2 (findings_Player-33 §1, Thomas 08.11): the hero
+                    // ENTERS the view at its printed blue deploy field, not
+                    // only when it first acts or bleeds. Round 1 the Imperials
+                    // activate BEFORE any hero has closed a turn, so without
+                    // this registration the fresh deploy-fakt anchor had no
+                    // living hero to hang the ring on and the whole S-D rail
+                    // stayed blind in r1. Registering a hero that just entered
+                    // the board is public table truth (the card sits there);
+                    // status stays healthy/never-acted - nothing else changes.
+                    case "HeroDeployed":
+                        {
+                            var hd = e.Str("hero");
+                            if (!string.IsNullOrEmpty(hd)) Hero(v, hd);
+                            break;
+                        }
                     case "HeroWounded":
                         Hero(v, e.Str("hero")).Wounded = true;
                         break;

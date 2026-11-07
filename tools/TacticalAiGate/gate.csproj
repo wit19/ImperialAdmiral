@@ -26,6 +26,7 @@
     <Compile Include="SectionTextGate.cs" />
     <Compile Include="UiCompletenessGate.cs" />
     <Compile Include="DeploymentFilterGate.cs" />
+    <Compile Include="DpScoreGate.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Saga\MissionModels\DeploymentPointProps.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\ImperialDeckState.cs" />
     <Compile Include="..\..\ImperialCommander2\Assets\Scripts\Screens\CampaignScreen\Models\AgendaState.cs" />

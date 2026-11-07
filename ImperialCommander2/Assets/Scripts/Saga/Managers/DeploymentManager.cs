@@ -63,28 +63,86 @@ namespace Saga
 			// A multi-field mission ("Deploy HALF of the heroes here" x2)
 			// stores the SET: a hypothesis of possible sections, never a
 			// point claim (Thomas 07.11).
-			var he = DataStore.sagaSessionData.heroEntryDps;
-			if ( he != null && he.Count > 0 && !string.IsNullOrEmpty( cd.id ) )
-			{
-				var em = FindObjectOfType<MapEntityManager>();
-				var live = new List<string>();
-				foreach ( var g in he )
-				{
-					Guid gid;
-					if ( !Guid.TryParse( g, out gid ) ) continue;
-					if ( em != null && em.GetEntity( gid ) == null ) continue;   // data-exists
-					if ( !live.Contains( g ) )
-						live.Add( g );
-				}
-				if ( live.Count > 0 )
-					DataStore.sagaSessionData.RecordDeployEntry( cd.id, live, "hero-entry" );
-			}
-
+			TryRecordHeroEntry( cd );
 			var go = Instantiate( hgPrefab, heroContainer );
 			go.GetComponent<SagaHGPrefab>().Init( cd );
 			if ( !DataStore.deployedHeroes.ContainsCard( cd ) )
 				DataStore.deployedHeroes.Add( cd );
 			sound.PlaySound( FX.Computer );
+		}
+
+		/// <summary>
+		/// M14e/P33-H2: write the hero's ENTRY row from the mission's blue
+		/// hero-entry fields, keeping only GUIDs the LIVE map carries
+		/// (data-exists). Returns true when a row was written. The dummy hero
+		/// (3-hero squad filler) is EXCLUDED: no figure sits at that spot on
+		/// the physical board, so an anchor for it would be an invented
+		/// position - Null-Law. Null/empty card: no row, no claim.
+		/// </summary>
+		bool TryRecordHeroEntry( DeploymentCard cd )
+		{
+			if ( cd == null || cd.isDummy || string.IsNullOrEmpty( cd.id ) )
+				return false;
+			var he = DataStore.sagaSessionData.heroEntryDps;
+			if ( he == null || he.Count == 0 )
+				return false;
+			var em = FindObjectOfType<MapEntityManager>();
+			var live = new List<string>();
+			foreach ( var g in he )
+			{
+				Guid gid;
+				if ( !Guid.TryParse( g, out gid ) ) continue;
+				if ( em != null && em.GetEntity( gid ) == null ) continue;   // data-exists
+				if ( !live.Contains( g ) )
+					live.Add( g );
+			}
+			if ( live.Count == 0 )
+				return false;
+			DataStore.sagaSessionData.RecordDeployEntry( cd.id, live, "hero-entry" );
+			return true;
+		}
+
+		/// <summary>
+		/// P33-H2 (findings_Player-33 §1, Fix A): the START deploy runs in
+		/// StartNewGame BEFORE mapEntityManager.InstantiateEntities, so the
+		/// data-exists check above drops every field and the initial heroes
+		/// - the ONLY figures whose entry section every player reads off the
+		/// mission briefing - carried no ledger row all mission. Replay the
+		/// entry records once the live map exists: same hero-entry law, same
+		/// data-exists check, honest origin "hero-entry" (the start deploy
+		/// uses the printed blue field; mid-mission joiners arrive through
+		/// the very same fields - one law, one origin, the DeployLedger::
+		/// audit line decides which hero wrote when). Cards that already
+		/// carry a row keep it (an "active" row would outvote; last-write
+		/// law of the ledger is preserved by NOT writing). Called by
+		/// SagaController right after InstantiateEntities (fresh start) and
+		/// after dgManager.RestoreState (resumed old saves that predate the
+		/// row). Fills NOTHING where no field exists (Null-Law) and never
+		/// throws into the game loop.
+		/// </summary>
+		public void ReplayHeroEntryRecords()
+		{
+			try
+			{
+				var sess = DataStore.sagaSessionData;
+				if ( sess == null ) return;
+				var he = sess.heroEntryDps;
+				if ( he == null || he.Count == 0 ) return;   // mission without field: inert
+				int wrote = 0;
+				foreach ( var cd in DataStore.deployedHeroes )
+				{
+					if ( cd == null || cd.isDummy || string.IsNullOrEmpty( cd.id ) ) continue;
+					DeployLedgerRow row;
+					if ( sess.TryGetDeployEntry( cd.id, out row ) ) continue; // existing truth wins
+					if ( TryRecordHeroEntry( cd ) ) wrote++;
+				}
+				Debug.Log( "ReplayHeroEntryRecords()::" + wrote + " hero row(s) anchored"
+					+ " (fields: " + he.Count + ", deployed heroes: " + DataStore.deployedHeroes.Count + ")" );
+			}
+			catch ( Exception e )
+			{
+				Debug.LogWarning( "ReplayHeroEntryRecords()::" + e.Message );
+			}
 		}
 
 		/// <summary>

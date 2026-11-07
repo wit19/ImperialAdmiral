@@ -161,12 +161,16 @@ namespace TacticalAI
 
         /// <summary>Deploy/reinforce price of a printed card for the LIVE
         /// campaign. Fail-open: printed cost (a display or booking site
-        /// must never be broken by the persona layer).</summary>
+        /// must never be broken by the persona layer).
+        /// MODE GATE (Thomas 07.11 standing rule): tactical missions only -
+        /// the mission-frozen ActiveNow() seam, NOT the bare master toggle.
+        /// A badge-off (legacy) mission must price exactly like the
+        /// untouched app; personas live in the tactical AI only.</summary>
         public static int CostFor(global::DeploymentCard card, int printedCost)
         {
             try
             {
-                if (card == null || !TacticalAISettings.Enabled) return printedCost;
+                if (card == null || !TacticalAIBridge.TacticalMissionActive()) return printedCost;
                 var v = ResolveLive();
                 return v.IsEmpty ? printedCost
                                  : v.CostFor(card.name, card.faction, printedCost);
@@ -223,7 +227,10 @@ namespace TacticalAI
             try
             {
                 if (card == null || card.isElite) return card;
-                if (!TacticalAISettings.Enabled) return card;   // same gate as CostFor
+                // same mode-frozen gate as CostFor (Thomas 07.11): a
+                // badge-off legacy mission never sees a persona swap -
+                // the shared landing/onslaught/manual rails stay untouched.
+                if (!TacticalAIBridge.TacticalMissionActive()) return card;
                 var v = ResolveLive();
                 if (v.IsEmpty || PersonaSwaps.Budget(v) <= 0) return card;
                 var key = MissionIdentity();

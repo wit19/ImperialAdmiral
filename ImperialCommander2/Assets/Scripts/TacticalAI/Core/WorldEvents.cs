@@ -152,6 +152,14 @@ namespace TacticalAI.Core
             // Reading fields, never guessing; nothing parseable => no event
             // (Null-Law: today's behaviour bit-identical).
             "VictoryConditions",
+            // P33-H4c (Thomas 08.11, CONCEPT_missionsachse §2.4): MissionObject
+            // - a mission-file object whose OWN theText carries the printed
+            // board rule "can attack X (Health: N[, Defense: ...])". The
+            // attackable fact plus its public wiring evidence (button texts,
+            // wired event names, outcome side) ride as raw public data; the
+            // POLARITY LADDER is Core law (WorldEventVector), not a producer
+            // claim. Nothing parseable => no event (Null-Law).
+            "MissionObject",
         };
 
         // The COMPLETE payload surface. Anything else (a die value, a hero
@@ -212,6 +220,32 @@ namespace TacticalAI.Core
             // "section" (registered above) the escape/evac section GUID on
             // the block axis. Loch-Gesetz holds: ids and app names only.
             "imperialWinBy", "rebelWinBy", "actor", "actorName", "escortHero",
+            // P33-H4c MissionObject (CONCEPT_missionsachse §2.4). All values
+            // are public mission-file facts read from the object's OWN
+            // fields: "name"/"entity"/"section" above carry identity and
+            // the entity's own mapSectionOwner; "health"/"defense" are the
+            // PRINTED numbers inside the object's own "can attack ...
+            // (Health: N, Defense: ...)" text (SICHTBARKEITSGRENZE: printed
+            // text values, never a runtime damage counter);
+            // "buttons"/"eventNames" are RAW public authoring strings
+            // (";"-joined, ordinal) - the P1 evidence the CORE ladder
+            // classifies, not a producer verdict; "outcomeSide" is the
+            // losing side named by the WIRED end event's outcome sentence
+            // (P3). failImperial/failRebel are dead and never enter here.
+            "defense", "buttons", "eventNames", "outcomeSide",
+        };
+
+        // P33-H4c: keys scoped to ONE kind (leak-guard law stays global for
+        // every other kind). "position" is the entity's PRINTED setup
+        // placement "x;y" - authored data-model identity of the object
+        // itself, allowed ONLY on MissionObject. The Loch-Gesetz keeps
+        // holding exactly where it was measured: no runtime kind (Move,
+        // hero/guard anchors, door/section/entity events) may ever carry a
+        // position - the two leak-guard fixtures pin that.
+        static readonly Dictionary<string, string[]> KindScopedKeys =
+            new Dictionary<string, string[]>
+        {
+            { "MissionObject", new[] { "position" } },
         };
 
         // Minimal per-kind shape guard (typos fail loud, not silently).
@@ -254,6 +288,11 @@ namespace TacticalAI.Core
             // event (empty string = explicit "no wiring on this side");
             // section rides along on the block axis (data-existence law).
             { "VictoryConditions", new[] { "imperialWinBy", "rebelWinBy" } },
+            // P33-H4c: identity + the printed Health fact are required (the
+            // parse gate IS the Null-Law: no "can attack (Health: N" => no
+            // event at all). section/position/defense/buttons/eventNames/
+            // outcomeSide are data-existence optional (authoring varies).
+            { "MissionObject", new[] { "name", "entity", "health" } },
         };
 
         public readonly string MissionKey;
@@ -317,8 +356,11 @@ namespace TacticalAI.Core
                 if (payload == null || !payload.ContainsKey(k))
                     throw new ArgumentException("WorldEventFeed: " + kind + " requires key " + k);
             if (payload == null) return;
+            string[] scoped;
+            KindScopedKeys.TryGetValue(kind, out scoped);
             foreach (var k in payload.Keys)
-                if (!PayloadKeys.Contains(k))
+                if (!PayloadKeys.Contains(k) &&
+                    (scoped == null || Array.IndexOf(scoped, k) < 0))
                     throw new ArgumentException("WorldEventFeed: payload key not public-vocabulary: " + k);
         }
 

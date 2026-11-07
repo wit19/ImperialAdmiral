@@ -451,6 +451,11 @@ namespace TacticalAI
             // per poll; the payload-canon dedup keeps the stream append-only.
             PollVictory(round);
 
+            // P33-H4c (CONCEPT_missionsachse §2.4): the attackable mission
+            // objects (own "can attack (Health: N" text) ride the same law -
+            // per-GUID canon dedup, restatements only when a row MOVED.
+            PollObjects(round);
+
             // M6s-B7 causal order (Player-19 law): damage first, then the
             // table's words about it. The wheel dials are polled BEFORE the
             // logger drain and the objective HUD, so a shot observed in the
@@ -501,6 +506,7 @@ namespace TacticalAI
             _threat = 0;
             _objective = null;
             _lastVictoryCanon = "";   // P33-H4b: fresh mission, fresh claim
+            _objectRowCanon.Clear();  // P33-H4c: same law for the object rows
             _wheels.Clear();
             _seenGroups.Clear();
             _heroWounded.Clear();
@@ -1008,6 +1014,279 @@ namespace TacticalAI
                       + " zones=" + evs.Count + " [public mission-file wiring]");
         }
 
+        // ============================================ P33-H4c MissionObject
+        // CONCEPT_missionsachse §2.4 (Thomas, hart): objects carrying the
+        // printed board rule "can attack X (Health: N, Defense: ...)" in
+        // their OWN canonical EN theText become facts. The producer READS
+        // FIELDS (attack text numbers, own section, printed setup position,
+        // RAW button texts, WIRED event names, the outcome sentence side of
+        // the wired end event) and never guesses; the POLARITY LADDER is
+        // Core law (WorldEventVector.DeriveObjectPolarity), not a claim
+        // here. Nothing parseable => no event (Null-Law). failImperial/
+        // failRebel are dead flags (measured 0x true across the shipped
+        // collection) and are NEVER read. FAIRNESS GRENZE: only the printed
+        // TEXT values and the authored wiring are consulted - never a
+        // runtime damage counter, never currentHealth, never the DamageTracker.
+        // Dedup is PER ENTITY GUID (a late-resolvable section legitimately
+        // restates the row; the projection is last-wins per GUID).
+        readonly Dictionary<string, string> _objectRowCanon =
+            new Dictionary<string, string>(StringComparer.Ordinal);
+
+        /// Attack sentence vocabulary (canonical EN file; "angreifen" kept
+        /// for authored DE mission files, same law).
+        static readonly string[] AttackWords = { "can attack", "angreifen" };
+        /// Outcome sentence vocabulary of a WIRED end event (P3 evidence,
+        /// EN+DE shipped authoring vocabularies). First group that matches
+        /// (fixed order) decides the losing side - deterministic.
+        static readonly string[] LoseRebels =
+            { "rebels lose", "rebel lose", "rebellen verlieren" };
+        static readonly string[] LoseEmpire =
+            { "empire lose", "imperial lose", "imperials lose",
+              "imperium verliert", "imperium verlieren" };
+        static readonly string[] WinRebels =
+            { "rebels win", "rebel win", "rebellen gewinn" };
+        static readonly string[] WinEmpire =
+            { "empire win", "imperial win", "imperials win", "imperium gewinn" };
+
+        void PollObjects(int round)
+        {
+            var evs = TryBuildObjectEvents();
+            if (evs.Count == 0) return;                    // Null-Law
+            var sb = new System.Text.StringBuilder();
+            foreach (var p in evs)
+            {
+                object gv;
+                var key = p.TryGetValue("entity", out gv) ? gv as string : "";
+                if (string.IsNullOrEmpty(key)) continue;
+                string row = ObjectRowCanon(p);
+                string old;
+                if (_objectRowCanon.TryGetValue(key, out old) && old == row) continue;
+                _objectRowCanon[key] = row;
+                Append("MissionObject", round, new Dictionary<string, object>(p));
+                if (sb.Length > 0) sb.Append(" +");
+            }
+            if (sb.Length == 0) return;                    // nothing MOVED
+            Debug.Log("WorldEvents::objects r" + round
+                      + " restated=" + sb.ToString().Trim().Split('+').Length
+                      + " parsed=" + evs.Count + " [public mission-file text]");
+        }
+
+        static string ObjectRowCanon(Dictionary<string, object> p)
+        {
+            var keys = new List<string>(p.Keys);
+            keys.Sort(StringComparer.Ordinal);
+            var s = "";
+            foreach (var k in keys) s += k + "=" + p[k] + ";";
+            return s;
+        }
+
+        /// <summary>The derivation (mission-file order scan; per entity the
+        /// FIRST matching wiring wins - deterministic, no sorting surprises).
+        /// Empty list = nothing parseable = Null-Law.</summary>
+        List<Dictionary<string, object>> TryBuildObjectEvents()
+        {
+            var outp = new List<Dictionary<string, object>>();
+            try
+            {
+                var m = DataStore.mission;
+                if (m == null || m.mapEntities == null) return outp;
+                var all = new List<Saga.MissionEvent>();
+                if (m.globalEvents != null) all.AddRange(m.globalEvents);
+                if (m.mapSections != null)
+                    foreach (var s in m.mapSections)
+                        if (s != null && s.missionEvents != null) all.AddRange(s.missionEvents);
+                var mem = EntityManagerOrNull();
+
+                foreach (var en in m.mapEntities)
+                {
+                    if (en == null || en.entityProperties == null) continue;
+                    var ep = en.entityProperties;
+                    long health, defense; bool hasDef;
+                    // THE gate: the object's OWN printed attack sentence with
+                    // a plain Health number. "Health: *N*" (variable-driven)
+                    // is explicitly NOT parseable - never a guess (Null-Law).
+                    if (!TryParseAttackText(ep.theText, out health, out defense, out hasDef))
+                        continue;
+                    var name = (en.name ?? "").Trim();
+                    if (name.Length == 0) continue;        // identity required
+
+                    var live = mem != null ? mem.GetEntity(en.GUID) : null;
+                    var src = live != null ? live : en;
+
+                    var p = new Dictionary<string, object>();
+                    p["name"] = name;
+                    p["entity"] = en.GUID.ToString();
+                    if (src.mapSectionOwner != Guid.Empty)
+                        p["section"] = src.mapSectionOwner.ToString();
+                    if (src.entityPosition != null)
+                        p["position"] = Num(src.entityPosition.X) + ";" + Num(src.entityPosition.Y);
+                    p["health"] = health;
+                    if (hasDef) p["defense"] = defense;
+
+                    // P1 raw evidence + the wired events behind the buttons.
+                    var btns = new List<string>();
+                    var names = new List<string>();
+                    var wired = new List<Saga.MissionEvent>();
+                    string outcome = "";
+                    if (ep.buttonActions != null)
+                        foreach (var b in ep.buttonActions)
+                        {
+                            if (b == null) continue;
+                            var bt = (b.buttonText ?? "").Trim().ToLowerInvariant();
+                            if (bt.Length > 0 && !btns.Contains(bt)) btns.Add(bt);
+                            if (b.eventGUID == Guid.Empty) continue;
+                            var ev = FindEvent(all, b.eventGUID);
+                            if (ev == null) continue;
+                            var evn = (ev.name ?? "").Trim().ToLowerInvariant();
+                            if (evn.Length > 0 && !names.Contains(evn)) names.Add(evn);
+                            if (!wired.Contains(ev)) wired.Add(ev);
+                            // direct: the WIRED event itself ends the mission
+                            if (outcome == "" && HasEndAction(ev))
+                                outcome = OutcomeSideOfText(
+                                    (ev.name ?? "") + ". " + (ev.eventText ?? ""));
+                        }
+                    // one hop (H4b setter/trigger law): the wired event SETS
+                    // a trigger a mission-end event LISTENS to - that end
+                    // event carries the outcome sentence.
+                    if (outcome == "" && wired.Count > 0)
+                        outcome = OutcomeSideOneHop(all, wired);
+
+                    if (btns.Count > 0)
+                    {
+                        btns.Sort(StringComparer.Ordinal);
+                        p["buttons"] = string.Join(";", btns.ToArray());
+                    }
+                    if (names.Count > 0)
+                    {
+                        names.Sort(StringComparer.Ordinal);
+                        p["eventNames"] = string.Join(";", names.ToArray());
+                    }
+                    if (outcome != "") p["outcomeSide"] = outcome;
+                    outp.Add(p);
+                }
+            }
+            catch { return new List<Dictionary<string, object>>(); }   // fail-open
+            return outp;
+        }
+
+        static string OutcomeSideOneHop(List<Saga.MissionEvent> all,
+                                        List<Saga.MissionEvent> wired)
+        {
+            var setters = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var e in wired)
+            {
+                if (e == null || e.eventActions == null) continue;
+                foreach (var a in e.eventActions)
+                {
+                    var mv = a as Saga.ModifyVariable;
+                    if (mv == null || mv.triggerList == null) continue;
+                    foreach (var t in mv.triggerList)
+                    {
+                        if (t == null || t.triggerGUID == Guid.Empty) continue;
+                        if (t.setValue < 1 && t.modifyValue < 1) continue;
+                        setters.Add(t.triggerGUID.ToString());
+                    }
+                }
+            }
+            if (setters.Count == 0) return "";
+            foreach (var e in all)
+            {
+                if (e == null || !HasEndAction(e) || e.additionalTriggers == null) continue;
+                foreach (var tb in e.additionalTriggers)
+                {
+                    if (tb == null || tb.triggerGUID == Guid.Empty || tb.triggerValue < 1) continue;
+                    if (!setters.Contains(tb.triggerGUID.ToString())) continue;
+                    var side = OutcomeSideOfText((e.name ?? "") + ". " + (e.eventText ?? ""));
+                    if (side != "") return side;
+                }
+            }
+            return "";
+        }
+
+        /// Fixed-order first match: which side LOSES the mission when the
+        /// wired event fires? "rebels"/"empire", "" = no sentence.
+        static string OutcomeSideOfText(string text)
+        {
+            var t = (text ?? "").ToLowerInvariant();
+            if (t.Length == 0) return "";
+            foreach (var s in LoseRebels) if (t.Contains(s)) return "rebels";
+            foreach (var s in LoseEmpire) if (t.Contains(s)) return "empire";
+            foreach (var s in WinRebels) if (t.Contains(s)) return "empire";
+            foreach (var s in WinEmpire) if (t.Contains(s)) return "rebels";
+            return "";
+        }
+
+        /// The attack sentence gate + printed numbers. The numbers must sit
+        /// in the SAME sentence window (bounded scan, never a far number).
+        /// A printed '*' at the value ("Health: *8*") marks a VARIABLE-driven
+        /// value: explicitly NOT parseable - never a guess (Null-Law).
+        /// "Defense: None" => 0 (printed, honest); a non-plain Defense is NO
+        /// fact (never a guess).
+        static bool TryParseAttackText(string text, out long health,
+                                       out long defense, out bool hasDef)
+        {
+            health = -1; defense = -1; hasDef = false;
+            if (string.IsNullOrEmpty(text)) return false;
+            var t = text.ToLowerInvariant();
+            int at = -1;
+            foreach (var w in AttackWords)
+            {
+                int i = t.IndexOf(w, StringComparison.Ordinal);
+                if (i >= 0 && (at < 0 || i < at)) at = i;
+            }
+            if (at < 0) return false;
+            int winEnd = Math.Min(t.Length, at + 160);
+            var win = t.Substring(at, winEnd - at);
+            if (!TryParsePrintedInt(win, "health:", out health)) return false;
+            long d;
+            if (TryParsePrintedDefense(win, "defense:", out d)) { defense = d; hasDef = true; }
+            return true;
+        }
+
+        /// key -> first PLAIN number after it (asterisks/spaces skipped).
+        /// A '*' directly at the number marks a variable-driven value:
+        /// explicitly NOT parseable (returns false).
+        static bool TryParsePrintedInt(string win, string key, out long value)
+        {
+            value = -1;
+            int i = win.IndexOf(key, StringComparison.Ordinal);
+            if (i < 0) return false;
+            i += key.Length;
+            while (i < win.Length && (win[i] == ' ' || win[i] == '\t')) i++;
+            if (i >= win.Length || win[i] < '0' || win[i] > '9') return false;  // '*' or text
+            int j = i;
+            while (j < win.Length && win[j] >= '0' && win[j] <= '9') j++;
+            return long.TryParse(win.Substring(i, j - i),
+                                 System.Globalization.NumberStyles.None,
+                                 System.Globalization.CultureInfo.InvariantCulture, out value);
+        }
+
+        static bool TryParsePrintedDefense(string win, string key, out long value)
+        {
+            value = -1;
+            int i = win.IndexOf(key, StringComparison.Ordinal);
+            if (i < 0) return false;
+            i += key.Length;
+            while (i < win.Length && (win[i] == ' ' || win[i] == '\t')) i++;
+            if (i >= win.Length) return false;
+            if (win[i] >= '0' && win[i] <= '9')
+            {
+                int j = i;
+                while (j < win.Length && win[j] >= '0' && win[j] <= '9') j++;
+                return long.TryParse(win.Substring(i, j - i),
+                                     System.Globalization.NumberStyles.None,
+                                     System.Globalization.CultureInfo.InvariantCulture, out value);
+            }
+            if (win.Length >= i + 4 && string.CompareOrdinal(win, i, "none", 0, 4) == 0)
+            { value = 0; return true; }                   // printed "Defense: None"
+            return false;                                 // variable/dice law: no fact
+        }
+
+        static string Num(float v)
+        {
+            return v.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         static string Get2(List<Dictionary<string, object>> evs, string key)
         {
             foreach (var p in evs)
@@ -1454,6 +1733,18 @@ namespace TacticalAI
                 var vEvs = TryBuildVictoryEvents();
                 foreach (var p in vEvs) log.Add(Mk(seq++, "VictoryConditions", round, p));
                 _lastVictoryCanon = VictoryCanon(vEvs);
+            }
+            // P33-H4c: the parsed attackable objects are CURRENT state too -
+            // the re-log restates every row and rebuilds the per-GUID dedup.
+            {
+                var oEvs = TryBuildObjectEvents();
+                foreach (var p in oEvs)
+                {
+                    log.Add(Mk(seq++, "MissionObject", round, p));
+                    object gv;
+                    var gk = p.TryGetValue("entity", out gv) ? gv as string : "";
+                    if (!string.IsNullOrEmpty(gk)) _objectRowCanon[gk] = ObjectRowCanon(p);
+                }
             }
             log.Add(Mk(seq++, "ThreatSpend", round, P("balance", (long)(sd?.gameVars?.currentThreat ?? 0))));
             Feed.Resync(log);

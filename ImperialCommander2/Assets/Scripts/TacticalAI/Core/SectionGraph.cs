@@ -143,6 +143,17 @@ namespace TacticalAI.Core
             _doorState[doorGuid] = open ? DoorOpen : DoorClosed;
         }
 
+        /// P33-H4c: the visible state of ONE door by GUID (DoorOpen/DoorClosed/
+        /// DoorUnknown). The TUER-sprengen plan option reads ONLY this visible
+        /// flip (SICHTBARKEITSGRENZE: doorOpen, never a damage counter) - an
+        /// already open door is nothing left to blow.
+        public string DoorStateOfGuid(string doorGuid)
+        {
+            if (string.IsNullOrEmpty(doorGuid)) return DoorUnknown;
+            string st;
+            return _doorState.TryGetValue(doorGuid, out st) ? st : DoorUnknown;
+        }
+
         /// State of the pair's connection: open if any door edge door was last
         /// seen open; closed if door edges exist and every one was last seen
         /// closed; otherwise unknown. A closed state is a STATE, not a
@@ -176,6 +187,19 @@ namespace TacticalAI.Core
             if (a == null || b == null) return null;
             Dictionary<string, Edge> adj;
             return _adj.TryGetValue(a, out adj) && adj.TryGetValue(b, out e) ? e.Kind : null;
+        }
+
+        /// P33-H4c: the door GUIDs recorded on the edge a<->b (sorted), or an
+        /// empty list when no edge is recorded. The TUER-sprengen Wegwahl
+        /// asks "does a door sit ON this edge" - identity only, Loch-Gesetz.
+        public List<string> DoorsOnEdge(string a, string b)
+        {
+            Edge e;
+            if (a == null || b == null) return new List<string>();
+            Dictionary<string, Edge> adj;
+            if (!_adj.TryGetValue(a, out adj) || !adj.TryGetValue(b, out e))
+                return new List<string>();
+            return new List<string>(e.Doors);
         }
 
         /// GRUNDGESETZ AS CODE: every connection is permeable. Unknown edges

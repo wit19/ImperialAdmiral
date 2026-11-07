@@ -68,6 +68,97 @@ namespace TacticalAI.Core
         public string AxisActorName = "";     // its public display name
         public string EscortHero = "";        // specificHero display name, "" = unknown
         public readonly List<string> EscapeSections = new List<string>(); // sorted GUIDs
+        // P33-H4c (CONCEPT_missionsachse §2.4): the mission's attackable
+        // objects ("can attack X (Health: N...)" in the object's OWN EN
+        // mission text) keyed by entity GUID (last-event-wins per GUID,
+        // additive across GUIDs — same data-existence law as the victory
+        // row: no MissionObject events -> no rows -> Canon and every
+        // consumer byte-identical, Null-Law). Polaritaet/Basis are derived
+        // by the CORE ladder (CONCEPT 2.4 P1-P4), never by the producer.
+        public readonly Dictionary<string, MissionObjectFact> Objects =
+            new Dictionary<string, MissionObjectFact>(StringComparer.Ordinal);
+
+        /// P33-H4c: objects the Empire attacks (polaritaet "jagt"), name
+        /// ordinal then GUID ordinal — deterministic target ordering.
+        public List<MissionObjectFact> HuntObjects()
+        {
+            var list = new List<MissionObjectFact>();
+            foreach (var kv in Objects)
+                if (kv.Value.Polaritaet == "jagt") list.Add(kv.Value);
+            list.Sort((a, b) =>
+            {
+                int c = string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                return c != 0 ? c : string.Compare(a.Guid, b.Guid, StringComparison.Ordinal);
+            });
+            return list;
+        }
+
+        /// P33-H4c: objects the Empire must PROTECT (polaritaet "schuetzt":
+        /// the opponent must destroy/claim them - CONCEPT 2.4 SCHUTZGESETZ),
+        /// name ordinal then GUID ordinal.
+        public List<MissionObjectFact> ProtectObjects()
+        {
+            var list = new List<MissionObjectFact>();
+            foreach (var kv in Objects)
+                if (kv.Value.Polaritaet == "schuetzt") list.Add(kv.Value);
+            list.Sort((a, b) =>
+            {
+                int c = string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                return c != 0 ? c : string.Compare(a.Guid, b.Guid, StringComparison.Ordinal);
+            });
+            return list;
+        }
+
+        /// P33-H4c ZUSÄTZLICH clause: sections of POLAR objects (jagt or
+        /// schuetzt - contested by mission wiring) as contested-zone
+        /// candidates for the ZoneBelief/critical-section layer; unique,
+        /// ordinal. Neutral objects contribute nothing.
+        public List<string> ContestedObjectSections()
+        {
+            var list = new List<string>();
+            foreach (var kv in Objects)
+                if (kv.Value.Polaritaet != "neutral" && !string.IsNullOrEmpty(kv.Value.Section)
+                    && !list.Contains(kv.Value.Section))
+                    list.Add(kv.Value.Section);
+            list.Sort(StringComparer.Ordinal);
+            return list;
+        }
+
+        /// <summary>P33-H4c (CONCEPT_missionsachse §2.4): one attackable
+        /// mission object. Facts are the object's OWN canonical EN mission
+        /// text/data (Health/Defense printed in the text, section, printed
+        /// position) plus the raw public wiring evidence (button texts,
+        /// wired event names, outcome side). Polaritaet/Basis are the CORE
+        /// ladder's verdict (P1-P4), recomputed over the completed stream -
+        /// never a producer claim, never hidden state.</summary>
+        public sealed class MissionObjectFact
+        {
+            public string Guid = "";        // entity GUID (Objects key, identity)
+            public string Name = "";        // public app name (ziel=OBJEKT:<name>)
+            public string Section = "";     // own mapSectionOwner GUID, "" = unknown
+            public string Position = "";    // printed setup "x;y" (SICHTBARKEITSGRENZE)
+            public long Health = -1;        // printed "Health: N" from the text
+            public long Defense = -1;       // printed "Defense: N" (None => 0); -1 = no fact
+            public string Buttons = "";     // raw button texts, ";" joined, ordinal
+            public string EventNames = "";  // wired event names, ";" joined, ordinal
+            public string OutcomeSide = ""; // losing side of the wired end event
+            public string Polaritaet = "neutral";  // "jagt" | "schuetzt" | "neutral"
+            public string Basis = "P4";            // "P1" | "P2" | "P3" | "P4"
+
+            /// The P1 evidence pool: button texts and wired event names.
+            public List<string> EvidenceStrings()
+            {
+                var list = new List<string>();
+                foreach (var src in new[] { Buttons, EventNames })
+                    foreach (var s in (src ?? "").Split(';'))
+                    {
+                        var t = s.Trim();
+                        if (t.Length > 0) list.Add(t);
+                    }
+                return list;
+            }
+        }
+
         public long ThreatBalance;
         public bool ThreatSeen;            // at least one public ThreatSpend event
         public int Seq;
@@ -256,6 +347,25 @@ namespace TacticalAI.Core
                   .Append('|').Append(EscortHero).Append('\n');
                 foreach (var z in EscapeSections)
                     sb.Append("escape=").Append(z).Append('\n');
+            }
+            // P33-H4c data-existence law (same as the victory row): object
+            // rows appear ONLY where the mission really parsed attackable
+            // objects - streams without MissionObject events keep their
+            // exact pre-H4c Canon byte-identical (Null-Law, marker_object.json).
+            if (Objects.Count > 0)
+            {
+                var okeys = new List<string>(Objects.Keys);
+                okeys.Sort(StringComparer.Ordinal);
+                foreach (var k in okeys)
+                {
+                    var o = Objects[k];
+                    sb.Append("object=").Append(o.Guid).Append('|').Append(o.Name).Append('|')
+                      .Append(string.IsNullOrEmpty(o.Section) ? "-" : o.Section).Append('|')
+                      .Append(string.IsNullOrEmpty(o.Position) ? "-" : o.Position).Append('|')
+                      .Append(o.Health.ToString(CultureInfo.InvariantCulture)).Append('|')
+                      .Append(o.Defense.ToString(CultureInfo.InvariantCulture)).Append('|')
+                      .Append(o.Polaritaet).Append('|').Append(o.Basis).Append('\n');
+                }
             }
             foreach (var g in Groups)
             {
@@ -582,6 +692,34 @@ namespace TacticalAI.Core
                                                   v.ObjectiveForEmpire,
                                                   v.ImperialWinBy, v.RebelWinBy);
                         break;
+                    case "MissionObject":
+                        // P33-H4c (CONCEPT_missionsachse §2.4): one event per
+                        // attackable mission object, keyed by entity GUID
+                        // (last-event-wins per GUID - a late-resolvable
+                        // section legitimately restates the row). The raw
+                        // public evidence rides along (button texts, wired
+                        // event names, outcome side); the POLARITY is the
+                        // CORE ladder, computed over the whole set AFTER the
+                        // stream (P2 reads the final projected objective).
+                        {
+                            var og = e.Str("entity");
+                            if (string.IsNullOrEmpty(og)) break;    // identity required
+                            FeedWorldView.MissionObjectFact o;
+                            if (!v.Objects.TryGetValue(og, out o))
+                            {
+                                o = new FeedWorldView.MissionObjectFact { Guid = og };
+                                v.Objects[og] = o;
+                            }
+                            if (e.Has("name")) o.Name = e.Str("name") ?? "";
+                            if (e.Has("section")) o.Section = e.Str("section") ?? "";
+                            if (e.Has("position")) o.Position = e.Str("position") ?? "";
+                            if (e.Has("health")) o.Health = e.Long("health", -1);
+                            if (e.Has("defense")) o.Defense = e.Long("defense", -1);
+                            if (e.Has("buttons")) o.Buttons = e.Str("buttons") ?? "";
+                            if (e.Has("eventNames")) o.EventNames = e.Str("eventNames") ?? "";
+                            if (e.Has("outcomeSide")) o.OutcomeSide = e.Str("outcomeSide") ?? "";
+                        }
+                        break;
                     case "ThreatSpend":
                         v.ThreatBalance = e.Long("balance");
                         v.ThreatSeen = true;
@@ -837,6 +975,12 @@ namespace TacticalAI.Core
                     // only exposes the state facts above.
                 }
             }
+            // P33-H4c: the object polarity ladder runs over the COMPLETED
+            // stream - P2 needs the FINAL projected objective and a restated
+            // objective legitimately re-polarises (the ladder is a pure
+            // function of row + final objective, so replay stays
+            // bit-identical). No objects -> no pass (Null-Law).
+            DeriveObjectPolarities(v);
             return v;
         }
 
@@ -1164,10 +1308,132 @@ namespace TacticalAI.Core
                 if (e.Seq <= planSeq) continue;
                 if (e.Round != round) continue;
                 if (e.Kind == "ObjectiveChange" || e.Kind == "VictoryConditions"
-                    || e.Kind == "HeroDeployed")
+                    || e.Kind == "HeroDeployed" || e.Kind == "MissionObject")
                     return e.Kind;
             }
             return null;
+        }
+
+        // ================================================ P33-H4c polaritaet
+        // CONCEPT_missionsachse §2.4 POLARITÄTS-LEITER (Thomas 3, hart):
+        // an object becomes an attack target ONLY when its polarity is
+        // DERIVED; without a rung it is NEUTRAL - nobody attacks it, nobody
+        // defends it. The ladder reads ONLY public mission-file data that
+        // the MissionObject event carries (button texts, wired event names,
+        // outcome side) plus the projected objective channel:
+        //   P2 Objective: startingObjective/ObjectiveChange text +
+        //      objectiveForEmpire names the object with a destroy/claim/
+        //      disable verb => the side OF the goal attacks, the opponent
+        //      gets the SCHUTZ-pflicht.
+        //   P1 Buttons/event names: 'Claim for Empire' at the object =>
+        //      Empire may claim => Rebels contest it (mirror: a hero-side
+        //      claim/rescue button or a faction event name => Empire
+        //      ATTACKS - the EMPIRE3 protester form).
+        //   P3 Outcome text at the destroy/claim event: the side that LOSES
+        //      when the object falls, defends it.
+        //   P4 nothing derivable => NEUTRAL.
+        // Mehrdeutig P1 vs P2 => P2 gewinnt (explicit Thomas ruling);
+        // otherwise the rung order decides (P1 rides above P3). failImperial/
+        // failRebel are DEAD flags (measured 0x true in the whole collection)
+        // and are NEVER read anywhere. Deterministic: no RNG, ordinal ties.
+        static readonly string[] P2Verbs =
+            { "destroy", "zerstör", "zerstoer", "sabotag", "deactivat", "disable",
+              "disarm", "entwaffn", "claim", "besetz" };
+
+        /// Recompute every object's polaritaet over the COMPLETED stream:
+        /// a pure function of the row + final objective + perspective flag,
+        /// so replaying the same events yields the same verdict bit-identically.
+        public static void DeriveObjectPolarities(FeedWorldView v)
+        {
+            if (v == null || v.Objects.Count == 0) return;   // Null-Law
+            foreach (var o in v.Objects.Values)
+                DeriveObjectPolarity(o, v.Objective, v.ObjectiveForEmpire);
+        }
+
+        /// The ladder for ONE object (public for the harness vectors).
+        public static void DeriveObjectPolarity(FeedWorldView.MissionObjectFact o,
+                                                string objective, bool objectiveForEmpire)
+        {
+            // P2 wins over P1 by ruling - evaluate it FIRST.
+            if (NamesObject(objective, o.Name) && HasVerb(objective, P2Verbs))
+            {
+                o.Polaritaet = objectiveForEmpire ? "jagt" : "schuetzt";
+                o.Basis = "P2";
+                return;
+            }
+            // P1: hero-side claim/rescue evidence OUTRANKS empire-side claim
+            // evidence (EMPIRE3 carries BOTH buttons and its verdict is
+            // JAGT per the concept's own example).
+            bool rebel = false, emp = false;
+            foreach (var s in o.EvidenceStrings())
+            {
+                if (RebelClaimEvidence(s)) rebel = true;
+                else if (EmpClaimEvidence(s)) emp = true;
+            }
+            if (rebel) { o.Polaritaet = "jagt"; o.Basis = "P1"; return; }
+            if (emp) { o.Polaritaet = "schuetzt"; o.Basis = "P1"; return; }
+            // P3: the producer read the outcome sentence of the WIRED end
+            // event ("rebels" = the Rebels lose when this object falls).
+            if (o.OutcomeSide == "rebels") { o.Polaritaet = "jagt"; o.Basis = "P3"; return; }
+            if (o.OutcomeSide == "empire") { o.Polaritaet = "schuetzt"; o.Basis = "P3"; return; }
+            // P4: NEUTRAL - kein Angriffsziel, kein Schutzziel.
+            o.Polaritaet = "neutral"; o.Basis = "P4";
+        }
+
+        /// 'Claim for Empire' form: an imperial faction marker WITH a claim
+        /// word, on a button text or a wired event name.
+        public static bool EmpClaimEvidence(string s)
+        {
+            var t = (s ?? "").ToLowerInvariant();
+            if (t.Length == 0) return false;
+            bool imperial = t.Contains("empire") || t.Contains("imperium");
+            bool claim = t.Contains("claim") || t.Contains("besetz");
+            return imperial && claim;
+        }
+
+        /// The rebel/hero side of P1: a faction event name ("Protester
+        /// Rebels N") or a hero-side claim/rescue/interact button WITHOUT
+        /// an imperial marker (buttons are presented to the hero player).
+        public static bool RebelClaimEvidence(string s)
+        {
+            var t = (s ?? "").ToLowerInvariant();
+            if (t.Length == 0) return false;
+            if (t.Contains("rebel") || t.Contains("rebellen")) return true;
+            bool imperial = t.Contains("empire") || t.Contains("imperium");
+            bool claim = t.Contains("claim") || t.Contains("besetz");
+            bool rescue = t.Contains("rescue") || t.Contains("rette") || t.Contains("befrei");
+            return (claim || rescue) && !imperial;
+        }
+
+        /// The objective names the object: full lower-case name containment,
+        /// or the cluster base name (trailing " <number>" stripped, at least
+        /// 4 chars) - the same full-name-token discipline NamesAllyKill uses.
+        public static bool NamesObject(string objective, string objectName)
+        {
+            var o = (objective ?? "").ToLowerInvariant();
+            var n = (objectName ?? "").Trim().ToLowerInvariant();
+            if (o.Length == 0 || n.Length == 0) return false;
+            if (o.Contains(n)) return true;
+            int sp = n.LastIndexOf(' ');
+            if (sp >= 0)
+            {
+                var tail = n.Substring(sp + 1);
+                bool digits = tail.Length > 0;
+                foreach (var ch in tail) if (ch < '0' || ch > '9') { digits = false; break; }
+                if (digits)
+                {
+                    var baseName = n.Substring(0, sp);
+                    if (baseName.Length >= 4 && o.Contains(baseName)) return true;
+                }
+            }
+            return false;
+        }
+
+        static bool HasVerb(string text, string[] verbs)
+        {
+            var t = (text ?? "").ToLowerInvariant();
+            foreach (var v in verbs) if (t.Contains(v)) return true;
+            return false;
         }
     }
 }

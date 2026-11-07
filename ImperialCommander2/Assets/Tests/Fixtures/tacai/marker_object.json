@@ -1,0 +1,198 @@
+{
+  "_doc": "P33-H4c Objekt-Achse (CONCEPT_missionsachse 2.4, card t_2ff1ba37). object_cases: the MissionObject feed projection + the CORE polaritaet ladder P1-P4 (a EMPIRE3 protest form -> P1 jagt, b LOCKED door named by an imperial objective -> P2 jagt, c sabotage objective authored by the rebels -> SCHUTZpflicht, d neutral object untouched P4, e P1-vs-P2 => P2 wins by ruling, f P3 outcome side, g P2 reads the FINAL objective after ObjectiveChange; a_null_twin = Null-Law pin: no 'can attack (Health:' object -> canon byte-identical, all three object views empty). guard_cases: the SCHUTZGESETZ Schnittstelle (mirrored block axis, Loch-Gesetz: -1 knowledge never counts). plantarget_cases: ziel=OBJEKT ordering law - door ON the route first (Tuer sprengen as Weg-Alternative; doorOpen is the ONLY state read, an open door drops out), then nearest, unknown last, ties = incoming name-ordinal. Relations hand-pilled from the law, no recorded values (no arithmetic, no RNG).",
+  "object_cases": [
+    {
+      "name": "a_empires3_p1",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Halte die Protestierenden vom Platz fern", "priorityTarget": "", "roundLimit": -1, "mission": "EMPIRE3"}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Imperial Protesters 2", "entity": "ent-protest-1", "health": 6, "defense": 0, "section": "sec-platz", "position": "12;7", "buttons": "Claim for Empire;Claim/Protesters Rescue", "eventNames": "Protesters Rebel 2"}}
+      ],
+      "expect": {
+        "pol": "jagt", "basis": "P1",
+        "hunt": "Imperial Protesters 2", "protect": "", "contested": "sec-platz",
+        "canon_has": ["object=ent-protest-1|Imperial Protesters 2|sec-platz|12;7|6|0|jagt|P1"]
+      }
+    },
+    {
+      "name": "a_null_twin",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Halte die Protestierenden vom Platz fern", "priorityTarget": "", "roundLimit": -1, "mission": "EMPIRE3"}}
+      ],
+      "expect": {
+        "pol": "", "basis": "",
+        "hunt": "", "protect": "", "contested": "",
+        "canon_not": ["object="]
+      }
+    },
+    {
+      "name": "b_locked_door_p2",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Destroy the containment door to reach the intruders", "priorityTarget": "", "roundLimit": -1, "mission": "EMPIRE-DOOR", "objectiveForEmpire": 1}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Containment Door", "entity": "ent-door-9", "health": 6, "defense": 0, "section": "sec-flur", "position": "5;2"}}
+      ],
+      "expect": {
+        "pol": "jagt", "basis": "P2",
+        "hunt": "Containment Door", "protect": "", "contested": "sec-flur",
+        "canon_has": ["object=ent-door-9|Containment Door|sec-flur|5;2|6|0|jagt|P2"]
+      }
+    },
+    {
+      "name": "c_terminal_schutz",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Sabotage the comms terminal in the hangar", "priorityTarget": "", "roundLimit": -1, "mission": "SAB"}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Comms Terminal", "entity": "ent-term-1", "health": 10, "defense": 2, "section": "sec-hangar", "position": "8;1"}}
+      ],
+      "expect": {
+        "pol": "schuetzt", "basis": "P2",
+        "hunt": "", "protect": "Comms Terminal", "contested": "sec-hangar",
+        "canon_has": ["object=ent-term-1|Comms Terminal|sec-hangar|8;1|10|2|schuetzt|P2"]
+      }
+    },
+    {
+      "name": "d_neutral_untouched",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the perimeter", "priorityTarget": "", "roundLimit": -1, "mission": "PERIM"}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Supply Crate", "entity": "ent-crate-1", "health": 4, "defense": 0, "section": "sec-lager", "position": "1;1"}}
+      ],
+      "expect": {
+        "pol": "neutral", "basis": "P4",
+        "hunt": "", "protect": "", "contested": "",
+        "canon_has": ["object=ent-crate-1|Supply Crate|sec-lager|1;1|4|0|neutral|P4"]
+      }
+    },
+    {
+      "name": "e_p1_vs_p2_p2_wins",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Destroy the relay marker", "priorityTarget": "", "roundLimit": -1, "mission": "RELAY", "objectiveForEmpire": 1}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Relay Marker", "entity": "ent-mark-1", "health": 5, "defense": 0, "buttons": "Claim for Empire"}}
+      ],
+      "expect": {
+        "pol": "jagt", "basis": "P2",
+        "hunt": "Relay Marker", "protect": "", "contested": "",
+        "canon_has": ["object=ent-mark-1|Relay Marker|-|-|5|0|jagt|P2"]
+      }
+    },
+    {
+      "name": "f_p3_rebels_lose",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Sichere den Raum", "priorityTarget": "", "roundLimit": -1, "mission": "DEPOT"}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Fuel Depot", "entity": "ent-depot-1", "health": 12, "defense": 1, "section": "sec-lager", "eventNames": "Depot Ignition", "outcomeSide": "rebels"}}
+      ],
+      "expect": {
+        "pol": "jagt", "basis": "P3",
+        "hunt": "Fuel Depot", "protect": "", "contested": "sec-lager"
+      }
+    },
+    {
+      "name": "f2_p3_empire_loses",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Sichere den Raum", "priorityTarget": "", "roundLimit": -1, "mission": "DEPOT"}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Fuel Depot", "entity": "ent-depot-1", "health": 12, "defense": 1, "section": "sec-lager", "eventNames": "Depot Ignition", "outcomeSide": "empire"}}
+      ],
+      "expect": {
+        "pol": "schuetzt", "basis": "P3",
+        "hunt": "", "protect": "Fuel Depot", "contested": "sec-lager"
+      }
+    },
+    {
+      "name": "g_p2_final_objective",
+      "events": [
+        {"kind": "MissionStart", "round": 1, "payload": {"objective": "Hold the perimeter", "priorityTarget": "", "roundLimit": -1, "mission": "PERIM"}},
+        {"kind": "MissionObject", "round": 1, "payload": {"name": "Fuel Depot", "entity": "ent-depot-1", "health": 12, "defense": 1, "section": "sec-lager"}},
+        {"kind": "ObjectiveChange", "round": 2, "payload": {"objective": "Destroy the fuel depot"}}
+      ],
+      "expect": {
+        "pol": "schuetzt", "basis": "P2",
+        "hunt": "", "protect": "Fuel Depot", "contested": "sec-lager"
+      }
+    }
+  ],
+  "guard_cases": [
+    {
+      "name": "bridge_pinch",
+      "sections": ["sec-approach", "sec-bridge", "sec-hangar"],
+      "edges": [["sec-approach", "sec-bridge"], ["sec-bridge", "sec-hangar"]],
+      "approach": ["sec-approach"],
+      "objects": ["sec-hangar"],
+      "expect": "sec-bridge"
+    },
+    {
+      "name": "no_route_knowledge_null",
+      "sections": ["sec-approach", "sec-bridge", "sec-hangar", "sec-far"],
+      "edges": [["sec-approach", "sec-bridge"], ["sec-bridge", "sec-hangar"]],
+      "approach": ["sec-far"],
+      "objects": ["sec-hangar"],
+      "expect": ""
+    },
+    {
+      "name": "empty_inputs_null",
+      "sections": ["sec-a"],
+      "edges": [],
+      "approach": [],
+      "objects": ["sec-a"],
+      "expect": ""
+    }
+  ],
+  "plantarget_cases": [
+    {
+      "name": "route_door_first",
+      "sections": ["A", "B", "C", "D"],
+      "edges": [["A", "B"], ["B", "C"], ["C", "D"]],
+      "door_edges": [["A", "B", "d-1"]],
+      "door_states": {"d-1": "closed"},
+      "group": "A", "focus": "D",
+      "objects": [{"name": "Gate", "guid": "d-1", "section": "B"}, {"name": "Med Pack", "guid": "x-2", "section": "B"}],
+      "expect": "Gate"
+    },
+    {
+      "name": "open_door_drops",
+      "sections": ["A", "B", "C", "D"],
+      "edges": [["A", "B"], ["B", "C"], ["C", "D"]],
+      "door_edges": [["A", "B", "d-1"]],
+      "door_states": {"d-1": "open"},
+      "group": "A", "focus": "D",
+      "objects": [{"name": "Gate", "guid": "d-1", "section": "B"}, {"name": "Med Pack", "guid": "x-2", "section": "B"}],
+      "expect": "Med Pack"
+    },
+    {
+      "name": "nearest_wins",
+      "sections": ["A", "B", "C"],
+      "edges": [["A", "B"], ["B", "C"]],
+      "door_edges": [],
+      "door_states": {},
+      "group": "A", "focus": "C",
+      "objects": [{"name": "Far Thing", "guid": "x-1", "section": "C"}, {"name": "Near Thing", "guid": "x-2", "section": "B"}],
+      "expect": "Near Thing"
+    },
+    {
+      "name": "unknown_section_last",
+      "sections": ["A", "B", "C"],
+      "edges": [["A", "B"], ["B", "C"]],
+      "door_edges": [],
+      "door_states": {},
+      "group": "A", "focus": "C",
+      "objects": [{"name": "Ghost", "guid": "x-1", "section": ""}, {"name": "Known", "guid": "x-2", "section": "C"}],
+      "expect": "Known"
+    },
+    {
+      "name": "tie_name_ordinal",
+      "sections": ["A", "B"],
+      "edges": [["A", "B"]],
+      "door_edges": [],
+      "door_states": {},
+      "group": "A", "focus": "B",
+      "objects": [{"name": "Alpha", "guid": "x-1", "section": "B"}, {"name": "Zeta", "guid": "x-2", "section": "B"}],
+      "expect": "Alpha"
+    },
+    {
+      "name": "no_objects_null",
+      "sections": ["A"],
+      "edges": [],
+      "door_edges": [],
+      "door_states": {},
+      "group": "A", "focus": "",
+      "objects": [],
+      "expect": ""
+    }
+  ]
+}

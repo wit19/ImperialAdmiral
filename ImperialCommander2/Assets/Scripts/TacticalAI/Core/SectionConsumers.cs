@@ -511,6 +511,117 @@ namespace TacticalAI.Core
             return null;
         }
 
+        // ---- P33-H4c OBJEKT-ACHSE (CONCEPT_missionsachse 2.4) -------------
+        // SCHUTZGESETZ (mirrored block axis): an object the OPPONENT must
+        // destroy/claim (polaritaet "schuetzt") is a defence anchor. The
+        // stand duties (guard/blocker) hold the SCHNITTSTELLE ZUM OBJEKT -
+        // exactly the H4b block law over the OBSERVED graph, with the
+        // rebel approach as anchor: anchor = the observed hero section with
+        // a known route to an object section (Loch-Gesetz: DistanceLowerBound
+        // -1 = no knowledge = does not exist, never "far"), zones = the
+        // protected object sections. Anchor choice: shortest known distance,
+        // ties zone ordinal then anchor ordinal (pure traversal order).
+        // Null-Law: no protect object or no known distance anywhere ->
+        // null -> the consumer keeps today's Konten-Punkt clause bit-
+        // identical. hunter duties keep the existing Reaktionsgesetz.
+        public static string ObjectGuardSchnittstelle(SectionGraph graph,
+            IEnumerable<string> approachSections, IEnumerable<string> objectSections)
+        {
+            if (graph == null || approachSections == null || objectSections == null)
+                return null;
+            var ap = new List<string>();
+            foreach (var s in approachSections)
+                if (!string.IsNullOrEmpty(s) && graph.HasSection(s) && !ap.Contains(s))
+                    ap.Add(s);
+            var zs = new List<string>();
+            foreach (var s in objectSections)
+                if (!string.IsNullOrEmpty(s) && graph.HasSection(s) && !zs.Contains(s))
+                    zs.Add(s);
+            if (ap.Count == 0 || zs.Count == 0) return null;
+            ap.Sort(StringComparer.Ordinal);
+            zs.Sort(StringComparer.Ordinal);
+            string anchor = null; int anchorD = 0;
+            foreach (var z in zs)
+                foreach (var a in ap)
+                {
+                    int d = graph.DistanceLowerBound(a, z);
+                    if (d < 0) continue;                    // no knowledge
+                    if (anchor == null || d < anchorD) { anchor = a; anchorD = d; }
+                }
+            if (anchor == null) return null;               // -1 stays neutral
+            return BlockSchnittstelle(graph, anchor, zs);
+        }
+
+        // TUER-sprengen + plan-Ziel: the per-activation target law for
+        // POLAR objects (CONCEPT 2.4: "ziel=OBJEKT:<name>" - the caller
+        // gates WHICH duties may choose an object and only ever passes
+        // POLAR rows here; without polarity nothing reaches this seam).
+        // Ordering law, fully deterministic, no Aufwand-/Rest-Health-Kalkuel:
+        //   1) a hunt object that IS a door sitting ON the best route
+        //      (group section -> focus section, door edge on a shortest
+        //      path) rides FIRST - "Tuer sprengen" as Weg-Alternative to
+        //      opening it; its visible state must not be open (doorOpen is
+        //      the ONLY state read - an open door is nothing to blow).
+        //   2) then nearest object by DistanceLowerBound from the group
+        //      section; -1 (no knowledge) never outranks a known distance
+        //      but still ranks among the unknowns (identity is the GUID/
+        //      name, the board shows where the thing stands).
+        //   3) ties: the incoming name-ordinal order (FeedWorldView
+        //      .HuntObjects) - the first candidate wins, never a coin flip.
+        public static FeedWorldView.MissionObjectFact ObjectPlanTargetFor(
+            SectionGraph graph, string groupSection, string focusSection,
+            List<FeedWorldView.MissionObjectFact> huntObjects)
+        {
+            if (huntObjects == null || huntObjects.Count == 0) return null;
+            FeedWorldView.MissionObjectFact best = null;
+            int bestRoute = 2, bestDist = 0;
+            foreach (var o in huntObjects)
+            {
+                if (o == null) continue;
+                if (graph != null && graph.DoorStateOfGuid(o.Guid) == SectionGraph.DoorOpen)
+                    continue;                               // visibly open: done
+                int route = DoorOnRoute(graph, o.Guid, groupSection, focusSection) ? 0 : 1;
+                int d = SectionGraph.NoKnowledge;
+                if (graph != null && !string.IsNullOrEmpty(groupSection) && graph.HasSection(groupSection)
+                    && !string.IsNullOrEmpty(o.Section) && graph.HasSection(o.Section))
+                    d = graph.DistanceLowerBound(groupSection, o.Section);
+                int dk = d < 0 ? int.MaxValue : d;
+                if (best == null || route < bestRoute
+                    || (route == bestRoute && dk < bestDist))
+                { best = o; bestRoute = route; bestDist = dk; }
+            }
+            return best;
+        }
+
+        /// Does a door with this GUID sit ON a shortest observed route from
+        /// `from` to `focus`? (edge carries the door AND d(from,a)+1+d(b,focus)
+        /// == d(from,focus) or mirror). No route knowledge -> false (neutral).
+        public static bool DoorOnRoute(SectionGraph graph, string doorGuid,
+                                       string from, string focus)
+        {
+            if (graph == null || string.IsNullOrEmpty(doorGuid)) return false;
+            if (string.IsNullOrEmpty(from) || !graph.HasSection(from)) return false;
+            if (string.IsNullOrEmpty(focus) || !graph.HasSection(focus)) return false;
+            int full = graph.DistanceLowerBound(from, focus);
+            if (full < 0) return false;
+            foreach (var a in graph.Sections)               // Sections: ordinal
+            {
+                foreach (var b in graph.NeighborsOf(a))
+                {
+                    if (string.Compare(a, b, StringComparison.Ordinal) > 0) continue; // each edge once
+                    var doors = graph.DoorsOnEdge(a, b);
+                    if (!doors.Contains(doorGuid)) continue;
+                    int d1 = graph.DistanceLowerBound(from, a);
+                    int d2 = graph.DistanceLowerBound(b, focus);
+                    if (d1 >= 0 && d2 >= 0 && d1 + 1 + d2 == full) return true;
+                    d1 = graph.DistanceLowerBound(from, b);
+                    d2 = graph.DistanceLowerBound(a, focus);
+                    if (d1 >= 0 && d2 >= 0 && d1 + 1 + d2 == full) return true;
+                }
+            }
+            return false;
+        }
+
         // M14f R3 text law (Thomas 07.11, concept §8.4): an authored
         // section name may ride a popup ONLY when it informs. The editor
         // boilerplate prefix "Section <n> - " is stripped; junk is refused

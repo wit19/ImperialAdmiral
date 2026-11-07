@@ -166,6 +166,7 @@ namespace TacticalAiHarness
             Run("dp_score.json", SecDpScore);
             Run("axis.json", SecAxis);
             Run("budget_rank.json", SecBudgetRank);    // P33-H5 (t_94d361bb): Beschaffungs-Ranking Kauf-vs-Verstaerken (hand-pinned weight table, Null-Law, Spare/dump, tie law, fail-closed reader)
+            Run("marker_object.json", SecMarkerObject);    // P33-H4c (t_2ff1ba37): Objekt-Achse - MissionObject-Feed, Polaritaets-Leiter P1-P4 (P2 vor P1), Schutzgesetz-Schnittstelle, ziel=OBJEKT Wegwahl (Tuer sprengen), Null-Law-Pin
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

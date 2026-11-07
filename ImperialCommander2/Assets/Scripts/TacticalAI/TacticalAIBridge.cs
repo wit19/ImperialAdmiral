@@ -521,6 +521,28 @@ namespace TacticalAI
                     try
                     {
                         LastCriticalSections = _feedAdapter.MissionCriticalSectionsNow();
+                        // P33-H4c ZUSÄTZLICH clause (CONCEPT_missionsachse
+                        // 2.4): sections of POLAR objects (rettungs-/
+                        // claimpflichtige Marker, Terminals, Türen ...) join
+                        // the critical set, live-filtered by the phase law -
+                        // additive, ordinal-deduped. Neutral objects
+                        // contribute nothing; a mission without object facts
+                        // keeps the mined table bit-identical (Null-Law).
+                        try
+                        {
+                            var contested = LiveEscapeZones(v.ContestedObjectSections());
+                            if (contested.Count > 0)
+                            {
+                                var merged = LastCriticalSections != null
+                                    ? new List<string>(LastCriticalSections)
+                                    : new List<string>();
+                                foreach (var s in contested)
+                                    if (!merged.Contains(s)) merged.Add(s);
+                                merged.Sort(StringComparer.Ordinal);
+                                LastCriticalSections = merged;
+                            }
+                        }
+                        catch { /* additive only - the mined table stands */ }
                         LastSdZones = Tac.SectionConsumers.PlanZones(
                             LastSectionSpace, v,
                             Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(
@@ -2599,7 +2621,42 @@ namespace TacticalAI
                                       " -> " + fokuszoneHero +
                                       " basis=fokuszone round=" + ordView.Round);
                         }
-                        else why = BuildOverlordWhy(L0, dec, heroName);
+                        else
+                        {
+                            // P33-H4c OBJEKT-ZIEL (CONCEPT_missionsachse 2.4):
+                            // a POLAR hunt object may take the per-activation
+                            // PLAN target slot (ziel=OBJEKT:<name>) - the
+                            // round fokus= above stays figures-only (concept:
+                            // "GLOBALES fokus= bleibt Figuren-only"). No
+                            // object wins the slot -> the canon why line.
+                            string objTarget;
+                            Tac.FeedWorldView.MissionObjectFact objFact;
+                            TryObjectTarget(sdSpace, ordView, cd, rdPattern, dec,
+                                            reactionHero, wachzoneHero, vergeltungHero,
+                                            supporterTrustHero, out objTarget, out objFact);
+                            if (objTarget != null)
+                            {
+                                heroName = "OBJEKT:" + objTarget;
+                                // Raw-token law (card: ui.json NOT touched):
+                                // the German why is a raw token until the
+                                // Controller follow-up localizes it; it
+                                // names ONLY public mission-file data, never
+                                // a damage counter, never "fast zerstoert".
+                                why = "Missionsobjekt laut Missionstext angreifbar (Health: "
+                                      + objFact.Health + "), Polaritaet " + objFact.Polaritaet
+                                      + " abgeleitet " + objFact.Basis + " [public mission-file text]";
+                                string objState = sdSpace != null && sdSpace.Graph != null
+                                    ? sdSpace.Graph.DoorStateOfGuid(objFact.Guid) : "unknown";
+                                Debug.Log("TacticalAIBridge::OBJEKT ziel=OBJEKT:" + objTarget
+                                          + " muster=" + rdPattern
+                                          + " polaritaet=" + objFact.Polaritaet
+                                          + " basis=" + objFact.Basis
+                                          + " zustand=" + objState
+                                          + " r" + ordView.Round
+                                          + " [public mission-file text; explain=full]");
+                            }
+                            else why = BuildOverlordWhy(L0, dec, heroName);
+                        }
                         Debug.Log("TacticalAIBridge::target " + cd.id + " -> " +
                                   (fokuszoneHero != null ? fokuszoneHero : dec.HeroId) +
                                   " basis=" + (fokuszoneHero != null ? "fokuszone" : dec.Basis) +
@@ -2634,6 +2691,70 @@ namespace TacticalAI
             heroName = pick.name;
             why = string.Join("; ", parts);
             return true;
+        }
+
+        /// <summary>P33-H4c plan-Ziel (CONCEPT_missionsachse 2.4): may a
+        /// POLAR hunt object take the per-activation PLAN target slot?
+        /// "ziel=OBJEKT:&lt;name&gt;" - NEVER the round fokus= (that stays
+        /// figures-only) and never without a DERIVED polarity (Core P1-P3;
+        /// neutral objects never even reach the Core seam). Gates, all
+        /// deterministic, mirroring the H4b axis-mask law:
+        ///  - only the chase duties (hunter/aggressive) - the stand duties
+        ///    have the SCHUTZseite (risk fallback),
+        ///  - no fact key spoke this activation (reaktion/wachzone/
+        ///    vergeltung/maskenvertrauen all silent - board rules and
+        ///    observed facts keep Vorrang),
+        ///  - the DECIDING focus basis sits on the estimation side
+        ///    (card/economy/basis/proxy): mark (human designation stays
+        ///    king), achse (win wiring outranks object wiring), objactor
+        ///    and chip (canon focus keys) keep their hero target,
+        ///  - Core ordering (door-ON-ROUTE first = TUER sprengen as Weg-
+        ///    Alternative, then nearest, then name ordinal; visibly OPEN
+        ///    doors drop out - doorOpen is the ONLY state read, no
+        ///    Aufwand-/Rest-Health-Kalkuel anywhere).
+        /// No hunt object, no seam hit -> false: the canon popup line is
+        /// built bit-identically (Null-Law).</summary>
+        static void TryObjectTarget(Tac.SectionSpace space, Tac.FeedWorldView view,
+            global::DeploymentCard cd, string pattern, Tac.FocusPick dec,
+            string reactionHero, string wachzoneHero, string vergeltungHero,
+            string supporterTrustHero, out string targetName,
+            out Tac.FeedWorldView.MissionObjectFact fact)
+        {
+            targetName = null; fact = null;
+            try
+            {
+                if (view == null || dec == null) return;
+                if (pattern != "hunter" && pattern != "aggressive") return;
+                if (reactionHero != null || wachzoneHero != null ||
+                    vergeltungHero != null || supporterTrustHero != null) return;
+                var b = dec.Basis ?? "";
+                if (b != "card" && b != "economy" && b != "basis" && b != "proxy") return;
+                var hunt = view.HuntObjects();          // POLAR rows only
+                if (hunt.Count == 0) return;
+                string groupSec = LastSdZones != null ? LastSdZones.ZoneOf(cd.id) : null;
+                string focusSec = null;
+                if (space != null && !string.IsNullOrEmpty(dec.HeroId))
+                {
+                    focusSec = space.HeroInSection(dec.HeroId);
+                    if (string.IsNullOrEmpty(focusSec) && view.Heroes != null)
+                        foreach (var h in view.Heroes)
+                            if (h.HeroId == dec.HeroId)
+                            {
+                                focusSec = space.HeroInSection(h.Name);
+                                if (!string.IsNullOrEmpty(focusSec)) break;
+                            }
+                }
+                var o = Tac.SectionConsumers.ObjectPlanTargetFor(
+                    space != null ? space.Graph : null, groupSec, focusSec, hunt);
+                if (o == null) return;
+                fact = o;
+                targetName = o.Name;
+            }
+            catch (Exception e)
+            {
+                targetName = null; fact = null;
+                Debug.LogWarning("TacticalAIBridge::object target failed (canon target): " + e.Message);
+            }
         }
 
         // ------------------------------------------------- M6 overlord helpers
@@ -3098,6 +3219,54 @@ namespace TacticalAI
                 blockHold = null;
                 Debug.LogWarning("TacticalAIBridge::block interface failed (Konten-Punkt fallback): " + e.Message);
             }
+            // P33-H4c SCHUTZGESETZ (CONCEPT_missionsachse 2.4, mirrored to
+            // the block axis): an object the mission wiring assigns to the
+            // OPPONENT (polaritaet "schuetzt" - Core ladder P1/P2/P3) is a
+            // defence anchor. The stand duties (blocker/guard, inside
+            // RiskPosture) hold the SCHNITTSTELLE between the observed
+            // rebel approach (the heroes' observed sections) and the
+            // object's LIVE section (M14d phase law, same helper as the
+            // escape zones). The mission-END wiring (H4b block axis)
+            // outranks the object duty - this only fills the free slot.
+            // hunter duties keep the existing Reaktionsgesetz ("fassen
+            // Gegner in Objekt-Naehe") - no new law here. Null-Law: no
+            // protect object, no observed hero, no live section, no known
+            // route (-1 neutral) -> null -> the Konten-Punkt clause stays
+            // bit-identical (risk.json pinned).
+            string objectHold = null;
+            try
+            {
+                if (view != null)
+                {
+                    var prot = view.ProtectObjects();
+                    var oSpace = LastSectionSpace;
+                    if (prot.Count > 0 && oSpace != null)
+                    {
+                        var heroSections = new List<string>();
+                        foreach (var h in view.Heroes)
+                        {
+                            var hs = oSpace.HeroInSection(h.HeroId);
+                            if (string.IsNullOrEmpty(hs)) hs = oSpace.HeroInSection(h.Name);
+                            if (!string.IsNullOrEmpty(hs) && !heroSections.Contains(hs))
+                                heroSections.Add(hs);
+                        }
+                        var objSecs = new List<string>();
+                        foreach (var o in prot)
+                            if (!string.IsNullOrEmpty(o.Section) && !objSecs.Contains(o.Section))
+                                objSecs.Add(o.Section);
+                        var liveObj = LiveEscapeZones(objSecs);
+                        if (heroSections.Count > 0 && liveObj.Count > 0)
+                            objectHold = Tac.SectionConsumers.ObjectGuardSchnittstelle(
+                                oSpace.Graph, heroSections, liveObj);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                objectHold = null;
+                Debug.LogWarning("TacticalAIBridge::object guard failed (Konten-Punkt fallback): " + e.Message);
+            }
+            if (blockHold == null) blockHold = objectHold;
             _blockHoldDbg = blockHold ?? "";
             foreach (var f in facts)
             {

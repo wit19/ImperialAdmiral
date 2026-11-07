@@ -110,7 +110,7 @@ writes nothing back:
 | Own group positions at spawn and own movement (the AI placed them) | the mode's own orders (spawn DP + activation outcomes) |
 | Own group damage | the OPTIONAL per-group wound-tracker dial next to the deployment card (it is not tied to individual figures; if a table doesn't use the dial, the model only learns losses through Death/Removal events) |
 | Hero wounded / defeated status | hero card toggles (`heroState.isWounded/isDefeated`) |
-| Which hero activates when (public activation order) | activation events |
+| Which hero activates when (public activation order) | the hero's END-of-turn activation-chip flip (`SagaHGPrefab.OnActivation1/2` writes the GroupActivation log line — M6s-B7; the ONLY carrier of `HeroActivated`) |
 | Threat spend/replacement | `gameVars.threat`, threat ledger hooks |
 | Campaign bookkeeping: hero items, known skills, XP | CampaignManager state (read-only) |
 
@@ -127,6 +127,19 @@ GroupDamage, RoundEnd, RoundLimitChanged`
 
 Payloads carry only public values (names, zone labels, rounds, wheel damage numbers,
 threat balance). Unknown keys are rejected.
+
+**Player contract for `HeroActivated` (the activation-chip rule).** The only
+carrier of this event is the hero's end-of-turn activation checkbox flip, and
+the law on the consumers is strict: the flip must come at the END of the
+hero's turn — after the damage is announced, the kills are removed and every
+interaction is declared — because ALL table-event attribution keys on it: the
+closer-law credits (M14a), the hero activation window close, the section
+observations (`SectionSpace.cs`), the M10b retro channel ("the hero whose turn
+closed after the event did it") and the focus handoff. A turn whose chip is
+never flipped is, to the AI, a turn that never happened; a chip flipped at the
+START misattributes that hero's whole turn to the previous closer. This is a
+table discipline the docs state in player words in
+[`WIKI_tactical_ai.md`](WIKI_tactical_ai.md) ("golden rule of the table").
 
 ```mermaid
 flowchart LR
@@ -1043,3 +1056,75 @@ throwaway concept probe — three independent implementations agreed on
 every number BEFORE the fixture moved). Lesson logged: when a ruling
 changes the LAW, prototype it in a throwaway probe with real numbers
 first — M29 was argued and accepted on engine output, not on prose.
+## Entry ledger, reaction zones, and the geometry census (2026-11-07, M14d–M14f)
+
+The location question got its data foundation this day. Three layers, each
+mission-frozen Tactical-only (the Legacy rail is bit-for-bit untouched —
+standing rule, Thomas 06.11/07.11):
+
+**M14d — deployment decision.** Reinforcement priority is a deterministic
+law now, not a random pick (priority ranking over legal DPs, `bf15225`);
+DP-anchor coverage/phase and the strict threat economy gate it
+(`0bf3ae7`); persona economy hooks (CostFor/SwapDeployCandidate) ride the
+`TacticalMissionActive()` seam, closing the three shared-rail legacy paths
+(landing d1/d2, onslaught draw loop, M13c manual-optional window).
+
+**M14e — the standort ledger.** `SagaSession.deployLedger` (save/loaded,
+survives the Loch-Gesetz) carries THREE honest origins for EVERY figure:
+`authored` (the mission file's own pointList — 293 of 297 start groups carry
+a usable DP; the old in-memory recorder never saw the Specific flow — plus
+authored Specific-event DPs at deploy time), `active` (the DP the Active-DP
+choice actually used), `hero-entry` (the mined blue entry fields). None/
+empty placement spots get NO row: honest unknown, ever. Hero-entry mining
+law (`tools/hero_entry_mine.py`, fail-closed gates): blue Highlight AND
+((theText ~ /deploy|place/ AND ~ /hero|helden|rebel/) OR (text empty AND
+name=='Entrance')) → 134/138 missions, 143 entries, 8 multi-field, 4
+fieldless (CORE11, CORE28, EMPIRE13, OTHER11), 0 false positives; a
+multi-field mission is a SET of possible entry sections (SectionSpace
+`_heroEntrySet`) — nodes exist, an anchor forms only when the set collapses
+to one, an observation always outranks. `spawn.dp` rides the ledger into
+SectionSpace: spawn belief seeds on the figure's OWN entry section. C4
+friend leash in `DeploymentAnchors.Choose(ownSections)` acts ONLY in the
+cross-section tie (anchor tier and intra-section distance keep Primat;
+empty/no leash = bit-identical seed chain). Fixtures: `deploy_ledger.json`
+(50 checks) + `dp_anchors.json` (92 checks).
+
+**M14f — the geometry census and the reaction answer.** Census over all 138
+missions / 2313 tiles (`docs/SECTIONS_census.md`): the grid is clean, but
+only 3.5 % of tile contacts carry a Door entity and 228/260 doors float on
+no contact, and `TileDescriptor` carries no opening/wall data — VERDICT:
+physical tile geometry CANNOT ground sound rings (opening-vs-wall is
+unknowable to the app). Rings therefore stay on the OBSERVED SectionGraph
+(Grundgesetz: unknown = permeable; `DistanceLowerBound` −1 = no knowledge =
+neutral, never "far"). On that graph the live proximity law ships:
+`ZoneBelief.ThreatZone` = contestZone, else EXACTLY one fresh ring (several
+rings without contest = no goal, neutral); `GroupThreatDist` =
+DistanceLowerBound over the observed graph; `OrderPlan.Efficiency` lifts a
+`dist==1` group by ONE fixed ×11/10 (dist 0 already rides the ring ×5/4 /
+contest ×23/20 — no double signal; dist ≥ 2 unpunished — bonus-only pending
+playtest calibration; the lift provably cannot flip finisher candidacy,
+vectored). Gate S3+ (ladder fills the table only there; PlanRound
+re-gates). Null-Law: absent/empty/−1 maps bit-identical to canon
+(`nahe_plan.null_eq_*`, `gate_s2_identical`). Text law R3 §8.4:
+`CleanSectionName` strips the "Section <n> - " boilerplate and refuses junk
+(Start Section, bare Section, R1..L5, digits) — the explain line names the
+reaction zone (`ordExplainNahe`) or falls back to a purely RELATIVE wording
+(`ordExplainNaheRel`): never an id, never a coord; both keys in all 11
+languages (UiCompletenessGate PASS). Architecture correction pinned in the
+CONCEPT v3 addendum: `Core/Belief.cs` (BeliefState/AppView/SelectDoctrine,
+Contest) has NO live caller — sim-theater only; the live rail is
+SectionSpace → SectionConsumers → OverlordFocus. Forensic log lines for the
+playtest (log-only, no decision reads them): `DeployLedger::card<-dps(origin)`
+per ledger write, `TacticalAIBridge::SD-ZONES::zone/ring/contest` per S-D pull.
+
+**QA (07.11):** harness ALL PASS 45657 checks; compile APP rc=0 (285 files)
+/ TESTS rc=0 (10); TacticalAiGate + UiCompletenessGate + DeploymentFilterGate
+ALL PASS; taboo lint 12/12; hero-entry miner + geometry census OK.
+
+**The player-side consequence (why this sits next to the feed law):** the
+entry ledger and the threat-zone belief both consume exactly the public
+events the table writes — and the biggest single event carrier is the hero
+activation-chip flip (§4 player contract). No flip, no observation, no zone,
+no reaction: the ledger knows where figures CAME IN, the flip is the only
+thing that says where the HEROES have BEEN.
+

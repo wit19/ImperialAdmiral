@@ -1,5 +1,21 @@
 # Playtest-Paket: Faire Imperiale KI (feature/tactical-ai)
 
+> **⚠ STAND-HINWEIS (Nachtrag 07.11.2026):** Dieses Paket beschreibt den
+> Playtest-Stand dev 21 (27.10.2026) und ist damit ein **historisches Dokument** —
+> Versionsnummer, Order-Deck-Ablauf und Settings-Beschreibung sind überholt
+> (das Order-Deck wurde in M11 entfernt; Personas, Reaktive Ebene, Sektionsraum,
+> Eintritts-Ledger und Reaktionszonen kamen danach). Der **maßgebliche Stand**
+> steht in `docs/WIKI_tactical_ai.md` (Spielerführung) und
+> `docs/MECHANICS_tactical_ai.md` (Mechanik).
+> **Neue, zwingende Brett-Regel für alle Playtester:** Den Aktivierungs-Chip
+> (Aktivierungs-Checkbox) eines Helden erst am **ENDE** seiner Runde flippen —
+> nachdem Schaden angesagt, Kills entfernt und alle Interaktionen angesagt
+> wurden. Nicht am Rundenanfang, nicht vergessen: **Ohne diesen Flip
+> funktioniert in Imperial Admiral nichts** — Vergeltungs-Zuordnung,
+> Türen-/Objektiv-Credits, Sektions-Wissen und Fokuswechsel hängen
+> ausschließlich an diesem einen Log-Ereignis. Details: „Golden rule of the
+> table" im WIKI.
+
 Stand: dev 21, 27.10.2026 — Assembly-CSharp (249 Dateien inkl. KI) kompiliert fehlerfrei;
 Settings + Missions-Badges zeigen EINE Leiter (Rekrut, Stormtrooper, Veteran, Kommandant,
 Großadmiral Thrawn); Missions-Badge zyklert AUTO -> AUS -> Leiter -> AUTO;

@@ -15,6 +15,11 @@ deliberately does not: Gloomhaven draws a random initiative card each round to
 decide which monsters activate; here every figure activates, in a planned,
 reproducible order.)
 
+Before anything else, one obligation belongs to the hero players: **flip each hero's
+activation chip at the END of that hero's turn** — after damage, kills and
+interactions have been announced. The whole tactical machinery keys on that flip;
+see the [golden rule under Activation](#activation).
+
 This page documents the mode as it is actually implemented. Every section names the
 code or data file behind the claim, so anything here can be checked. The deep
 mechanics reference (planner internals, tables, formulas) lives in
@@ -52,6 +57,8 @@ in [`ANDROID_build.md`](ANDROID_build.md).
 14. [What this release does NOT include](#not-included)
 15. [Tips, limits and honest admissions](#tips-and-limits)
 16. [Links to the original IC2 documentation](#links)
+17. [The reactive layer (November 2026)](#reactive-layer)
+18. [The section space (November 2026)](#section-space)
 
 ---
 
@@ -170,17 +177,36 @@ comes up". Tactical mode replaces both halves with planning
   mission; the skill level decides how wisely the budget is spent, never how big it
   is (see [Difficulty](#difficulty)).
 
-**Flip the hero switch at the END of the hero's activation.** This is your side of
-the deal in tactical mode: ticking a hero's activation checkbox is the one public
-signal that says *"this hero's turn is over now"*, and the tactical AI reads the
-mission log exactly like the table reads it — events written *before* your flip
-belong to that hero (the figure who opened the door gets the door; the hero who
-shot the objective's troops gets the strike credit *and* becomes the one the plan
-focuses on — the marker follows the fighting, not the errands). If you flip the box
-at the *start* of a turn instead, the AI credits the events to the wrong hero — and
-it will look "very dumb", because the AI only knows what the log says. The flips
-also appear as regular lines in the in-game mission log panel (same kind of line
-the imperial activation pop-ups have always written there).
+### The golden rule of the table: flip the activation chip at the END of the hero's turn
+
+> **This is the one thing the hero side must get right — every mechanism in
+> Imperial Admiral's tactical mode depends on it.** A hero's turn ends like
+> this: move, act, roll the dice, **announce the damage, remove the kills,
+> announce every interaction** (doors opened, terminals used, objects touched,
+> saves made, order effects taken) — and **only then flip that hero's
+> activation chip** (the activation checkbox on the hero's squad-HUD card).
+> Not at the start of the turn. Not halfway through. Never forgotten.
+>
+> **Why:** the flip is the single public signal that says *"this hero's turn
+> is over now."* The app writes exactly one mission-log line when you flip it,
+> and the tactical AI reads the mission log the way a human Imperial player
+> reads the table — events written *before* your flip belong to that hero.
+> That is how the AI knows: who opened which door (the door credit), who shot
+> the objective's troops (the strike credit — and that hero then becomes the
+> one the plan focuses on: the marker follows the fighting, not the errands),
+> who the suspected shooter of a retaliating unit is (the closer law), where
+> the hero is likely to be (the section belief), and when a hero's activation
+> window closes.
+>
+> **If you flip too early**, the AI credits the events of that turn to the
+> *wrong* hero and it will genuinely look "very dumb" — it only knows what the
+> log says. **If you never flip**, the AI literally does not see that the hero
+> acted: no retaliation attribution, no section observation, no focus shift.
+> One flip per hero, per turn, at the end — that is the whole deal.
+>
+> The flips also appear as regular lines in the in-game mission log panel
+> (same kind of line the imperial activation pop-ups have always written
+> there), so you can always check what the AI saw.
 
 Mission-authored figures — the special ones a scenario spawns for you (a named
 villain like Ivan Talos, custom bosses, mission troopers) — are planned
@@ -697,7 +723,7 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 | Hidden power | Legacy hidden bonus-effect rolls can fire | Never fire in tactical missions; printed stat cards only |
 | MedPac | App convenience HUD available | Switched off for tactical missions (wounded stay wounded in-mission; between-mission recovery unchanged); crates/rewards stop dispensing them |
 | Massive figures | Some printed restrictions relaxed | Printed restrictions enforced: no interiors, no two Massives in one space; every proposed move is legality-checked first |
-| Reinforcement entry | Rolled/drawn deployment points | Deterministic deployment choice from the plan (same seed → same landing zones) |
+| Reinforcement entry | Rolled/drawn deployment points | Deterministic deployment choice from the plan, anchored on the mission file's own deployment points (same seed → same landing zones) |
 | Imperial growth | Baked-in convenience growth | Unchanged — no Imperial purchases in this release (see [what this release does not include](#not-included)) |
 | Wound status | Cosmetic in places | Machine-grade input: from Veteran up the AI *reads your marks* and finishes wounded heroes |
 | Officers | Passive stat figures | Command figures: 2 movement points (Officer) or movement **or** attack (Executive Officer), gated by a machine-checked rule text |
@@ -777,12 +803,14 @@ concept document [`CONCEPT_fair_imperial_ai.md`](CONCEPT_fair_imperial_ai.md)
 ---
 
 *Page status: written against the shipped `main` tree of this fork (product branch
-since November 2026); every claim
+since November 2026), current through the 07.11 milestones (entry ledger, reaction
+zones); every claim
 carries a file pointer so reviewers can verify it. If something here and something on
 a printed card disagree — the card wins; report it to us.*
 
 ---
 
+<a name="reactive-layer"></a>
 ## The reactive layer (November 2026)
 
 The Fair Imperial AI now *reacts* to what happens inside a round instead of
@@ -863,6 +891,29 @@ What players feel, with the file behind each claim:
 - **Guard over chase** at S3+: while a hero works a mission-critical
   object, the posture clamp switches the units from hunting heroes to
   guarding the objective (`ordExplainClamp`).
+- **Reaction zones** (added 07.11, skill 3+). The belief distils the hero
+  sightings into one **threat zone**: the contested section if there is one,
+  otherwise exactly one fresh ring around the latest sighting (several fresh
+  rings without a contest = no goal, neutral). A unit whose believed position
+  sits right at the edge of that zone gets a single fixed boost in the
+  activation plan (×11/10, public in `Core/OrderPlan.cs`) and says so in its
+  explain line: "moves toward *the named zone*" — or a purely relative
+  wording when the zone has no clean printed name (never a section id, never
+  a coordinate: `ordExplainNahe` / `ordExplainNaheRel`, cleaned section
+  names per the name law). Missing distance knowledge is **neutral, never
+  "far"**, and where the data is absent the behaviour is bit-identical to the
+  previous canon (Null-Law, pinned by fixtures).
+- **Entry points are remembered** (added 07.11). Every imperial figure rides
+  a saved, load-safe placement ledger: start groups use the mission file's
+  own deployment points, event reinforcements use the point their event
+  names, and the heroes' blue entry field is mined per mission (134 of 138
+  shipped missions carry a usable entry field; multi-field missions stay a
+  *set* of possible entry sections — no guessing). A unit's spawn belief
+  seeds on its own entry section, and placements the mission leaves as
+  "None" stay honest unknowns. Player-visible effect: reinforcements arrive
+  from the mission's printed deployment points, deterministic per seed
+  (`SagaSession.deployLedger`, `SectionSpace.cs`; fixtures
+  `deploy_ledger.json` + `dp_anchors.json`).
 - **Nothing ever knows your coordinates.** The belief is section-granular:
   names, objects, time windows. A section log line containing a coordinate
   is a machine-checked bug (coord-free law, `section_trust.json`).

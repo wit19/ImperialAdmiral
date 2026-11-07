@@ -145,6 +145,13 @@ namespace TacticalAI.Core
             // or the roundLimitToggle flip) - public table info, the feed
             // gate re-derives posture from it.
             "RoundLimitChanged",
+            // P33-H4b (Thomas 08.11, CONCEPT_missionsachse): VictoryConditions
+            // - the mission's PUBLIC win wiring, derived from the mission file's
+            // own fields (fixedAlly/specificAlly, useAllyDefeated+endMission
+            // wiring, escape-vocabulary entities whose button ends the mission).
+            // Reading fields, never guessing; nothing parseable => no event
+            // (Null-Law: today's behaviour bit-identical).
+            "VictoryConditions",
         };
 
         // The COMPLETE payload surface. Anything else (a die value, a hero
@@ -196,6 +203,15 @@ namespace TacticalAI.Core
             // coordinate; absence stays distinguishable from a value
             // (Has()), no-claim deployments carry NO dp key.
             "dp",
+            // P33-H4b VictoryConditions (CONCEPT_missionsachse). All values
+            // are public mission-file facts: "imperialWinBy"/"rebelWinBy" the
+            // win-law tokens ("" = this side has no parsed win wiring -
+            // explicit absence, never a guess), "actor"/"actorName" the axis
+            // figure (fixedAlly/specificAlly identity + its public display
+            // name), "escortHero" the specificHero card's public name,
+            // "section" (registered above) the escape/evac section GUID on
+            // the block axis. Loch-Gesetz holds: ids and app names only.
+            "imperialWinBy", "rebelWinBy", "actor", "actorName", "escortHero",
         };
 
         // Minimal per-kind shape guard (typos fail loud, not silently).
@@ -234,6 +250,10 @@ namespace TacticalAI.Core
             { "PlayerSelection",  new[] { "name" } },
             { "RoundEnd",         new string[0] },
             { "RoundLimitChanged", new[] { "roundLimit" } },
+            // P33-H4b: BOTH win tokens required on every VictoryConditions
+            // event (empty string = explicit "no wiring on this side");
+            // section rides along on the block axis (data-existence law).
+            { "VictoryConditions", new[] { "imperialWinBy", "rebelWinBy" } },
         };
 
         public readonly string MissionKey;

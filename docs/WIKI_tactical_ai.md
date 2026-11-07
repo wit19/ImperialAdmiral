@@ -927,3 +927,48 @@ group occupies it — the belief seeds a *candidate set*, never an
 accusation; section labels are app-authored names, not printed rules text;
 and at S1/S2 the belief carries raw facts only, so behaviour there is
 bit-for-bit the pre-section canon (pinned by fixtures).
+
+## Procurement: buying is a decision now (November 2026, P33-H5)
+
+The Imperium's money moments — the **Landings** and the **Reinforcements**
+popups between rounds — used to follow a rigid ritual: always reinforce
+first if any group legally can, then spend the rest on the most expensive
+affordable card. Your playtests showed both halves of that ritual
+misfire: fresh groups landed while veterans bled out in the fight, and
+the treasury bought a big card down to an unusable remainder while a
+bigger card stayed one round out of reach. The AI now *chooses*, from
+public facts only (same army, same cards, same dice — only better
+decisions):
+
+- **Reinforcement or new landing?** Whichever act serves the fight better
+  right now: a wounded group *in* the contested section is restored first
+  (each lost figure it suffered counts while it stands near the fight); a
+  fresh group that lands *into* reach of the fight leads while the
+  doctrine is hunting. Distance is measured in sections over the observed
+  section graph — the mission's win-condition axis counts highest, then
+  the reaction zones; an unmeasured route is never treated as far.
+- **The Imperium saves money — but only with a plan.** A big purchase
+  that would leave less than the price of the cheapest still-buyable card
+  is deferred when the saved threat provably reaches a *bigger* card next
+  round. Saving aims at something or it doesn't happen at all — and it
+  **never happens in the final-round threat dump**, where keeping
+  unspent threat would break the printed mission rules. A round saved on
+  purpose shows no warning: the coins are held, not lost.
+- **Nothing changed for the rules you play.** At most two acts per round,
+  the printed reinforcement and landing costs, the canReinforce mission
+  overrides, the coin-flip optional deployments and the final-round dump
+  all work exactly as before — the AI only reorders and optionally
+  *declines* among the acts the rules already allow. With Tactical AI off,
+  or in missions where the app has no battle-zone facts yet, the old
+  ritual runs untouched.
+- **When a purchase and a reinforcement share one round,** the popup
+  shows both as a landing (new figures land — that is a landing); the
+  reinforced veteran shows its current figures, and the debug log names
+  every act with its score (the BUDGET line in Player.log).
+
+Honest edges: the ranking only ever speaks when the app actually holds
+section facts — no facts, no opinion (this is the same Null-Law that kept
+every earlier feature honest); the saving rule estimates next round's
+income from the difficulty setting, and uses that estimate for nothing
+except deciding whether saving is worth it; and a card the Imperium
+declines today is a card it may well buy tomorrow — watch for it.

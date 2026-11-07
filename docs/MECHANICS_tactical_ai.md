@@ -1146,3 +1146,112 @@ activation-chip flip (§4 player contract). No flip, no observation, no zone,
 no reaction: the ledger knows where figures CAME IN, the flip is the only
 thing that says where the HEROES have BEEN.
 
+
+## The procurement ranking — Kauf vs. Verstärkung (2026-11-08, P33-H5)
+
+Player-33 exposed the strict procurement sequence as two decision
+deficits: the Reinforcements popup always spent on the fixed order
+"first reinforce, then buy, always the most expensive affordable card"
+(FAIL-OPEN bought the 10-threat Trandoshan while 2 remained and a bigger
+card stayed out of reach), and neither half of the choice consulted the
+battle-field facts the H2–H4b chain now provides. `Core/BudgetPlanner.cs`
+is the new action-ranking head (CONCEPT_drohungsbudget §2 Stufen 1–2);
+the popups only ever execute what its ranking says they may.
+
+**Candidate law (bridge, `TacticalAIBridge.TryRankProcurement`).** Legal
+actions are built with the SAME legality laws the strict sequence reads —
+reinforcements: `rcost >= 0 && currentSize < size && max(1,rcost) <=
+threat && (override == null || override.canReinforce)` (verbatim
+`DataStore.GetReinforcement`); purchases: `MinusDeployed` hand with
+`DeployCost(card,false) <= threat` (`GetFuzzyDeployable` law — cost
+`DeployCost`, PersonaState.CostFor applied when the action runs). The
+head never proposes an illegal action; the runners RE-CHECK legality
+against the CURRENT threat before each execution (the first action's bill
+can make the second unaffordable — then it is skipped, exactly like the
+strict second pick). Max 2 actions per round stays the table law.
+
+**Score law (fixed integer weights, zero RNG, section granularity —
+never a hex, never a coordinate):**
+
+| part | weight | fact |
+|---|---|---|
+| mission-axis distance | 40 / 28 / 12 (dist 0/1/≥2, −1 = 0) | H4b win-condition axis — the highest target weight (controller order 07.11) |
+| battle-zone distance | 30 / 21 / 9 / (−1 → 0) | H4 feed zones via `SectionGraph.DistanceLowerBound` (Loch-Gesetz: unmeasured ≠ far, contributes 0) |
+| urgency | +5 per lost figure, only when near (dist ≤ 1) | the wounded group in the fight is the one that must be restored first |
+| posture hunt | +15 to buys | Neukauf-Waffenpriorität (jagd) |
+| posture defend | +15 + 2 × currentSize to reinforces | Verstärkungs-/Größenpriorität (halten) |
+| friendly leash | +8 to buys landing on a section holding own located groups | entry-ledger Kontaktlage |
+| Spar-Regel | −400 on the deferred buy | see below |
+
+Posture truth is the doctrine-level `_doctrineEffective` (hunt/defend);
+before any doctrine round the descriptive feed posture maps over
+(eliminate → hunt, protect/stall → defend); any other token claims
+nothing (inert weights, honestly). Distance parts are ADDITIVE — axis and
+zone can both speak; the axis table is strictly higher at every distance
+class, which is what "hohes Ziel-Sek-Gewicht" means operationally
+(`budget_rank.axis_primes_over_zone`).
+
+**Spar-Regel (Stufe 2, Player-33 deficit "kein Horizont").** A buy is
+HEAVY when `5·cost ≥ 3·threat` (integer math — no rounding anywhere in
+this planner). A heavy buy is deferred (−400, below the hold action) iff
+(a) the leftover `threat − cost` is BELOW the cheapest still-buyable card
+(the next purchase stage must survive), (b) something bigger is within
+reach: another candidate with a higher cost, or a hand card unaffordable
+NOW whose cost ≤ `threat + projectedGain` (projectedGain =
+`setupOptions.threatLevel` (+1 landing popup), an estimate used ONLY by
+this reachability test — never spendable), and (c) it is NOT a dump
+window: the FINAL-ROUND-DUMP law (M14d-R) outranks saving — threat may
+not survive the last round, so inside the dump window the Spar penalty is
+inert (`budget_rank.spare_off_in_dump`). Sparing must AIM at something:
+with no bigger card reachable the heavy buy stays first
+(`spare_never_without_a_bigger_goal`) — deferring the best card for
+nothing would just lose a round of pressure. A fully spared round shows
+NO warning and keeps the threat (the money is held, not wasted); the
+ordinary warning still fires when there truly were no candidates
+(H1 display law stays grifffest).
+
+**Hold row.** "Do nothing this round" participates in the sort at score 0
+— only Spar-penalised actions fall behind it. The consumer STOP LAW: the
+bridge returns picks only up to the hold row; everything below it is
+spared by design and never reaches the popup.
+
+**Tie law.** Score → kind (reinforce before buy before hold — the proven
+strict default survives inside the ranking) → name Ordinal → id Ordinal.
+Zero RNG (`budget_rank.tie_law_name_then_id_and_kind_first`).
+
+**Null-Law + Mode-Gate (acceptance (d)).** No section graph OR (no feed
+zone AND no axis zone) ⇒ `Rank` returns null ⇒ both popups run today's
+strict sequence VERBATIM. `TacticalMissionActive() == false` ⇒ same. Any
+exception inside the head ⇒ fail-open to the strict sequence (dev 30
+law). The legacy mode never calls the head at all —
+`HandleReinforcements`/`HandleLanding` below the head call are unchanged
+down to comment text. Machine proof: `budget_rank.null_law_no_zones`
+(Rank == null with full candidate rosters present) + the unchanged strict
+branches (structural).
+
+**Consumer wiring.** `SagaDeploymentPopup`: the ranked path REPLACES
+`GetReinforcement`/`GetFuzzyDeployable` selection for the ordinary
+round-end Reinforcements and Landing popups only. Override-costed flows
+(`deploymentOverride != null`), the event rails (optional deployments,
+button flow) and the FINAL-ROUND-DUMP chain keep the strict line verbatim
+(the dump popup arrives `isOptionalDeployment=true`). Presentation law
+(P33-H1 extended): ANY bought group makes the popup wear the landing
+outfit (the player sees a landing when figures land); a pure
+reinforcement run keeps the native upgrade slots with the +1 thumb; a
+mixed run shows both actions in the landing slots (the veteran shows its
+CURRENT pips — the BUDGET log line names every action). The ranked path
+applies the documented reinforce law to EVERY returning figure (the
+strict Reinforcements branch resets only its first slot — a Legacy
+quirk; Onslaught and the printed law reset per returning figure).
+
+**Diagnostics (log-only, no ui.json keys — Overlord debug rail).** One
+`TacticalAIBridge::BUDGET r<n>: posture= dump= threat= gain= axis=[..]
+zones=[..] | <row dump>... -> picks=[..]` line per procurement decision
+(the explain=full budget trace Thomas reads in Player-N.log, M6s-B9
+channel), one `-> strict sequence (Null-Law)` line when the head stays
+silent. Row dump carries kind/id/cost/axis/zone/leash/spare/score.
+
+**QA (08.11):** harness ALL PASS 46147 checks (`budget_rank.json` 162
+pins — hand-pinned against the table above; the section deliberately has
+no `--record` branch, so the pins cannot be blindly overwritten);
+TacticalAiGate ALL PASS; taboo lint 12/12; compile APP/TESTS rc=0.

@@ -1,0 +1,206 @@
+{
+"_comment": "P33-H5 (card t_94d361bb, CONCEPT_drohungsbudget Sec.2 Stufe 2): the Beschaffungs-Ranking vectors. Hand-pinned against the documented Core weight table (BudgetPlanner: axis 40/28/12, zone 30/21/9 by hops, urgency 5/loss when near(<=1), hunt buy +15, defend reinforce +15+2*size, leash +8, heavy = 5*cost>=3*threat, SparePenalty 400; the hold row participates in the sort at score 0, only Spar-penalised rows fall behind it). The record cross-check (harness --record) must reproduce every number byte-identically - a drift means the Core law changed, then re-read the playtest, never just re-record. Graph: S-A..S-D, door edges A-B,B-C,C-D,B-D => hops A-B 1, A-C 2, A-D 2, B-C 1, B-D 1, C-D 1.",
+"graph": {
+  "sections": [ "S-A", "S-B", "S-C", "S-D" ],
+  "doors": [ [ "S-A", "S-B", "d-ab" ], [ "S-B", "S-C", "d-bc" ], [ "S-C", "S-D", "d-cd" ], [ "S-B", "S-D", "d-bd" ] ]
+},
+"cases": [
+{
+  "name": "buy_beats_reinforce_hunt",
+  "_law": "(a) jagd + Naehe: a purchase landing in the fight ring (zone dist 1 => 21 + hunt 15 = 36) beats a far reinforcement (dist 2 => 9, urgency needs near). Friendly [S-A] gives DG045 (S-C) no leash - honest 0.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [ "S-A" ],
+  "posture": "hunt", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG045", "name": "Trandoshan Hunter", "cost": 10, "size": 2, "firepower": 3, "sections": [ "S-C" ] },
+    { "kind": "reinforce", "id": "DG001", "name": "Royal Guard", "cost": 2, "losses": 2, "size": 3, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG045", "reinforce:DG001", "hold" ],
+    "buy:DG045": { "axis": -1, "zone": 1, "leash": false, "spare": false, "score": 36 },
+    "reinforce:DG001": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 }
+  }
+},
+{
+  "name": "reinforce_beats_buy_defend",
+  "_law": "(b) halten + Verlust in Kampfnaehe: the veteran group at the zone (dist 1 => 21 + 3 losses x5 = 15 + defend 15 + 2 x size 2 = 19 => 55) outranks a far purchase (dist 2 => 9). Posture adds NOTHING to a buy in defend - the posture axis itself flips the strict sequence's default.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "defend", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "reinforce", "id": "DG010", "name": "Wounded Veterans", "cost": 2, "losses": 3, "size": 2, "sections": [ "S-C" ] },
+    { "kind": "buy", "id": "DG002", "name": "Fresh Recruits", "cost": 6, "size": 2, "firepower": 1, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "reinforce:DG010", "buy:DG002", "hold" ],
+    "reinforce:DG010": { "axis": -1, "zone": 1, "leash": false, "spare": false, "score": 55 },
+    "buy:DG002": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 }
+  }
+},
+{
+  "name": "spare_defers_heavy_buy",
+  "_law": "(c) Spar-Regel: DG045 is heavy (5x10=50 >= 3x12=36), would leave rest 2 BELOW the cheapest still-buyable card (3) and a BIGGER card (16) is reachable next round (16 <= 12+5) => -400 below the hold row; the light DG001 (not heavy) still runs. Player-33 deficit 2 'kein Horizont' fixed: threat must not rot into an unusable remainder.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "", "threat": 12, "gain": 5, "dump": false, "future": [ 16 ],
+  "actions": [
+    { "kind": "buy", "id": "DG045", "name": "Trandoshan Hunter", "cost": 10, "size": 2, "firepower": 3, "sections": [ "S-D" ] },
+    { "kind": "buy", "id": "DG001", "name": "Recruit Squad", "cost": 3, "size": 1, "firepower": 2, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG001", "hold", "buy:DG045" ],
+    "buy:DG001": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 },
+    "buy:DG045": { "axis": -1, "zone": 0, "leash": false, "spare": true, "score": -370 }
+  }
+},
+{
+  "name": "spare_off_in_dump",
+  "_law": "(c2) Sparen NIE im Dumpfenster: identical case, dump=true - the Spar-Regel is inert, the heavy buy on the zone (30) leads. The FINAL-ROUND-DUMP law (threat may not survive the last round) stays the boss.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "", "threat": 12, "gain": 5, "dump": true, "future": [ 16 ],
+  "actions": [
+    { "kind": "buy", "id": "DG045", "name": "Trandoshan Hunter", "cost": 10, "size": 2, "firepower": 3, "sections": [ "S-D" ] },
+    { "kind": "buy", "id": "DG001", "name": "Recruit Squad", "cost": 3, "size": 1, "firepower": 2, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG045", "buy:DG001", "hold" ],
+    "buy:DG045": { "axis": -1, "zone": 0, "leash": false, "spare": false, "score": 30 },
+    "buy:DG001": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 }
+  }
+},
+{
+  "name": "spare_never_without_a_bigger_goal",
+  "_law": "Sparing must AIM at something: threat 12, hand {10, 3}, NO bigger card (no candidate cost >10, no future cost) - the heavy buy is NOT spared (deferring the best card for nothing would just lose a round of pressure).",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "", "threat": 12, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG045", "name": "Trandoshan Hunter", "cost": 10, "size": 2, "firepower": 3, "sections": [ "S-D" ] },
+    { "kind": "buy", "id": "DG001", "name": "Recruit Squad", "cost": 3, "size": 1, "firepower": 2, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG045", "buy:DG001", "hold" ],
+    "buy:DG045": { "axis": -1, "zone": 0, "leash": false, "spare": false, "score": 30 }
+  }
+},
+{
+  "name": "spare_needs_light_leftover_below_next_stage",
+  "_law": "The rest test of the concept literally ('Rest unter naechster-Kaufstufe'): threat 20, cards {14, 6} - heavy 14 (70 >= 60) leaves rest 6, which is NOT below the cheapest other (6), so the leftover still buys the next stage: no sparing.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "", "threat": 20, "gain": 5, "dump": false, "future": [ 23 ],
+  "actions": [
+    { "kind": "buy", "id": "DG055", "name": "Heavy Gunner", "cost": 14, "size": 1, "firepower": 4, "sections": [ "S-D" ] },
+    { "kind": "buy", "id": "DG003", "name": "Scout Patrol", "cost": 6, "size": 1, "firepower": 2, "sections": [ "S-C" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG055", "buy:DG003", "hold" ],
+    "buy:DG055": { "axis": -1, "zone": 0, "leash": false, "spare": false, "score": 30 },
+    "buy:DG003": { "axis": -1, "zone": 1, "leash": false, "spare": false, "score": 21 }
+  }
+},
+{
+  "name": "null_law_no_zones",
+  "_law": "(d) Null-Law, machine-pinned in Core: no battle zone AND no axis zone => Rank answers NULL and the popup keeps today's strict sequence VERBATIM. 'Ohne Kampfzonen-Fakt = heutige Reihenfolge' needs no ordering computation - the head never speaks.",
+  "zones": [], "axis": [], "friendly": [ "S-A" ],
+  "posture": "hunt", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "no_result": true,
+  "actions": [
+    { "kind": "buy", "id": "DG045", "name": "Trandoshan Hunter", "cost": 10, "size": 2, "firepower": 3, "sections": [ "S-D" ] },
+    { "kind": "reinforce", "id": "DG010", "name": "Wounded Veterans", "cost": 2, "losses": 3, "size": 2, "sections": [ "S-C" ] }
+  ],
+  "expect": { "order": null }
+},
+{
+  "name": "tie_law_name_then_id_and_kind_first",
+  "_law": "Tie chain: score, then KIND (reinforce before buy - the proven sequence - before hold), then name Ordinal, then id Ordinal. Alpha(DG060)/Bear(DG050) tie at 21: name wins over id (DG060 despite the bigger id). 'Same Name' pair ties at 9 and decides on kind: the reinforcement first, exactly the old strict default.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG060", "name": "Alpha Squad", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-C" ] },
+    { "kind": "buy", "id": "DG050", "name": "Bear Squad", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-C" ] },
+    { "kind": "reinforce", "id": "DG030", "name": "Same Name", "cost": 2, "losses": 0, "size": 3, "sections": [ "S-A" ] },
+    { "kind": "buy", "id": "DG031", "name": "Same Name", "cost": 2, "size": 1, "firepower": 1, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG060", "buy:DG050", "reinforce:DG030", "buy:DG031", "hold" ],
+    "buy:DG060": { "axis": -1, "zone": 1, "leash": false, "spare": false, "score": 21 },
+    "buy:DG050": { "axis": -1, "zone": 1, "leash": false, "spare": false, "score": 21 },
+    "reinforce:DG030": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 },
+    "buy:DG031": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 }
+  }
+},
+{
+  "name": "player33_r3_axis_hunt",
+  "_law": "Player-33 R3 evidence: Reinforcements popup, nobody wounded (no reinforcement candidate), the escape-axis section (H4b allyReaches) is the fight. Trandoshan's fresh DP reaches it (axis 1 => 28 + hunt 15 = 43) - the ranked buy now ALSO picks its DP toward the escape zone through the H4 ChooseScored law. No spare: no bigger card exists, so buying is right. DG001 gets the hunt bonus too (it covers ALL buys: 12 + 15 = 27).",
+  "zones": [], "axis": [ "S-D" ], "friendly": [],
+  "posture": "hunt", "threat": 12, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG045", "name": "Trandoshan Hunter", "cost": 10, "size": 2, "firepower": 3, "sections": [ "S-C" ] },
+    { "kind": "buy", "id": "DG001", "name": "Recruit Squad", "cost": 3, "size": 1, "firepower": 2, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG045", "buy:DG001", "hold" ],
+    "buy:DG045": { "axis": 1, "zone": -1, "leash": false, "spare": false, "score": 43 },
+    "buy:DG001": { "axis": 2, "zone": -1, "leash": false, "spare": false, "score": 27 }
+  }
+},
+{
+  "name": "axis_primes_over_zone",
+  "_law": "Controller order 07.11: the mission-axis zone is the HIGHER target weight. On-axis group: 40+21 = 61; zone-adjacent group: 12+21 = 33. The axis fact outranks the feed zone at equal measured distance classes.",
+  "zones": [ "S-B" ], "axis": [ "S-D" ], "friendly": [],
+  "posture": "", "threat": 20, "gain": 5, "dump": true, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG070", "name": "Near Zone", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-A" ] },
+    { "kind": "buy", "id": "DG071", "name": "On Axis", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-D" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG071", "buy:DG070", "hold" ],
+    "buy:DG070": { "axis": 2, "zone": 1, "leash": false, "spare": false, "score": 33 },
+    "buy:DG071": { "axis": 0, "zone": 1, "leash": false, "spare": false, "score": 61 }
+  }
+},
+{
+  "name": "no_claim_never_far",
+  "_law": "Loch-Gesetz (P33-H4 law rides): a section the observed graph does not connect contributes 0 - it is NEVER treated as 'far', but an honest far claim (2 hops => 9) still outscores no knowledge. Unknown must not beat a measured distance.",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG072", "name": "Far Claim", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-A" ] },
+    { "kind": "buy", "id": "DG073", "name": "No Claim", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-ZZZ" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG072", "buy:DG073", "hold" ],
+    "buy:DG072": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 },
+    "buy:DG073": { "axis": -1, "zone": -1, "leash": false, "spare": false, "score": 0 }
+  }
+},
+{
+  "name": "leash_lands_near_own_groups",
+  "_law": "Friendly-Sektionen (concept Stufe 1 'Kontaktlage'): a purchase whose fresh DP sits on a section holding own located groups gets the support bonus (+8): 21+8=29 - enough to beat a same-class claim without cover but NOT to outbuy the on-zone card (30).",
+  "zones": [ "S-D" ], "axis": [], "friendly": [ "S-C" ],
+  "posture": "", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "buy", "id": "DG080", "name": "Support Column", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-C" ] },
+    { "kind": "buy", "id": "DG081", "name": "Zone Breaker", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-D" ] },
+    { "kind": "buy", "id": "DG082", "name": "Far Guard", "cost": 5, "size": 1, "firepower": 2, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "buy:DG081", "buy:DG080", "buy:DG082", "hold" ],
+    "buy:DG080": { "axis": -1, "zone": 1, "leash": true, "spare": false, "score": 29 },
+    "buy:DG081": { "axis": -1, "zone": 0, "leash": false, "spare": false, "score": 30 },
+    "buy:DG082": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 }
+  }
+},
+{
+  "name": "reader_junk_fails_closed",
+  "_law": "Fail-closed reader law (fixture schema discipline): null rows, unknown kinds and empty ids are SKIPPED, never ranked; an unknown posture token claims nothing (no bonus); urgency needs near (losses far => no 5x).",
+  "zones": [ "S-D" ], "axis": [], "friendly": [],
+  "posture": "weird", "threat": 20, "gain": 5, "dump": false, "future": [],
+  "actions": [
+    { "kind": "junk", "id": "DG900", "name": "Junk Kind", "cost": 1, "size": 1, "sections": [ "S-D" ] },
+    { "kind": "buy", "id": "", "name": "Empty Id", "cost": 1, "size": 1, "sections": [ "S-D" ] },
+    { "kind": "reinforce", "id": "DG901", "name": "Far Losses", "cost": 1, "losses": 3, "size": 2, "sections": [ "S-A" ] }
+  ],
+  "expect": {
+    "order": [ "reinforce:DG901", "hold" ],
+    "reinforce:DG901": { "axis": -1, "zone": 2, "leash": false, "spare": false, "score": 9 }
+  }
+}
+]
+}

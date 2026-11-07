@@ -152,8 +152,18 @@ namespace TacticalAI
                 if (PlayerPrefs.GetInt("roundLimitToggle", 1) == 0) return -1;   // user: clock OFF
             }
             catch { }
-            long rt = gv != null ? gv.roundLimit : -1;
-            if (rt >= 0) return rt;
+            // P33-H4b (CONCEPT_missionsachse 2.2, Player-33: "roundLimit wird
+            // trotz ModifyRndLimit-DISABLE weiter als aktiv gemeldet"): the
+            // runtime variable is INITIALIZED from the authored value at
+            // mission load (SagaController -> SagaSession.InitGameVars) and
+            // ModifyRndLimit(DISABLE) sets it to -1 - so once the session
+            // exists, gv.roundLimit IS the truth, INCLUDING the -1 that
+            // means "no clock". The old "rt >= 0 wins, else authored" chain
+            // read a disabled clock as "runtime never spoke" and silently
+            // resurrected the authored limit => posture=stall on a mission
+            // whose clock the mission itself had switched off. Authored
+            // value is the fallback ONLY where no session booted at all.
+            if (gv != null) return gv.roundLimit;      // -1 = no clock (also DISABLE)
             return mp != null && mp.roundLimit >= 0 ? mp.roundLimit : -1;
         }
 
@@ -436,6 +446,11 @@ namespace TacticalAI
                 _lastRoundLimit = lim;
             }
 
+            // P33-H4b: the mission-file win wiring (VictoryConditions) is
+            // (re)claimed whenever the derivation moves. Cheap and stateless
+            // per poll; the payload-canon dedup keeps the stream append-only.
+            PollVictory(round);
+
             // M6s-B7 causal order (Player-19 law): damage first, then the
             // table's words about it. The wheel dials are polled BEFORE the
             // logger drain and the objective HUD, so a shot observed in the
@@ -485,6 +500,7 @@ namespace TacticalAI
             _round = 0;
             _threat = 0;
             _objective = null;
+            _lastVictoryCanon = "";   // P33-H4b: fresh mission, fresh claim
             _wheels.Clear();
             _seenGroups.Clear();
             _heroWounded.Clear();
@@ -950,6 +966,278 @@ namespace TacticalAI
             return p;
         }
 
+        // ============================================ P33-H4b VictoryConditions
+        // CONCEPT_missionsachse §1: the mission's win wiring is PUBLIC in the
+        // mission file (fixedAlly/specificAlly, useAllyDefeated+end wiring,
+        // escape-vocabulary entities whose button ends the mission) and read
+        // by nobody today. The derivation follows the MissionDpAnchors law:
+        // READ FIELDS, NEVER GUESS, fail-open to null - nothing parseable
+        // emits NOTHING (Null-Law: streams stay exactly today's).
+        // Everything below reads DataStore.mission (the parsed file the
+        // table itself opens) + DataStore card lists - public data.
+        string _lastVictoryCanon = "";
+
+        /// Escape/evac hint vocabulary (lowercase substring on the entity's
+        /// OWN authored name/text/button text - the same class of public
+        /// table text DerivePosture reads).
+        static readonly string[] EscapeHintWords =
+            { "escape", "evac", "flucht", "flieh", "entkommen", "flee" };
+        /// Kill vocabulary (word-prefix law, EN+DE shipped vocabularies) -
+        /// ONLY consulted on an event's own name/eventText that also names
+        /// the axis figure by display name.
+        static readonly string[] KillVocab =
+            { "execut", "execution", "erschosse", "erschossen", "killed",
+              "getötet", "getotet", "defeated", "besiegt", "erlegen",
+              "ausgeschaltet" };
+
+        void PollVictory(int round)
+        {
+            var evs = TryBuildVictoryEvents();
+            string canon = VictoryCanon(evs);
+            if (canon == "" || canon == _lastVictoryCanon) return;
+            // The claim MOVED (mission load, or a late-resolvable ally name
+            // / zone). Re-state the FULL claim: the projection is idempotent
+            // (scalars last-wins, zones additive), so repeating is honest.
+            _lastVictoryCanon = canon;
+            foreach (var p in evs)
+                Append("VictoryConditions", round, new Dictionary<string, object>(p));
+            Debug.Log("WorldEvents::victory r" + round
+                      + " axis=" + (Get2(evs, "actorName") ?? "")
+                      + " imp=" + (Get2(evs, "imperialWinBy") ?? "")
+                      + " reb=" + (Get2(evs, "rebelWinBy") ?? "")
+                      + " zones=" + evs.Count + " [public mission-file wiring]");
+        }
+
+        static string Get2(List<Dictionary<string, object>> evs, string key)
+        {
+            foreach (var p in evs)
+            {
+                object v;
+                if (p.TryGetValue(key, out v)) return v as string;
+            }
+            return "";
+        }
+
+        static string VictoryCanon(List<Dictionary<string, object>> evs)
+        {
+            if (evs == null || evs.Count == 0) return "";
+            var parts = new List<string>();
+            foreach (var p in evs)
+            {
+                var keys = new List<string>(p.Keys);
+                keys.Sort(StringComparer.Ordinal);
+                var s = "";
+                foreach (var k in keys) s += k + "=" + p[k] + ";";
+                parts.Add(s);
+            }
+            parts.Sort(StringComparer.Ordinal);
+            return string.Join("|", parts.ToArray());
+        }
+
+        /// <summary>The derivation. Empty list = nothing parseable (fail-open
+        /// Null-Law). Deterministic: mission-file order scan, first claim
+        /// wins; zones collected ordinal-deduped. ONE payload per escape
+        /// zone (scalars repeat); a hunt-only mission emits one payload
+        /// without a section key.</summary>
+        List<Dictionary<string, object>> TryBuildVictoryEvents()
+        {
+            var outp = new List<Dictionary<string, object>>();
+            try
+            {
+                var m = DataStore.mission;
+                if (m == null) return outp;
+                var mp = m.missionProperties;
+                if (mp == null) return outp;
+                string axis = !string.IsNullOrEmpty(mp.fixedAlly) ? mp.fixedAlly
+                            : (mp.specificAlly ?? "");
+                if (string.IsNullOrEmpty(axis)) return outp;      // no axis = no law
+                string axisName = ResolveAllyName(axis);
+
+                var all = new List<Saga.MissionEvent>();
+                if (m.globalEvents != null) all.AddRange(m.globalEvents);
+                if (m.mapSections != null)
+                    foreach (var s in m.mapSections)
+                        if (s != null && s.missionEvents != null) all.AddRange(s.missionEvents);
+
+                // ---- hunt axis: the ally's DEFEAT ends the mission.
+                // (a) direct: the event listens on ally defeat AND ends it.
+                // (b) one hop: an event whose own name/text names the ally
+                //     with kill vocabulary SETS a trigger (ModifyVariable),
+                //     and a mission-end event LISTENS on that trigger at
+                //     value >= 1 - the HOTH12 "Draylen executed" chain, read
+                //     from fields + the event's OWN public text. No chain,
+                //     no sentence -> no hunt claim (never guessed).
+                string imperialWinBy = "";
+                foreach (var e in all)
+                {
+                    if (e == null) continue;
+                    bool direct = e.useAllyDefeated
+                                  && string.Equals(e.allyDefeated, axis, StringComparison.Ordinal)
+                                  && HasEndAction(e);
+                    if (direct) { imperialWinBy = "allyDefeated"; break; }
+                }
+                if (imperialWinBy == "" && !string.IsNullOrEmpty(axisName))
+                {
+                    // setter map: trigger GUID -> claiming event (first claimer,
+                    // file order); a claim names the ally + kill vocabulary.
+                    var setters = new Dictionary<string, Saga.MissionEvent>(StringComparer.Ordinal);
+                    foreach (var e in all)
+                    {
+                        if (e == null || !NamesAllyKill(e, axisName)) continue;
+                        if (e.eventActions == null) continue;
+                        foreach (var a in e.eventActions)
+                        {
+                            var mv = a as Saga.ModifyVariable;
+                            if (mv == null || mv.triggerList == null) continue;
+                            foreach (var t in mv.triggerList)
+                            {
+                                if (t == null || t.triggerGUID == Guid.Empty) continue;
+                                if (t.setValue < 1 && t.modifyValue < 1) continue;
+                                string gid = t.triggerGUID.ToString();
+                                if (!setters.ContainsKey(gid)) setters[gid] = e;
+                            }
+                        }
+                    }
+                    if (setters.Count > 0)
+                        foreach (var e in all)
+                        {
+                            if (e == null || !HasEndAction(e)) continue;
+                            if (e.additionalTriggers == null) continue;
+                            bool hop = false;
+                            foreach (var tb in e.additionalTriggers)
+                            {
+                                if (tb == null || tb.triggerGUID == Guid.Empty
+                                    || tb.triggerValue < 1) continue;
+                                if (setters.ContainsKey(tb.triggerGUID.ToString())) { hop = true; break; }
+                            }
+                            if (hop) { imperialWinBy = "allyDefeated"; break; }
+                        }
+                }
+
+                // ---- block axis: an ESCAPE-vocabulary entity whose button
+                // ends the mission => its own section is the rebel win zone.
+                var zones = new List<string>();
+                if (m.mapEntities != null)
+                    foreach (var en in m.mapEntities)
+                    {
+                        if (en == null || en.entityProperties == null) continue;
+                        string hint = ((en.name ?? "") + " "
+                                       + (en.entityProperties.theText ?? "")).ToLowerInvariant();
+                        bool wired = false;
+                        if (en.entityProperties.buttonActions != null)
+                            foreach (var b in en.entityProperties.buttonActions)
+                            {
+                                if (b == null || b.eventGUID == Guid.Empty) continue;
+                                hint += " " + (b.buttonText ?? "").ToLowerInvariant();
+                                var target = FindEvent(all, b.eventGUID);
+                                if (target != null && HasEndAction(target)) wired = true;
+                            }
+                        if (!wired) continue;
+                        foreach (var w in EscapeHintWords)
+                            if (hint.Contains(w))
+                            {
+                                if (en.mapSectionOwner != Guid.Empty)
+                                {
+                                    var g = en.mapSectionOwner.ToString();
+                                    if (!zones.Contains(g)) zones.Add(g);
+                                }
+                                break;
+                            }
+                    }
+                string rebelWinBy = zones.Count > 0 ? "allyReaches" : "";
+
+                if (imperialWinBy == "" && rebelWinBy == "") return outp;  // Null-Law
+                zones.Sort(StringComparer.Ordinal);
+
+                string escort = "";
+                if (!string.IsNullOrEmpty(mp.specificHero)) escort = ResolveCardName(mp.specificHero);
+
+                var scalars = new Dictionary<string, object>
+                {
+                    { "imperialWinBy", imperialWinBy },
+                    { "rebelWinBy", rebelWinBy },
+                    { "actor", axis },
+                };
+                if (!string.IsNullOrEmpty(axisName)) scalars["actorName"] = axisName;
+                if (!string.IsNullOrEmpty(escort)) scalars["escortHero"] = escort;
+
+                if (zones.Count == 0) outp.Add(new Dictionary<string, object>(scalars));
+                else foreach (var z in zones)
+                    {
+                        var p = new Dictionary<string, object>(scalars);
+                        p["section"] = z;
+                        outp.Add(p);
+                    }
+            }
+            catch { return new List<Dictionary<string, object>>(); }   // fail-open
+            return outp;
+        }
+
+        static bool HasEndAction(Saga.MissionEvent e)
+        {
+            if (e == null || e.eventActions == null) return false;
+            foreach (var a in e.eventActions)
+            {
+                var mm = a as Saga.MissionManagement;
+                if (mm != null && mm.endMission) return true;
+            }
+            return false;
+        }
+
+        static Saga.MissionEvent FindEvent(List<Saga.MissionEvent> all, Guid guid)
+        {
+            foreach (var e in all)
+                if (e != null && e.GUID == guid) return e;
+            return null;
+        }
+
+        /// The event's OWN name/eventText names the axis figure (full-name
+        /// tokens) AND carries kill vocabulary (word-prefix law). Public
+        /// authoring text only - the same class DeriveCounter reads.
+        static bool NamesAllyKill(Saga.MissionEvent e, string axisName)
+        {
+            var text = ((e.name ?? "") + ". " + (e.eventText ?? "")).ToLowerInvariant();
+            if (axisName.Length < 3 || !text.Contains(axisName.ToLowerInvariant())) return false;
+            var words = text.Split(new[] { ' ', '\t', '\n', '\r', '-', ',', ';', ':', '.', '!', '?', '"', '\'' },
+                                   StringSplitOptions.RemoveEmptyEntries);
+            foreach (var w in words)
+                foreach (var k in KillVocab)
+                    if (w.StartsWith(k, StringComparison.Ordinal)) return true;
+            return false;
+        }
+
+        static string ResolveAllyName(string axis)
+        {
+            try
+            {
+                foreach (var h in DataStore.deployedHeroes)
+                    if (h != null && h.id == axis && !string.IsNullOrEmpty(h.name)) return h.name;
+            }
+            catch { }
+            try
+            {
+                var fa = DataStore.sagaSessionData != null ? DataStore.sagaSessionData.fixedAlly : null;
+                if (fa != null && fa.id == axis && !string.IsNullOrEmpty(fa.name)) return fa.name;
+            }
+            catch { }
+            return ResolveCardName(axis);
+        }
+
+        static string ResolveCardName(string id)
+        {
+            try
+            {
+                if (DataStore.allyCards != null)
+                    foreach (var c in DataStore.allyCards)
+                        if (c != null && c.id == id && !string.IsNullOrEmpty(c.name)) return c.name;
+                if (DataStore.heroCards != null)
+                    foreach (var c in DataStore.heroCards)
+                        if (c != null && c.id == id && !string.IsNullOrEmpty(c.name)) return c.name;
+            }
+            catch { }
+            return "";
+        }
+
         Saga.SagaController Ctrl()
         {
             try
@@ -1160,6 +1448,13 @@ namespace TacticalAI
                 }
             foreach (var h in _heroWounded) log.Add(Mk(seq++, "HeroWounded", round, P("hero", h)));
             foreach (var h in _heroDefeated) log.Add(Mk(seq++, "HeroDefeated", round, P("hero", h)));
+            // P33-H4b: the win wiring is CURRENT state too - the full re-log
+            // states it (append-only law: the re-log always restates).
+            {
+                var vEvs = TryBuildVictoryEvents();
+                foreach (var p in vEvs) log.Add(Mk(seq++, "VictoryConditions", round, p));
+                _lastVictoryCanon = VictoryCanon(vEvs);
+            }
             log.Add(Mk(seq++, "ThreatSpend", round, P("balance", (long)(sd?.gameVars?.currentThreat ?? 0))));
             Feed.Resync(log);
             // M8/F5: clock watch re-based on the re-log's own snapshot

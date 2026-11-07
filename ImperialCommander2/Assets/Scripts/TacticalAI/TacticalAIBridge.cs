@@ -136,6 +136,18 @@ namespace TacticalAI
         // per-mission roles - the renderer is ready for all six patterns).
         static Dictionary<string, string> _patternByCard;
         static int _planRound = -1;
+        // P33-H4b midround replan (CONCEPT_missionsachse 2.3, Player-33:
+        // "Helden-Zugang mitten in der Runde ist Fakt, aber Fokus/Reihenfolge
+        // erst am naechsten Rundenanfang neu"): the feed seq THIS round's plan
+        // was built on. A plan-relevant fact AFTER it, inside this round,
+        // rebuilds the plan once (Core detector MidroundReplanTrigger:
+        // ObjectiveChange / VictoryConditions / HeroDeployed). -1 = never
+        // built = detector silent (Null-Law: without the facts EnsureRound
+        // still plans exactly once per round like today).
+        static int _planSeqAtBuild = -1;
+        // P33-H4b: the block Schnittstelle resolved by BuildRiskPositions
+        // this round - carried ONLY for the ACHSE:: diagnostic row.
+        static string _blockHoldDbg = "";
         static List<Tac.OrderSlot> _slots = new List<Tac.OrderSlot>();
         static string _publicLine = "";
         static ulong _sessionSeed;
@@ -580,7 +592,30 @@ namespace TacticalAI
 
         static void EnsureRound(int roundNo)
         {
-            if (_planRound == roundNo) return;
+            if (_planRound == roundNo)
+            {
+                // P33-H4b MIDROUND-REPLAN (CONCEPT_missionsachse 2.3): the
+                // three feed facts that make THIS round's plan stale INSIDE
+                // the round (objective change, newly parsed win wiring, a
+                // hero/ally entering mid-round) rebuild it once, on
+                // activation, through the SAME deterministic code path -
+                // only the inputs legitimately moved. The Reaktionsgesetz
+                // (activation-time reaction order, a board rule) keeps its
+                // precedence untouched; only the plan/order layers re-read.
+                // No new fact -> return exactly like today (Null-Law).
+                string replan = null;
+                try
+                {
+                    if (_planSeqAtBuild >= 0 && Feed != null)
+                        replan = Tac.WorldEventVector.MidroundReplanTrigger(
+                            Feed.Events, _planSeqAtBuild, roundNo);
+                }
+                catch { replan = null; }
+                if (replan == null) return;
+                Debug.Log("TacticalAIBridge::REPLAN r" + roundNo + " trigger=" + replan +
+                          " [P33-H4b: mission fact moved inside the round - focus + order rebuilt same-round]");
+                _planRound = -1;   // fall through: full rebuild, same laws
+            }
             EnsurePersona();
             // M5: fresh feed state BEFORE building this round's plan
             var feedView = PullFeedView();
@@ -795,6 +830,9 @@ namespace TacticalAI
             _nameByGroup = names;   // S-D EXPLAIN name rail (same-round facts)
             _publicLine = plan.PublicLine(names);
             _planRound = roundNo;
+            // P33-H4b: remember the feed state this plan was built on - the
+            // midround detector above watches ONLY events after this seq.
+            _planSeqAtBuild = feedView != null ? feedView.Seq : -1;
 
             // M11 (Thomas 31.10.): the per-round order-card deal is GONE with
             // the decks (concept corpse). Nothing to reap, nothing to deal -
@@ -1978,6 +2016,303 @@ namespace TacticalAI
             }
         }
 
+        // ============================================ P33-H5 Beschaffung
+        // (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2, Player-33
+        // deficits 1-3: "Kein Zielbezug / Kein Horizont / Kein Modus-Tausch"
+        // - Player-33 R3 bought the Trandoshan for 10/12 out of a rigid
+        // sequence that never compared reinforcement against purchase).
+        // One deterministic ranking over ALL legal round-end actions
+        // (max 2/round is the TABLE law, enforced by the popup runner, not
+        // here): the strict reinforce-then-buy sequence is replaced ONLY
+        // while battle-zone facts exist; without any zone fact the popup
+        // keeps today's sequence VERBATIM (Null-Law, machine-pinned twice:
+        // here by the empty-zone gate and in Core BudgetPlanner.Rank).
+        // Facts are AppView-only: H4 battle zones (anchors + S-D zones),
+        // H4b axis zones (real victory condition, phase-checked), the
+        // deploy ledger, hand + DeployCost law, the doctrine-level plan
+        // posture (concept Sec.3: the doctrine layer is the ONE truth, the
+        // feed posture is descriptive and only the documented pre-plan
+        // fallback). Table costs (rcost/DeployCost/override bills) are
+        // UNANTASTBAR - this head only ORDERS, it never reprices.
+        // Mode gate: TacticalMissionActive() (mission-frozen seam, the
+        // persona-law rule for Unity popup rails) - legacy badge-off
+        // popups never see this code. Fail-open: any error => false =>
+        // the popup's strict sequence runs; a planner bug may degrade
+        // quality, never break the game loop (dev 30 law).
+
+        /// <summary>One ranked procurement action handed to the popup
+        /// runner. Card is the LIVE object (deployed group resp. hand
+        /// card) so the runner's re-check reads the same legality the
+        /// strict sequence reads.</summary>
+        public sealed class ProcurementPick
+        {
+            public bool IsBuy;
+            public global::DeploymentCard Card;
+        }
+
+        /// <summary>Rank the popup's legal actions, best first. STOP AT
+        /// the hold row: the caller executes only picks BEFORE it - a
+        /// Spar-penalised purchase is deliberately left in the reserve.
+        /// picks may be EMPTY while hadCandidates is true: everything was
+        /// spared on purpose (the popup must NOT warn then - the money is
+        /// not lost, it is held). hadCandidates false with empty picks =
+        /// truly nothing to do (the popup's own warning law applies).
+        /// Returns false => no facts / inactive / error => the popup runs
+        /// its strict sequence VERBATIM.</summary>
+        public static bool TryRankProcurement(out List<ProcurementPick> picks,
+                                              out bool hadCandidates,
+                                              bool reinforcementMode, bool dumpWindow)
+        {
+            picks = null; hadCandidates = false;
+            try
+            {
+                if (!TacticalMissionActive()) return false;
+                var session = DataStore.sagaSessionData;
+                var gv = session != null ? session.gameVars : null;
+                if (gv == null) return false;
+
+                var view = PullFeedView();
+                var anchors = MissionDpAnchors();
+                var zones = DpBattleZones(anchors);
+                var axis = ProcurementAxisZones(view);
+                var graph = LastSectionSpace != null ? LastSectionSpace.Graph : null;
+                if (graph == null
+                    || (zones.Count == 0 && axis.Count == 0))
+                {
+                    Debug.Log("TacticalAIBridge::BUDGET r" + CurrentRound()
+                              + ": no battle-zone facts -> strict sequence (Null-Law)");
+                    return false;
+                }
+
+                var map = UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>();
+                var friendly = FriendlySectionsFor(null, map);
+                var usedDps = UsedDeploymentGuids();
+
+                // Posture truth (concept Sec.3): doctrine-level planPosture.
+                // Only while no doctrine round has run yet the descriptive
+                // feed posture maps over (eliminate -> hunt, protect/stall
+                // -> defend); deny/unknown claims nothing.
+                string posture = _doctrineEffective;
+                if (posture != "hunt" && posture != "defend")
+                    posture = view == null ? "" :
+                        (view.Posture == "eliminate" ? "hunt" :
+                         (view.Posture == "protect" || view.Posture == "stall" ? "defend" : ""));
+
+                long threat = gv.currentThreat < 0 ? 0 : gv.currentThreat;
+                int gain = (session.setupOptions != null ? session.setupOptions.threatLevel : 0)
+                         + (reinforcementMode ? 0 : 1);
+
+                var actions = new List<Tac.BudgetAction>();
+                var byAction = new Dictionary<Tac.BudgetAction, ProcurementPick>();
+                var futureCosts = new List<long>();
+
+                // ---- reinforcement candidates: the SAME legality law
+                // DataStore.GetReinforcement builds its pool with (rcost /
+                // size / canReinforce override / budget) - mirrored here
+                // verbatim so the ranked list never contains an illegal
+                // action; the bill stays CostFor in the popup runner.
+                if (reinforcementMode && DataStore.deployedEnemies != null)
+                    foreach (var cd in DataStore.deployedEnemies)
+                    {
+                        if (cd == null || cd.isDummy || string.IsNullOrEmpty(cd.id)) continue;
+                        if (cd.rcost < 0 || cd.currentSize >= cd.size) continue;
+                        if (Math.Max(1, cd.rcost) > gv.currentThreat) continue;
+                        var ovrd = gv.GetDeploymentOverride(cd.id);
+                        if (ovrd != null && !ovrd.canReinforce) continue;
+                        // Losses = the STRONGER of the two public signals
+                        // (knockout decrement vs wheel-shown death,
+                        // Player-33 findings Sec.2b showed they can disagree) - never
+                        // the sum: one dead figure must not count twice.
+                        int lost = cd.size - cd.currentSize;
+                        int wheelDead = 0;
+                        if (cd.woundTrackerValue != null && cd.health > 0)
+                            foreach (var v in cd.woundTrackerValue)
+                                if (v >= cd.health) wheelDead++;
+                        var act = new Tac.BudgetAction
+                        {
+                            Kind = Tac.BudgetPlanner.KindReinforce,
+                            Id = cd.id,
+                            Name = cd.name ?? "",
+                            Cost = Math.Max(1, cd.rcost),
+                            Losses = Math.Max(lost, wheelDead),
+                            Size = cd.currentSize,
+                            Firepower = cd.attacks != null ? cd.attacks.Length : 0,
+                        };
+                        AddLedgerSections(cd.id, map, act.Sections);
+                        actions.Add(act);
+                        byAction[act] = new ProcurementPick { IsBuy = false, Card = cd };
+                    }
+
+                // ---- purchase candidates: the SAME legality law
+                // GetStrictDeployable filters with (MinusDeployed +
+                // DeployCost <= threat). Unaffordable hand costs are NOT
+                // dropped silently - they are the bigger card the
+                // Spar-Regel may be saving for (futureCosts).
+                var hand = DataStore.deploymentHand != null
+                         ? DataStore.deploymentHand.MinusDeployed() : null;
+                if (hand != null)
+                    foreach (var cd in hand)
+                    {
+                        if (cd == null || string.IsNullOrEmpty(cd.id)) continue;
+                        int cost = Math.Max(0, global::DataStore.DeployCost(cd, false));
+                        if (cost > gv.currentThreat)
+                        {
+                            futureCosts.Add(cost);
+                            continue;
+                        }
+                        var act = new Tac.BudgetAction
+                        {
+                            Kind = Tac.BudgetPlanner.KindBuy,
+                            Id = cd.id,
+                            Name = cd.name ?? "",
+                            Cost = cost,
+                            Size = cd.size,
+                            Firepower = cd.attacks != null ? cd.attacks.Length : 0,
+                        };
+                        AddLandingSections(cd, map, usedDps, act.Sections);
+                        actions.Add(act);
+                        byAction[act] = new ProcurementPick { IsBuy = true, Card = cd };
+                    }
+
+                var ranked = Tac.BudgetPlanner.Rank(graph, zones, axis, friendly,
+                                                    posture, threat, gain, dumpWindow,
+                                                    actions, futureCosts);
+                if (ranked == null)
+                {
+                    Debug.Log("TacticalAIBridge::BUDGET r" + CurrentRound()
+                              + ": no battle-zone facts -> strict sequence (Null-Law)");
+                    return false;
+                }
+
+                hadCandidates = actions.Count > 0;
+                picks = new List<ProcurementPick>();
+                var sb = new System.Text.StringBuilder(
+                    "TacticalAIBridge::BUDGET r" + CurrentRound()
+                    + ": posture=" + (string.IsNullOrEmpty(posture) ? "-" : posture)
+                    + " dump=" + (dumpWindow ? "1" : "0")
+                    + " threat=" + threat + " gain=" + gain
+                    + " axis=[" + string.Join(",", axis.ToArray()) + "]"
+                    + " zones=[" + string.Join(",", zones.ToArray()) + "]");
+                foreach (var row in ranked)
+                {
+                    if (row.Kind == Tac.BudgetPlanner.KindHold)
+                    {
+                        sb.Append(" | hold score=0");
+                        break;   // everything below the hold row is spared
+                    }
+                    sb.Append(" | ").Append(row.Dump());
+                    ProcurementPick p;
+                    if (byAction.TryGetValue(row, out p)) picks.Add(p);
+                }
+                var pl = new List<string>();
+                foreach (var p in picks) pl.Add((p.IsBuy ? "buy:" : "reinforce:") + p.Card.id);
+                sb.Append(" -> picks=[" + string.Join(",", pl.ToArray()) + "]");
+                Debug.Log(sb.ToString());
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::procurement failed -> strict sequence: "
+                                 + e.Message + "\n" + e.StackTrace);
+                picks = null; hadCandidates = false;
+                return false;
+            }
+        }
+
+        /// <summary>P33-H5 axis zones (H4b law, controller order 07.11
+        /// "nutze die Achsen-Kampfzone als hohes Ziel-Sek-Gewicht"): the
+        /// rebel victory axis names the fight. allyReaches -> the LIVE
+        /// escape sections (phase law of LiveEscapeZones, same as the risk
+        /// consumer); allyDefeated -> the axis actor's CURRENT section
+        /// (observed SectionSpace fact). Imperial-authored objectives are
+        /// the escort route and NEVER a fight zone (H4b polarity law).</summary>
+        static List<string> ProcurementAxisZones(Tac.FeedWorldView view)
+        {
+            var outp = new List<string>();
+            try
+            {
+                if (view == null || view.ObjectiveForEmpire) return outp;
+                if (view.RebelWinBy == "allyReaches")
+                {
+                    foreach (var z in LiveEscapeZones(view.EscapeSections))
+                        if (!outp.Contains(z)) outp.Add(z);
+                }
+                else if (view.ImperialWinBy == "allyDefeated"
+                         && !string.IsNullOrEmpty(view.AxisActorName)
+                         && LastSectionSpace != null)
+                {
+                    var sec = LastSectionSpace.HeroInSection(view.AxisActorName);
+                    if (!string.IsNullOrEmpty(sec)) outp.Add(sec);
+                }
+            }
+            catch { return new List<string>(); }
+            return outp;
+        }
+
+        /// <summary>P33-H5 location fact of a reinforcement: the sections
+        /// of the group's ENTRY points (durable deploy ledger -> live
+        /// mapSectionOwner, data-exists law of M14e). No row, no GUID, no
+        /// entity => no sections => no proximity claim (Null-Law).</summary>
+        static void AddLedgerSections(string cardId, Saga.MapEntityManager map,
+                                      List<string> into)
+        {
+            try
+            {
+                var session = DataStore.sagaSessionData;
+                if (session == null || map == null || string.IsNullOrEmpty(cardId)) return;
+                Saga.DeployLedgerRow row;
+                if (!session.TryGetDeployEntry(cardId, out row)) return;
+                if (row == null || row.dps == null) return;
+                foreach (var g in row.dps)
+                {
+                    Guid gid;
+                    if (!Guid.TryParse(g, out gid)) continue;
+                    var e = map.GetEntity(gid);
+                    if (e == null) continue;
+                    var s = e.mapSectionOwner.ToString();
+                    if (s != "00000000-0000-0000-0000-000000000000" && !into.Contains(s))
+                        into.Add(s);
+                }
+            }
+            catch { /* Null-Law */ }
+        }
+
+        /// <summary>P33-H5 location fact of a purchase: the sections of
+        /// the card's VALID DPs (GetValidDeploymentPoints already applies
+        /// type+active+live-section+color-filter law). Fresh points first
+        /// (the DP-diversity ledger); if every valid point is already used,
+        /// the used ones still claim honestly - the landing will reuse
+        /// them. No map / no DPs => no claim (Null-Law).</summary>
+        static void AddLandingSections(global::DeploymentCard card,
+                                       Saga.MapEntityManager map,
+                                       List<string> usedDps, List<string> into)
+        {
+            try
+            {
+                if (map == null || card == null) return;
+                var dps = map.GetValidDeploymentPoints(card);
+                if (dps == null) return;
+                foreach (var e in dps)
+                {
+                    if (e == null) continue;
+                    var g = e.GUID.ToString();
+                    if (usedDps != null && usedDps.Contains(g)) continue;
+                    var s = e.mapSectionOwner.ToString();
+                    if (s == "00000000-0000-0000-0000-000000000000" || into.Contains(s)) continue;
+                    into.Add(s);
+                }
+                if (into.Count == 0)
+                    foreach (var e in dps)
+                    {
+                        if (e == null) continue;
+                        var s = e.mapSectionOwner.ToString();
+                        if (s == "00000000-0000-0000-0000-000000000000" || into.Contains(s)) continue;
+                        into.Add(s);
+                    }
+            }
+            catch { /* Null-Law */ }
+        }
+
         /// <summary>M14e C4 input (CONCEPT_standort_ledger_v2): the sections
         /// that already carry the Imperator's OWN located groups, read from
         /// the durable deploy ledger (entry DP -> live mapSectionOwner,
@@ -2073,6 +2408,16 @@ namespace TacticalAI
                     // layer). null = no key = canon rank law, byte-identical.
                     string rdPattern = null;
                     if (_patternByCard != null) _patternByCard.TryGetValue(cd.id, out rdPattern);
+                    // P33-H4b ACHSEN-MASKENGESETZ (the Core side documents
+                    // it on FocusCandidate.AxisHunt): the win-wiring key
+                    // rides the CHASE patterns the concept names (hunter/
+                    // aggressive). blocker/guard run the BLOCK law instead
+                    // (RiskPosture BlockHold fallback), support/ambusher
+                    // carry no axis key; unknown pattern clears the key =
+                    // today's rank law (fail-closed for the new key).
+                    if (rdPattern != "hunter" && rdPattern != "aggressive")
+                        for (int ci = 0; ci < cands.Count; ci++)
+                            if (cands[ci].AxisHunt) cands[ci].AxisHunt = false;
                     var rdSkill = Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(CurrentMissionAiMode()));
                     int rdRung = SkillRungOf(rdSkill);   // null profile -> honest S1 blind floor
                     var reactionHero = Tac.OverlordFocus.ReactionHeroFor(
@@ -2305,6 +2650,20 @@ namespace TacticalAI
             _profileByName = new Dictionary<string, Tac.HeroThreatProfile>();
             var heroViews = new Dictionary<string, Tac.FeedWorldView.HeroView>();
             foreach (var hv in view.Heroes) heroViews[hv.HeroId] = hv;
+            // P33-H4b ACHSEN-FOKUS (CONCEPT_missionsachse 2.1): the mission's
+            // own win wiring names the attack axis - "Fokus-Prioritaet wie
+            // Designation (explizit, nicht Text-Glueck)". POLARITAET: the key
+            // lives only for the REBEL-authored objective - on an imperial-
+            // authored objective the ally is OUR escort figure (protect
+            // posture), hunting him would be the polarity misread. No parsed
+            // wiring -> false on every row, Compare slot inert, every pre-
+            // H4b vector byte-identical (Null-Law). The per-activation
+            // pattern mask (hunter/aggressive only) rides in the activation
+            // path; the round-level designation already carries the key.
+            bool axisHunt = view != null && !view.ObjectiveForEmpire
+                            && view.ImperialWinBy == "allyDefeated"
+                            && (!string.IsNullOrEmpty(view.AxisActor)
+                                || !string.IsNullOrEmpty(view.AxisActorName));
             int row = 0;
             foreach (var h in living)
             {
@@ -2322,14 +2681,32 @@ namespace TacticalAI
                 if (ch == null) ch = CampaignHeroFor(h.id);
                 var prof = TacticalAIAssets.ProfileFor(id, ch);
                 _profileByName[id] = prof;
+                // M11b: the printed hero card (null only for rows
+                // outside the 21-hero app roster -> curated fallback).
+                var card = TacticalAIAssets.CardFor(id);
+                // P33-H4b BASIS-FALLBACK input (Player-33 gap a2): a hero
+                // with NO card AND no curation row (the mission's special
+                // NPC ally - Draylen class) is priced from his REAL printed
+                // deployment values. Both facts present -> null/-1 = the
+                // priced card/curation path stays bit-identical (Null-Law).
+                bool basisRow = card == null && prof == null;
                 outp.Add(new Tac.FocusCandidate
                 {
                     HeroId = id,
                     SquadRow = row++,
                     Profile = prof,
-                    // M11b: the printed hero card (null only for rows
-                    // outside the 21-hero app roster -> curated fallback).
-                    Card = TacticalAIAssets.CardFor(id),
+                    Card = card,
+                    // P33-H4b: the axis key (id/name join on the feed's
+                    // public actor fields; the live card's own id is the
+                    // exact key, display name the fallback - M15 F1 law).
+                    AxisHunt = axisHunt && ((h.id != null && h.id == view.AxisActor)
+                        || System.StringComparer.Ordinal.Equals(id, view.AxisActor)
+                        || (!string.IsNullOrEmpty(view.AxisActorName)
+                            && System.StringComparer.Ordinal.Equals(id, view.AxisActorName))),
+                    BasisDice = basisRow && h.attacks != null && h.attacks.Length > 0
+                        ? new List<string>(System.Array.ConvertAll(h.attacks, d => d.ToString()))
+                        : null,
+                    BasisSpeed = basisRow ? h.speed : -1,
                     // feed fact first (deterministic public history); the live
                     // hero state is the fallback for heroes the feed never saw
                     Wounded = hv != null ? hv.Wounded : (h.heroState != null && h.heroState.isWounded),
@@ -2638,6 +3015,28 @@ namespace TacticalAI
             _ledgerRound = roundNo;
         }
 
+        /// <summary>P33-H4b: the phase law of the block zones - a parsed
+        /// escape section counts ONLY while it is live (same law as the
+        /// dynamic DP anchors). TileManager missing / tiles unloaded / any
+        /// error => empty list = no block fact (Null-Law).</summary>
+        static List<string> LiveEscapeZones(System.Collections.Generic.IReadOnlyList<string> zones)
+        {
+            var outp = new List<string>();
+            try
+            {
+                var tm = UnityEngine.Object.FindObjectOfType<Saga.TileManager>();
+                if (tm == null || !tm.tilesLoaded) return outp;
+                foreach (var z in zones)
+                {
+                    Guid sid;
+                    if (!Guid.TryParse(z, out sid)) continue;
+                    if (tm.IsMapSectionActive(sid)) outp.Add(z);
+                }
+            }
+            catch { return new List<string>(); }
+            return outp;
+        }
+
         static int RiskLedgerBalance(Tac.FeedWorldView view)
         {
             long b = view.ThreatSeen ? view.ThreatBalance
@@ -2660,6 +3059,46 @@ namespace TacticalAI
             Tac.HeroThreatProfile focusProf = null;
             if (_roundFocusHero != null && _profileByName != null)
                 _profileByName.TryGetValue(_roundFocusHero, out focusProf);
+            // P33-H4b BLOCK-ACHSE (CONCEPT_missionsachse 2.1): the rebel win
+            // zone (RebelWinBy=allyReaches, parsed from the mission file's
+            // OWN escape/evac wiring) is held by the stand duties at the
+            // observed graph's SCHNITTSTELLE between the axis actor's anchor
+            // section and the zone. Polarity: an imperial-authored objective
+            // makes it OUR escort route (protect) - never a block target.
+            // Phase law (M14d/H4 pattern): only sections LIVE at decision
+            // time count. Missing rail, missing anchor fact, unknown route ->
+            // null: today's Konten-Punkt fallback, bit-identical (Null-Law,
+            // risk.json pinned).
+            string blockHold = null;
+            try
+            {
+                if (view != null && !view.ObjectiveForEmpire
+                    && view.RebelWinBy == "allyReaches" && view.EscapeSections.Count > 0)
+                {
+                    var space = LastSectionSpace;
+                    if (space != null)
+                    {
+                        string anchor = null;
+                        if (!string.IsNullOrEmpty(view.AxisActorName))
+                            anchor = space.HeroInSection(view.AxisActorName);
+                        if (string.IsNullOrEmpty(anchor) && !string.IsNullOrEmpty(view.AxisActor))
+                            anchor = space.HeroInSection(view.AxisActor);
+                        if (!string.IsNullOrEmpty(anchor))
+                        {
+                            var live = LiveEscapeZones(view.EscapeSections);
+                            if (live.Count > 0)
+                                blockHold = Tac.SectionConsumers.BlockSchnittstelle(
+                                    space.Graph, anchor, live);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                blockHold = null;
+                Debug.LogWarning("TacticalAIBridge::block interface failed (Konten-Punkt fallback): " + e.Message);
+            }
+            _blockHoldDbg = blockHold ?? "";
             foreach (var f in facts)
             {
                 var gv = view.FindGroup(f.GroupId);
@@ -2683,6 +3122,9 @@ namespace TacticalAI
                     LedgerBalance = RiskLedgerBalance(view),
                     ThreatIgnoreLos = focusProf != null && focusProf.IgnoreLos,
                     ThreatRangeMax = focusProf != null ? focusProf.RangeMax : 0,
+                    // P33-H4b: resolved ONCE per round above; only the
+                    // stand duties (blocker/guard) read it in RiskPosture.
+                    BlockHold = blockHold ?? "",
                 };
                 try { _riskByGroup[f.GroupId] = Tac.RiskPosture.RiskPosition(rf, skill != null ? skill.Rho : 3); }
                 catch (Exception e) { Debug.LogWarning("TacticalAIBridge::risk " + f.GroupId + ": " + e.Message); }
@@ -2811,6 +3253,11 @@ namespace TacticalAI
             return heroId;
         }
 
+        /// P33-H4b: the separator inside the ACHSE:: typ token (helper kept
+        /// next to its only caller; "+" only when BOTH wirings exist).
+        static string axType0(Tac.FeedWorldView v)
+            => !string.IsNullOrEmpty(v.ImperialWinBy) ? "+" : "";
+
         static string ExplainFor(string groupId, ActivationPlanData plan)
         {
             if (TacticalAISettings.ExplainLevel == "none") return null;
@@ -2830,6 +3277,46 @@ namespace TacticalAI
                 // play against, rank, active bonuses (self-labelled line).
                 if (plan != null && !string.IsNullOrEmpty(plan.PersonaLine))
                     line = (line == null ? "" : line + "\n") + plan.PersonaLine;
+                // P33-H4b ACHSE:: (explain=full ONLY): the mission's win
+                // wiring the engine actually reads - axis type, actor,
+                // polarity, block zone, resolved Schnittstelle. Raw log
+                // diagnostic (no ui.json key - the same class as the risk
+                // and patternRoll lines below; Thomas reads Player.log as
+                // his explain UI). Null-Law: no parsed wiring, no row.
+                var axv = _lastFeedView;
+                if (axv != null && (!string.IsNullOrEmpty(axv.ImperialWinBy)
+                                    || !string.IsNullOrEmpty(axv.RebelWinBy)))
+                {
+                    string axType = (!string.IsNullOrEmpty(axv.ImperialWinBy)
+                                        ? "jage:" + axv.ImperialWinBy : "")
+                                    + (!string.IsNullOrEmpty(axv.RebelWinBy)
+                                        ? (axType0(axv)) + "block:" + axv.RebelWinBy : "");
+                    string axActor = !string.IsNullOrEmpty(axv.AxisActorName) ? axv.AxisActorName
+                               : (axv.AxisActor ?? "");
+                    string axZones = "";
+                    if (axv.EscapeSections.Count > 0)
+                    {
+                        var zs = new List<string>();
+                        foreach (var z in axv.EscapeSections)
+                        {
+                            string nm = z;
+                            if (LastSectionSpace != null)
+                            {
+                                var pretty = LastSectionSpace.Graph.SectionName(z);
+                                if (!string.IsNullOrEmpty(pretty)) nm = pretty;
+                            }
+                            zs.Add(nm);
+                        }
+                        axZones = string.Join(",", zs.ToArray());
+                    }
+                    Debug.Log("TacticalAIBridge::ACHSE:: r" + (axv.Round)
+                              + " typ=" + axType
+                              + " akteur=\"" + axActor + "\""
+                              + " polaritaet=" + (axv.ObjectiveForEmpire ? "imperial" : "rebel")
+                              + " blockzonen=[" + axZones + "]"
+                              + " schnittstelle=\"" + (_blockHoldDbg ?? "") + "\""
+                              + " [public mission-file wiring]");
+                }
                 var slot = _slots.FirstOrDefault(s => s.GroupId == groupId);
                 if (slot != null && UIx != null)
                     // (append, not assign - the header row stays on top)

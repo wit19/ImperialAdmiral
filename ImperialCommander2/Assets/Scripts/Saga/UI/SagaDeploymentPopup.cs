@@ -317,6 +317,22 @@ namespace Saga
 			DataStore.sagaSessionData.ModifyThreat( threatGain );
 			DataStore.sagaSessionData.UpdateDeploymentModifier( depMod );
 
+			// P33-H5 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2):
+			// the Beschaffungs-Ranking replaces the strict reinforce-then-buy
+			// sequence ONLY while battle-zone facts exist. Without facts (or
+			// mode off, or any error inside the head) the sequence below runs
+			// VERBATIM - bit-identical to every earlier build (Null-Law +
+			// Mode-Gate). The head only ORDERS legal actions; every bill and
+			// legality law below resp. in the runner stays the table law.
+			List<TacticalAI.TacticalAIBridge.ProcurementPick> ranked;
+			bool hadCandidates;
+			if ( TacticalAI.TacticalAIBridge.TryRankProcurement( out ranked, out hadCandidates,
+			                                                     true, FinalRoundThreatDump() ) )
+			{
+				RunRankedReinforcements( ranked, hadCandidates );
+				return;
+			}
+
 			DeploymentCard r1 = DataStore.GetReinforcement( DataStore.sagaSessionData.gameVars.currentThreat );
 			if ( r1 != null )
 			{
@@ -440,6 +456,170 @@ namespace Saga
 			landingPanel.SetActive( true );
 		}
 
+		// ------------------------------------------------------------ P33-H5
+
+		/// <summary>
+		/// P33-H5 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2): execute
+		/// the ranked round-end actions of the Reinforcements popup. The TABLE
+		/// laws stay untouched: max 2 actions per round; every action is
+		/// re-checked against the SAME legality the strict sequence reads, at
+		/// the CURRENT threat (the first action's bill can make the second one
+		/// unaffordable - then it is skipped, exactly like the strict second
+		/// pick). All bills are verbatim copies of the strict branches
+		/// (rcost/DeployCost/override laws UNANTASTBAR). Presentation law
+		/// (P33-H1 extended): ANY bought group makes the popup wear the
+		/// landing outfit - a pure reinforcement run keeps the native slots
+		/// with the +1 upgrade thumb exactly as the strict sequence renders
+		/// them; a mixed run puts both actions into the landing slots (the
+		/// reinforced veteran shows its CURRENT pips - the landing gear prints
+		/// no +1 optic, the BUDGET log line names every action). Empty run and
+		/// no candidates => the ordinary warning. Empty run WITH candidates =>
+		/// the Spar-Regel held everything back ON PURPOSE: no warning, the
+		/// threat is kept for the next round (Player-33 deficit 2 "kein
+		/// Horizont" - the money is an investment, not waste).
+		/// The ranked path applies the documented reinforce law consistently:
+		/// EVERY returning figure clears one >=health damage slot (the strict
+		/// Reinforcements branch does this for its first slot only - that
+		/// asymmetry is a Legacy quirk; Onslaught and the printed law reset
+		/// per returning figure, and the ranked path follows the law).
+		/// </summary>
+		void RunRankedReinforcements( List<TacticalAI.TacticalAIBridge.ProcurementPick> picks,
+		                              bool hadCandidates )
+		{
+			var gv = DataStore.sagaSessionData.gameVars;
+			var run = new List<TacticalAI.TacticalAIBridge.ProcurementPick>();
+			if ( picks != null )
+				foreach ( var p in picks )
+				{
+					if ( run.Count >= 2 ) break;//the TABLE law: max 2 actions
+					if ( p == null || p.Card == null ) continue;
+					if ( p.IsBuy )
+					{
+						if ( DataStore.deploymentHand != null
+							&& DataStore.deploymentHand.Contains( p.Card )
+							&& DataStore.DeployCost( p.Card, false ) <= gv.currentThreat )
+							run.Add( p );
+					}
+					else
+					{
+						var ovrd = gv.GetDeploymentOverride( p.Card.id );
+						if ( p.Card.rcost >= 0 && p.Card.currentSize < p.Card.size
+							&& Mathf.Max( 1, p.Card.rcost ) <= gv.currentThreat
+							&& ( ovrd == null || ovrd.canReinforce ) )
+							run.Add( p );
+					}
+				}
+
+			bool anyBuy = false;
+			foreach ( var p in run )
+				if ( p.IsBuy ) { anyBuy = true; break; }
+
+			int landingSlot = 0, reinforceSlot = 0;
+			foreach ( var p in run )
+			{
+				if ( p.IsBuy )
+				{
+					//the FAIL-OPEN law verbatim: swap candidate, fresh wound
+					//reset, landing slot full size, hand removal (regular +
+					//consumed elite), the same override billing branch.
+					var deploy = TacticalAI.PersonaState.SwapDeployCandidate( p.Card );
+					deploy.ResetWoundTracker();
+					PresentFallbackAsLanding();
+					if ( landingSlot == 0 ) { topLanding.SetActive( true ); landing1.Init( deploy, 3 ); }
+					else { bottomLanding.SetActive( true ); landing2.Init( deploy, 3 ); }
+					landingSlot++;
+					groupsToDeploy.Add( deploy );
+					DataStore.deploymentHand.Remove( p.Card );
+					DataStore.deploymentHand.Remove( deploy );
+					if ( deploymentOverride != null )
+					{
+						if ( deploymentOverride.useThreat )
+							DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( DataStore.DeployCost( p.Card, false ) + deploymentOverride.threatCost, 0, 100 )) );
+					}
+					else
+						DataStore.sagaSessionData.ModifyThreat( -DataStore.DeployCost( p.Card, false ) );
+				}
+				else
+				{
+					if ( anyBuy )
+					{
+						//mixed run: the landing gear carries both actions
+						PresentFallbackAsLanding();
+						if ( landingSlot == 0 ) { topLanding.SetActive( true ); landing1.Init( p.Card ); }
+						else { bottomLanding.SetActive( true ); landing2.Init( p.Card ); }
+						landingSlot++;
+					}
+					else if ( reinforceSlot == 0 )
+					{
+						topPanel.SetActive( true );
+						topR1.Init( p.Card );
+						topR2.Init( p.Card, 1 );
+					}
+					else
+					{
+						bottomPanel.SetActive( true );
+						bottomR1.Init( p.Card );
+						bottomR2.Init( p.Card, 1 );
+					}
+					reinforceSlot++;
+					p.Card.currentSize += 1;
+					//the returning figure gets a fresh start (see doc header)
+					p.Card.ResetWoundTrackersForReinforcement( 1 );
+					DataStore.sagaSessionData.ModifyThreat( -TacticalAI.PersonaState.CostFor( p.Card, p.Card.rcost ) );
+				}
+			}
+
+			if ( run.Count == 0 && !hadCandidates )
+			{
+				warning.gameObject.SetActive( true );
+				warning.text = DataStore.uiLanguage.uiMainApp.reinforceWarningUC;
+			}
+		}
+
+		/// <summary>P33-H5: execute the ranked Landings (ordinary round-end
+		/// Landing popup only). Same re-check + max-2 law; the bills mirror
+		/// the strict d1/d2 branches (deploymentOverride is null by the
+		/// caller's gate - the override branch is kept for safety). Empty run
+		/// WITHOUT candidates => the ordinary deployment warning; empty run
+		/// WITH candidates => everything was spared on purpose: no warning,
+		/// the threat is kept.</summary>
+		void RunRankedLandings( List<TacticalAI.TacticalAIBridge.ProcurementPick> picks,
+		                        bool hadCandidates )
+		{
+			var gv = DataStore.sagaSessionData.gameVars;
+			int slot = 0;
+			if ( picks != null )
+				foreach ( var p in picks )
+				{
+					if ( slot >= 2 ) break;//the TABLE law: max 2 landings
+					if ( p == null || p.Card == null || !p.IsBuy ) continue;
+					if ( DataStore.deploymentHand == null
+						|| !DataStore.deploymentHand.Contains( p.Card ) ) continue;
+					if ( DataStore.DeployCost( p.Card, false ) > gv.currentThreat ) continue;
+					var deploy = TacticalAI.PersonaState.SwapDeployCandidate( p.Card );
+					deploy.ResetWoundTracker();
+					if ( slot == 0 ) { topLanding.SetActive( true ); landing1.Init( deploy, 3 ); }
+					else { bottomLanding.SetActive( true ); landing2.Init( deploy, 3 ); }
+					slot++;
+					groupsToDeploy.Add( deploy );
+					DataStore.deploymentHand.Remove( p.Card );
+					DataStore.deploymentHand.Remove( deploy );
+					if ( deploymentOverride != null )
+					{
+						if ( deploymentOverride.useThreat )
+							DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( DataStore.DeployCost( p.Card, false ) + deploymentOverride.threatCost, 0, 100 )) );
+					}
+					else
+						DataStore.sagaSessionData.ModifyThreat( -TacticalAI.PersonaState.CostFor( p.Card, p.Card.cost ) );
+				}
+
+			if ( slot == 0 && !hadCandidates )
+			{
+				warning.gameObject.SetActive( true );
+				warning.text = DataStore.uiLanguage.uiMainApp.deploymentWarningUC;
+			}
+		}
+
 		public void HandleLanding( bool skipThreatIncrease, bool isOptionalDeployment )
 		{
 			/*
@@ -464,6 +644,23 @@ namespace Saga
 				DataStore.sagaSessionData.ModifyThreat( threatGain );
 				DataStore.sagaSessionData.UpdateDeploymentModifier( depMod );
 				landingMessage.SetActive( true );
+			}
+
+			// P33-H5: the ranked Landing path - ONLY for the ordinary round-end
+			// popup. Override-costed flows (deploymentOverride != null) and the
+			// event-rails/button optional deployments keep the strict greedy
+			// line VERBATIM, and so does the FINAL-ROUND DUMP chain (its popup
+			// arrives isOptionalDeployment=true): the dump window must dump,
+			// never spare. Null-Law + Mode-Gate as in HandleReinforcements.
+			List<TacticalAI.TacticalAIBridge.ProcurementPick> rankedLanding;
+			bool hadLandingCandidates;
+			if ( deploymentOverride == null && !isOptionalDeployment
+				&& TacticalAI.TacticalAIBridge.TryRankProcurement( out rankedLanding,
+				                                                   out hadLandingCandidates,
+				                                                   false, FinalRoundThreatDump() ) )
+			{
+				RunRankedLandings( rankedLanding, hadLandingCandidates );
+				return;
 			}
 
 			DeploymentCard d1 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );

@@ -1,0 +1,328 @@
+{
+  "_doc": "P33-H4b mission-axis vectors (CONCEPT_missionsachse, findings_Player-33). feed_cases: the VictoryConditions feed law - the Hoth12-form vector (jagd+bLOCK, hunt outranks the race despite the roundLimit rest), polarity flip, additive zones under restatement, and the Null-Law twin without any win wiring. block_cases: the observed-graph Schnittstelle between axis anchor and win zone (Loch-Gesetz: unknown distance = does not exist). risk_cases: the RiskPosture block fallback clause - blocker/guard duty holds the interface, chase patterns and the no-fact side keep the Konten-Punkt clause bit-identical. focus_cases: the axis slot behind the human mark, mark beats axis, Basis-Fallback pricing of the card-less NPC ally (rational strings observed on the harness and pinned after review - never hand-recomputed) and its masked twin. replan_cases: the midround detector - current round only, after the plan seq.",
+
+  "feed_cases": [
+    {
+      "name": "hoth12_achse_jagd_vor_rennstall",
+      "_why": "Acceptance (a)+(c): both wirings parsed; posture = eliminate DESPITE the running roundLimit (5) and the escape-worded objective - Player-33's stall misread is fixed.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Helft Draylen zur Evakuierungsstelle zu bringen", "priorityTarget": "A001", "roundLimit": 5, "mission": "HOTH12" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "escortHero": "MHD-19", "section": "sec-flucht" } }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "imperialWinBy": "allyDefeated",
+        "rebelWinBy": "allyReaches",
+        "axis": "A001",
+        "axisName": "Draylen",
+        "escort": "MHD-19",
+        "escape": ["sec-flucht"],
+        "canon_has": ["victory=allyDefeated|allyReaches|A001|Draylen|MHD-19", "escape=sec-flucht"],
+        "canon_not": []
+      }
+    },
+    {
+      "name": "hoth12_ruhestellung_restate_idempotent",
+      "_why": "The canon-move restatement law: a second identical VictoryConditions after other events keeps every scalar and does NOT duplicate the zone (additive set).",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Helft Draylen zur Evakuierungsstelle zu bringen", "priorityTarget": "A001", "roundLimit": 5, "mission": "HOTH12" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "escortHero": "MHD-19", "section": "sec-flucht" } },
+        { "kind": "ThreatSpend", "round": 2, "payload": { "balance": 4 } },
+        { "kind": "VictoryConditions", "round": 2, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "escortHero": "MHD-19", "section": "sec-flucht" } }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "imperialWinBy": "allyDefeated",
+        "rebelWinBy": "allyReaches",
+        "axis": "A001",
+        "axisName": "Draylen",
+        "escort": "MHD-19",
+        "escape": ["sec-flucht"],
+        "canon_has": [],
+        "canon_not": []
+      }
+    },
+    {
+      "name": "block_achse_ohne_jagd_stall",
+      "_why": "Only the escape wiring parsed -> stall (block the race) - the wiring, not text luck.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "section": "sec-zwei" } }
+      ],
+      "expect": {
+        "posture": "stall",
+        "imperialWinBy": "",
+        "rebelWinBy": "allyReaches",
+        "axis": "A001",
+        "axisName": "Draylen",
+        "escort": "",
+        "escape": ["sec-zwei"],
+        "canon_has": ["victory=|allyReaches|A001|Draylen|"],
+        "canon_not": []
+      }
+    },
+    {
+      "name": "polaritaet_imperial_protect_statt_jagd",
+      "_why": "Polaritaet: imperial-authored objective (objectiveForEmpire=1) flips BOTH wirings to protect - the authored ally is our own escort figure, never a hunt target.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Beschuetzt den Verbuendeten bis zur Evakuierung", "priorityTarget": "A001", "roundLimit": 6, "objectiveForEmpire": 1, "mission": "M2" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "section": "sec-flucht" } }
+      ],
+      "expect": {
+        "posture": "protect",
+        "imperialWinBy": "allyDefeated",
+        "rebelWinBy": "allyReaches",
+        "axis": "A001",
+        "axisName": "Draylen",
+        "escort": "",
+        "escape": ["sec-flucht"],
+        "canon_has": [],
+        "canon_not": []
+      }
+    },
+    {
+      "name": "null_law_keine_achse_kein_victory_row",
+      "_why": "Null-Law: a stream WITHOUT VictoryConditions keeps today's text-law posture AND a Canon with no victory/escape rows (bit-compat with every pre-H4b vector - world_feed.json pins the legacy Canon itself). posture 'stall' is the OLD text law reading 'Hold the perimeter' as a runner goal - exactly what the pre-H4b chain returns with the victory args at their '' defaults.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Assault the rebel base", "priorityTarget": "", "roundLimit": 5, "mission": "M3" } },
+        { "kind": "ObjectiveChange", "round": 2, "payload": { "objective": "Hold the perimeter" } }
+      ],
+      "expect": {
+        "posture": "stall",
+        "imperialWinBy": "",
+        "rebelWinBy": "",
+        "axis": "",
+        "axisName": "",
+        "escort": "",
+        "escape": [],
+        "canon_has": [],
+        "canon_not": ["victory=", "escape="]
+      }
+    },
+    {
+      "name": "zwei_zonen_additiv_sortiert",
+      "_why": "Every parsed evac zone joins the sorted set (data-existence, additive; the phase law is the consumer's at decision time).",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "section": "sec-zwei" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "", "rebelWinBy": "allyReaches", "actor": "A001", "actorName": "Draylen", "section": "sec-eins" } }
+      ],
+      "expect": {
+        "posture": "stall",
+        "imperialWinBy": "",
+        "rebelWinBy": "allyReaches",
+        "axis": "A001",
+        "axisName": "Draylen",
+        "escort": "",
+        "escape": ["sec-eins", "sec-zwei"],
+        "canon_has": ["escape=sec-eins", "escape=sec-zwei"],
+        "canon_not": []
+      }
+    }
+  ],
+
+  "block_cases": [
+    {
+      "name": "schnittstelle_kette_mittig",
+      "_why": "Chain A-B-C-D, axis A, zone D: score tie A(0+3)/B(1+2)/C(2+1) breaks on |d1-d2| - B and C tie at 1, the FIRST (ordinal, B) keeps the goal.",
+      "sections": ["A", "B", "C", "D"],
+      "edges": [["A", "B"], ["B", "C"], ["C", "D"]],
+      "axis": "A",
+      "zones": ["D"],
+      "expect": "B"
+    },
+    {
+      "name": "zwei_zonen_erste_ordinal_gewinnt",
+      "_why": "First zone (ordinal, here C) with a known route owns the block law: on A-B-C-D the only midpoint between the axis section A and C is B (score ties 2, delta breaks to B).",
+      "sections": ["A", "B", "C", "D"],
+      "edges": [["A", "B"], ["B", "C"], ["C", "D"]],
+      "axis": "A",
+      "zones": ["D", "C"],
+      "expect": "B"
+    },
+    {
+      "name": "loch_gesetz_keine_kante_kein_fall",
+      "_why": "D exists but no route is observed: DistanceLowerBound -1 everywhere -> null (no fact, consumer keeps Konten-Punkt).",
+      "sections": ["A", "B", "D"],
+      "edges": [["A", "B"]],
+      "axis": "A",
+      "zones": ["D"],
+      "expect": ""
+    },
+    {
+      "name": "ohne_achser_fall_null",
+      "_why": "No anchor fact for the axis actor -> no Schnittstelle (never a guess).",
+      "sections": ["A", "B", "C", "D"],
+      "edges": [["A", "B"], ["B", "C"], ["C", "D"]],
+      "axis": "",
+      "zones": ["D"],
+      "expect": ""
+    }
+  ],
+
+  "risk_cases": [
+    {
+      "name": "blocker_haelt_schnittstelle",
+      "pattern": "blocker", "posture": "eliminate", "replaces": 2, "balance": 3, "range": 0, "rho": 3,
+      "fact": "SEC-B",
+      "expect": {
+        "fallback_same": false,
+        "fallback0": "falls außer Reichweite: auf Konten-Punkt vorrücken",
+        "fallback1": "falls außer Reichweite: auf die Schnittstelle \"SEC-B\" vorrücken und den Weg versperren"
+      }
+    },
+    {
+      "name": "guard_baume_gleiche_pflicht",
+      "pattern": "guard", "posture": "eliminate", "replaces": 2, "balance": 3, "range": 0, "rho": 3,
+      "fact": "SEC-B",
+      "expect": {
+        "fallback_same": false,
+        "fallback0": "falls außer Reichweite: auf Konten-Punkt vorrücken",
+        "fallback1": "falls außer Reichweite: auf die Schnittstelle \"SEC-B\" vorrücken und den Weg versperren"
+      }
+    },
+    {
+      "name": "jagdmuster_null_law_bitidentisch",
+      "pattern": "aggressive", "posture": "eliminate", "replaces": 2, "balance": 3, "range": 0, "rho": 3,
+      "fact": "SEC-B",
+      "expect": {
+        "fallback_same": true,
+        "fallback0": "falls außer Reichweite: auf Konten-Punkt vorrücken"
+      }
+    },
+    {
+      "name": "blocker_ohne_fakt_konten_punkt",
+      "pattern": "blocker", "posture": "eliminate", "replaces": 2, "balance": 3, "range": 0, "rho": 3,
+      "fact": "",
+      "expect": {
+        "fallback_same": true,
+        "fallback0": "falls außer Reichweite: auf Konten-Punkt vorrücken"
+      }
+    }
+  ],
+
+  "focus_cases": [
+    {
+      "name": "achse_ohne_mark_vorn",
+      "_why": "Acceptance (a): the win wiring designates - the NPC ally carries focus priority WITHOUT a mark, above the higher-threat row (Compare slot 1a, mission-file fact over threat economy).",
+      "posture": "eliminate",
+      "heroes": [
+        { "hero": "draylen", "axis_hunt": true, "basis_dice": ["Red", "Green"], "basis_speed": 4, "attack_dice": 1, "health": 4 },
+        { "hero": "rebelvet", "attack_dice": 3, "health": 4 }
+      ],
+      "expect": { "order": ["draylen", "rebelvet"], "winner_axis": true }
+    },
+    {
+      "name": "mark_schlaegt_achse",
+      "_why": "The human designation at the throne stays king: a marked row beats the axis key.",
+      "posture": "eliminate",
+      "heroes": [
+        { "hero": "draylen", "axis_hunt": true, "basis_dice": ["Red", "Green"], "basis_speed": 4, "attack_dice": 1, "health": 4 },
+        { "hero": "rebelvet", "marks": 1, "marked_round": 1, "attack_dice": 3, "health": 4 }
+      ],
+      "expect": { "order": ["rebelvet", "draylen"], "winner_axis": false }
+    },
+    {
+      "name": "maskiert_canon_reihenfolge",
+      "_why": "The caller's pattern mask simulated (flag cleared for non-chase activations): with BOTH rows priced from printed basis, threat ranks on its own again - rebelvet's Red+Red+Red (17/2) beats draylen's Red+Green (10/3).",
+      "posture": "eliminate",
+      "heroes": [
+        { "hero": "draylen", "axis_hunt": false, "basis_dice": ["Red", "Green"], "basis_speed": 4, "attack_dice": 1, "health": 4 },
+        { "hero": "rebelvet", "axis_hunt": false, "basis_dice": ["Red", "Red", "Red"], "basis_speed": 4, "attack_dice": 1, "health": 4 }
+      ],
+      "expect": { "order": ["rebelvet", "draylen"], "winner_axis": false }
+    },
+    {
+      "name": "basis_preist_den_npc",
+      "_why": "Gap a2: card-less AND curation-less rows price from PRINTED values - the basis row outranks the equal-stats proxy row under the same posture.",
+      "posture": "eliminate",
+      "heroes": [
+        { "hero": "draylen_basis", "basis_dice": ["Red", "Green"], "basis_speed": 4, "attack_dice": 1, "health": 4 },
+        { "hero": "draylen_proxy", "attack_dice": 1, "health": 4 }
+      ],
+      "expect": {
+        "order": ["draylen_basis", "draylen_proxy"],
+        "winner_axis": false,
+        "basis": { "draylen_basis": "10/3" }
+      }
+    },
+    {
+      "name": "basis_runner_postur_temppo",
+      "_why": "Runner postures price the M16 percent law over printed damage + MobilityTier(printed speed); range reads 0 (absence never a penalty beyond the missing share).",
+      "posture": "stall",
+      "heroes": [
+        { "hero": "draylen_basis", "basis_dice": ["Red", "Green"], "basis_speed": 4, "attack_dice": 1, "health": 4 }
+      ],
+      "expect": {
+        "basis": { "draylen_basis": "102" }
+      }
+    },
+    {
+      "name": "ohne_basis_proxy_wie_heute",
+      "_why": "Null-Law twin: no printed basis -> ThreatBasis stays null = today's proxy row.",
+      "posture": "eliminate",
+      "heroes": [
+        { "hero": "draylen_proxy", "attack_dice": 1, "health": 4 }
+      ],
+      "expect": { "basis": { "draylen_proxy": "none" } }
+    }
+  ],
+
+  "replan_cases": [
+    {
+      "name": "siegtat_mitten_in_der_runde",
+      "plan_seq": 1, "round": 1,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "", "actor": "A001", "actorName": "Draylen" } }
+      ],
+      "expect": "VictoryConditions"
+    },
+    {
+      "name": "held_zugang_mitten_in_der_runde",
+      "plan_seq": 1, "round": 2,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "HeroDeployed", "round": 2, "payload": { "hero": "H9", "dp": "3,4" } }
+      ],
+      "expect": "HeroDeployed"
+    },
+    {
+      "name": "objective_wechsel_mitten_in_der_runde",
+      "plan_seq": 1, "round": 3,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "ObjectiveChange", "round": 3, "payload": { "objective": "Jagt den Sender" } }
+      ],
+      "expect": "ObjectiveChange"
+    },
+    {
+      "name": "aeltere_runde_rollt_ueber_normale_rneuer",
+      "plan_seq": 1, "round": 3,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "VictoryConditions", "round": 2, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "", "actor": "A001", "actorName": "Draylen" } }
+      ],
+      "expect": ""
+    },
+    {
+      "name": "vor_dem_planbau_zaehlt_nicht",
+      "plan_seq": 2, "round": 1,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "allyDefeated", "rebelWinBy": "", "actor": "A001", "actorName": "Draylen" } }
+      ],
+      "expect": ""
+    },
+    {
+      "name": "null_law_nur_spawn_und_threat",
+      "plan_seq": 1, "round": 2,
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Sichert den Sektor", "priorityTarget": "", "roundLimit": 5, "mission": "M1" } },
+        { "kind": "Spawn", "round": 2, "payload": { "group": "storm1" } },
+        { "kind": "ThreatSpend", "round": 2, "payload": { "balance": 7 } }
+      ],
+      "expect": ""
+    }
+  ]
+}

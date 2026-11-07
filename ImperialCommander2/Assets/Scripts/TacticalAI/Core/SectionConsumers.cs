@@ -464,6 +464,53 @@ namespace TacticalAI.Core
                 zb.GroupThreatDist[kv.Key] = graph.DistanceLowerBound(kv.Value, threat);
         }
 
+        // ---- P33-H4b BLOCK-ACHSE (CONCEPT_missionsachse 2.1) -------------
+        // RebelWinBy = "the axis actor reaches section Z" -> Z's sections are
+        // the fight/block zones. The blocker/guard risk-Fallback target is
+        // the SCHNITTSTELLE of the observed graph: the section minimizing
+        // DistanceLowerBound(S, X-Anker) + DistanceLowerBound(S, Z) - the
+        // pinch of the route the rebels must walk. Deterministic, zero RNG:
+        // zones run ordinal, candidate score first, then |d1-d2| SMALLEST
+        // (the true middle of the route is the interface, not either end -
+        // an endpoint is where the actor already stands, not where you
+        // block), then ordinal section id.
+        // Null-Law: the OBSERVED graph is the only truth (same law as the
+        // Naehesuch ladder) - DistanceLowerBound -1 = NO knowledge, such a
+        // candidate never counts as "far", it does not exist. No candidate
+        // with both distances known -> null: the consumer keeps today's
+        // Konten-Punkt fallback, bit-identical (record-pinned).
+        public static string BlockSchnittstelle(SectionGraph graph, string axisSection,
+                                                IEnumerable<string> blockZones)
+        {
+            if (graph == null || string.IsNullOrEmpty(axisSection)
+                || !graph.HasSection(axisSection) || blockZones == null) return null;
+            var zones = new List<string>();
+            foreach (var z in blockZones)
+                if (!string.IsNullOrEmpty(z) && graph.HasSection(z) && !zones.Contains(z))
+                    zones.Add(z);
+            zones.Sort(StringComparer.Ordinal);
+            foreach (var z in zones)
+            {
+                string best = null; int bestScore = 0, bestDelta = 0;
+                foreach (var s in graph.Sections)     // Sections: ordinal sorted
+                {
+                    int d1 = graph.DistanceLowerBound(s, axisSection);
+                    int d2 = graph.DistanceLowerBound(s, z);
+                    if (d1 < 0 || d2 < 0) continue;   // no knowledge -> never a goal
+                    int score = d1 + d2;
+                    int delta = Math.Abs(d1 - d2);
+                    if (best == null || score < bestScore
+                        || (score == bestScore && delta < bestDelta))
+                    { best = s; bestScore = score; bestDelta = delta; }
+                }
+                // A zone the graph reaches at all yields a Schnittstelle;
+                // the FIRST zone (ordinal) with a known route owns the block
+                // law - documented zone-priority law, deterministic.
+                if (best != null) return best;
+            }
+            return null;
+        }
+
         // M14f R3 text law (Thomas 07.11, concept §8.4): an authored
         // section name may ride a popup ONLY when it informs. The editor
         // boilerplate prefix "Section <n> - " is stripped; junk is refused

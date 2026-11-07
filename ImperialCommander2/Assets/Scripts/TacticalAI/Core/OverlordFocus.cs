@@ -144,6 +144,31 @@ namespace TacticalAI.Core
         // engaged tier holds more than one hero, the most recent engagement
         // leads - the human GM looks at what just HAPPENED on the table.
         public int EngagedRound;
+        // P33-H4b (CONCEPT_missionsachse 2.1): the mission's own win wiring
+        // names this hero the ATTACK AXIS (VictoryConditions projected:
+        // ImperialWinBy=allyDefeated, this is the axis actor, rebel-authored
+        // objective). "Fokus-Priorität wie Designation" - an EXPLICIT
+        // mission-file fact, not text luck: the Compare slot rides directly
+        // behind the human's aim mark and above the local reaction trio
+        // (mission-end wiring outranks a local round fact; the human's
+        // designation at the throne stays king). false default = key inert,
+        // every pre-H4b vector byte-identical (Null-Law). The CALLER masks
+        // this per activation: guard/blocker (and every pattern not named
+        // by the concept) run with the flag cleared - their axis duty is
+        // the BLOCK law (SectionConsumers.BlockSchnittstelle risk fallback),
+        // not chasing.
+        public bool AxisHunt;
+        // P33-H4b Basis-Fallback-Bepreisung (Player-33 gap a2: the mission's
+        // ally is a special NPC with NO curation row and NO hero card, so
+        // basis=card could never price him and without a Mark he stood zero
+        // chances). Only consulted where Card == null AND Profile == null:
+        // the threat is then priced from the hero's REAL printed card values
+        // - damage EV from the printed attack dice (exact,
+        // VictoryHelpers.PrintedDamageEvExactColors) and, for the runner
+        // postures, the printed mobility tempo (MobilityTier). null/-1 = no
+        // printed basis = today's proxy row, bit-identical (Null-Law).
+        public List<string> BasisDice;      // printed attack dice colours
+        public int BasisSpeed = -1;         // printed speed, -1 = unknown
 
         public bool Marked { get { return Marks > 0; } }
     }
@@ -219,6 +244,11 @@ namespace TacticalAI.Core
         // richtige Sektion"). AsDict key appears ONLY where true - every
         // pre-S-E canon row stays byte-identical.
         public bool Maskenvertrauen;
+        // P33-H4b (CONCEPT_missionsachse): the attack-axis key of this row
+        // (the mission's own win wiring names the hero). AsDict key "achse"
+        // appears ONLY where true - every pre-H4b canon row stays byte-
+        // identical (record discipline).
+        public bool Achse;
 
         /// Comparable vector row (harness/NUnit pin), exact string fields.
         /// The strain_druck key appears ONLY on rows where the pressure
@@ -260,6 +290,7 @@ namespace TacticalAI.Core
             if (Wachzone) d["wachzone"] = true;
             if (Vergeltung) d["vergeltung"] = true;
             if (Maskenvertrauen) d["maskenvertrauen"] = true;
+            if (Achse) d["achse"] = true;
             return d;
         }
     }
@@ -540,7 +571,16 @@ namespace TacticalAI.Core
                 // (the mask track never outranks a fact read, Z6 law) and
                 // ahead of chip/economy - the supporter's "Feuer in die
                 // richtige Sektion". Null-inert for every pre-S-E vector.
+                // P33-H4b: "achse" rides directly behind "mark" - the same
+                // slot law Compare 1a enforces (mission-file win wiring,
+                // explicit designation class). "basis" marks the printed-
+                // values fallback row (no card, no curation - Player-33
+                // gap a2): it rides where "economy" rides, naming the
+                // DIFFERENT source honestly. ui.json labels are the
+                // controller's follow-up; per the TF law an unlabelled
+                // token stays visible raw, never silently relabelled.
                 Basis = x.C.Marked ? "mark"
+                        : (x.C.AxisHunt ? "achse"
                         : (x.Reaktion ? "reaktion"
                         : (x.Wachzone ? "wachzone"
                         : (x.Vergeltung ? "vergeltung"
@@ -551,8 +591,10 @@ namespace TacticalAI.Core
                         // not the first non-null number below it.
                         : (x.C.ObjectiveActor ? "objactor"
                         : (x.Chip != null ? "chip"
-                        : (x.Econ != null ? (x.C.Card != null ? "card" : "economy")
-                                          : "proxy"))))))),
+                        : (x.Econ != null ? (x.C.Card != null ? "card"
+                                          : (x.C.Profile != null ? "economy" : "basis"))
+                                          : "proxy")))))))),
+                Achse = x.C.AxisHunt,
             }).ToList();
         }
 
@@ -607,7 +649,41 @@ namespace TacticalAI.Core
             if (c.Card != null)
                 return HeroThreatModelV2.Threat(c.Card, table, c.Profile,
                                                 c.Wounded, posture, defenderDefense, engage);
+            if (c.Profile == null)
+                // P33-H4b BASIS-FALLBACK (Player-33 gap a2): a hero with NO
+                // card AND no curation row (the mission's special NPC ally -
+                // Draylen class) is priced from his REAL printed card values
+                // where the caller supplies them. No printed basis -> null =
+                // today's proxy row, bit-identical (Null-Law).
+                return ThreatBasis(c, posture);
             return ThreatBase(c.Profile, posture);
+        }
+
+        /// P33-H4b: the Basis-Fallback pricing (CONCEPT_missionsachse 2.1,
+        /// "Basis-Fallback-Bepreisung der Threat-Tabelle aus echten
+        /// Kartenwerten"). Deterministic, exact rationals, zero new inputs
+        /// beyond the hero's own printed deployment values:
+        ///   race (eliminate/attrition): threat = printed damage EV
+        ///     (exactly what an eliminate card row reads - printed damage);
+        ///   runner (protect/stall): threat = RunnerThreat(damage EV,
+        ///     MobilityTier(printed speed), 0) - the M16 percent law with
+        ///     the KNOWN operands only; range unknown reads 0 (absence is
+        ///     never a penalty beyond the missing 10% share).
+        /// Health does NOT price in (parity: card rows never price it in the
+        /// race either) - it keeps breaking the reference tie-chain below,
+        /// where printed values legitimately speak (proxy keys).
+        public static Rational? ThreatBasis(FocusCandidate c, string posture)
+        {
+            if (c.BasisDice == null || c.BasisDice.Count == 0) return null;
+            var dmg = VictoryHelpers.PrintedDamageEvExactColors(c.BasisDice);
+            if (posture == "protect" || posture == "stall")
+            {
+                int band = c.BasisSpeed >= 0
+                    ? HeroThreatModelV2.MobilityTier(c.BasisSpeed) : 1;
+                return HeroThreatModelV2.RunnerThreat(dmg, band, 0);
+            }
+            if (posture == "attrition" || posture == "eliminate") return dmg;
+            return null;                                  // deny: node rules
         }
 
         static Rational? EconOf(FocusCandidate c, string posture, string counter,
@@ -683,6 +759,17 @@ namespace TacticalAI.Core
                 int mr = b.C.MarkedRound.CompareTo(a.C.MarkedRound);
                 if (mr != 0) return mr;
             }
+            // 1a. P33-H4b ACHSEN-SCHLUESSEL (CONCEPT_missionsachse 2.1): the
+            //     hero the mission's OWN win wiring names the attack axis
+            //     leads directly behind the human's aim mark - "Fokus-
+            //     Priorität wie Designation (explizit, nicht Text-Glück)":
+            //     a public mission-file fact outranks every local round
+            //     fact and the whole threat economy below. The caller masks
+            //     the flag per activation (only the chase patterns carry
+            //     it; guard/blocker run the BLOCK law instead). No axis
+            //     candidate -> both rows false, slot inert, every pre-H4b
+            //     vector byte-identical (Null-Law).
+            if (a.C.AxisHunt != b.C.AxisHunt) return a.C.AxisHunt ? -1 : 1;
             // 1b. R-D REAKTION (concept v1.2 §2.3, Thomas-Punkt 3a): the hero
             //     who shot THIS activating figure inside an open window THIS
             //     round leads right behind the aim mark (the human's

@@ -36,6 +36,15 @@ namespace TacticalAI.Core
         // (Pflichttest 3/4).
         public bool ThreatIgnoreLos = false;
         public int ThreatRangeMax = 0;       // 0 = unknown (no profile)
+        // P33-H4b (CONCEPT_missionsachse 2.1 BLOCK-ACHSE): the observed-graph
+        // SCHNITTSTELLE between the axis anchor section and the rebel win
+        // zone (SectionConsumers.BlockSchnittstelle built it from the
+        // mission's own VictoryConditions wiring; name = clean section name,
+        // never a GUID). "" / null = no block fact = EVERY fallback clause
+        // below stays today's Konten-Punkt text, bit-identical
+        // (Null-Law, risk.json pinned). Only blocker/guard read it - the
+        // stand-duty holds the interface INSTEAD of following.
+        public string BlockHold = "";
     }
 
     public sealed class RiskDecision
@@ -289,8 +298,28 @@ namespace TacticalAI.Core
         }
 
         static RiskDecision DecidePress(RiskFacts f, string reason) =>
-            new RiskDecision("press", "Press: " + reason,
-                "falls außer Reichweite: auf Konten-Punkt vorrücken");
+            new RiskDecision("press", "Press: " + reason, BlockPressFallback(f));
+
+        /// P33-H4b BLOCK-FALLBACK-GESETZ (CONCEPT_missionsachse 2.1): where
+        /// the mission's win wiring names a block interface AND this group
+        /// carries the stand duty (blocker/guard), the out-of-reach branch
+        /// walks/holds the SCHNITTSTELLE instead of the generic Konten-Punkt
+        /// ("stand-guard hält Schnittstelle statt zu folgen"). No fact or a
+        /// chase pattern -> the exact canon clause (Null-Law: risk.json
+        /// pins the Konten-Punkt strings byte-identical).
+        static bool BlockDuty(RiskFacts f)
+            => !string.IsNullOrEmpty(f.BlockHold)
+               && (f.Pattern == "blocker" || f.Pattern == "guard");
+        static string BlockPressFallback(RiskFacts f)
+            => BlockDuty(f)
+                ? "falls außer Reichweite: auf die Schnittstelle \"" + f.BlockHold
+                  + "\" vorrücken und den Weg versperren"
+                : "falls außer Reichweite: auf Konten-Punkt vorrücken";
+        static string BlockHoldFallback(RiskFacts f, string canon)
+            => BlockDuty(f)
+                ? "falls Ziel gleich außer Feuerlinie: Schnittstelle \"" + f.BlockHold
+                  + "\" halten, nicht folgen"
+                : canon;
 
         /// disengage-Nutzen gegen die bekannte Bedrohung (§3.3.1a,
         /// Pflichttest 3/4): gegen ignoreLos / Reichweite ueber der
@@ -301,7 +330,12 @@ namespace TacticalAI.Core
         static RiskDecision Decide(RiskFacts f, string pos, string reason)
         {
             var fb = Fallbacks[pos];
-            return new RiskDecision(pos, pos + ": " + reason, fb.Text, fb.Anchor);
+            // P33-H4b: the plain "hold" clause carries the block duty (the
+            // stand position IS the Schnittstelle then); "guard_hold" (the
+            // anchor law) and the disengage cover law stay canon verbatim.
+            string text = pos == "hold" ? BlockHoldFallback(f, fb.Text) : fb.Text;
+            string anchor = pos == "hold" && BlockDuty(f) ? "Schnittstelle" : fb.Anchor;
+            return new RiskDecision(pos, pos + ": " + reason, text, anchor);
         }
 
         static RiskDecision DecideDisengage(RiskFacts f, string reason) =>
@@ -336,8 +370,16 @@ namespace TacticalAI.Core
             var d = doctrine.Clone();
             string fallback = decision.Fallback;
             if (decision.Position == "press")
-                fallback = "falls außer Reichweite: rücke auf Konten-Punkt vor; " +
-                           "falls Ziel außer Feuerlinie: Deckungskante halten";
+                // P33-H4b: with a block fact the chase clause names the
+                // Schnittstelle for the stand duties (DecidePress already
+                // put it into decision.Fallback); the canon two-clause text
+                // stands where no fact exists (Null-Law).
+                fallback = (decision.Fallback != null
+                            && decision.Fallback.Contains("Schnittstelle"))
+                    ? "falls außer Reichweite: rücke auf die Schnittstelle vor; " +
+                      "falls Ziel außer Feuerlinie: Schnittstelle halten"
+                    : "falls außer Reichweite: rücke auf Konten-Punkt vor; " +
+                      "falls Ziel außer Feuerlinie: Deckungskante halten";
             d.Why = doctrine.Why + " | Risiko " + decision.Position + ": " + decision.Why
                     + " | Fallback: " + fallback;
             d.CardText = doctrine.CardText + " | Risiko: " + fallback;

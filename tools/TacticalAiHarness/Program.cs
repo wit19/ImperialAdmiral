@@ -164,6 +164,8 @@ namespace TacticalAiHarness
             Run("hero_deploy_anchor.json", SecHeroDeployAnchor);
             Run("tracker_bind.json", SecTrackerBind);
             Run("dp_score.json", SecDpScore);
+            Run("axis.json", SecAxis);
+            Run("budget_rank.json", SecBudgetRank);    // P33-H5 (t_94d361bb): Beschaffungs-Ranking Kauf-vs-Verstaerken (hand-pinned weight table, Null-Law, Spare/dump, tie law, fail-closed reader)
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

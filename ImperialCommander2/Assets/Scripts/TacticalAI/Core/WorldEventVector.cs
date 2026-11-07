@@ -54,6 +54,20 @@ namespace TacticalAI.Core
         // (Canon text unchanged - posture, not its inputs, is the decision.)
         public string PriorityTarget = "";
         public long RoundLimit = -1;
+        // P33-H4b (CONCEPT_missionsachse): the mission's PUBLIC win wiring as
+        // projected from VictoryConditions events (producer: mission-file
+        // fields only - fixedAlly/specificAlly identity, defeat->end wiring,
+        // escape-vocabulary entities whose button ends the mission). "" /
+        // empty list = no fact = every consumer stays exactly today's law
+        // (Null-Law). Scalars are last-event-wins (a later event refining the
+        // wiring legitimately rewrites the claim); EscapeSections is an
+        // additive sorted set (every parsed evac zone, ordinal).
+        public string ImperialWinBy = "";     // "" | "allyDefeated"
+        public string RebelWinBy = "";        // "" | "allyReaches"
+        public string AxisActor = "";         // ally id (A001-style card id)
+        public string AxisActorName = "";     // its public display name
+        public string EscortHero = "";        // specificHero display name, "" = unknown
+        public readonly List<string> EscapeSections = new List<string>(); // sorted GUIDs
         public long ThreatBalance;
         public bool ThreatSeen;            // at least one public ThreatSpend event
         public int Seq;
@@ -229,6 +243,20 @@ namespace TacticalAI.Core
             sb.Append("threat=").Append(ThreatBalance.ToString(CultureInfo.InvariantCulture)).Append('\n');
             sb.Append("threatseen=").Append(ThreatSeen ? 1 : 0).Append('\n');
             sb.Append("seq=").Append(Seq.ToString(CultureInfo.InvariantCulture)).Append('\n');
+            // P33-H4b data-existence law (Player-19/22 pattern): the victory row
+            // and the escape rows appear ONLY where the mission really parsed
+            // win wiring - streams without VictoryConditions facts keep their
+            // exact pre-H4b Canon (Null-Law, pinned in axis.json).
+            if (!string.IsNullOrEmpty(ImperialWinBy) || !string.IsNullOrEmpty(RebelWinBy)
+                || !string.IsNullOrEmpty(AxisActor) || !string.IsNullOrEmpty(AxisActorName)
+                || !string.IsNullOrEmpty(EscortHero) || EscapeSections.Count > 0)
+            {
+                sb.Append("victory=").Append(ImperialWinBy).Append('|').Append(RebelWinBy)
+                  .Append('|').Append(AxisActor).Append('|').Append(AxisActorName)
+                  .Append('|').Append(EscortHero).Append('\n');
+                foreach (var z in EscapeSections)
+                    sb.Append("escape=").Append(z).Append('\n');
+            }
             foreach (var g in Groups)
             {
                 sb.Append("G|").Append(g.GroupId).Append('|').Append(g.Name).Append('|')
@@ -518,9 +546,41 @@ namespace TacticalAI.Core
                         // stall unless protect wins). Re-wire = re-derive with
                         // the MissionStart priority target, exactly the way a
                         // fresh MissionStart would decide.
+                        // P33-H4b: the re-derive reads the projected victory
+                        // wiring FIRST - a ModifyRndLimit(DISABLE) clock
+                        // (-1) no longer auto-stalls a mission the win
+                        // wiring already answers (CONCEPT_missionsachse 2.2).
+                        // No victory facts -> exact M8/F5 law (Null-Law).
                         v.RoundLimit = e.Long("roundLimit", -1);
                         v.Posture = DerivePosture(v.Objective, v.PriorityTarget, v.RoundLimit,
-                                                  v.ObjectiveForEmpire);
+                                                  v.ObjectiveForEmpire,
+                                                  v.ImperialWinBy, v.RebelWinBy);
+                        break;
+                    case "VictoryConditions":
+                        // P33-H4b (CONCEPT_missionsachse §1): the mission's
+                        // public win wiring as ONE event per parsed escape
+                        // zone (scalars repeat). Skalar fields are last-wins;
+                        // an escape section joins the sorted set (additive -
+                        // zones are never removed from the feed, the PHASE
+                        // law is enforced by the consumer at decision time,
+                        // analog M14d/H4 dynamic anchors). Posture re-derives
+                        // victory-aware (FIRST input, see DerivePosture).
+                        if (e.Has("imperialWinBy")) v.ImperialWinBy = e.Str("imperialWinBy") ?? "";
+                        if (e.Has("rebelWinBy")) v.RebelWinBy = e.Str("rebelWinBy") ?? "";
+                        if (e.Has("actor")) v.AxisActor = e.Str("actor") ?? "";
+                        if (e.Has("actorName")) v.AxisActorName = e.Str("actorName") ?? "";
+                        if (e.Has("escortHero")) v.EscortHero = e.Str("escortHero") ?? "";
+                        {
+                            var z = e.Str("section");
+                            if (!string.IsNullOrEmpty(z) && !v.EscapeSections.Contains(z))
+                            {
+                                v.EscapeSections.Add(z);
+                                v.EscapeSections.Sort(StringComparer.Ordinal);
+                            }
+                        }
+                        v.Posture = DerivePosture(v.Objective, v.PriorityTarget, v.RoundLimit,
+                                                  v.ObjectiveForEmpire,
+                                                  v.ImperialWinBy, v.RebelWinBy);
                         break;
                     case "ThreatSpend":
                         v.ThreatBalance = e.Long("balance");
@@ -814,8 +874,35 @@ namespace TacticalAI.Core
             { "destroy", "assault", "zerstör" };
 
         public static string DerivePosture(string objective, string priorityTarget, long roundLimit,
-                                           bool objectiveForEmpire = false)
+                                           bool objectiveForEmpire = false,
+                                           string imperialWinBy = "", string rebelWinBy = "")
         {
+            // P33-H4b ACHSEN-GESETZ FIRST (CONCEPT_missionsachse 2.2, Thomas
+            // 08.11: posture=stall R1-R5 despite ModifyRndLimit-DISABLE was
+            // the misread; the win wiring is public mission data and OUTRANKS
+            // the text vocabulary and the clock):
+            //   rebel-authored objective (objectiveForEmpire == false):
+            //     ally defeat ends the mission  -> the Empire WINS by killing
+            //       the axis actor -> eliminate (hunt; the kill ENDS the
+            //       mission, so it outranks the escape race's stall - Player-
+            //       33 acceptance (c): posture != stall despite roundLimit);
+            //     ally reaches an escape zone   -> the Rebels win by racing
+            //       -> stall (block the race - the existing stall semantics
+            //       "rebel progress goals -> stall", now from wiring, not
+            //       from text luck).
+            //   imperial-authored objective (objectiveForEmpire == true):
+            //     POLARITY FLIPS - the authored "ally" is the side's own
+            //     escort figure, so BOTH wirings read as protect (hold the
+            //     axis figure; the escape line is our own escort route, never
+            //     a block target). Empirics: no shipped Empire mission wires
+            //     ally defeat to a mission end (scan 06.11: 0/16) - the flip
+            //     is the honest polarity law, vector-pinned in axis.json.
+            // No parsed wiring ("" / "") -> the exact pre-H4b chain below,
+            // bit-identical for every existing vector (Null-Law).
+            if (imperialWinBy == "allyDefeated")
+                return objectiveForEmpire ? "protect" : "eliminate";
+            if (rebelWinBy == "allyReaches")
+                return objectiveForEmpire ? "protect" : "stall";
             var words = ((objective ?? "") + " " + (priorityTarget ?? "")).ToLowerInvariant()
                         .Split(new[] { ' ', '\t', '\n', '\r', '-', ',', ';', ':', '.', '!', '?' },
                                StringSplitOptions.RemoveEmptyEntries);
@@ -1052,6 +1139,35 @@ namespace TacticalAI.Core
             }
             if (cur.Length > 0) words.Add(cur.ToString());
             return words;
+        }
+
+        // ------------------------------------------------- midround replan
+        // P33-H4b (CONCEPT_missionsachse 2.3, Player-33: "Helden-Zugang
+        // mitten in der Runde ist Fakt, aber Fokus/Reihenfolge erst am
+        // naechsten Rundenanfang neu"). The three feed facts that make the
+        // CURRENT round's focus/order stale INSIDE the round: a new mission
+        // objective (ObjectiveChange), newly parsed win wiring
+        // (VictoryConditions) and a hero/ally entering mid-round
+        // (HeroDeployed). This is the pure detector; the REACTION law
+        // (ReactionOrder at activation, a board rule) keeps its precedence -
+        // only the PLAN/ORD layers are recomputed same-round by the caller.
+        // Deterministic: FIRST matching event after planSeq in stream order,
+        // in the CURRENT round only (later rounds roll over the plan anyway
+        // via the normal round-start rebuild). No matching event -> null ->
+        // the caller plans exactly once per round like today (Null-Law).
+        public static string MidroundReplanTrigger(IReadOnlyList<WorldEvent> events,
+                                                   int planSeq, int round)
+        {
+            if (events == null) return null;
+            foreach (var e in events)
+            {
+                if (e.Seq <= planSeq) continue;
+                if (e.Round != round) continue;
+                if (e.Kind == "ObjectiveChange" || e.Kind == "VictoryConditions"
+                    || e.Kind == "HeroDeployed")
+                    return e.Kind;
+            }
+            return null;
         }
     }
 }

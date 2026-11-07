@@ -362,8 +362,17 @@ namespace Saga
 					Debug.Log( "HandleReinforcements()::FAIL-OPEN: nothing to reinforce - buying new group instead" );
 					var f1Deploy = TacticalAI.PersonaState.SwapDeployCandidate( f1 );
 					f1Deploy.ResetWoundTracker();
-					topPanel.SetActive( true );
-					topR1.Init( f1Deploy, 3 );//full size card, as in Landing
+					// P33-H1 (Player-33 screenshot): a fallback purchase LANDS new
+					// figures - that is a LANDING, not an upgrade. Present it with
+					// the landing title/layout (existing keys, no new text) and
+					// render into the landing slots. The old path activated the
+					// Reinforcements topPanel but only Init'd topR1: the second
+					// thumb kept the prefab placeholder ('enemy name enemy name'
+					// + genericEnemy art). PresentFallbackAsLanding() hides both
+					// upgrade containers BEFORE anything becomes visible.
+					PresentFallbackAsLanding();
+					topLanding.SetActive( true );
+					landing1.Init( f1Deploy, 3 );//full size card, as in Landing
 					groupsToDeploy.Add( f1Deploy );
 					DataStore.deploymentHand.Remove( f1 );
 					DataStore.deploymentHand.Remove( f1Deploy );
@@ -381,8 +390,10 @@ namespace Saga
 				{
 					var f2Deploy = TacticalAI.PersonaState.SwapDeployCandidate( f2 );
 					f2Deploy.ResetWoundTracker();
-					bottomPanel.SetActive( true );
-					bottomR1.Init( f2Deploy, 3 );
+					// P33-H1: see f1 - landing presentation, landing slot.
+					PresentFallbackAsLanding();
+					bottomLanding.SetActive( true );
+					landing2.Init( f2Deploy, 3 );//full size card, as in Landing
 					groupsToDeploy.Add( f2Deploy );
 					DataStore.deploymentHand.Remove( f2 );
 					DataStore.deploymentHand.Remove( f2Deploy );
@@ -401,6 +412,32 @@ namespace Saga
 				warning.gameObject.SetActive( true );
 				warning.text = DataStore.uiLanguage.uiMainApp.reinforceWarningUC;
 			}
+		}
+
+		// P33-H1 (Player-33): presentation law for the FAIL-OPEN fallback in
+		// HandleReinforcements. That branch BUYS NEW GROUPS - a landing - so
+		// the popup must wear the landing outfit: title and 'threat increased'
+		// bar use exactly the keys DeployMode.Landing already uses (no new
+		// text), the landing slots render the bought cards, and the upgrade
+		// optic is removed. Both upgrade containers are hidden HERE, before
+		// anything becomes visible: their second ReinforcePrefab thumbs are
+		// never Init'd on this path, and ReinforcePrefab.Init does not touch
+		// the thumb's own active state - an exposed uninitialized thumb shows
+		// the prefab placeholder text + genericEnemy art (the screenshot).
+		// Only the containers are toggled (Show() re-activates them per mode,
+		// so the hiding is presentation-local); thumb GameObjects are never.
+		// landingMessage is active-by-default inside Landing, so its text AND
+		// state are set explicitly - threat did increase (HandleReinforcements
+		// granted its threat gain before the fallback ran).
+		void PresentFallbackAsLanding()
+		{
+			topPanel.SetActive( false );
+			bottomPanel.SetActive( false );
+			reinforcePanel.SetActive( false );
+			depTypeText.text = DataStore.uiLanguage.uiMainApp.deployModeLanding;
+			landingMessageText.text = DataStore.uiLanguage.uiMainApp.threatIncreasedUC;
+			landingMessage.SetActive( true );
+			landingPanel.SetActive( true );
 		}
 
 		public void HandleLanding( bool skipThreatIncrease, bool isOptionalDeployment )

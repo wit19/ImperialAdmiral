@@ -59,6 +59,8 @@ in [`ANDROID_build.md`](ANDROID_build.md).
 16. [Links to the original IC2 documentation](#links)
 17. [The reactive layer (November 2026)](#reactive-layer)
 18. [The section space (November 2026)](#section-space)
+19. [Procurement — buying is a decision (November 2026)](#procurement)
+20. [The mission axis — win conditions, objectives, polarity (November 2026)](#mission-axis)
 
 ---
 
@@ -447,6 +449,10 @@ pop-up; see also the Guard zone above.)
 **Focus (target).** The hero the Imperials concentrate on this round, named on
 every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice
 follows public criteria in a fixed, published order: the human's aim mark first;
+then the **axis key** — when the mission's own win wiring names a rebel figure the
+Imperium must defeat, he leads right behind the mark, explicit and independent of
+what the objective text happens to word (the *mission axis*, November 2026; the log
+names this basis `achse` — see [the mission axis](#mission-axis));
 then the reaction keys (who shot the activating figure this round, the guard-zone
 and retaliation keys, the supporter's trust section); then the **objective actor**
 — a hero who is actually working the mission objective outranks every wound and
@@ -474,7 +480,12 @@ reserves), never how much there is.
 targets) or **hunt** (the Imperials must find and destroy the rebels; classic
 open-field missions). Posture tilts the doctrine dice (the defend
 modifier row) and sets what the planner optimises (see
-[doctrines](#the-doctrines)).
+[doctrines](#the-doctrines)). Since the November 2026 mission-axis hop the
+classification reads the mission's public **win wiring** first (the log's
+round-stance line, `feedPosture=`, now starts from it — see
+[the mission axis](#mission-axis)); the two stance words that share the log
+(`feedPosture=` for the planner's round stance, `planPosture=` for the doctrine
+dice layer) were deliberately renamed apart so one word never means two things.
 
 **World feed.** The app's event log distilled into public information: activations,
 deaths, removals, objective progress, the round clock. This is the only lens the AI
@@ -727,7 +738,7 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 | Hidden power | Legacy hidden bonus-effect rolls can fire | Never fire in tactical missions; printed stat cards only |
 | MedPac | App convenience HUD available | Switched off for tactical missions (wounded stay wounded in-mission; between-mission recovery unchanged); crates/rewards stop dispensing them |
 | Massive figures | Some printed restrictions relaxed | Printed restrictions enforced: no interiors, no two Massives in one space; every proposed move is legality-checked first |
-| Reinforcement entry | Rolled/drawn deployment points | Deterministic deployment choice from the plan, anchored on the mission file's own deployment points (same seed → same landing zones) |
+| Reinforcement entry | Rolled/drawn deployment points | Deterministic **scored** deployment choice: mission anchors (the mission file's own points *plus* sections the mission activates while playing), battle-zone distance, a friendly leash toward the Imperium's own located groups, and DP-diversity so landings stop piling on one point (same seed → same landing zones) |
 | Imperial growth | Baked-in convenience growth | Unchanged — no Imperial purchases in this release (see [what this release does not include](#not-included)) |
 | Wound status | Cosmetic in places | Machine-grade input: from Veteran up the AI *reads your marks* and finishes wounded heroes |
 | Officers | Passive stat figures | Command figures: 2 movement points (Officer) or movement **or** attack (Executive Officer), gated by a machine-checked rule text |
@@ -777,6 +788,13 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
   the board; the pop-up asks, the board decides.
 - **Hero status stays manual.** No HP tracker: you mark wounded/defeated on the hero
   cards as the printed game does; the AI reads exactly those marks — nothing else.
+- **The Imperial damage dials keep their numbers (07.11, fixed).** Earlier builds
+  could snap an Imperial group's wound dial back to zero mid-fight when a popup
+  re-showed a card while a dial container closed and wrote its empty wheels back —
+  a fallen figure "came back" and the numbers shuffled onto the wrong slots. The
+  dial now commits exactly once per opening and always reads back from the board's
+  own card object (`Core/TrackerBindLaw.cs`). The bug was equally real in classic
+  mode, so classic mode got the fix too — that is a bugfix there, not rule drift.
 - **Feed fallback.** On the rare missions where the world feed isn't active, high
   levels fall back to the reference brain; the log says so instead of faking.
 - **Ambusher doctrine** is implemented but unassigned in shipped cards (no printed
@@ -807,8 +825,9 @@ concept document [`CONCEPT_fair_imperial_ai.md`](CONCEPT_fair_imperial_ai.md)
 ---
 
 *Page status: written against the shipped `main` tree of this fork (product branch
-since November 2026), current through the 07.11 milestones (entry ledger, reaction
-zones); every claim
+since November 2026), current through the P33 chain of 07./08.11 (mission axis and
+object polarity, procurement ranking, scored landings, entry ledger, reaction zones);
+every claim
 carries a file pointer so reviewers can verify it. If something here and something on
 a printed card disagree — the card wins; report it to us.*
 
@@ -918,6 +937,31 @@ What players feel, with the file behind each claim:
   from the mission's printed deployment points, deterministic per seed
   (`SagaSession.deployLedger`, `SectionSpace.cs`; fixtures
   `deploy_ledger.json` + `dp_anchors.json`).
+- **The landing point is scored, not guessed** (added 07.11, P33-H4). Which
+  deployment point a new group enters through now reads the mission's live
+  situation: points near a *mission anchor* lead — and besides the mission
+  file's static anchors, every section the mission **activates while you
+  play** anchors its whole section while it stays live. Inside that tier the
+  plan scores distance to the anchor, distance to the battle zone (anchor
+  sections plus the reaction zones above), then prefers a point whose section
+  already holds Imperial groups (the friendly leash — concentrate, don't split
+  a landing), then prefers an *unused* point over one the ledger already
+  recorded (the Green-1 pile-up of the Player-33 playtest cannot recur). An
+  unmeasured route is neutral, never "far", and every remaining tie falls
+  onto the old deterministic name chain — a mission with no facts at all
+  picks exactly as it always did (log: the `[dp-score …]` line names every
+  candidate's parts).
+- **Hero start anchors** (added 07.11, P33-H2). The heroes' own starting
+  placement is public briefing data — everyone reads it off the same mission
+  page. The app now records it as a ledger row the moment the live map exists
+  (and back-fills saves that predate the law), and the heroes enter the AI's
+  view right at their entry sections — healthy, having acted nothing yet,
+  exactly what the table can see. First effect, and it is a big one: in round
+  1 the ring and threat-zone machinery above finally has inputs for the
+  *initial* heroes, so reaction zones and "moves toward the named zone"
+  behaviour can fire from the first round — in the Player-33 log the whole
+  machinery saw exactly one ring in the entire mission because only a
+  mid-mission joiner had an anchor.
 - **Nothing ever knows your coordinates.** The belief is section-granular:
   names, objects, time windows. A section log line containing a coordinate
   is a machine-checked bug (coord-free law, `section_trust.json`).
@@ -928,6 +972,9 @@ accusation; section labels are app-authored names, not printed rules text;
 and at S1/S2 the belief carries raw facts only, so behaviour there is
 bit-for-bit the pre-section canon (pinned by fixtures).
 
+---
+
+<a name="procurement"></a>
 ## Procurement: buying is a decision now (November 2026, P33-H5)
 
 The Imperium's money moments — the **Landings** and the **Reinforcements**
@@ -965,6 +1012,15 @@ decisions):
   shows both as a landing (new figures land — that is a landing); the
   reinforced veteran shows its current figures, and the debug log names
   every act with its score (the BUDGET line in Player.log).
+- **A landing says LANDING** (P33-H1, Player-33). The Imperium may only
+  reinforce units that legally still stand on the board. When the
+  round-end *Reinforcements* popup finds none (nothing wounded enough, no
+  group below its printed size), the printed fallback buys a fresh group
+  instead — and that used to wear the upgrade outfit: an empty upgrade slot
+  leaked placeholder art and an "enemy name" filler text onto the popup. The
+  fallback now always presents as a **landing**: landing title, threat line,
+  the bought group in a landing slot, and both upgrade containers hidden
+  before anything becomes visible. No placeholder ever reaches your screen.
 
 Honest edges: the ranking only ever speaks when the app actually holds
 section facts — no facts, no opinion (this is the same Null-Law that kept
@@ -972,3 +1028,105 @@ every earlier feature honest); the saving rule estimates next round's
 income from the difficulty setting, and uses that estimate for nothing
 except deciding whether saving is worth it; and a card the Imperium
 declines today is a card it may well buy tomorrow — watch for it.
+
+---
+
+<a name="mission-axis"></a>
+## The mission axis — win conditions, objectives, polarity (November 2026)
+
+The Player-33 playtest caught the Empire sleepwalking through an escort
+mission: the objective said *help this NPC escape*, the escape field was
+right there, and the troops stood where the round-start plan had left them.
+The honest diagnosis: **the app never read the mission's win conditions at
+all** — it only ever read the objective *text*, and the text is written for
+the rebels. That gap is now a law (P33-H4b/H4c; Core: `WorldEventVector.cs`,
+`OverlordFocus.cs`, `SectionConsumers.cs`; adapter: `WorldEventsUnity.cs`).
+
+**Win conditions are public data.** Your mission file already states, in the
+app's own fields, which named figure's death wins the mission for which side,
+which button at which escape field ends it, and which escort figure belongs
+to the objective. The AI reads exactly those fields — reads, never guesses —
+and missions whose wiring is not parseable behave exactly as before (the
+Null-Law again). The round-stance line (`feedPosture=`, see
+[the glossary](#the-glossary)) now derives from this wiring **first**, so an
+escort-or-escape mission no longer misreports itself as a clock-stall mission.
+
+**The hunt axis.** When the mission's own wiring says *the Imperium wins when
+this named rebel figure dies*, that figure leads the focus ranking directly
+behind the human player's aim mark — explicit mission knowledge, no longer a
+lucky coincidence of the objective text naming him (the log's focus basis
+`achse`). And a mission NPC with no card of his own (the joining allies some
+scenarios hand the rebels) is now **priced from his real printed values** —
+damage, health, tempo — instead of standing outside the threat economy with a
+blank number, which is how Player-33's Draylen turned out unpriceable.
+
+**Polarity — the objective text is the rebels' view.** "*Help* Draylen
+escape" is what the rebel players read. Negated, it is the Imperial
+doctrine: hunt the escorted figure, block his escape field. On an
+Imperial-authored objective the same wiring flips the other way — the named
+figure is *our* escort, and hunting him would be the polarity misread this
+law exists to prevent.
+
+**The block axis.** The zone the rebels must reach (escape/evacuation field,
+its section as the mission file names it) is a battle zone. Guard and blocker
+figures hold its **interface** — the connecting section of shortest *known*
+distance between the axis figure and that zone, measured on the observed
+section graph (an unmeasured route is neutral, never "far"). Stand-guards hold
+the interface instead of trailing the fight.
+
+**The plan updates mid-round.** An objective change, newly parsed win wiring,
+or a hero/ally entering the board mid-round rebuilds focus *and* activation
+order once, inside the same round, at the next activation (log line
+`REPLAN rN trigger=…`). The reaction law — a unit that was just shot still
+reacts first, that's a board rule — keeps precedence. With EXPLAIN = FULL the
+Player.log row `ACHSE::` shows exactly what the engine read: axis type
+(`jage:`/`block:`), actor, polarity, block zones, the resolved interface.
+
+**Mission objects — and why nobody shoots the terminal.** Many mission texts
+print board rules of their own: *"A figure can attack the barricade (Health:
+5, Defense: …)"*. That marks a **potentially** attackable object — never
+automatically an Imperial target. An object enters the Empire's decisions only
+when the mission's own wiring derives **which side needs it destroyed or kept
+alive**: claim/rescue buttons and wired event names, the objective channel, or
+the outcome sentence at the wired end-event. Nothing derivable ⇒ the object is
+**neutral**: nobody attacks it, nobody guards it — deliberately, that is not a
+bug. (The editor's `failImperial`/`failRebel` flags are dead data — zero true
+rows in the entire shipped collection — so they are never read.) This is why
+your troops attack the protesters but walk past the terminal — and why the
+Royal Guard stands next to *that* terminal instead: different polarity, same
+law mirrored. The answer to the playtest question "why do they shoot X but
+not Y" is always the wiring, and EXPLAIN names the rung that decided.
+
+**An object can be the plan target.** When a *polar attack* object wins the
+per-activation target slot, that slot reads `OBJEKT:<name>` (the reason line
+explaining it appears with EXPLAIN = FULL) — only
+for the chase doctrines (Jäger/Vorstoß), and only while no fact-key spoke
+(reacting to incoming fire always outranks mission geometry). The round-wide
+**focus** stays figures-only; objects never replace a named hero there. Among
+candidates, a door **on the best route** rides first: *Tür sprengen* —
+attacking the door — is offered as the route alternative to opening it, and a
+visibly open door is never offered again. Otherwise: nearest known object,
+ties by name order. Deterministic, no chance.
+
+**The honesty boundary: the damage counter stays on the board.** Objects carry
+a physical damage counter at your table, and the app cannot see any object's
+running damage. So the recommendation only ever says *attack it* or *blow the
+door* — never "almost destroyed", never a remaining-health calculation. You
+report progress the printed ways: the door opens, the mission event fires.
+Non-door objects' state is honestly reported as *unknown* in the log rather
+than assumed.
+
+**The mission's flashpoints become reaction zones.** Sections holding a
+*polar* object (attacked or protected — the mission wiring says contested)
+feed the belief zones described in [the section
+space](#section-space), so guard, retaliation and proximity behaviour
+concentrate where the mission's own machinery says the fight is.
+
+Honest edges: the whole axis speaks only where the mission file's wiring is
+parseable — missions without it run the pre-November canon bit-identical
+(pinned by fixtures); the object texts are read from the canonical English
+mission files only (the ten other language files are display text, and display
+text never decides a law); and the `OBJEKT:` name plus its reason line are
+currently raw dev tokens — a follow-up pass moves them into the eleven
+language files like every other popup text (the internal `ziel=OBJEKT:<name>`
+notation itself stays a log/debug vocabulary, not player prose).

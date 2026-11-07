@@ -122,11 +122,31 @@ of sight, hero hand/exhaustion state. These remain human calls at every difficul
 `WorldEvents.cs` — append-only, per-mission, sequence-verified and hashable. Kinds:
 
 `MissionStart, Spawn, Move, Death, Removal, ObjectiveChange, TileChange, FocusChange,
-ThreatSpend, ActivationStart, ActivationEnd, HeroActivated, HeroWounded, HeroDefeated,
-GroupDamage, RoundEnd, RoundLimitChanged`
+ThreatSpend, ActivationStart, ActivationEnd, HeroActivationStart, HeroActivated,
+HeroWounded, HeroDefeated, GroupDamage, RoundEnd, DoorOpen, DoorClosed, SectionActivated,
+EntityInteract, PlayerSelection, HeroDeployed, RoundLimitChanged, VictoryConditions,
+MissionObject`
+
+(The list grew with the shipped chains and every kind sits in the closed set below:
+`DoorOpen`/`DoorClosed` = R-A digital door flips; `SectionActivated` = a map section
+became publicly visible — deactivation carries NO kind on purpose, a section the feed
+has no event for stays through-pass, never "closed"; `EntityInteract` = a
+Token/Terminal/Crate flipped its digital `isActive` (doors ride their own R-A pair);
+`PlayerSelection` = the prompt-box button/click logger line, joinable with the flag
+flips by seq adjacency; `HeroDeployed` = a hero/ally entered through its printed blue
+entry field (M14e/P33-H2 — one event per field the ledger carries, the SET is the
+honest claim); `RoundLimitChanged` = the clock was rewired at runtime (M8/F5);
+`VictoryConditions` = the mission's public win wiring (P33-H4b, below); `MissionObject`
+= an object whose own text prints the attackable rule (P33-H4c, below).)
 
 Payloads carry only public values (names, zone labels, rounds, wheel damage numbers,
-threat balance). Unknown keys are rejected.
+threat balance). Unknown keys are rejected. Position coordinates are structurally
+outside the payload alphabet; the ONE scoped exception is the `position` key, allowed
+by `KindScopedKeys` on `MissionObject` only (the printed map position of an attackable
+object is public briefing data). A `door_feed` and a `section_feed` leak-guard fixture
+pin that the GLOBAL position rejection stands — the H4c hop learned this the honest
+way: a first design that opened the key loosely failed both guards on the first harness
+run and was corrected to per-kind scoping.
 
 **Player contract for `HeroActivated` (the activation-chip rule).** The only
 carrier of this event is the hero's end-of-turn activation checkbox flip, and
@@ -164,6 +184,18 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
 0. **Aim mark** (public designation — the mission text or the Imperial feed names
    a hero; most recent designation first). This is the ONLY human input that
    ranks above everything else.
+0a. **Axis key (P33-H4b, slot 1a in `OverlordFocus.cs`, vectors `axis.json`)**: when
+   the mission's own win wiring says the Empire wins by this rebel figure's death
+   (`imperialWinBy=allyDefeated`, axis actor from `fixedAlly`/`specificAlly` incl. the
+   name hop), that hero leads directly behind the aim mark — a public mission-file
+   fact outranks every local round fact and the whole threat economy ("Fokus-Priorität
+   wie Designation, explizit statt Text-Glück"). Two masks keep it honest: the flag
+   rides ONLY the chase patterns per activation (the stand duties run the BLOCK law;
+   the round-level designation already carries the key), and it lives ONLY for
+   rebel-authored objectives — on an Imperial-authored objective the named ally is OUR
+   escort figure and hunting him would be the polarity misread. No parsed wiring ⇒
+   both rows false, slot inert, every pre-H4b vector byte-identical (Null-Law). Log
+   basis token `achse`, riding directly behind `mark` in the `basis=` chain.
 0b. **Reaction keys** (chain R-D/S-D/S-E): `Reaktion` (the hero who shot THIS
    activating figure inside an open window this round), then `Wachzone`, then
    `Vergeltung`, then `Maskenvertrauen` — fact-track before suspicion-track,
@@ -249,6 +281,15 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    Campaign purchases still count twice: the bought weapon moves the score
    (M17), the XP-ability index stays the economic basis (M4) — the hero who is
    really strongest on THIS campaign, not from a tier list.
+   **Basis fallback (P33-H4b, Player-33 gap a2):** a rebel figure with NEITHER a
+   printed card row NOR a curated profile (the mission's special NPC ally — the
+   Draylen class) is priced from his REAL printed deployment values: `BasisDice`
+   (attack die colours), speed and health from the live card. Eliminate/attrition
+   postures take the exact printed EV; hold postures run the M16 percent law over
+   it; a missing range is never a penalty. Basis token `basis` marks such a row.
+   Both facts present on a priced hero ⇒ the fallback inputs stay null and the
+   card/curation path runs bit-identical (Null-Law) — Player-33's `threat=-` row
+   was the gap this closes.
 2. **Wound economy** (`EconOf`, non-woundAll only): ×2 in the removing races when
    the figure can actually finish the wounded hero (printed wounded bar fits the
    figure's damage EV — the sim's ERLEDBAR law, M10a part 2). Protect/stall rows
@@ -1146,6 +1187,198 @@ activation-chip flip (§4 player contract). No flip, no observation, no zone,
 no reaction: the ledger knows where figures CAME IN, the flip is the only
 thing that says where the HEROES have BEEN.
 
+## The P33 chain H1–H4c — Player-33 remediation (2026-11-07/08)
+
+Findings source: `~/work/ia-ai/playtests/findings_Player-33.md` (HOTH12
+"An der Schwelle", persona Feldherr, Thomas + Sohn). Laws:
+`CONCEPT_drohungsbudget.md` (procurement) and `CONCEPT_missionsachse.md`
+(§1–2.4, mission/object axis). The H4 DP-scoring law itself lives in §11
+(dynamic anchor law + DP-Score), the posture rename in "Activation planning,
+in depth", and the H5 procurement ranking has its own section directly below
+— this section collects the chain parts not yet written down. Commits:
+0a2aa25 (H1), e95b087 (H2+H3+H4 stacked honestly, per-hop QA on the kanban
+cards t_db6814bb / t_0bd6f7d3 / t_31d8b805), ff42a0c (H4b+H5, likewise
+stacked and QA'd per hop on t_d673a95d / t_94d361bb), e56a637 (H4c).
+
+### H1 — landing presentation law (`SagaDeploymentPopup.cs`)
+
+`HandleReinforcements()` FAIL-OPENs per the printed fallback: nothing legally
+reinforceable ⇒ the treasury buys NEW groups. That fallback wore the upgrade
+optic (topPanel/bottomPanel active with only R1 Init'd) — the uninitialized
+second `ReinforcePrefab` thumb showed the prefab placeholder ("enemy name"
+text + genericEnemy art, Player-33 screenshot). `PresentFallbackAsLanding()`
+switches the fallback to the LANDING presentation: title `deployModeLanding` +
+`threatIncreasedUC` bar (existing keys, zero new text in any of the 11
+languages), the bought cards rendered into the landing slots full-size, and
+BOTH upgrade containers + `reinforcePanel` explicitly hidden before anything
+becomes visible. Thumb GameObjects are never toggled (`ReinforcePrefab.Init`
+does not restore their active state); containers re-activate per mode via
+`Show()`. The real reinforcement path (r1/r2 with both thumbs Init'd) is
+untouched. H5's mixed runs reuse the same presentation (purchase +
+reinforcement = a landing).
+
+### H2 — hero start anchors (`DeploymentManager.cs`, `SagaController.cs`, `WorldEventVector.cs`)
+
+The start deploy runs in `StartNewGame` BEFORE `InstantiateEntities`, so the
+data-exists check dropped every blue hero-entry field: the INITIAL heroes —
+the only figures whose entry section every player reads off the briefing —
+carried no ledger row all mission (Player-33 §1: exactly one ring in the
+whole mission, from the one mid-mission joiner). `ReplayHeroEntryRecords()`
+replays the hero-entry law once the live map exists: same law, same
+data-exists check, honest origin `"hero-entry"` (one law / one origin for
+start deploy and mid-mission joins — the `DeployLedger::` audit line tells
+which hero wrote when). Called on BOTH rails: fresh start right after
+`InstantiateEntities`, resumed pre-H2 saves after `RestoreState`. Cards that
+already carry a row KEEP it (an active row would outvote; the ledger's
+last-write law is preserved by NOT writing). The dummy 3-hero squad filler is
+excluded — no physical figure sits there, an anchor would be an invented
+position. No field ⇒ nothing is filled (Null-Law); the call never throws into
+the game loop (loud `Debug.LogWarning` instead). Feed side: one `HeroDeployed`
+per ledger field; the projection REGISTERS the entering hero at view entry
+(`case "HeroDeployed": Hero(v, hero)` — status healthy / never-acted, nothing
+else changes), so round-1 rings, threat zones and the Nahe calibration have an
+anchor for the initial heroes. Consumers sit only on the tactical bridge —
+legacy bit-identical. Log: `ReplayHeroEntryRecords()::N hero row(s) anchored`.
+
+### H3 — tracker bind law (`Core/TrackerBindLaw.cs`, `HPTrackerContainer.cs`)
+
+Root cause of the mid-fight dial reset (Player-33 §2a: `[1,5,0] → [0,0,0]`
+oscillation after an off-board deploy): the container committed the wheels on
+EVERY close without an open/close transaction — a stray second close (card
+re-shown behind a popup, then scene teardown) wrote zeroed wheels back onto
+the board card, and the next open re-read the zeroed card, shuffling existing
+damage onto wrong slots. New Unity-free law: `TryBeginCommit(ref wasVisible)`
+— only `ResetTracker` (the open) starts a commit session, `OnEnable` never
+touches `wasVisible`, so the `ShowMissionCard` null-wipe channel is
+STRUCTURALLY dead (single commit per open, at BOTH commit paths). Wheels
+re-read from the board object (`ResolveBoard` over `DataStore.deployedEnemies`)
+— the popup copy is never authoritative (board-rebound). Forensics logs carry
+caller + id + hash + wounds. Shared rail: the bug was equally real in legacy —
+bugfix, not rule drift (pre-authorized on the card). The oscillation replay is
+pinned in `tracker_bind.json` (ops sequence verbatim from the Player-33 log).
+
+### H4 — pointer
+
+Dynamic anchor law + scored DP choice: §11 ("Dynamische Anker + DP-Score",
+already written by the H4 hop). `feedPosture=`/`planPosture=` rename:
+"Activation planning, in depth". Log vocabulary: the `[dp-score …]` line names
+every candidate's tier/anchor/bd/zone/leash parts; the posture lines split into
+`feedPosture=` (feed side, `WorldEventVector`) vs `planPosture=` (doctrine
+layer) so the old same-word-different-values contradiction (Player-33 §4)
+cannot recur.
+
+### H4b — mission axis (`WorldEventsUnity.cs`, `WorldEventVector.cs`, `OverlordFocus.cs`, `SectionConsumers.cs`, `RiskPosture.cs`, `TacticalAIBridge.cs`)
+
+**Producer.** One `VictoryConditions` event per mission (and on phase changes):
+built ONLY from app-owned, printed fields — `fixedAlly`/`specificAlly` as axis
+actor, `useAllyDefeated` + `EndMission` wiring (incl. the variable-hop over the
+actor's NAME), escape/evacuation intent read from entity/button text +
+`mapSectionOwner`; phase law on activity changes. NOTHING parseable ⇒ no event
+(Null-Law). Both win tokens (`imperialWinBy`, `rebelWinBy`) are REQUIRED keys
+(`""` = explicit absence); the adapter emit log names both. Reading fields,
+never guessing beyond the printed escape vocabulary.
+
+**Hunt axis + polarity.** `DerivePosture` reads the parsed victory row FIRST
+(an escort/escape mission no longer mis-stalls on a clock reading); the focus
+comparator gained slot 1a (§5, basis `achse`), masked per activation to the
+chase patterns and gated to REBEL-authored objectives — on an
+imperial-authored objective the ally is OUR escort (protect), never the hunt.
+Threat fallback pricing for unpriced mission NPCs: §5 "Basis fallback".
+`ModifyRndLimit` DISABLE reaches `EffectiveRoundLimit` (gv-witness law) —
+Player-33's mission reported `posture=stall` all mission ON A CLOCK THE
+MISSION HAD SWITCHED OFF; that root is closed.
+
+**Block axis.** The escape/evac section (the entity's OWN `mapSectionOwner`)
+is a battle zone; `SectionConsumers.BlockSchnittstelle` resolves the
+Schnittstelle = connecting section of MINIMAL `DistanceLowerBound` in the
+OBSERVED graph (Loch-Gesetz: −1 = does not exist, never "far"; ordinal ties),
+and `RiskPosture` BlockHold duties for blocker/guard in press+hold make the
+stand duty HOLD it (hunter keeps the Reaktionsgesetz). The resolved value
+surfaces as `schnittstelle=` in the ACHSE line.
+
+**Midround replan.** `MidroundReplanTrigger` watches the feed PAST the round's
+build-seq (`_planSeqAtBuild`): `ObjectiveChange`, `VictoryConditions` or
+`HeroDeployed` after the plan was built ⇒ rebuild ONCE, at the next activation,
+through the SAME deterministic code path (only the inputs legitimately moved);
+the Reaktionsgesetz keeps precedence; log
+`TacticalAIBridge::REPLAN rN trigger=…`. No new fact ⇒ return exactly like
+before (all pre-existing fixtures zahlgleich — the Null-Law pin).
+
+**ACHSE:: diagnostic (explain=full only, Debug-only, NO ui.json key).**
+`TacticalAIBridge::ACHSE:: rN achse=<jage:/block:akteur=… polaritaet=…|none>
+blockzonen=… schnittstelle=…`: what the Empire's own win-condition law sees;
+with an actor named, the block zones and their resolved Schnittstelle (or
+"unbekannt" — no knowledge, Loch-Gesetz). ACHSE stays raw inside the German
+Debug row: it is Thomas's debug channel, not popup prose. Vectors: `axis.json`
+106 hand-pinned checks (two pins sighted by independent recomputation);
+harness 45879 → 45985.
+
+### H4c — object axis: MissionObject feed, Polaritätspflicht, Tür-sprengen
+
+**Producer** (`WorldEventsUnity.cs`). An object enters the feed ONLY when its
+OWN text prints the board rule — the canonical EN mission file's `theText`
+carrying "can attack … (Health: N[, Defense: …])" (Type is irrelevant, the
+TEXT decides; `Health: *N*` with a variable star = variable-driven ⇒ NOT
+parseable, no guessing). Payload: `{name, entity, section, position, health,
+defense}` + RAW public wiring evidence `buttons`/`eventNames`/`outcomeSide`.
+Fail-open to empty; emit log `WorldEvents::objects … parsed=` (explain-full
+diagnostics). Language files are display-only — law texts are read in the
+canonical EN file only.
+
+**Polarity ladder** (`WorldEventVector.cs`, CORE law, never a producer claim),
+recomputed over the COMPLETED stream because P2 needs the FINAL projected
+objective: **P2** objective channel (startingObjective/ObjectiveChange text +
+`objectiveForEmpire` phase) > **P1** buttons/wired event names ("Claim for
+Empire" ⇒ the Empire attacks) > **P3** outcome text at the wired end-event
+(the side that LOSES a claim event needs the object kept) > **P4** nothing
+derivable ⇒ NEUTRAL. P2-over-P1 on conflict is an explicit Thomas ruling;
+otherwise the rung order decides. `failImperial`/`failRebel` are read ZERO
+times — measured dead (0 true rows in all 138 missions). Polarität values:
+`jagt` | `schuetzt` | `neutral`; the deciding rung surfaces as `basis=P1..P4`.
+
+**Consumers.** (1) *Plan target:* `TryObjectTarget` behind every gate — only
+the chase duties (hunter/aggressive), only when NO fact key spoke
+(reaktion/wachzone/vergeltung/maskenvertrauen all silent), and only when the
+DECIDING focus basis sits on the estimation side (`card|economy|basis|proxy` —
+`mark` stays king, `achse` outranks object wiring, `objactor`/`chip` keep the
+hero target). The slot reads `ziel=OBJEKT:<name>`; the GLOBAL `fokus=` stays
+figures-only. Ordering: a hunt object that IS a door ON a shortest
+group→focus route rides FIRST (Tür sprengen as Weg-Alternative; visibly OPEN
+doors drop out — `DoorStateOfGuid` is the ONLY state read, no
+Aufwand-/Rest-Health-Kalkül anywhere), then nearest `DistanceLowerBound`,
+name-ordinal ties. The why names only public mission text — never "fast
+zerstört" (the damage counter is physical, unprojected; the human reports
+progress via doorOpen/mission events; non-door state = honest
+`zustand=unknown`). Log
+`TacticalAIBridge::OBJEKT ziel=OBJEKT:<name> muster= polaritaet= basis= zustand=…
+health=… [public mission-file text; explain=full]`.
+(2) *Schutzgesetz:* mirrored block axis — an object the OPPONENT must
+destroy/claim (`schuetzt`) is a defence anchor; the stand duties hold the
+SCHNITTSTELLE ZUM OBJEKT (same `BlockSchnittstelle` over the observed graph,
+anchor = the observed hero section with a known route to an object section;
+shortest known distance, ties zone-then-anchor ordinal; free block slot — the
+H4b end-wiring outranks). (3) *Zonen-Zusatz:* POLAR object sections (jagt OR
+schuetzt — contested by wiring) ride the contested/critical-section channels —
+the S-D zone rails gain the mission's flashpoints. NEUTRAL objects reach NO
+consumer at all (deliberate, not a bug).
+
+**Leak discipline.** The ladder reads names/ids/printed text; damage-counter
+and Health-token reads at Token/Door/Terminal/Crate are ZERO (the single hit
+in a grep is a do-not-read comment line). `position` entered the payload
+register per-kind-scoped on `MissionObject` ONLY (§4) — the global leak-guard
+fixtures (`door_feed`, `section_feed`) caught a loose first design with two
+FAILs (design corrected, fixtures NOT pulled). Vectors: `marker_object.json`
+94 checks, hand-pinned (no RNG, no --record): EMPIRE3 P1 hunt, LOCKED-DOOR P2
++ door-on-route before nearer, Sabotage+Schutzpflicht, neutral P4 unarmed,
+P2-priority, P3 both sides, P2-final-objective, guard/plantarget 9. Canon
+`object=` rows pin the Null-Law; all 35 pre-existing fixtures stay zahlgleich.
+The `OBJEKT:` prefix + why-line localization is the controller's follow-up
+line (raw-token law); the docs hop changed ZERO ui.json lines.
+
+**Chain QA (docs hop re-ran on the final tree).** Harness ALL PASS 46,241 =
+46,147 base + 94 `marker_object`, every earlier fixture count zahlgleich;
+TacticalAiGate ALL PASS rc=0; taboo_lint GREEN; compile APP 287 / TESTS 10,
+C#8 gate, rc=0.
 
 ## The procurement ranking — Kauf vs. Verstärkung (2026-11-08, P33-H5)
 

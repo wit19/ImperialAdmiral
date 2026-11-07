@@ -158,6 +158,34 @@ namespace TacticalAiHarness
                     if (sb.Length == 0) sb.Append("ok");
                     Check(path + "|rows", "ok", sb.ToString());
                 }
+
+                // P34-C Vergleichszeilen-Vektoren (Thomas, card t_1787135b):
+                // winnerScore vs the STRONGEST alternative plus the stage
+                // that separated them - the same API the log line prints,
+                // pinned by relation (never recorded arithmetic).
+                if (eh.ContainsKey("cmp"))
+                {
+                    var cmpE = Json.AsDict(eh["cmp"]);
+                    var alt = DeploymentAnchors.StrongestAlternative(
+                        rows, pick == null ? null : pick.Score);
+                    if (cmpE.ContainsKey("alt"))
+                        Check(path + "|cmp.alt",
+                              alt == null ? "" : alt.Candidate.Guid,
+                              Json.AsStr(cmpE["alt"]));
+                    if (cmpE.ContainsKey("alt_not_winner"))
+                        Check(path + "|cmp.alt_not_winner", true,
+                              pick != null && alt != null &&
+                              alt.Candidate.Guid != pick.Candidate.Guid);
+                    if (cmpE.ContainsKey("stage"))
+                        Check(path + "|cmp.stage",
+                              alt == null || pick == null ? ""
+                                  : DeploymentAnchors.DecideStage(pick.Score, alt),
+                              Json.AsStr(cmpE["stage"]));
+                    if (cmpE.ContainsKey("winner_pairwise"))
+                        Check(path + "|cmp.winner_pairwise", Json.AsBool(cmpE["winner_pairwise"]),
+                              pick != null && alt != null &&
+                              DeploymentAnchors.DecideScored(pick.Score, alt) < 0);
+                }
             }
 
             // ---------------- null_law: no fact, no tactical claim ----------

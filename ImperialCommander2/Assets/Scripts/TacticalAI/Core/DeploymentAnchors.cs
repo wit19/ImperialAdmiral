@@ -523,6 +523,82 @@ namespace TacticalAI.Core
                                   StringComparison.Ordinal);
         }
 
+        /// <summary>P34-C diagnosis (Thomas, card t_1787135b): the stage
+        /// ladder as a PAIRWISE read-back over already-materialized rows, so
+        /// the log can print WHY the winner beat the strongest alternative
+        /// instead of leaving the fresh/leash transitions to interpretation.
+        /// DecideScored mirrors CompareScored exactly, except stage 4 reads
+        /// the row's materialized Own fact (OwnSectionCompare over
+        /// ownSections is exactly Own=true outranking Own=false, both or
+        /// neither = inert). Returns "tier"|"dist"|"zone"|"leash"|"fresh"|
+        /// "seed"|"name"|"guid"|"equal". Null-safe: "".</summary>
+        public static int DecideScored(DpRow c, DpRow b)
+        {
+            if (c == null || b == null) return 0;
+            if (c.Tier != b.Tier) return c.Tier - b.Tier;
+            if (c.Tier == 0 && SameGuid(c.Candidate.SectionGuid, b.Candidate.SectionGuid))
+            {
+                if (c.SecDistSq < b.SecDistSq - 1e-9) return -1;
+                if (c.SecDistSq > b.SecDistSq + 1e-9) return 1;
+            }
+            if (c.ZoneKnown || b.ZoneKnown)
+            {
+                if (c.ZoneKnown != b.ZoneKnown) return c.ZoneKnown ? -1 : 1;
+                if (c.ZoneDist != b.ZoneDist) return c.ZoneDist < b.ZoneDist ? -1 : 1;
+            }
+            if (c.Own != b.Own) return c.Own ? -1 : 1;
+            if (c.Fresh != b.Fresh) return c.Fresh ? -1 : 1;
+            if (c.Seed != b.Seed) return c.Seed < b.Seed ? -1 : 1;
+            int cmp = string.Compare(c.Candidate.Name ?? "", b.Candidate.Name ?? "",
+                                     StringComparison.Ordinal);
+            if (cmp != 0) return cmp;
+            return string.Compare(c.Candidate.Guid ?? "", b.Candidate.Guid ?? "",
+                                  StringComparison.Ordinal);
+        }
+
+        /// The NAME of the first stage that separates the two rows (see
+        /// DecideScored). Cross-section anchor distance is NOT a claim
+        /// (Loch-Gesetz) - it never names the stage, exactly like in the
+        /// real comparator.
+        public static string DecideStage(DpRow c, DpRow b)
+        {
+            if (c == null || b == null) return "";
+            if (c.Tier != b.Tier) return "tier";
+            if (c.Tier == 0 && SameGuid(c.Candidate.SectionGuid, b.Candidate.SectionGuid)
+                && (c.SecDistSq < b.SecDistSq - 1e-9 || c.SecDistSq > b.SecDistSq + 1e-9))
+                return "dist";
+            if (c.ZoneKnown || b.ZoneKnown)
+            {
+                if (c.ZoneKnown != b.ZoneKnown) return "zone";
+                if (c.ZoneDist != b.ZoneDist) return "zone";
+            }
+            if (c.Own != b.Own) return "leash";
+            if (c.Fresh != b.Fresh) return "fresh";
+            if (c.Seed != b.Seed) return "seed";
+            if (string.Compare(c.Candidate.Name ?? "", b.Candidate.Name ?? "",
+                               StringComparison.Ordinal) != 0) return "name";
+            if (string.Compare(c.Candidate.Guid ?? "", b.Candidate.Guid ?? "",
+                               StringComparison.Ordinal) != 0) return "guid";
+            return "equal";
+        }
+
+        /// The strongest LOSER (best remaining row under DecideScored) - the
+        /// alternative the winnerScore line compares against. The challenge
+        /// order of ChooseScored is sequential; when the winner nevertheless
+        /// reads BETTER-LOSER against the strongest alternative here, the
+        /// log surfaces it (that IS the diagnosis signal, never hidden).
+        public static DpRow StrongestAlternative(IList<DpRow> rows, DpRow winner)
+        {
+            if (rows == null) return null;
+            DpRow best = null;
+            foreach (var r in rows)
+            {
+                if (r == null || ReferenceEquals(r, winner)) continue;
+                if (best == null || DecideScored(r, best) < 0) best = r;
+            }
+            return best;
+        }
+
         // Hop lower bound from ONE section to the nearest battle zone over
         // the recorded graph. DistanceLowerBound's NoKnowledge (-1) means
         // "no recorded route" - per the Loch-Gesetz that is NO CLAIM

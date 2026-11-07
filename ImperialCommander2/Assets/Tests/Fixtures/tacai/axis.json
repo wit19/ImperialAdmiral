@@ -201,6 +201,89 @@
     }
   ],
 
+  "phase_cases": [
+   {
+    "name": "p34_empire3_r6_defend_stays",
+    "_why": "Player-34 EXAKT reproduziert: defend-Basis, limit=8, r6, OHNE geparste Siegbedingungen (EMPIRE3 laeuft Null-Law, A5-Beweis) => der blinde hunt-Flip von damals ist weg: Defend bleibt Defend.",
+    "base": "defend",
+    "round": 6,
+    "limit": 8,
+    "iwb": "",
+    "expect": "defend"
+   },
+   {
+    "name": "p34_rebels_own_the_clock",
+    "_why": "rebelWinBy gesetzt, imperialWinBy leer (Rebellen muessten vor dem Limit fertig sein): die Uhr drueckt den GEGNER - halten ist gewinnen. Kein hunt-Flip.",
+    "base": "defend",
+    "round": 6,
+    "limit": 8,
+    "iwb": "",
+    "expect": "defend"
+   },
+   {
+    "name": "no_facts_no_blind_flip",
+    "_why": "Fallback ohne JEDE geparste Bedingung (Thomas: 'Fallback OHNE geparste Bedingungen: Defend bleibt Defend') - die alte blinde Glaube-Zeile ('Jagd spaetestens mit Limit') war genau der Fehler.",
+    "base": "defend",
+    "round": 8,
+    "limit": 8,
+    "iwb": "",
+    "expect": "defend"
+   },
+   {
+    "name": "empire_must_finish_hunt_legit",
+    "_why": "Nachweisbar imperium-unter-Uhr: imperialWinBy=allyDefeated geparst (der Imperium-Sieg ist eine Aktion, die das Limit wegnehmen wuerde) UND Runde im letzten Drittel (5 >= 6-max(1,2)) => hunt wie bisher.",
+    "base": "defend",
+    "round": 5,
+    "limit": 6,
+    "iwb": "allyDefeated",
+    "expect": "hunt"
+   },
+   {
+    "name": "empire_clock_early_round",
+    "_why": "Gleiche Fakten, FRUEHE Runde (3 < 6-2): das letzte-Drittel-Fenster bleibt unveraendert - frueh wird nicht gehetzt.",
+    "base": "defend",
+    "round": 3,
+    "limit": 6,
+    "iwb": "allyDefeated",
+    "expect": "defend"
+   },
+   {
+    "name": "clock_off_no_phase",
+    "_why": "roundLimit=-1 (clock off = keine Phase, ehrlich): auch mit geparstem imperialWinBy kein Flip.",
+    "base": "defend",
+    "round": 4,
+    "limit": -1,
+    "iwb": "allyDefeated",
+    "expect": "defend"
+   },
+   {
+    "name": "tiny_limit_guard",
+    "_why": "limit<3 Guard unveraendert: kein degeneriertes 'letztes Drittel' am Missionsanfang.",
+    "base": "defend",
+    "round": 2,
+    "limit": 2,
+    "iwb": "allyDefeated",
+    "expect": "defend"
+   },
+   {
+    "name": "hunt_base_untouched",
+    "_why": "Nicht-defend-Basen passieren die Funktion bit-identisch (Richtungs-Gesetz gilt NUR fuer den defend-Flip).",
+    "base": "hunt",
+    "round": 5,
+    "limit": 6,
+    "iwb": "",
+    "expect": "hunt"
+   },
+   {
+    "name": "eliminate_base_untouched",
+    "_why": "Wie hunt_base: eliminate/stall/protect-Basen bleiben, was sie waren.",
+    "base": "eliminate",
+    "round": 6,
+    "limit": 8,
+    "iwb": "allyDefeated",
+    "expect": "eliminate"
+   }
+  ],
   "focus_cases": [
     {
       "name": "achse_ohne_mark_vorn",

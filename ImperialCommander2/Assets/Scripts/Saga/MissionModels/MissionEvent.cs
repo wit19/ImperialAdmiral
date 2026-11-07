@@ -36,5 +36,13 @@ namespace Saga
 
 		[JsonConverter( typeof( EventActionConverter ) )]
 		public List<IEventAction> eventActions { get; set; }
+
+		// LANGUAGE-BRIDGE (card t_1787135b P34-A1): authored original of
+		// eventText, see EntityProperties.sourceText for the law. The event
+		// NAME is never translated (authoring data, GUID-keyed injection only
+		// replaces texts) - it needs no source field. Serialized like the
+		// other source fields so a post-injection save still carries the
+		// original on ContinueGame (capture-once then keeps the TRUE original).
+		public string sourceEventText;
 	}
 }

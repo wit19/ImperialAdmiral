@@ -283,6 +283,33 @@ namespace TacticalAI.Core
             return false;
         }
 
+        /// <summary>P34-B DIRECTION law (findings_Player-34 §4b, Thomas
+        /// ruling 08.11 after the Player-34 EMPIRE3 log): the old blind
+        /// "defend -> hunt at the final third of the round clock" flip was
+        /// directionally WRONG there - EMPIRE3 runs the clock against the
+        /// REBELLS (their win needs the hideaway BEFORE the limit; expiry is
+        /// "Rebels lose"). For the Empire, holding out IS winning. Law:
+        /// a limit-driven flip to hunt is legitimate ONLY when the parsed
+        /// victory wiring PROVES the Empire itself must finish before the
+        /// clock (imperialWinBy parsed - the Empire's win is an action the
+        /// clock would take away). If the rebels own the win-by clause
+        /// (rebelWinBy set, imperialWinBy empty) they are the side under
+        /// time pressure -> Defend holds (Verstaerken, nicht Jagen). And
+        /// with NO parsed conditions at all (Null-Law, e.g. EMPIRE3): the
+        /// blind flip is GONE - Defend bleibt Defend. The final-third
+        /// WINDOW (lim>=3, round >= lim - max(1, lim/3), clock-off = -1 =
+        /// no phase) is the documented one, unchanged; only its direction
+        /// law is new. Pure function of public, already-parsed facts.</summary>
+        public static string DoctrinePhaseOnLimit(string basePosture, int roundNo,
+                                                  long roundLimit, string imperialWinBy)
+        {
+            if (basePosture != "defend") return basePosture;
+            if (roundLimit < 3) return "defend";
+            if (roundNo < roundLimit - System.Math.Max(1, roundLimit / 3)) return "defend";
+            if (string.IsNullOrEmpty(imperialWinBy)) return "defend";
+            return "hunt";
+        }
+
         // ------------------------------------------------------ selection
         /// Selection — AppView ONLY (type boundary).
         public static Doctrine SelectDoctrine(AppView view, string pattern = "aggressive",

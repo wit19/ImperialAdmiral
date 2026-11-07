@@ -270,6 +270,215 @@
    "cands": [
     { "guid": "dp-only", "name": "DP Only", "section": "SEC-1", "x": 0, "y": 0 }
    ]
+  },
+  {
+   "name": "p34_r5_leash_beats_fresh",
+   "_why": "Player-34 r5 Diagnose (DG049 ging an das own=1 recycled Green 3 (anchor=4) statt an das freie frische Green 5 (anchor=0)): BEIDE tier=0, aber Green 5s anchor=0 liegt in einer ANDEREN Sektion - innere Distanz ist nie eine Abschnittsuebergreifende Behauptung (Loch-Gesetz, dieselbe Stufe wie im Comparator); Kampfzone unbekannt = null claim; dann entscheidet die Freund-Leine (own=1) VOR fresh. Das ist exakt die geschriebene Gesetztesliste ('DP diversity ... never out-ranks a spatial or leash claim'), kein Umdeuten - der Uebergang wird hier auf die geschriebene Ordnung festgenagelt.",
+   "seed": 61001,
+   "round": 5,
+   "anchors": [
+    {
+     "guid": "a-green3",
+     "section": "SEC-G3",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "guid": "a-green5",
+     "section": "SEC-G5",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "own": [
+    "SEC-G3"
+   ],
+   "used": [
+    "dp-green3"
+   ],
+   "cands": [
+    {
+     "guid": "dp-green3",
+     "name": "DP Green 3",
+     "section": "SEC-G3",
+     "x": 2,
+     "y": 2
+    },
+    {
+     "guid": "dp-green5",
+     "name": "DP Green 5",
+     "section": "SEC-G5",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "expect": {
+    "winner": "dp-green3",
+    "anchor": "a-green3",
+    "rows": [
+     "DP Green 3|tier=0|anchor=2.83|zone=-|own=1|fresh=0",
+     "DP Green 5|tier=0|anchor=0|zone=-|own=0|fresh=1"
+    ],
+    "cmp": {
+     "alt": "dp-green5",
+     "stage": "leash",
+     "winner_pairwise": true
+    }
+   }
+  },
+  {
+   "name": "p34_r3_sec_anchor_does_not_outrank_leash",
+   "_why": "Player-34 r3 (E-Web ging an own=1 recycled Green 3 (anchor=4) statt an die freie frische Green 4 (anchor=sec)): ein Sektions-Anker ist eine GANZSEKTIONS-Behauptung - tiergleich mit dem positionierten Anker, keine Positions-Fakten zum Vorziehen; Kampfzone gleich; die Leine entscheidet vor fresh. Beide Beziehungen in einem Pin: tier-Gleichheit sec-vs-pos-Anker UND leash > fresh.",
+   "seed": 61004,
+   "round": 3,
+   "anchors": [
+    {
+     "guid": "a-pos",
+     "section": "SEC-G3",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "guid": "SEC-HIDE",
+     "section": "SEC-HIDE",
+     "x": 0,
+     "y": 0,
+     "hasPosition": false
+    }
+   ],
+   "own": [
+    "SEC-G3"
+   ],
+   "used": [
+    "dp-green3"
+   ],
+   "cands": [
+    {
+     "guid": "dp-green3",
+     "name": "DP Green 3",
+     "section": "SEC-G3",
+     "x": 2,
+     "y": 0
+    },
+    {
+     "guid": "dp-green4",
+     "name": "DP Green 4",
+     "section": "SEC-HIDE",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "expect": {
+    "winner": "dp-green3",
+    "anchor": "a-pos",
+    "rows": [
+     "DP Green 3|tier=0|anchor=2|zone=-|own=1|fresh=0",
+     "DP Green 4|tier=0|anchor=sec|zone=-|own=0|fresh=1"
+    ],
+    "cmp": {
+     "alt": "dp-green4",
+     "stage": "leash",
+     "winner_pairwise": true
+    }
+   }
+  },
+  {
+   "name": "fresh_beats_recycled_when_prior_equal",
+   "_why": "Der fresh-Hebel selbst, positiv gepinnt: tier, Sektionsdistanz (gleicher Anker, gleiche Distanz), Kampfzone und Leine ALLE gleich => Stufe 5 (DP-DIVERSITAET) wirkt: fresh schlaegt recycled. Genau das, was die Gesetztesliste hergibt (Stufe 5 erreicht nur, wer bei allen frueheren Stufen gleich las) - nicht mehr und nicht weniger.",
+   "seed": 61002,
+   "round": 1,
+   "anchors": [
+    {
+     "guid": "a-1",
+     "section": "SEC-A",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "used": [
+    "dp-b"
+   ],
+   "cands": [
+    {
+     "guid": "dp-b",
+     "name": "DP B",
+     "section": "SEC-A",
+     "x": 3,
+     "y": 4
+    },
+    {
+     "guid": "dp-a",
+     "name": "DP A",
+     "section": "SEC-A",
+     "x": 3,
+     "y": 4
+    }
+   ],
+   "expect": {
+    "winner": "dp-a",
+    "anchor": "a-1",
+    "rows": [
+     "DP B|tier=0|anchor=5|zone=-|own=0|fresh=0",
+     "DP A|tier=0|anchor=5|zone=-|own=0|fresh=1"
+    ],
+    "cmp": {
+     "alt": "dp-b",
+     "stage": "fresh",
+     "winner_pairwise": true
+    }
+   }
+  },
+  {
+   "name": "p34_r1_all_equal_seed",
+   "_why": "Player-34 r1 (Sturmtruppen/Gestaltwandler/Ordnungssoldaten auf Green 1): die Pr\u00e4misse 'Green 2 fresh=1' haelt dem Log NICHT stand - zum Waehlzeitpunkt waren BEIDE DP own=1 UND fresh=0 (Green 2 wurde schon vom 2. DP der Runde genommen, dp-score all-Liste der Sturmtruppen-Zeile zeigt fresh=0 bei beiden). Alle Faktenstufen gleich => die SEED-Kette entscheidet; ihr absoluter Winner wird nie von Hand gerechnet (Record-Diziplin) - winner_in pinnt die Menge, decided=stage pinnt die Kette.",
+   "seed": 61003,
+   "round": 1,
+   "anchors": [
+    {
+     "guid": "a-1",
+     "section": "SEC-A",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "own": [
+    "SEC-A"
+   ],
+   "used": [
+    "dp-green1",
+    "dp-green2"
+   ],
+   "cands": [
+    {
+     "guid": "dp-green1",
+     "name": "DP Green 1",
+     "section": "SEC-A",
+     "x": 1,
+     "y": 0
+    },
+    {
+     "guid": "dp-green2",
+     "name": "DP Green 2",
+     "section": "SEC-A",
+     "x": 1,
+     "y": 0
+    }
+   ],
+   "expect": {
+    "winner_in": [
+     "dp-green1",
+     "dp-green2"
+    ],
+    "anchor": "a-1",
+    "rows": [
+     "DP Green 1|tier=0|anchor=1|zone=-|own=1|fresh=0",
+     "DP Green 2|tier=0|anchor=1|zone=-|own=1|fresh=0"
+    ],
+    "cmp": {
+     "stage": "seed",
+     "alt_not_winner": true
+    }
+   }
   }
  ]
 }

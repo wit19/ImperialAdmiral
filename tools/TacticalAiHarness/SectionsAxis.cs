@@ -63,6 +63,29 @@ namespace TacticalAiHarness
                               canon.Contains(Json.AsStr(sraw)));
             }
 
+            // ---------------- phase_cases: the P34-B direction law -------
+            // Doctrine phase on the round limit (Core Doctrine phase law,
+            // consumed by the bridge's SetDoctrinePhase). Hand-pinned both
+            // directions + the no-facts fallback (findings_Player-34 §4b):
+            // hunt-at-limit ONLY with a parsed imperial win-by clause;
+            // rebelWinBy-owned clock and Null-Law keep Defend.
+            if (v.ContainsKey("phase_cases"))
+                foreach (var raw in Json.AsList(v["phase_cases"]))
+                {
+                    var c = Json.AsDict(raw);
+                    var name = "phase|" + Json.AsStr(c["name"]);
+                    var iwb = c.ContainsKey("iwb") && c["iwb"] != null
+                              ? Json.AsStr(c["iwb"]) : "";
+                    var got = Doctrine.DoctrinePhaseOnLimit(
+                        Json.AsStr(c["base"]), (int)Json.AsLong(c["round"]),
+                        (long)Json.AsLong(c["limit"]), iwb);
+                    Check(name, Json.AsStr(c["expect"]), got);
+                    var got2 = Doctrine.DoctrinePhaseOnLimit(
+                        Json.AsStr(c["base"]), (int)Json.AsLong(c["round"]),
+                        (long)Json.AsLong(c["limit"]), iwb);
+                    Check(name + "|determinism", got, got2);
+                }
+
             // ---------------- block_cases: the Schnittstelle ----------------
             foreach (var raw in Json.AsList(v["block_cases"]))
             {

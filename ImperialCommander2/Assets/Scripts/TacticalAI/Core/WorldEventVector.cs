@@ -1336,9 +1336,11 @@ namespace TacticalAI.Core
         // otherwise the rung order decides (P1 rides above P3). failImperial/
         // failRebel are DEAD flags (measured 0x true in the whole collection)
         // and are NEVER read anywhere. Deterministic: no RNG, ordinal ties.
+        // P34-A2: "anspruch" is the authored-DE claim stem (beansprucht/
+        // beanspruchen/Anspruch) - EN "claim" keeps its exact behavior.
         static readonly string[] P2Verbs =
             { "destroy", "zerstör", "zerstoer", "sabotag", "deactivat", "disable",
-              "disarm", "entwaffn", "claim", "besetz" };
+              "disarm", "entwaffn", "claim", "besetz", "anspruch" };
 
         /// Recompute every object's polaritaet over the COMPLETED stream:
         /// a pure function of the row + final objective + perspective flag,
@@ -1387,7 +1389,7 @@ namespace TacticalAI.Core
             var t = (s ?? "").ToLowerInvariant();
             if (t.Length == 0) return false;
             bool imperial = t.Contains("empire") || t.Contains("imperium");
-            bool claim = t.Contains("claim") || t.Contains("besetz");
+            bool claim = t.Contains("claim") || t.Contains("besetz") || t.Contains("anspruch");
             return imperial && claim;
         }
 
@@ -1400,7 +1402,7 @@ namespace TacticalAI.Core
             if (t.Length == 0) return false;
             if (t.Contains("rebel") || t.Contains("rebellen")) return true;
             bool imperial = t.Contains("empire") || t.Contains("imperium");
-            bool claim = t.Contains("claim") || t.Contains("besetz");
+            bool claim = t.Contains("claim") || t.Contains("besetz") || t.Contains("anspruch");
             bool rescue = t.Contains("rescue") || t.Contains("rette") || t.Contains("befrei");
             return (claim || rescue) && !imperial;
         }

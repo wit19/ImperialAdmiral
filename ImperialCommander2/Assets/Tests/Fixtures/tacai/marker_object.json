@@ -106,6 +106,127 @@
         "hunt": "", "protect": "Fuel Depot", "contested": "sec-lager"
       }
     }
+,
+    {
+     "name": "h_p34_empire3_canonical_mirror",
+     "_why": "Player-34 Protester-Cluster, EXAKT wie der Producer nach der t_1787135b-A1-KanalLesung sendet: kanonische EN-Autext ('A figure can attack a protester (Health: 5, Defense: None)' => 5/0), die gedruckten Buttons lowercase+ordinal, verdrahtete EN-autored Event-Namen. Der DE-injizierte Live-Zustand liefert DIESELBE Zeile (sourceText traegt das EN-Original = die Sprachbruecke). health=5 + Polaritaet jagt: der Card-Pin.",
+     "events": [
+      {
+       "kind": "MissionStart",
+       "round": 1,
+       "payload": {
+        "objective": "Reach the hideaway and recover the data.",
+        "priorityTarget": "",
+        "roundLimit": -1,
+        "mission": "EMPIRE3"
+       }
+      },
+      {
+       "kind": "MissionObject",
+       "round": 1,
+       "payload": {
+        "name": "Protester 1",
+        "entity": "b76939b9-8150-4180-9f16-c625a6739625",
+        "health": 5,
+        "defense": 0,
+        "section": "sec-section-4",
+        "position": "930;1040",
+        "buttons": "claim / {a} rescue;claim for empire",
+        "eventNames": "protester empire 1;protester rebels 1"
+       }
+      }
+     ],
+     "expect": {
+      "pol": "jagt",
+      "basis": "P1",
+      "hunt": "Protester 1",
+      "protect": "",
+      "contested": "sec-section-4",
+      "canon_has": [
+       "object=b76939b9-8150-4180-9f16-c625a6739625|Protester 1|sec-section-4|930;1040|5|0|jagt|P1"
+      ]
+     }
+    },
+    {
+     "name": "h2_p34_de_authored_parity",
+     "_why": "DE-PARITAET (Card A2: DE-autored Dateien tragen DE als ORIGINAL, Gesetz identisch): derselbe Protester in DE-autorer Form - Buttons 'Beanspruchen / {A} Retten' + 'F\u00fcr Imperium beanspruchen', DE-autore Event-Namen. Held-Seiten-Behauptung (claim-Stamm 'anspruch' + 'rette', ohne imperium-Marker) sticht die imperiale Behauptung => jagt, P1 - identisch zur EN-Form oben.",
+     "events": [
+      {
+       "kind": "MissionStart",
+       "round": 1,
+       "payload": {
+        "objective": "Erreicht das Versteck und sichert die Daten.",
+        "priorityTarget": "",
+        "roundLimit": -1,
+        "mission": "EMPIRE3_DE"
+       }
+      },
+      {
+       "kind": "MissionObject",
+       "round": 1,
+       "payload": {
+        "name": "Demonstrant 1",
+        "entity": "b76939b9-8150-4180-9f16-c625a6739625",
+        "health": 5,
+        "defense": 0,
+        "section": "sec-section-4",
+        "position": "930;1040",
+        "buttons": "beanspruchen / {a} retten;f\u00fcr imperium beanspruchen",
+        "eventNames": "demonstrant imperium 1;demonstrant rebellen 1"
+       }
+      }
+     ],
+     "expect": {
+      "pol": "jagt",
+      "basis": "P1",
+      "hunt": "Demonstrant 1",
+      "protect": "",
+      "contested": "sec-section-4",
+      "canon_has": [
+       "object=b76939b9-8150-4180-9f16-c625a6739625|Demonstrant 1|sec-section-4|930;1040|5|0|jagt|P1"
+      ]
+     }
+    },
+    {
+     "name": "h3_p34_de_imperial_claim_only",
+     "_why": "A2-Vokabel-Pin solo: NUR die imperiale Behauptung ('f\u00fcr imperium beanspruchen' = 'imperium' + 'anspruch') traegt P1 schon allein - ohne den 'anspruch'-Stamm waere das heute P4 neutral. Imperium beansprucht => das Imperium ist die Angreifer-Seite NICHT; der Gegenpart verliert das Objekt - die Polaritaet zeigt auf schuetzt fuer die imperiale Seite (Core: OutcomeSide-artig ueber die Button-Leiter, imperial marker gewinnt P1 fuer emp).",
+     "events": [
+      {
+       "kind": "MissionStart",
+       "round": 1,
+       "payload": {
+        "objective": "Reach the hideaway and recover the data.",
+        "priorityTarget": "",
+        "roundLimit": -1,
+        "mission": "EMPIRE3"
+       }
+      },
+      {
+       "kind": "MissionObject",
+       "round": 1,
+       "payload": {
+        "name": "Demonstrant 1",
+        "entity": "ent-de-only",
+        "health": 5,
+        "defense": 0,
+        "section": "sec-platz",
+        "position": "10;10",
+        "buttons": "f\u00fcr imperium beanspruchen",
+        "eventNames": "demonstrant imperium 1"
+       }
+      }
+     ],
+     "expect": {
+      "pol": "schuetzt",
+      "basis": "P1",
+      "hunt": "",
+      "protect": "Demonstrant 1",
+      "contested": "sec-platz",
+      "canon_has": [
+       "object=ent-de-only|Demonstrant 1|sec-platz|10;10|5|0|schuetzt|P1"
+      ]
+     }
+    }
   ],
   "guard_cases": [
     {

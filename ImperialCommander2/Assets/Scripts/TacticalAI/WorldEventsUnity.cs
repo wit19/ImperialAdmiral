@@ -507,6 +507,8 @@ namespace TacticalAI
             _objective = null;
             _lastVictoryCanon = "";   // P33-H4b: fresh mission, fresh claim
             _objectRowCanon.Clear();  // P33-H4c: same law for the object rows
+            _objectsNoneN = -1;       // P34-A4: fresh mission, fresh diagnose
+            _victoryNoneN = -1;
             _wheels.Clear();
             _seenGroups.Clear();
             _heroWounded.Clear();
@@ -982,6 +984,9 @@ namespace TacticalAI
         // Everything below reads DataStore.mission (the parsed file the
         // table itself opens) + DataStore card lists - public data.
         string _lastVictoryCanon = "";
+        // P34-A4 NullLawDiagnose one-shot state (-1 = nothing diagnosed yet).
+        int _objectsNoneN = -1;
+        int _victoryNoneN = -1;
 
         /// Escape/evac hint vocabulary (lowercase substring on the entity's
         /// OWN authored name/text/button text - the same class of public
@@ -995,12 +1000,81 @@ namespace TacticalAI
             { "execut", "execution", "erschosse", "erschossen", "killed",
               "getötet", "getotet", "defeated", "besiegt", "erlegen",
               "ausgeschaltet" };
+        /// P34-A2 (Thomas, card t_1787135b): a CLAIM sentence is NOT a lose
+        /// sentence - "If a protester is defeated, the Empire claims it" /
+        /// "beansprucht das Imperium ihn" names the ATTACKER side, and the
+        /// other side is the one that loses the object. Consulted LAST in
+        /// OutcomeSideOfText (fixed order keeps today's lose/win sentences
+        /// deciding exactly as before). EN + authored-DE stems only.
+        static readonly string[] ClaimWords = { "claim", "beanspruch" };
+        static readonly string[] ClaimEmpireMarks = { "empire", "imperium" };
+        static readonly string[] ClaimRebelMarks = { "rebel", "rebellen" };
+        /// Printed-number keys, EN + authored-DE (card A2: files authored in
+        /// DE carry DE as their ORIGINAL - the parse law stays IDENTICAL).
+        static readonly string[] HealthKeys = { "health:", "gesundheit:" };
+        static readonly string[] DefenseKeys = { "defense:", "verteidigung:" };
+        static readonly string[] DefenseNoneWords = { "none", "keine" };
+
+        // -------------------------------------------------- canonical reading
+        // LANGUAGE-BRIDGE (card t_1787135b P34-A1, Thomas 08.11): the game is
+        // selectable in ELEVEN languages and TranslationController rewrites the
+        // mission texts IN PLACE at load. It preserves the authored ORIGINAL in
+        // sourceText/sourceEventText (capture-once, its chokepoint); EVERY
+        // producer text read below goes through these helpers, so the mission
+        // grammar is language-independent for all eleven languages while the
+        // UI stays translated. A file authored in another language carries that
+        // language in the original field - the shipped EN+DE vocabularies apply
+        // to it directly. No original (EN play, nothing injected) => fallback
+        // theText/eventText, which IS the identical text (Null-Law twin).
+        static string CanonText(Saga.EntityProperties ep)
+        {
+            if (ep == null) return "";
+            return !string.IsNullOrEmpty(ep.sourceText) ? ep.sourceText : (ep.theText ?? "");
+        }
+        static string CanonButton(Saga.ButtonAction b)
+        {
+            if (b == null) return "";
+            return !string.IsNullOrEmpty(b.sourceText) ? b.sourceText : (b.buttonText ?? "");
+        }
+        static string CanonEventText(Saga.MissionEvent e)
+        {
+            if (e == null) return "";
+            return !string.IsNullOrEmpty(e.sourceEventText) ? e.sourceEventText : (e.eventText ?? "");
+        }
 
         void PollVictory(int round)
         {
             var evs = TryBuildVictoryEvents();
             string canon = VictoryCanon(evs);
-            if (canon == "" || canon == _lastVictoryCanon) return;
+            if (canon == "")
+            {
+                // P34-A4 NullLawDiagnose: a Null-Law producer that emits
+                // NOTHING must SAY it looked and found nothing (Player-34:
+                // the silence, not the Null-Law, was the error). ONE line per
+                // state, counters reset in SessionStart (measured candidates).
+                int cand = 0;
+                try
+                {
+                    var m = DataStore.mission;
+                    if (m != null)
+                    {
+                        if (m.globalEvents != null) cand += m.globalEvents.Count;
+                        if (m.mapSections != null)
+                            foreach (var s in m.mapSections)
+                                if (s != null && s.missionEvents != null) cand += s.missionEvents.Count;
+                    }
+                }
+                catch { }
+                if (cand != _victoryNoneN)
+                {
+                    _victoryNoneN = cand;
+                    Debug.Log("WorldEvents::victorynone candidates=" + cand
+                              + " parsed=0 [Null-Law: no parseable victory wiring]");
+                }
+                return;
+            }
+            if (canon == _lastVictoryCanon) return;
+            _victoryNoneN = -1;   // claim moved: a later empty state re-diagnoses
             // The claim MOVED (mission load, or a late-resolvable ally name
             // / zone). Re-state the FULL claim: the projection is idempotent
             // (scalars last-wins, zones additive), so repeating is honest.
@@ -1051,7 +1125,26 @@ namespace TacticalAI
         void PollObjects(int round)
         {
             var evs = TryBuildObjectEvents();
-            if (evs.Count == 0) return;                    // Null-Law
+            if (evs.Count == 0)
+            {
+                // P34-A4 NullLawDiagnose (see PollVictory): one line per
+                // state - objects-none names how many entities were scanned.
+                int cand = 0;
+                try
+                {
+                    var m = DataStore.mission;
+                    if (m != null && m.mapEntities != null) cand = m.mapEntities.Count;
+                }
+                catch { }
+                if (cand != _objectsNoneN)
+                {
+                    _objectsNoneN = cand;
+                    Debug.Log("WorldEvents::objects-none candidates=" + cand
+                              + " parsed=0 [Null-Law: no attack sentence in the canonical texts]");
+                }
+                return;
+            }
+            _objectsNoneN = -1;   // rows exist again: state changed
             var sb = new System.Text.StringBuilder();
             foreach (var p in evs)
             {
@@ -1105,7 +1198,9 @@ namespace TacticalAI
                     // THE gate: the object's OWN printed attack sentence with
                     // a plain Health number. "Health: *N*" (variable-driven)
                     // is explicitly NOT parseable - never a guess (Null-Law).
-                    if (!TryParseAttackText(ep.theText, out health, out defense, out hasDef))
+                    // canonical ORIGINAL text (P34-A1): the DE-injected live
+                    // text never reaches the grammar - eleven languages, one law.
+                    if (!TryParseAttackText(CanonText(ep), out health, out defense, out hasDef))
                         continue;
                     var name = (en.name ?? "").Trim();
                     if (name.Length == 0) continue;        // identity required
@@ -1132,7 +1227,7 @@ namespace TacticalAI
                         foreach (var b in ep.buttonActions)
                         {
                             if (b == null) continue;
-                            var bt = (b.buttonText ?? "").Trim().ToLowerInvariant();
+                            var bt = CanonButton(b).Trim().ToLowerInvariant();   // P34-A1
                             if (bt.Length > 0 && !btns.Contains(bt)) btns.Add(bt);
                             if (b.eventGUID == Guid.Empty) continue;
                             var ev = FindEvent(all, b.eventGUID);
@@ -1143,7 +1238,7 @@ namespace TacticalAI
                             // direct: the WIRED event itself ends the mission
                             if (outcome == "" && HasEndAction(ev))
                                 outcome = OutcomeSideOfText(
-                                    (ev.name ?? "") + ". " + (ev.eventText ?? ""));
+                                    (ev.name ?? "") + ". " + CanonEventText(ev));   // P34-A1
                         }
                     // one hop (H4b setter/trigger law): the wired event SETS
                     // a trigger a mission-end event LISTENS to - that end
@@ -1196,7 +1291,7 @@ namespace TacticalAI
                 {
                     if (tb == null || tb.triggerGUID == Guid.Empty || tb.triggerValue < 1) continue;
                     if (!setters.Contains(tb.triggerGUID.ToString())) continue;
-                    var side = OutcomeSideOfText((e.name ?? "") + ". " + (e.eventText ?? ""));
+                    var side = OutcomeSideOfText((e.name ?? "") + ". " + CanonEventText(e));   // P34-A1
                     if (side != "") return side;
                 }
             }
@@ -1213,6 +1308,16 @@ namespace TacticalAI
             foreach (var s in LoseEmpire) if (t.Contains(s)) return "empire";
             foreach (var s in WinRebels) if (t.Contains(s)) return "empire";
             foreach (var s in WinEmpire) if (t.Contains(s)) return "rebels";
+            // P34-A2 claim law (LAST rung, fixed order intact): "the Empire
+            // claims it" / "beansprucht das Imperium ihn" makes the CLAIMER
+            // the attacker side - the OTHER side loses the object.
+            bool claim = false;
+            foreach (var s in ClaimWords) if (t.Contains(s)) { claim = true; break; }
+            if (claim)
+            {
+                foreach (var s in ClaimEmpireMarks) if (t.Contains(s)) return "rebels";
+                foreach (var s in ClaimRebelMarks) if (t.Contains(s)) return "empire";
+            }
             return "";
         }
 
@@ -1237,9 +1342,19 @@ namespace TacticalAI
             if (at < 0) return false;
             int winEnd = Math.Min(t.Length, at + 160);
             var win = t.Substring(at, winEnd - at);
-            if (!TryParsePrintedInt(win, "health:", out health)) return false;
+            // EN + authored-DE keys (P34-A2, identical law for both).
+            bool hp = false;
+            foreach (var k in HealthKeys)
+                if (win.IndexOf(k, StringComparison.Ordinal) >= 0)
+                { hp = TryParsePrintedInt(win, k, out health); break; }
+            if (!hp) return false;
             long d;
-            if (TryParsePrintedDefense(win, "defense:", out d)) { defense = d; hasDef = true; }
+            foreach (var k in DefenseKeys)
+                if (win.IndexOf(k, StringComparison.Ordinal) >= 0)
+                {
+                    if (TryParsePrintedDefense(win, k, out d)) { defense = d; hasDef = true; }
+                    break;
+                }
             return true;
         }
 
@@ -1277,8 +1392,9 @@ namespace TacticalAI
                                      System.Globalization.NumberStyles.None,
                                      System.Globalization.CultureInfo.InvariantCulture, out value);
             }
-            if (win.Length >= i + 4 && string.CompareOrdinal(win, i, "none", 0, 4) == 0)
-            { value = 0; return true; }                   // printed "Defense: None"
+            foreach (var nw in DefenseNoneWords)         // EN "none" + authored DE "keine"
+                if (win.Length >= i + nw.Length && string.CompareOrdinal(win, i, nw, 0, nw.Length) == 0)
+                { value = 0; return true; }               // printed "Defense: None"/"Verteidigung: keine"
             return false;                                 // variable/dice law: no fact
         }
 
@@ -1401,13 +1517,13 @@ namespace TacticalAI
                     {
                         if (en == null || en.entityProperties == null) continue;
                         string hint = ((en.name ?? "") + " "
-                                       + (en.entityProperties.theText ?? "")).ToLowerInvariant();
+                                       + CanonText(en.entityProperties)).ToLowerInvariant();   // P34-A1
                         bool wired = false;
                         if (en.entityProperties.buttonActions != null)
                             foreach (var b in en.entityProperties.buttonActions)
                             {
                                 if (b == null || b.eventGUID == Guid.Empty) continue;
-                                hint += " " + (b.buttonText ?? "").ToLowerInvariant();
+                                hint += " " + CanonButton(b).ToLowerInvariant();   // P34-A1
                                 var target = FindEvent(all, b.eventGUID);
                                 if (target != null && HasEndAction(target)) wired = true;
                             }
@@ -1475,7 +1591,7 @@ namespace TacticalAI
         /// authoring text only - the same class DeriveCounter reads.
         static bool NamesAllyKill(Saga.MissionEvent e, string axisName)
         {
-            var text = ((e.name ?? "") + ". " + (e.eventText ?? "")).ToLowerInvariant();
+            var text = ((e.name ?? "") + ". " + CanonEventText(e)).ToLowerInvariant();   // P34-A1
             if (axisName.Length < 3 || !text.Contains(axisName.ToLowerInvariant())) return false;
             var words = text.Split(new[] { ' ', '\t', '\n', '\r', '-', ',', ';', ':', '.', '!', '?', '"', '\'' },
                                    StringSplitOptions.RemoveEmptyEntries);

@@ -69,6 +69,16 @@ namespace Saga
 						if ( missionEntity != null )
 						{
 							//main text
+							// LANGUAGE-BRIDGE law (card t_1787135b P34-A1, Thomas 08.11):
+							// the authored ORIGINAL survives the injection in sourceText,
+							// captured EXACTLY HERE, capture-once (the first overwrite wins;
+							// later re-injections keep the original). The TacticalAI
+							// producers read ONLY the source fields - one chokepoint covers
+							// all shipped languages permanently; the UI keeps reading the
+							// translated theText, EN never injects and the producer's
+							// fallback reads the identical text.
+							if ( string.IsNullOrEmpty( missionEntity.entityProperties.sourceText ) )
+								missionEntity.entityProperties.sourceText = missionEntity.entityProperties.theText;
 							missionEntity.entityProperties.theText = translatedEntity.mainText;
 							//buttons
 							missionEntity.entityProperties.buttonActions.ForEach( buttonAction =>
@@ -76,6 +86,8 @@ namespace Saga
 								var translatedButton = translatedEntity.buttonList.Where( x => x.GUID == buttonAction.GUID ).FirstOr( null );
 								if ( translatedButton != null )
 								{
+									if ( string.IsNullOrEmpty( buttonAction.sourceText ) )
+										buttonAction.sourceText = buttonAction.buttonText;   // P34-A1 chokepoint
 									buttonAction.buttonText = translatedButton.theText;
 								}
 							} );
@@ -91,6 +103,8 @@ namespace Saga
 						if ( missionEvent != null )
 						{
 							//main text
+							if ( string.IsNullOrEmpty( missionEvent.sourceEventText ) )
+								missionEvent.sourceEventText = missionEvent.eventText;   // P34-A1 chokepoint
 							missionEvent.eventText = translatedEvent.eventText;
 							//now check loaded event actions
 							foreach ( var translatedEA in translatedEvent.eventActions )
@@ -110,6 +124,8 @@ namespace Saga
 												if ( missionmme != null )
 												{
 													//text
+													if ( string.IsNullOrEmpty( missionmme.entityProperties.sourceText ) )
+														missionmme.entityProperties.sourceText = missionmme.entityProperties.theText;   // P34-A1 chokepoint
 													missionmme.entityProperties.theText = tmod.theText;
 													//buttons
 													foreach ( var tbtn in tmod.buttonList )
@@ -117,6 +133,8 @@ namespace Saga
 														var missionmmebtn = missionmme.entityProperties.buttonActions.Where( x => x.GUID == tbtn.GUID ).FirstOr( null );
 														if ( missionmmebtn != null )
 														{
+															if ( string.IsNullOrEmpty( missionmmebtn.sourceText ) )
+																missionmmebtn.sourceText = missionmmebtn.buttonText;   // P34-A1 chokepoint
 															missionmmebtn.buttonText = tbtn.theText;
 														}
 													}

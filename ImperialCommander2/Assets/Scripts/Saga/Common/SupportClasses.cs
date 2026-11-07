@@ -50,6 +50,10 @@ namespace Saga
 		public string buttonText;
 		public Guid triggerGUID;
 		public Guid eventGUID;
+
+		// LANGUAGE-BRIDGE (card t_1787135b P34-A1): authored original of
+		// buttonText, see EntityProperties.sourceText for the law.
+		public string sourceText;
 	}
 
 	public class DPData

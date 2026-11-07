@@ -641,13 +641,15 @@ namespace TacticalAI
             EnsurePersona();
             // M5: fresh feed state BEFORE building this round's plan
             var feedView = PullFeedView();
-            // Noldorion direction reply 2.11 + Thomas 01.11. (Punkt 2):
-            // doctrine phase. Base = MissionPosture() (structured mission
-            // data). A defend mission WITH a public round clock (the user's
-            // roundLimitToggle included - clock off = no phase, honest)
-            // shifts to hunt in the final third: the Imperium stops holding
-            // and races the rebels, exactly like a human would. Public
-            // trigger (HUD round display), deterministic, announced once.
+            // Noldorion direction reply 2.11 + Thomas 01.11. (Punkt 2) +
+            // P34-B DIRECTION law (Thomas 08.11, card t_1787135b): doctrine
+            // phase. Base = MissionPosture() (structured mission data). The
+            // final-third flip defend -> hunt is legitimate ONLY when the
+            // parsed victory wiring proves the EMPIRE is under the clock
+            // (imperialWinBy set). A clock the REBELLS race (rebelWinBy, or
+            // nothing parsed at all like EMPIRE3) must NOT push the Empire
+            // into a hunt: Defend bleibt Defend. Public trigger (HUD round
+            // display), deterministic, announced once.
             SetDoctrinePhase(roundNo);
             BuildGroups(out var facts, out var figures, feedView);
             _patternByCard = new Dictionary<string, string>();
@@ -1719,6 +1721,22 @@ namespace TacticalAI
                               $"zone={(pick.Score.ZoneKnown ? pick.Score.ZoneDist.ToString(ci) : "-")} " +
                               $"leash={(pick.Score.Own ? 1 : 0)} fresh={(pick.Score.Fresh ? 1 : 0)} " +
                               $"all={allRows}]");
+                    // P34-C Vergleichszeile (Thomas 08.11): winnerScore vs
+                    // the BEST alternative plus the stage that separated
+                    // them - "why did fresh not bite" is answered by the log
+                    // itself, not by re-reading the ladder. BETTER-ALT marks
+                    // the (pathological) case where the pairwise-best loser
+                    // would pairwise-beat the winner: the honest diagnosis
+                    // signal, never silenced.
+                    var altRow = Tac.DeploymentAnchors.StrongestAlternative(scoreRows, pick.Score);
+                    if (altRow != null && pick.Score != null)
+                    {
+                        var altStage = Tac.DeploymentAnchors.DecideStage(pick.Score, altRow);
+                        var altFlag = Tac.DeploymentAnchors.DecideScored(pick.Score, altRow) < 0
+                                      ? "" : " BETTER-ALT";
+                        Debug.Log("TacticalAIBridge::DP-cmp decided=" + altStage + altFlag
+                                  + " winner[" + pick.Score.Dump() + "] alt[" + altRow.Dump() + "]");
+                    }
                     return true;
                 }
                 // unresolvable pick (must not happen): fall through to the
@@ -3802,13 +3820,15 @@ namespace TacticalAI
         static void SetDoctrinePhase(int roundNo)
         {
             _doctrineBase = MissionPosture();
-            _doctrineEffective = _doctrineBase;
-            if (_doctrineBase == "defend")
-            {
-                long lim = DoctrineRoundLimit();
-                if (lim >= 3 && roundNo >= lim - Math.Max(1, lim / 3))
-                    _doctrineEffective = "hunt";
-            }
+            // P34-B: the flip DIRECTION comes from the parsed win conditions
+            // (Core law, harness-pinned both ways). No feed view / no parsed
+            // imperial win-by clause = no flip - the blind hunt-at-limit that
+            // served the Rebels' clock in Player-34 r6 is gone.
+            long lim = DoctrineRoundLimit();
+            var phaseView = _lastFeedView;
+            string impWin = phaseView != null ? (phaseView.ImperialWinBy ?? "") : "";
+            _doctrineEffective = Tac.Doctrine.DoctrinePhaseOnLimit(
+                _doctrineBase, roundNo, lim, impWin);
             // guard band membership for a defend deployment (count computed
             // in BuildGroups; DoctrineFor consumes it): recompute per round,
             // wiped the moment the effective posture stops being defend.
@@ -3827,7 +3847,10 @@ namespace TacticalAI
                     catch { /* cosmetic */ }
                 }
                 Debug.Log("TacticalAIBridge::doctrine phase " + _doctrineBase + " -> "
-                          + _doctrineEffective + " r" + roundNo + " limit=" + DoctrineRoundLimit());
+                          + _doctrineEffective + " r" + roundNo + " limit=" + DoctrineRoundLimit()
+                          + " imperialWinBy=" + (string.IsNullOrEmpty(
+                              _lastFeedView != null ? _lastFeedView.ImperialWinBy : null)
+                              ? "none" : _lastFeedView.ImperialWinBy));
             }
         }
 

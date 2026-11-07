@@ -13,13 +13,17 @@ public static class DataStore
 	// (wit19) against THIS string. NEW PROJECT (06.11.): the fork flies under
 	// its own name "Imperial Admiral" now (Tilman/GlowPuff asked for distance
 	// from "Imperial Commander", upstream stays untouched as the origin) -
-	// versioning restarts at v1.0.0, plain semver, no build counter. The TAG
-	// moves WITH every push to main (tag v1.0.0, v1.0.1, ... from the same
-	// step), or the title icon goes orange: version and latest tag must stay
-	// married - the check reads the TAG, not a release page. A GitHub RELEASE
-	// is only ever created when Thomas says so (04.11, after an auto-created
-	// #1007 release was deleted).
-	public static readonly string appVersion = "v1.0.0";
+	// versioning restarts at v1.0.0, plain semver, no build counter.
+	// TAG LAW (Thomas 07.11, replaces the tag-per-push law): strict
+	// v<maj>.<min>.<pat> tags are cut ONLY at a release act, by Thomas, on
+	// the chosen commit; dev pushes tag v<next>-dev.N instead - the update
+	// parser accepts exactly-three-integers only, so dev tags never move
+	// the check. THIS string carries that same -dev.N between releases,
+	// which makes a dev build honestly orange on the title icon (it IS not
+	// the release); a release build resets it to the plain tag and turns
+	// green again. A GitHub RELEASE is only ever created when Thomas says
+	// so (04.11, after an auto-created #1007 release was deleted).
+	public static readonly string appVersion = "v1.0.1-dev.1";	// dev tree between releases; the 07.11 versioning law bakes the next-planned version with a -dev.N push counter here (release act resets it to the plain vX.Y.Z tag Thomas cuts; the update check only honours strict v<maj>.<min>.<pat> tags, so a -dev build honestly shows orange)
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

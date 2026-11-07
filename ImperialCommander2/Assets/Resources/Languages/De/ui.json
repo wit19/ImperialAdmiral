@@ -222,7 +222,8 @@
     "optionalDeployCostFormatUC": "{0} - {1}",
     "optionalDeployDpFormatUC": "Aufstellungspunkt: {0}",
     "optionalDeployConfirmUC": "Aufstellen",
-    "optionalTacticalAnnounceUC": "{0} stellt sich bei {1} auf. Stelle seine Figuren auf dem Aufstellungspunkt auf."
+    "optionalTacticalAnnounceUC": "{0} stellt sich bei {1} auf. Stelle seine Figuren auf dem Aufstellungspunkt auf.",
+    "tooltipHeroChipUC": "Aktivierungs-Chip: erst am Ende der Heldenrunde flippen – nach Schaden, Kills und angesagten Interaktionen. Nur dann rechnet die KI mit diesem Zug."
   },
   "uiCampaign": {
     "threatInfoUC": "Der Bedrohungsgrad entspricht der Höhe des zuletzt gespielten Einsatzes.",
@@ -403,6 +404,7 @@
     "ordRiskDisengage": "Rückzug zur Deckung",
     "ordInfoAttack": "Angriff: Waffe oder Fähigkeit nutzen.",
     "ordInfoDoor": "Türen dürfen auf dem Weg zum Ziel geöffnet werden – das Öffnen kostet eine Aktion (Interaktion); gesperrte Türen nur nach Missionsregel.",
+    "ordInfoFlip": "Helden-Aktivierungs-Chips erst am Ende der jeweiligen Heldenrunde flippen – nachdem Schaden angesagt, Kills vom Brett entfernt und alle Interaktionen angesagt wurden. Dieser Flip ist das einzige Signal, dass der Zug des Helden vorbei ist; ohne ihn oder zu früh gesetzt rechnet die KI mit dem falschen Helden.",
     "ordInfoGuardZone": "Wachzone = der Bereich um die Missionsziele und Terminals, den die Rebellen erreichen müssen. Ihren Verlauf liest du aus der Mission ab – das Popup kennt keine Zonenfelder.",
     "ordInfoRule": "Grundregel: Eine imperiale Figur greift pro Aktivierung nur ein Mal an – außer ihre imperiale Karte erlaubt ausdrücklich mehrere Angriffe. Eine ungenutzte Aktion verfällt; die Figur bleibt dann stehen.",
     "setInfo": "INFO-TEXT",

@@ -206,7 +206,10 @@ comes up". Tactical mode replaces both halves with planning
 >
 > The flips also appear as regular lines in the in-game mission log panel
 > (same kind of line the imperial activation pop-ups have always written
-> there), so you can always check what the AI saw.
+> there), so you can always check what the AI saw. The game reminds you at
+> both ends of the turn: every tactical activation pop-up's INFO line states
+> this rule (hideable with the INFO-TEXT setting), and hovering a hero's
+> activation checkbox shows the same hint; legacy missions show neither.
 
 Mission-authored figures — the special ones a scenario spawns for you (a named
 villain like Ivan Talos, custom bosses, mission troopers) — are planned

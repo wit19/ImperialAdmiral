@@ -59,10 +59,36 @@ namespace Saga
 
 			SetHealth( cd.heroState );
 			SetActivation();
+			WireChipTooltip();
 
 			Transform tf = transform.GetChild( 0 );
 			tf.localScale = Vector3.zero;
 			tf.DOScale( 1, 1f ).SetEase( Ease.OutBounce );
+		}
+
+		/// <summary>
+		/// Thomas 07.11: the activation-chip golden rule on its OWN widget - the
+		/// hero's activation checkbox must be flipped at the END of the hero's
+		/// turn (after damage, kills and interactions are announced), because the
+		/// flip is the ONLY carrier of HeroActivated (M6s-B7) and every tactical
+		/// attribution law keys on that event. The hover tooltip is attached at
+		/// runtime (Init runs on BOTH the fresh-deploy and the restore rail),
+		/// tactical missions ONLY - a legacy mission never grows the component,
+		/// so classic behaviour stays bit-identical.
+		/// </summary>
+		private void WireChipTooltip()
+		{
+			if ( cardDescriptor.isDummy )
+				return;
+			if ( !TacticalAI.TacticalAIBridge.TacticalMissionActive() )
+				return;
+			foreach ( var t in new[] { activationToggle1, activationToggle2 } )
+			{
+				if ( t == null )
+					continue;
+				if ( t.gameObject.GetComponent<TooltipHandler>() == null )
+					t.gameObject.AddComponent<TooltipHandler>().tooltip = "HeroChipFlip";
+			}
 		}
 
 		public void OnCount1( Toggle t )

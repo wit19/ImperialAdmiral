@@ -108,6 +108,12 @@ public class UITacticalAI
 	// player reads off the mission (wiki Kalt-Lesetest: the popup knows
 	// no zone tiles), which is exactly what this line says.
 	public string ordInfoGuardZone;
+	// Thomas 07.11: the activation-chip golden rule - the END-of-turn hero chip
+	// flip is the ONLY carrier of HeroActivated (M6s-B7), so the popup INFO
+	// block states its timing (after damage/kills/interactions announced) on
+	// EVERY tactical activation popup, and the hero card's own checkbox
+	// carries the same rule as a hover tooltip (tooltipHeroChipUC below).
+	public string ordInfoFlip;
 	public string ordRiskLabel, ordRiskPress, ordRiskHold, ordRiskGuardHold, ordRiskDisengage;
 	public string whyPrefix, whyRank;
 	public string setHeading, setMode, setSkill, setExplain, setInfo, setOn, setOff, setRowFormat;
@@ -229,7 +235,7 @@ public class SagaUISetup
 public class SagaMainApp
 {
 	// M13c optional-deployment revival keys (last field block): ui.json sagaMainApp, 11 languages.
-	public string tooltipHideUIUC, roundIncreasedUC, endOfMissionUC, deployMessageUC, noDPWarningUC, mmAddTilesUC, mmRemoveTilesUC, mmCoreTileNameUC, mmTwinTileNameUC, mmHothTileNameUC, mmBespinTileNameUC, mmJabbaTileNameUC, mmEmpireTileNameUC, mmLothalTileNameUC, mmAddEntitiesUC, groupsReadyUC, groupsExhaustUC, repositionTargetUC, doorsUC, cratesUC, terminalsUC, tokensUC, woundUC, withdrawUC, exhaustUC, defeatUC, imperialMenu, medpacInfoUC, cannotDefeatUC, missionLogTitle, optionalDeployTitleUC, optionalDeployPickGroupUC, optionalDeployPickDpUC, optionalDeployNoGroupsUC, optionalDeployCostFormatUC, optionalDeployDpFormatUC, optionalDeployConfirmUC, optionalTacticalAnnounceUC;
+	public string tooltipHideUIUC, roundIncreasedUC, endOfMissionUC, deployMessageUC, noDPWarningUC, mmAddTilesUC, mmRemoveTilesUC, mmCoreTileNameUC, mmTwinTileNameUC, mmHothTileNameUC, mmBespinTileNameUC, mmJabbaTileNameUC, mmEmpireTileNameUC, mmLothalTileNameUC, mmAddEntitiesUC, groupsReadyUC, groupsExhaustUC, repositionTargetUC, doorsUC, cratesUC, terminalsUC, tokensUC, woundUC, withdrawUC, exhaustUC, defeatUC, imperialMenu, medpacInfoUC, cannotDefeatUC, missionLogTitle, optionalDeployTitleUC, optionalDeployPickGroupUC, optionalDeployPickDpUC, optionalDeployNoGroupsUC, optionalDeployCostFormatUC, optionalDeployDpFormatUC, optionalDeployConfirmUC, optionalTacticalAnnounceUC, tooltipHeroChipUC;
 }
 
 public class UIMainApp

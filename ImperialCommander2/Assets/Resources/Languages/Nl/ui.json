@@ -222,7 +222,8 @@
     "optionalDeployCostFormatUC": "{0} - {1}",
     "optionalDeployDpFormatUC": "Opstelplaats: {0}",
     "optionalDeployConfirmUC": "Opschonen",
-    "optionalTacticalAnnounceUC": "{0} plaatst zich bij {1}. Zet zijn figuren op de opstelplaats."
+    "optionalTacticalAnnounceUC": "{0} plaatst zich bij {1}. Zet zijn figuren op de opstelplaats.",
+    "tooltipHeroChipUC": "Activation chip: flip only at the END of this hero's turn - after damage, kills and announced interactions. Only then does the AI count this turn."
   },
   "uiCampaign": {
     "threatInfoUC": "Het dreigingsniveau is gelijk aan de meest recent gespeelde missie.",
@@ -404,6 +405,7 @@
     "ordRiskDisengage": "terugtrekken naar dekking",
     "ordInfoAttack": "Attack: use a weapon or an ability.",
     "ordInfoDoor": "Doors may be opened on the way to the objective - opening one costs an action (interact); locked doors only as the mission rules allow.",
+    "ordInfoFlip": "Flip a hero's activation chip only at the END of that hero's turn - after the damage is announced, kills are removed and all interactions are declared. This flip is the only signal that the hero's turn is over; without it, or flipped too early, the AI credits the turn's events to the wrong hero.",
     "ordInfoGuardZone": "Guard zone = the area around the mission's objectives and terminals the rebels must reach. Its extent comes from the mission — the popup knows no zone tiles.",
     "ordInfoRule": "Basic rule: an Imperial figure attacks only once per activation - unless its Imperial card explicitly allows several attacks. An unused action is lost; the figure simply stays put.",
     "setInfo": "INFO TEXT",

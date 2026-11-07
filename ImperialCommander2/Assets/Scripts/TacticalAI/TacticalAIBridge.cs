@@ -1131,6 +1131,13 @@ namespace TacticalAI
                 if (!string.IsNullOrEmpty(Li.ordInfoRule)) infoLines.Add(Li.ordInfoRule);
                 if (!string.IsNullOrEmpty(Li.ordInfoAttack)) infoLines.Add(Li.ordInfoAttack);
                 if (!string.IsNullOrEmpty(Li.ordInfoDoor)) infoLines.Add(Li.ordInfoDoor);
+                // Thomas 07.11: the activation-chip golden rule rides EVERY
+                // popup ("unbedingt ... das muss ein Spieler wissen"): the
+                // hero chip flips at the END of the hero's turn, after damage,
+                // kills and interactions are announced - it is the single
+                // carrier of HeroActivated and every attribution law keys on
+                // it. Missing key skips the sentence (same no-blank-row law).
+                if (!string.IsNullOrEmpty(Li.ordInfoFlip)) infoLines.Add(Li.ordInfoFlip);
                 // M6s (Thomas 03.11., B1): the guard-zone definition rides the
                 // Wachschutz popup ONLY (plan.Pattern == "guard" - the same
                 // pattern the tree/renderer already resolved above); every

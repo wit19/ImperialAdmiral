@@ -511,6 +511,14 @@ namespace TacticalAI
                             Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(
                                 CurrentMissionAiMode())),
                             LastCriticalSections);
+                        // Playtest forensics (Thomas 07.11, M14f Kontrollentwurf):
+                        // one greppable snapshot per pull ("SD-ZONES::") so a
+                        // playtest session records WHAT the proximity feed saw -
+                        // trust-gated own zones, fresh hero rings, contested
+                        // object. Log-only: no decision reads this line.
+                        Debug.Log("TacticalAIBridge::SD-ZONES::" +
+                                  (LastSdZones == null ? "-"
+                                   : LastSdZones.Dump().Replace('\n', ';')));
                     }
                     catch (Exception e)
                     {

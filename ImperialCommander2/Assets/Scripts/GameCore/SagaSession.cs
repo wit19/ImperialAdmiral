@@ -73,6 +73,10 @@ namespace Saga
 				if ( deployLedger == null )
 					deployLedger = new Dictionary<string, DeployLedgerRow>();
 				deployLedger[cardId] = new DeployLedgerRow { dps = new List<string>( dps ), origin = origin };
+				// Playtest forensics (Thomas 07.11, M14f Kontrollentwurf): greppable
+				// audit trail of every ledger write. Log-only.
+				UnityEngine.Debug.Log( "DeployLedger::" + cardId + " <- " + string.Join( ",", dps.ToArray() )
+					+ " (" + origin + ")" );
 			}
 			catch ( System.Exception e )
 			{

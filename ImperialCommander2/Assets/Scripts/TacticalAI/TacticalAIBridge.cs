@@ -518,7 +518,18 @@ namespace TacticalAI
                         // object. Log-only: no decision reads this line.
                         Debug.Log("TacticalAIBridge::SD-ZONES::" +
                                   (LastSdZones == null ? "-"
-                                   : LastSdZones.Dump().Replace('\n', ';')));
+                                   : LastSdZones.Dump().Replace('\n', ';')) +
+                                  // §8.4 name plumbing evidence: raw authored
+                                  // name -> cleaned popup name of the reaction
+                                  // zone ("null" = relative fallback fires).
+                                  (LastSdZones != null && LastSdZones.ThreatZone != null
+                                   ? "|threatName=" +
+                                     (LastSectionSpace.Graph.SectionName(
+                                         LastSdZones.ThreatZone) ?? "") + "->" +
+                                     (Tac.SectionConsumers.CleanSectionName(
+                                         LastSectionSpace.Graph.SectionName(
+                                             LastSdZones.ThreatZone)) ?? "null")
+                                   : ""));
                     }
                     catch (Exception e)
                     {
@@ -762,7 +773,13 @@ namespace TacticalAI
                                                   LastSdZones != null ? LastSdZones.RingZones : null,
                                                   LastSdZones != null ? LastSdZones.ContestZone : null,
                                                   MissionCounter(), null,
-                                                  _commandTimingByGroup);
+                                                  _commandTimingByGroup,
+                                                  // M14f Naehesuch: the live
+                                                  // ladder (empty/no threat
+                                                  // -> null = canon plan).
+                                                  LastSdZones != null &&
+                                                      LastSdZones.GroupThreatDist.Count > 0
+                                                  ? LastSdZones.GroupThreatDist : null);
             Tac.OrderPlanner.AssertPermutation(plan, facts.Select(f => f.GroupId));
             _slots = plan.Slots;
             var names = facts.ToDictionary(f => f.GroupId, f => f.Name);
@@ -2738,6 +2755,30 @@ namespace TacticalAI
                         && !string.IsNullOrEmpty(UIx.ordExplainVergeltung))
                         sdLine = TF(UIx.ordExplainVergeltung,
                             GroupDisplay(groupId), HeroDisplay(verg));
+                    // M14f Naehesuch (Thomas 07.11 R2=b+R3): THIS activation
+                    // rode the proximity lift - its own trusted section sits
+                    // one observed step from the reaction zone. Loch-Gesetz-
+                    // clean: the zone rides its AUTHORED NAME, cleaned by the
+                    // §8.4 law; when the name does not inform, the RELATIVE
+                    // variant speaks - never an id, never a coordinate.
+                    if (sdLine == null && LastSdZones != null
+                        && LastSdZones.ThreatZone != null
+                        && LastSectionSpace != null)
+                    {
+                        int nd;
+                        if (LastSdZones.GroupThreatDist.TryGetValue(groupId, out nd)
+                            && nd == 1)
+                        {
+                            var tName = Tac.SectionConsumers.CleanSectionName(
+                                LastSectionSpace.Graph.SectionName(LastSdZones.ThreatZone));
+                            if (tName != null && !string.IsNullOrEmpty(UIx.ordExplainNahe))
+                                sdLine = TF(UIx.ordExplainNahe,
+                                    GroupDisplay(groupId), tName);
+                            else if (!string.IsNullOrEmpty(UIx.ordExplainNaheRel))
+                                sdLine = TF(UIx.ordExplainNaheRel,
+                                    GroupDisplay(groupId));
+                        }
+                    }
                     // S-E (card t_9dd56737): the supporter mask-trust decision
                     // of THIS activation (strike AND support). Coord-free law:
                     // the section rides its AUTHORED name (Graph.SectionName),

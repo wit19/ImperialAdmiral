@@ -199,6 +199,9 @@ public class UITacticalAI
 	// Clamp carries no argument. All figure-/object-naming (Loch-Gesetz:
 	// never a coordinate, never a section number).
 	public string ordExplainWachzone, ordExplainThreeC, ordExplainVergeltung, ordExplainClamp, ordExplainFokuszone;
+	// M14f Naehesuch: {0}=group, {1}=cleaned reaction-zone name; the Rel
+	// variant carries only {0} (junk name -> relative wording, §8.4 law).
+	public string ordExplainNahe, ordExplainNaheRel;
 	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
 	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }

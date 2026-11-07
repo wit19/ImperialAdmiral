@@ -349,6 +349,8 @@
     "ordExplainWachzone": "{0} is working at the mission-critical object in {1} — {2} acts first.",
     "ordExplainThreeC": "{0} pushed into the newly activated section {1} — {2} reacts first.",
     "ordExplainVergeltung": "{0} was shot at this round — {1} is suspected as the shooter.",
+    "ordExplainNahe": "Következő reakció: {0} — {1} közvetlenül a történések mellett van.",
+    "ordExplainNaheRel": "Következő reakció: {0} — a saját pozíció közvetlenül a történések mellett van.",
     "ordExplainSupportMaske": "{0} trusts its picture of {1} and takes aim at the hero reported there.",
     "ordExplainSupportHalten": "{0} holds its own section instead of guessing a target — the picture is still too diffuse.",
     "ordExplainClamp": "A hero is working at the mission-critical object — the units guard the objective instead of hunting the heroes.",

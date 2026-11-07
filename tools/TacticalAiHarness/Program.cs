@@ -156,6 +156,8 @@ namespace TacticalAiHarness
             Run("section_trust.json", SecSectionTrust);
             Run("section_consumers.json", SecSectionConsumers);
             Run("section_consumers.json", SecFokuszone);
+            Run("section_consumers.json", SecNaheNames);
+            Run("order_plan.json", SecNaheOrder);
             Run("section_support.json", SecSectionSupport);
             Run("dp_anchors.json", SecDpAnchors);
             Run("deploy_ledger.json", SecDeployLedger);

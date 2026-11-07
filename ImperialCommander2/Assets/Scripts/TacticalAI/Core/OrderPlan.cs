@@ -275,7 +275,8 @@ namespace TacticalAI.Core
         /// (+ ring proximity x1.25, + contested-zone x1.15,
         ///  tempo law: heavy bonus / swarm discount).
         public static Rational Efficiency(GroupFactsWithEv w, string posture,
-                                         HashSet<string> ringZones, string contestZone)
+                                         HashSet<string> ringZones, string contestZone,
+                                         Dictionary<string, int> threatDist = null)
         {
             var f = w.Facts;
             var fit = DefaultFit;
@@ -297,6 +298,22 @@ namespace TacticalAI.Core
             }
             if (!string.IsNullOrEmpty(contestZone) && f.Zone == contestZone)
                 eff = eff * new Rational(23, 20);
+            // M14f Naehesuch (Thomas 07.11 R2=b: "der GM zieht benachbarte
+            // Truppen in die Schlacht und ueberbrueckt nur bewusst
+            // Distanz"): a group whose trusted own section sits ONE lower-
+            // bound step from the reaction zone activates ahead - it is
+            // already on the way. dist 0 needs no extra lift (the ring/
+            // contest weights above carry it); dist -1 means NO knowledge
+            // and stays NEUTRAL - never "far"; dist >= 2 is not punished
+            // (bonus-only law, the playtest sharpens it). ONE fixed lift,
+            // never a ladder of stacked zone bonuses (M11h combination
+            // law).
+            if (threatDist != null && f.GroupId != null)
+            {
+                int d;
+                if (threatDist.TryGetValue(f.GroupId, out d) && d == 1)
+                    eff = eff * new Rational(11, 10);
+            }
             // tempo law: heavies first when they are not waiting on a blocker;
             // swarms follow the heavy shots (they clear doors/positions)
             if (f.IsHeavy)
@@ -332,7 +349,14 @@ namespace TacticalAI.Core
                                           // null/absent = today's blind chain,
                                           // bit-identical canon (every pinned
                                           // order_plan vector runs untouched).
-                                          Dictionary<string, CommandTimingDecision> commandTiming = null)
+                                          Dictionary<string, CommandTimingDecision> commandTiming = null,
+                                          // M14f Naehesuch (Stage B): group ->
+                                          // lower-bound distance to the reaction
+                                          // zone (SectionConsumers.ApplyThreatLadder
+                                          // output). Null/empty = the plan is
+                                          // bit-identical canon. Appended LAST:
+                                          // every existing caller is positional.
+                                          Dictionary<string, int> threatDist = null)
         {
             var prof = skill;                       // resolve_skill(skill)
             var level = prof != null ? prof.Level : "ref";
@@ -372,10 +396,15 @@ namespace TacticalAI.Core
             {
                 var ringSet = new HashSet<string>();
                 if (ringZones != null) foreach (var z in ringZones) ringSet.Add(z == null ? null : z.ToString());
+                // M14f gate: the Naehesuch map is a tier-3 decision tool -
+                // the ladder upstream fills it only for S3+, but a caller
+                // that hands one in early still sees today's canon plan.
+                var naheDist = (level == "S3" || level == "S4" || level == "S5")
+                    ? threatDist : null;
                 var effs = new Dictionary<string, Rational>();
                 foreach (var w in weighted)
                 {
-                    var e0 = Efficiency(w, posture, ringSet, contestZone);
+                    var e0 = Efficiency(w, posture, ringSet, contestZone, naheDist);
                     // M12d activation-economy stage: printed extra-action /
                     // movement-point cards lift the owning side's groups by
                     // ONE fixed multiplier (MAX-once, never a sum - M11h

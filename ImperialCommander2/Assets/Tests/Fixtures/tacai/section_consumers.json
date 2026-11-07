@@ -1150,7 +1150,7 @@
       "expect": {
         "canon": "mission=vector|sd_zonen_vertrauen\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=8\nG|GUARD|GUARD|1|0|1|1|1|0|1\nG|SCOUT|SCOUT|1|0|1|1|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-b kind=fact seq=7 round=2\n",
         "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Relay Hall\nsec s-b name=Catwalk\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\ngroup SCOUT alive=1 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-b:fact\ncands s-b\ndom 1\nhero LU section=s-b round=2\ninteract LU t-9 section=s-b round=2\n",
-        "readout": "zones3[zone GUARD=s-a ; zone SCOUT=s-b ; ring s-b ; contest -]\nzones4[zone GUARD=s-a ; zone SCOUT=s-b ; ring s-b ; contest s-b]\nzonesNoTrust[ring s-b ; contest s-b]"
+        "readout": "zones3[zone GUARD=s-a ; zone SCOUT=s-b ; ring s-b ; contest - ; threat s-b ; naehe GUARD=-1 ; naehe SCOUT=0]\nzones4[zone GUARD=s-a ; zone SCOUT=s-b ; ring s-b ; contest s-b ; threat s-b ; naehe GUARD=-1 ; naehe SCOUT=0]\nzonesNoTrust[ring s-b ; contest s-b ; threat s-b]"
       }
     },
     {

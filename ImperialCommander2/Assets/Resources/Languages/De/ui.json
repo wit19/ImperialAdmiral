@@ -344,6 +344,8 @@
     "ordExplainWachzone": "{0} arbeitet am Missionsobjekt in {1} — {2} greift zuerst ein.",
     "ordExplainThreeC": "{0} drang in die neu aktivierte Sektion {1} ein — {2} reagiert zuerst.",
     "ordExplainVergeltung": "Auf {0} wurde in dieser Runde geschossen — als Schütze wird {1} vermutet.",
+    "ordExplainNahe": "Nächste Reaktion: {0} — {1} grenzt direkt an das Geschehen.",
+    "ordExplainNaheRel": "Nächste Reaktion: {0} — die eigene Position grenzt direkt an das Geschehen.",
     "ordExplainSupportMaske": "{0} folgt dem Bild der Sektion {1} und nimmt dort den gemeldeten Helden ins Visier.",
     "ordExplainSupportHalten": "{0} hält die eigene Sektion, statt ein Ziel zu raten — das Bild ist noch zu diffus.",
     "ordExplainClamp": "Ein Held arbeitet am Missionsobjekt — die Einheiten schützen das Ziel, statt die Helden zu suchen.",

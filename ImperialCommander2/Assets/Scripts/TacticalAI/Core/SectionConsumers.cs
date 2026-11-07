@@ -75,6 +75,15 @@ namespace TacticalAI.Core
         public readonly List<string> RingZones = new List<string>();
         public string ContestZone;          // null = nothing contested
 
+        // M14f Stage B - Naehesuch (Thomas 07.11 R2=b: "der GM zieht
+        // benachbarte Truppen in die Schlacht"): the reaction zone the
+        // plan looks toward, plus the lower-bound distance from each
+        // group's OWN trusted zone to it. -1 = no knowledge (neutral in
+        // the ordering law - never "far"). Empty table = law silent.
+        public string ThreatZone;
+        public readonly Dictionary<string, int> GroupThreatDist =
+            new Dictionary<string, int>(StringComparer.Ordinal);
+
         public string ZoneOf(string group)
         {
             string z;
@@ -90,6 +99,20 @@ namespace TacticalAI.Core
             foreach (var k in keys) sb.Add("zone " + k + "=" + ZoneByGroup[k] + "\n");
             sb.Add("ring " + (RingZones.Count == 0 ? "-" : string.Join(",", RingZones.ToArray())) + "\n");
             sb.Add("contest " + (ContestZone ?? "-") + "\n");
+            // M14f: the Naehesuch rows ride the SAME pin surface - but the
+            // record discipline holds (keys appear ONLY where the law is
+            // live): no threat zone -> no new rows, every pinned canon
+            // dump stays byte-identical. With a threat zone the "threat"
+            // row plus one sorted "naehe <group>=<dist>" row per known
+            // group are recorded.
+            if (ThreatZone != null)
+            {
+                sb.Add("threat " + ThreatZone + "\n");
+                var dk = new List<string>(GroupThreatDist.Keys);
+                dk.Sort(StringComparer.Ordinal);
+                foreach (var k in dk)
+                    sb.Add("naehe " + k + "=" + GroupThreatDist[k] + "\n");
+            }
             return string.Join("", sb.ToArray());
         }
     }
@@ -387,6 +410,7 @@ namespace TacticalAI.Core
             // The bridge passes the critical set through the dedicated
             // overload; the 3c fallback covers the no-table degradation.
             zb.ContestZone = contest;
+            ApplyThreatLadder(zb, space, profile);
             return zb;
         }
 
@@ -408,7 +432,60 @@ namespace TacticalAI.Core
                         contested = s;
                 if (contested != null) zb.ContestZone = contested;
             }
+            // the critical table can RETIRE the 3c contest -> re-derive the
+            // ladder (idempotent, ordinal-deterministic).
+            ApplyThreatLadder(zb, space, profile);
             return zb;
+        }
+
+        // M14f Stage B - the Naehesuch ladder (Thomas 07.11 R2=b). The
+        // reaction zone is the CONTESTED section (the object worked NOW),
+        // else exactly one fresh ring zone; several rings without a
+        // contest = no single reaction goal -> null (neutral, never a
+        // guess). Distances run over the OBSERVED graph only -
+        // DistanceLowerBound -1 means NO knowledge and reads as neutral
+        // in the ordering law, never "far". Gate: tier S3+ (zones are a
+        // tier-3 decision tool); below the gate the table stays empty and
+        // every plan is bit-identical (Null-Law).
+        static void ApplyThreatLadder(ZoneBelief zb, SectionSpace space,
+                                      SkillProfile profile)
+        {
+            zb.ThreatZone = null;
+            zb.GroupThreatDist.Clear();
+            if (profile == null) return;
+            var lvl = profile.Level;
+            if (lvl != "S3" && lvl != "S4" && lvl != "S5") return;
+            var threat = zb.ContestZone;
+            if (threat == null && zb.RingZones.Count == 1) threat = zb.RingZones[0];
+            if (threat == null) return;
+            zb.ThreatZone = threat;
+            var graph = space.Graph;
+            foreach (var kv in zb.ZoneByGroup)
+                zb.GroupThreatDist[kv.Key] = graph.DistanceLowerBound(kv.Value, threat);
+        }
+
+        // M14f R3 text law (Thomas 07.11, concept §8.4): an authored
+        // section name may ride a popup ONLY when it informs. The editor
+        // boilerplate prefix "Section <n> - " is stripped; junk is refused
+        // (bare "Start Section"/"Section", grid labels like "R1"/"L5",
+        // digits only). null = not trustworthy -> the consumer must fall
+        // back to a RELATIVE wording; an id or GUID is never quoted.
+        public static string CleanSectionName(string raw)
+        {
+            if (string.IsNullOrEmpty(raw)) return null;
+            var n = raw.Trim();
+            // editor boilerplate prefix, one regex: "Section <n> - tail"
+            var m = System.Text.RegularExpressions.Regex.Match(
+                n, @"^Section\s*\d+\s*-\s*(.*)$");
+            if (m.Success) n = m.Groups[1].Value.Trim();
+            if (n.Length == 0) return null;
+            if (string.Equals(n, "Start Section", System.StringComparison.OrdinalIgnoreCase)
+                || string.Equals(n, "Section", System.StringComparison.OrdinalIgnoreCase))
+                return null;
+            if (System.Text.RegularExpressions.Regex.IsMatch(n, @"^[A-Za-z]{1,2}[0-9]{1,2}$")
+                || System.Text.RegularExpressions.Regex.IsMatch(n, @"^[0-9]+$"))
+                return null;
+            return n;
         }
 
         // ---- Baustein 5: POSTURE-CLAMP (skill-gated at its consumer) -------

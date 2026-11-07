@@ -542,6 +542,125 @@ namespace TacticalAiHarness
             Check("fokuszone.no_space", null,
                   SectionConsumers.FokuszoneHeadFor(null, crit,
                       new List<string> { "LU" }, 5));
+
+            // ---- M14f Naehesuch vectors on the SAME fixture ----------------
+            // The reaction ladder over a KNOWN scenario: contest/ring ->
+            // threat zone + lower-bound distances (or -1), dumped on the
+            // record surface. Values pinned from the first honest run.
+            var zbN = SectionConsumers.PlanZones(space, view,
+                SkillProfile.For("S3"), crit);
+            // pinned ground truth (fixture sd_wachzone_held): the contest
+            // zone s-a is the reaction zone; the fixture carries no TRUSTED
+            // group zone -> no nahe rows (record discipline: rows appear
+            // only where the law is live).
+            Check("nahe.threat", "s-a", zbN != null ? zbN.ThreatZone : "NULL");
+            Check("nahe.dump", "ring s-a\ncontest s-a\nthreat s-a\n",
+                  zbN != null ? zbN.Dump() : "NULL");
+            // Null-Law gate: tier S2 never sees threat/naehe rows.
+            var zbS2 = SectionConsumers.PlanZones(space, view,
+                SkillProfile.For("S2"), crit);
+            Check("nahe.gate_s2", false,
+                  zbS2 != null && zbS2.Dump().Contains("threat"));
+            Check("nahe.gate_s2_threat_null", null,
+                  zbS2 != null ? zbS2.ThreatZone : "NULL");
+        }
+
+        // M14f R3 §8.4 name law - pure table vectors (no fixture needed).
+        static void SecNaheNames()
+        {
+            Check("nahe_name.canteen", "Cantina",
+                  SectionConsumers.CleanSectionName("Section 2 - Cantina"));
+            Check("nahe_name.control", "Control Room",
+                  SectionConsumers.CleanSectionName("Section 3 - Control Room"));
+            Check("nahe_name.bare_ok", "Hangar",
+                  SectionConsumers.CleanSectionName("Hangar"));
+            Check("nahe_name.start_junk", null,
+                  SectionConsumers.CleanSectionName("Start Section"));
+            Check("nahe_name.section_junk", null,
+                  SectionConsumers.CleanSectionName("Section 1 - Section"));
+            Check("nahe_name.grid_junk", null,
+                  SectionConsumers.CleanSectionName("R1"));
+            Check("nahe_name.grid_junk2", null,
+                  SectionConsumers.CleanSectionName("L5"));
+            Check("nahe_name.digits_junk", null,
+                  SectionConsumers.CleanSectionName("42"));
+            Check("nahe_name.empty", null,
+                  SectionConsumers.CleanSectionName(""));
+            Check("nahe_name.null", null,
+                  SectionConsumers.CleanSectionName(null));
+            Check("nahe_name.prefix_only", null,
+                  SectionConsumers.CleanSectionName("Section 2 - "));
+            Check("nahe_name.trim_ws", "Garage",
+                  SectionConsumers.CleanSectionName("  Section 2 - Garage  "));
+        }
+
+        // M14f Stage B ordering vectors (inline, symmetric roster: every
+        // difference in the plan is the law itself).
+        static void SecNaheOrder()
+        {
+            var catalog = Catalog();
+            List<GroupFacts> Roster()
+            {
+                return new List<GroupFacts>
+                {
+                    // SAME zone/card/pattern/vitality - the ONLY
+                    // difference the law can see is the index and the
+                    // Naehesuch map row.
+                    new GroupFacts("G0", 0, "DG021", "G0", "aggressive", 2, Rational.One, "Z1"),
+                    new GroupFacts("G1", 1, "DG021", "G1", "aggressive", 2, Rational.One, "Z1"),
+                };
+            }
+            // -- unit law: the exact multiplier on the efficiency rail ----
+            var card = catalog["DG021"];
+            var g1 = Roster()[1];
+            var w1 = OrderPlanner.WithEv(g1, card, Rational.Zero);
+            var baseEff = OrderPlanner.Efficiency(w1, "eliminate",
+                new HashSet<string>(), null, null);
+            Check("nahe_mult.adjacent", (baseEff * new Rational(11, 10)).ToString(),
+                  OrderPlanner.Efficiency(w1, "eliminate",
+                      new HashSet<string>(), null,
+                      new Dictionary<string, int> { { "G1", 1 } }).ToString());
+            Check("nahe_mult.unknown_neutral", baseEff.ToString(),
+                  OrderPlanner.Efficiency(w1, "eliminate",
+                      new HashSet<string>(), null,
+                      new Dictionary<string, int> { { "G1", -1 } }).ToString());
+            Check("nahe_mult.zero_no_double_signal", baseEff.ToString(),
+                  OrderPlanner.Efficiency(w1, "eliminate",
+                      new HashSet<string>(), null,
+                      new Dictionary<string, int> { { "G1", 0 } }).ToString());
+            Check("nahe_mult.far_no_penalty", baseEff.ToString(),
+                  OrderPlanner.Efficiency(w1, "eliminate",
+                      new HashSet<string>(), null,
+                      new Dictionary<string, int> { { "G1", 2 } }).ToString());
+            // -- integration: the map moves the activation order, the
+            // null-law rows never do. S3 (no finisher chain), the same
+            // deterministic rng for every run; dumps printed once and
+            // pinned below.
+            Func<Dictionary<string, int>, OrderPlan> Plan = map =>
+                OrderPlanner.PlanRound(3, Roster(), catalog, "eliminate",
+                    SkillProfile.For("S3"), new DeterministicRandom(7), 1,
+                    new string[0], null, null, null, null, map);
+            var pNull = Plan(null);
+            var pEmpty = Plan(new Dictionary<string, int>());
+            var pUnknown = Plan(new Dictionary<string, int> { { "G1", -1 } });
+            var pAdj = Plan(new Dictionary<string, int> { { "G1", 1 } });
+            var nm = new Dictionary<string, string> { { "G0", "G0" }, { "G1", "G1" } };
+            // Null-Law: absent/empty/-1 maps are bit-identical canon.
+            Check("nahe_plan.null_eq_empty", pNull.PublicLine(nm), pEmpty.PublicLine(nm));
+            Check("nahe_plan.null_eq_unknown", pNull.PublicLine(nm), pUnknown.PublicLine(nm));
+            // Gate below tier 3: the map is inert, bit-identical canon.
+            var pS2 = OrderPlanner.PlanRound(3, Roster(), catalog, "eliminate",
+                SkillProfile.For("S2"), new DeterministicRandom(7), 1,
+                new string[0], null, null, null, null,
+                new Dictionary<string, int> { { "G1", 1 } });
+            var pS2canon = OrderPlanner.PlanRound(3, Roster(), catalog, "eliminate",
+                SkillProfile.For("S2"), new DeterministicRandom(7), 1,
+                new string[0], null, null);
+            Check("nahe_plan.gate_s2_identical", pS2canon.PublicLine(nm),
+                  pS2.PublicLine(nm));
+            // The law: dist 1 moves the head (hand-pinned from the run).
+            Check("nahe_plan.adjacent_flips_head", "G1", pAdj.Slots[0].GroupId);
+            Check("nahe_plan.canon_head", "G0", pNull.Slots[0].GroupId);
         }
     }
 }

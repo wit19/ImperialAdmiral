@@ -61,6 +61,7 @@ in [`ANDROID_build.md`](ANDROID_build.md).
 18. [The section space (November 2026)](#section-space)
 19. [Procurement — buying is a decision (November 2026)](#procurement)
 20. [The mission axis — win conditions, objectives, polarity (November 2026)](#mission-axis)
+21. [Mission objective duty — the round serves the objective (November 2026)](#mission-duty)
 
 ---
 
@@ -1133,3 +1134,78 @@ renders byte-identical to the original raw-token line, the ten non-De files
 carry the EN text per the tactical-AI convention) — while the internal
 `ziel=OBJEKT:<name>` notation itself stays a log/debug vocabulary, not player
 prose.
+
+---
+
+<a name="mission-duty"></a>
+## Mission objective duty — the round serves the objective (November 2026)
+
+The mission-axis law made the Empire read *who* the mission is about. Its
+other half: some missions are won by **moving something** — walking prisoners
+to a cell, destroying supply caches, getting a courier off the board, binding
+a captive. The reference rule lets *any* Imperial figure do that work, and a
+human player picks who each round. In Tactical mode the pop-up now makes that
+pick out loud. Today seven shipped missions carry such an objective; in every
+other mission the pop-up stays exactly as you know it, character for
+character.
+
+**What you see.** In a duty mission, one or more groups open their activation
+pop-up each round with a violet **MISSION DUTY** line naming the mission
+objective, an if–then branch under it, and a small quota line. Other groups'
+pop-ups carry no duty rows at all. Nothing else on the surface moves.
+
+**The escort branch.** The duty branch is a printed if–then tree like every
+other one:
+
+- *? No rebel within threat range of you or your mission marker?* →
+  **Interact with the mission marker as the mission rule allows.**
+- *? Marker not reachable?* → Move towards the nearest mission marker.
+- *? Threat?* → Regular combat branch — the pattern tree below.
+
+So an escort that gets shot at (or is genuinely threatened) fights exactly
+like any other figure: the duty rides the **movement** point only, the attack
+point always belongs to the fight. Nobody ever takes a blaster bolt while
+politely pushing a prisoner instead of returning fire — approaching rebels
+themselves force the escort back into the battle.
+
+**Threat range is what you can read off the board.** The branch prints its own
+definition: every rebel who could reach you *or the marker* and attack by the
+end of his next activation. Speed and cover decide it — no hidden radius, no
+private number the AI checks and you cannot.
+
+**"As the mission rule allows" is deliberate.** The app never says *click X*,
+because the interaction surface is mission-authored: one mission tallies at
+the **target field's** button (the cell), another at the **marker's** own
+button (a bind token), another books the progress invisibly off-map. What
+applies is printed on your mission card, not invented here — the duty line
+points at the printed rule, and the Imperial player at the table executes it
+the mission's way. The tally itself stays yours: progress lives in the
+mission's own log, not in the AI's head.
+
+**The quota line — some serve, the rest fight.** Each round a seeded draw
+forms the escort team: **at least one** group serves the objective as long as
+the duty exists (the Empire never sleepwalks past its own win condition), and
+never more than **half the roster, rounded up** (it never degenerates into a
+nation of marker-pushers, either). Same campaign, same mission, same round ⇒
+same team. The line discloses the draw in raw, seed-readable form (size,
+cap, the full seed order) — disclosure, not decoration.
+
+**Immobile figures never escort.** A tripod has no movement point to spend;
+its pop-up simply keeps the emplacement tree it always had.
+
+**The briefing keeps out of the way.** In a duty mission the round decides
+anew who serves the objective — so the tactical briefing no longer prints the
+legacy sentence that pre-assigns the duty to named troop classes (HOTH10's
+"*Imperial Officers and Stormtroopers will usher the prisoners towards the
+cell.*" contradicts the reference rule, which lets every figure). This is the
+MedPac honesty law again: where the tactical layer replaces a mechanic,
+mission prose may not promise the old one. Everything else in the briefing
+stands; in non-duty missions not one briefing character changes.
+
+**Honest edges.** The duty exists only where the mission's own counter
+wiring parses — seven missions today; questionable ones are deliberately held
+back for separate review, and unflagged missions are untouched. The branch can
+never invent an interaction the mission doesn't print — with nothing on the
+board to serve it says *move towards the nearest marker* and stops. And the
+duty never touches the attack layer: who gets shot at is still decided by the
+focus law described [above](#the-activation-pop-up), unchanged.

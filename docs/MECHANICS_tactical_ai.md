@@ -1498,3 +1498,132 @@ silent. Row dump carries kind/id/cost/axis/zone/leash/spare/score.
 pins — hand-pinned against the table above; the section deliberately has
 no `--record` branch, so the pins cannot be blindly overwritten);
 TacticalAiGate ALL PASS; taboo lint 12/12; compile APP/TESTS rc=0.
+
+## Mission objective duty — duty anchors, escort quota, briefing scrub (2026-11-08, P37a–d)
+
+The HOTH10 finding (concept `docs/CONCEPT_missions_duty.md`, decisions §6 +
+§9, Rev-3.4 state): the mode read the escort objective's *text* but never its
+*counter machinery*. The P37 chain turns a mission's own variable wiring into
+a printed movement branch. Every layer is tactical-gated (INVARIABLE
+META-LAW): tactical OFF ⇒ legacy bit-identical, pinned per hop.
+
+**Mining law + polarity ladder (Hop A).** `tools/mission_critical_mine.py`
+grew its fourth mechanical rule (`duty_mine`, mission_critical_mine.py:190;
+law header :49–119). CANDIDATE: a mission variable whose threshold trigger
+(`additionalTriggers` of an `endMission` event, value ≥ 1) sits on an end
+event of the EMPIRE-WIN page — and the page is decided by the producer's OWN
+polarity ladder, never an ad-hoc regex: a Python secondary machine of
+`WorldEventsUnity.OutcomeSideOfText` (C# original WorldEventsUnity.cs:1310;
+mirror mission_critical_mine.py:163–187, lose-first fixed vocabulary order,
+claim rung last — the P34-A2 law mirrored). Then the Täter check (§7(c)
+„wer bewegt den Zähler", structural evidence only, no narrative text):
+Zielfeld/Crate/Token button carriers, side-marked fields, InputPrompt
+adjudication, DG activation and qualifying threshold-chain listeners are
+IMPERIUM; combat/round bookkeeping (setter name words, combat flags,
+missionProperties round refs) is BOOK (borderline ceiling); setter-is-end-event
+and struct-only variables are DEAD. Class = `duty` iff some channel is
+IMPERIUM, `borderline` iff channels survive unresolved, else `none`.
+Fail-closed golden vector: **DUTY=7** (CORE23, CORE27, CORE28, HOTH10,
+HOTH12, OTHER9, OTHER31), **BORDERLINE=7** (CORE10, CORE16, EMPIRE2, EMPIRE4,
+HOTH15, OTHER6, OTHER7), **RUHE=124** — any deviation exits 1
+(mission_critical_mine.py:620–678); `DutyMineGate` re-pins it independently
+plus data-exists GUID checks on BOTH artifact paths (registered
+`prog.cs:48` + `gate.csproj`, W7). Anchor export per duty (:561): targetFields
+= button carriers of the duty channels, markerTokens = Token spawns of the
+setter/chain writer (HOTH10's invisible marker `isActive:false` is authored
+law, not a miss; CORE23 exports zero anchors — counter rides figures).
+
+**objectiveCounter (Hop B).** `Board.CounterTypes` gained exactly one entry
+(Board.cs:47) riding the existing validation (Board.cs:342–346). §9.1: no
+mapping onto `capture` (it would wake the `killbare` rule on the eliminate
+posture and break bit-identity); the type carries NO runtime semantics —
+whitelist entry + validation, nothing else. Unknown counter types still throw.
+
+**dutyAnchors channel (Hop B).** Own channel, own validation — §9 documented
+assumption (protect semantics untouched; Board's walkability wall would throw
+on HOTH10's non-walkable escape rim). `Core/DutyAnchors.cs:56` is the ONLY
+reader of the mined duty rows (same only-reader discipline as
+`SectionTrust.DoorOwnersOf` over the same artifact), fail-closed, never
+throws: empty counter name drops the DUTY row, empty anchor name or a GUID
+outside the caller's entity truth (GHOST) drops the ANCHOR
+(DutyAnchors.cs:16–28); a duty with zero surviving anchors stays legal
+(CORE23). Loch-Gesetz: GUID + authored name + type — no coordinate ever
+leaves the reader (DutyAnchors.cs:30–33). `dutyModifiers` (W8) became a
+generic top-level key of the pattern-weight loader (PatternWeights.cs:226–231,
+per-pattern table field :68) — free data-row space, no code branch per
+mission.
+
+**Quota dice — why fmix64 (Hop C).** `Core/DutyQuota.Compute`
+(DutyQuota.cs:117) is a pure function of public inputs. The house
+Seeded-draw-Gesetz (DutyQuota.cs:22–26, same law as `PatternWeights.Roll`)
+forbids taking top bits of an end-salted hash: the value a modulo or ranking
+reads must be the FINALIZED value — hence the draw hashes an END-THREADED key
+(`fnv1a64("dutyq|r<round>") ^ sessionSeed`) and runs the Murmur3/splitmix
+finalizer fmix64 (DutyQuota.cs:80–85) BEFORE modulo:
+`k = 1 + fmix64(…) % ceil(n/2)` (cap :134, draw :156–157) — the §9.2 band
+[1…⌈n/2⌉]: never 0 while a duty + a mobile group exists (floor :172–174),
+never all by construction. Session seed = `fnv1a64(campaign|mission)` with
+the 0-guard (`SessionSeedOf` :91–95) — same public material as the bridge
+SessionSeed. All groups get the seed ranking (`fmix64("dutyrank|id|rN")`,
+:107, applied :139–143) — that ranking is the demotion net for over-cap
+escorts (seed-ablesbar, reproducible). Escort CANDIDATES are the modifizierte
+Muster: `dutyModifiers` rows with positive integer sum ride the duty
+(`RowPositive` :99–105, filtered :166–169); a shipped asset WITHOUT the key
+degrades cleanly to base weights + quota ranking (`ModeDegraded`, :163–164 —
+the shipped path today). Immobile tripods are never candidates
+(`DutyGroup.Mobile` :42; bridge sets it from the catalog's IsTripod,
+TacticalAIBridge.cs:1959–1962). G1 purity: the rolled pattern is an INPUT,
+echoed never re-rolled; no board read, no attack-slot touch — DutyCoreGate
+runs the Purity + Fairness scans over the source.
+
+**Plan markers, popup, Objectives feed (Hop C/D).** `EnsureRound` computes
+ONE `_dutyRound` per round (TacticalAIBridge.cs:767, Explain debug line
+:768–770); the per-activation seam writes ONLY plan markers — `plan.Duty` +
+`DutyTarget` + `DutyQuotaLine` (TacticalAIBridge.cs:1244–1264), Null-Law
+keeps every pre-P37c popup byte-identical. `RenderBlocks` prints the escort's
+`apDutyEscortTree` (anchor name substituted — the Anker name is READ, never
+hardcoded) right after `apRule` and before the pattern tree, plus the
+`apDutyQuotaLine` raw-explain disclosure — escort popup only, combat popups
+carry ZERO duty rows (TacticalAIBridge.cs:1461–1488), both behind fail-closed
+key guards (missing key or stale `{`placeholder renders nothing — Hop C
+shipped the seam before Hop D's values, popup stayed byte-identical in
+between). The §9.4 threat-range definition rides INSIDE the tree key (printed
+law, never evaluated — „Mensch löst am Brett"). W4 feeding: the optional
+`dutyAnchors` parameter of `Doctrine.SelectDoctrine` (Doctrine.cs:323–325)
+appends anchor NAMES at the END of the refs chain, deduped, existing entries
+never move (Doctrine.cs:384–390) so `gewinntraeger` carries them
+posture-independently; null/empty keeps the refs chain bit-identical
+(Null-Law; the runtime popup does not render the refs chain — the feed rides
+the Core doctrine-card layer, pinned by the harness vectors). 11/11 ui.json
+keys `apDutyEscortTree`+`apDutyQuotaLine` (De/ui.json:361–362 genuine De
+translation with umlauts, En :361–362, nine byte-exact EN copies; append-only
+line surgery).
+
+**Scrub scope (§9.3, Hop D).** ONLY duty missions, sentence level,
+language-stem law (MedPac machinery). `Core/DutyScrub.cs`: four stem families
+(Officer ∧ Trooper ∧ object word ∧ goal word — the 4th family is why generic
+„stormtroopers capture the prisoners" flavor NEVER matches, :58–76; the QA
+catch was the Es plural stem `soldados de asalto`, :61–62); sentence-span law
+:107; table keyed BY MISSION FILE (:86–91) so no sentence can scrub a foreign
+mission. Measured inventory (all 138 canonical files × every shipped
+injection, briefing channels): ONLY HOTH10 (2 sentences/language, Nl=1 — the
+missionInfo injection leaves one out) and OTHER9 (2/language) carry legacy
+duty sentences; the other five duty missions brief REF-clean already; QA-
+BLOCKED list empty; corpus leak-scan zero (other 131 missions byte-identical).
+Runtime seam `TacticalAIBridge.ScrubDutyBriefingText` (TacticalAIBridge.cs:486)
+rides `TacticalMissionActive()` + the artifact duty class behind the same
+fail-closed reader seam (`DutyMissionLive` :460–478), applied at the four
+MedPac briefing sites (MissionEventHandler.cs:31, HeroDashboard.cs:33,
+InputBox.cs:42, PromptBox.cs:57); blank-box fail-open (DutyScrub.cs:177).
+
+**QA (chain handoffs, re-measured at HEAD 7aed41e + this docs hop).** Canon
+46298 checks zahlgleich across all four hops; additive hand-pinned sections
+(no `--record` branch): duty_loader 107, duty_core 103, duty_popup 83. Gates:
+DutyMineGate (`DutyMineGate: ALL PASS | duty=7 borderline=7 ruhe=124
+anchors=28`, both artifact paths), DutyCoreGate (23 PASS incl. golden rerun in
+a second compile context), DutyScrubGate (98 PASS: 7×11 mission×language
+counts vs inventory + corpus leak-scan + empty QA-BLOCKED list). Fresh re-run
+at this hop (docs-only change): harness `== summary: ALL PASS | checks=46591
+fails=0` (= canon 46298 + 107 + 103 + 83); gate rc=0 `ALL PASS`, 6243 `^PASS`
+lines; compile_check `APP: rc=0 errors=0 files=291` / `TESTS: rc=0 errors=0
+files=10`.

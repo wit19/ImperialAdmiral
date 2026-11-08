@@ -1575,6 +1575,12 @@ the shipped path today). Immobile tripods are never candidates
 TacticalAIBridge.cs:1959–1962). G1 purity: the rolled pattern is an INPUT,
 echoed never re-rolled; no board read, no attack-slot touch — DutyCoreGate
 runs the Purity + Fairness scans over the source.
+DESIGN DECISION (Thomas, 08.11., closing the P37c open point 3): the Duty
+branch is deliberately PRINTED before the pattern tree — movement authority
+stays with the pattern tree (TreeFor untouched), the escort branch is the
+printed order with its own threat fallback. Replacing TreeFor with the duty
+tree for escort-slot groups was the alternative and is REJECTED; do not
+"fix" the double print — it is the law, not an oversight.
 
 **Plan markers, popup, Objectives feed (Hop C/D).** `EnsureRound` computes
 ONE `_dutyRound` per round (TacticalAIBridge.cs:767, Explain debug line
@@ -1696,3 +1702,11 @@ dangling named head for the nameless head; all other 131 missions Null-Law
 untouched. Mode aus / legacy bit-identical (every seam behind plan.Duty /
 ActiveNow, fields additive). Unity-machine TODO grows one line: .meta for
 duty_nameless.json (fixture precedent P37d/P38: JSON ships without meta).
+
+**Build stamp (documented at last — P40 MINOR-D).** `TacticalAiBuildStamp.cs`
+holds one const: `Value` carries the most recent published tag (currently
+`v1.0.1-dev.N`) and stamps itself into the boot log and the producer session
+line, so any player log answers "which build did this?" without archaeology.
+Ritual: after pushing a new dev tag, bump `Value` to it in the next commit
+(the stamp lags by design — it names the last PUBLISHED build, never an
+unreleased HEAD). First written documentation: this paragraph.

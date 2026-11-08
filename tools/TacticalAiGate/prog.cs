@@ -47,6 +47,7 @@ class P {
         DpScoreGate.Run();
         DutyMineGate.Run();    // P37a (t_1f4d7286): golden vector 7/7/124 + data-exists + Pfad-Doppelpfad, fail-closed
         DutyCoreGate.Run();    // P37c (t_e80246ed): Escort-Quota golden rerun (hoth10/one/six/no_duty/shadow) + Purity + Fairness-Scan, zweiter Compile-Kontext
+        DutyScrubGate.Run();   // P37d (t_ffc705af): Briefing-Scrub Zaehlt gescrubte Saetze je Duty-Mission x Sprache gegen Inventar (7x11), QA-BLOCKED-Liste, Corpus-Leak-Scan (andere Missionen byte-identisch), Mission-Liste aus dem dutyAnchors-Artefakt
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }
 }

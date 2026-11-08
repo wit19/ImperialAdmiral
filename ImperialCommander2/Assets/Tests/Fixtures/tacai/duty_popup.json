@@ -1,0 +1,44 @@
+{
+  "_meta": "P37d (card t_ffc705af, concept docs/CONCEPT_missions_duty.md 1b G3/G4 + 9.4) hand-pinned popup section - route like duty_core.json: NO recorder, no --record route. Hop D ships the ui.json VALUES of the two P37c keys (apDutyEscortTree {0}=anchor NAME, apDutyQuotaLine {0}=raw Explain) in all 11 languages. This section pins (1) key presence 11/11, (2) De+En real translations, 9 byte-exact EN copies (M6c fleet law), (3) the Escort-Aktivierung popup vector in DE and EN on the REAL HOTH10 duty fact (anchor name read, never hardcoded; the P37c quota law is REUSED read-only - duty_core.json stays untouched), (4) Gefechts-Aktivierung shows NO duty rows (card vector law), (5) Null-Law: no duty fact / missing key => zero rows everywhere. Canon untouched: no pre-existing fixture is read or changed.",
+  "langs": ["Br", "De", "En", "Es", "Fr", "Hu", "It", "Nl", "No", "Pl", "Ru"],
+  "keys": ["apDutyEscortTree", "apDutyQuotaLine"],
+  "tree_rows": 8,
+  "de_contains": [
+    "MISSIONSDIENST",
+    "<b>? Kein Rebell in Drohungsreichweite von dir oder deinem Missionsmarker?</b>",
+    "Interagiere mit dem Missionsmarker gemäß Missionsregel.",
+    "<b>? Marker nicht erreichbar?</b>",
+    "Bewege dich zum nächsten Missionsmarker.",
+    "<b>? Bedrohung?</b>",
+    "Regulärer Gefechtsast",
+    "Drohungsreichweite = jeder Rebell, der dich oder den Marker bis zum Ende seiner nächsten Aktivierung erreichen und angreifen könnte",
+    "Dienstplicht-Quote"
+  ],
+  "en_contains": [
+    "MISSION DUTY",
+    "<b>? No rebel within threat range of you or your mission marker?</b>",
+    "Interact with the mission marker as the mission rule allows.",
+    "<b>? Marker not reachable?</b>",
+    "Move towards the nearest mission marker.",
+    "<b>? Threat?</b>",
+    "Regular combat branch",
+    "Threat range = every rebel who could reach and attack you or the marker by the end of his next activation",
+    "Duty quota"
+  ],
+  "hoth10": {
+    "dir": "Hoth",
+    "missionFile": "HOTH10.json",
+    "sessionKey": "dutypopup-hoth10|HOTH10.json",
+    "round": 1,
+    "groups": [
+      { "cardId": "DG003", "pattern": "aggressive", "mobile": true },
+      { "cardId": "DG004", "pattern": "hunter", "mobile": true }
+    ],
+    "expect": {
+      "row_total": 9,
+      "de_head_contains": "MISSIONSDIENST: Missionsobjekt Cell",
+      "en_head_contains": "MISSION DUTY: objective Cell",
+      "quota_contains": "duty r1"
+    }
+  }
+}

@@ -27,7 +27,10 @@ public class HeroDashboard : MonoBehaviour
 	{
 		popupBase.Show();
 
-		missionInfo = info;
+		// P37d (card t_ffc705af, concept 9.3): the mission info panel is
+		// briefing surface too - scrub legacy duty sentences in tactical
+		// duty missions (no-op everywhere else, fail-open like MedPac).
+		missionInfo = TacticalAI.TacticalAIBridge.ScrubDutyBriefingText( info );
 
 		roundText.text = DataStore.uiLanguage.uiMainApp.roundHeading;
 		continueButton.text = DataStore.uiLanguage.uiMainApp.continueBtn;

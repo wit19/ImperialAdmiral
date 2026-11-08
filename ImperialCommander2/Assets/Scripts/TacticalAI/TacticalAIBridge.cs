@@ -436,6 +436,74 @@ namespace TacticalAI
             }
         }
 
+        // P37d (card t_ffc705af, concept 9.3 + 7 Abhaengigkeits-Gesetz): the
+        // duty briefing scrub. In a duty mission the Duty-Ast decides per
+        // round WHO serves the objective (seeded quota dice) - the briefing
+        // must not pre-attribute the duty to named legacy figure classes
+        // (HOTH10 "Offiziere und Sturmtruppen ...", 1a/9.3). Sentence-level,
+        // language-agnostic law lives in Core DutyScrub (one implementation,
+        // shared with the DutyScrubGate oracle - no mirror drift). Mission
+        // scoping (9.3): ONLY missions the dutyAnchors artifact classifies
+        // duty|borderline-free 'duty' reach the scrubber - here the same
+        // fail-closed reader seam ComputeDutyRound walks (artifact + live
+        // mapEntities GUID truth). Meta-law: tactical OFF = legacy, so the
+        // whole layer rides on TacticalMissionActive(). Fail-open like the
+        // MedPac law: any hiccup shows the original text, never an empty box.
+        static string _dutyScrubFile;       // mission fileName the cache below is for
+        static bool _dutyScrubIsDuty;       // artifact 'duty' class for that file (per-GUID truth)
+
+        /// <summary>Live duty-class fact for the CURRENT mission (briefing
+        /// seam): dutyAnchors artifact class == duty, validated against the
+        /// mission file's entity GUIDs (reader validation 3, fail-closed).
+        /// Cached per fileName (artifact is static data, same file same
+        /// class); any exception = false (no scrub).</summary>
+        static bool DutyMissionLive()
+        {
+            try
+            {
+                var mission = DataStore.mission;
+                if (mission == null || string.IsNullOrEmpty(mission.fileName)) return false;
+                if (mission.fileName == _dutyScrubFile) return _dutyScrubIsDuty;
+                var truth = new HashSet<string>(StringComparer.Ordinal);
+                if (mission.mapEntities != null)
+                    foreach (var e in mission.mapEntities)
+                        if (e != null) truth.Add(e.GUID.ToString());   // lowercase convention, same as the DP/duty anchors
+                var duties = Tac.DutyAnchors.ForMission(
+                    TacticalAIAssets.MissionCriticalRoot, mission.fileName, truth);
+                _dutyScrubFile = mission.fileName;
+                _dutyScrubIsDuty = duties != null && duties.Count > 0;
+                return _dutyScrubIsDuty;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>Public seam (same law/position as ScrubMedpacRewardText
+        /// at every briefing site): strips the legacy duty sentences from the
+        /// text a player is about to read - briefing text boxes, mission
+        /// info panel, prompts - but ONLY in tactical duty missions. The
+        /// Core table is keyed by mission file, so even a global call site
+        /// can never scrub a foreign mission's sentence.</summary>
+        public static string ScrubDutyBriefingText(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            if (!TacticalMissionActive()) return text;
+            try
+            {
+                if (!DutyMissionLive()) return text;
+                var mission = DataStore.mission;
+                if (mission == null || !Tac.DutyScrub.HasPatterns(mission.fileName)) return text;
+                int removed;
+                var scrubbed = Tac.DutyScrub.Scrub(mission.fileName, text, out removed);
+                if (removed > 0)
+                    Debug.Log("TacticalAIBridge::ScrubDutyBriefingText - legacy duty sentence removed for REF/ORD mission text (n=" + removed + ")");
+                return scrubbed;
+            }
+            catch
+            {
+                return text;   // fail-open: a regex hiccup shows the original text
+            }
+        }
+
         /// <summary>M13c: the optional-deployment path fork (Scope D) fed
         /// with the live, mission-frozen mode - same gate semantics as
         /// ActiveNow(). The pure decision lives in Core
@@ -1408,7 +1476,12 @@ namespace TacticalAI
                     foreach (var dl in dt.Replace("\r", "").Split('\n'))
                         if (!string.IsNullOrEmpty(dl.Trim())) outp.Add(dl);
             }
-            if (!string.IsNullOrEmpty(plan.DutyQuotaLine))
+            // P37d (card t_ffc705af popup vector law): a combat activation
+            // shows NO duty rows - the quota line renders only on the escort
+            // popup (the raw Explain marker stays on the plan for debug
+            // consumers, P37c seam untouched; G4 disclosure duty is met by
+            // the escort popup + the EnsureRound debug line).
+            if (plan.Duty == Tac.DutyQuota.DutyEscort && !string.IsNullOrEmpty(plan.DutyQuotaLine))
             {
                 var dq = TF(L.apDutyQuotaLine, plan.DutyQuotaLine);
                 if (!string.IsNullOrEmpty(dq) && dq.IndexOf('{') < 0) outp.Add(dq);

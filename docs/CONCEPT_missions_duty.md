@@ -124,7 +124,16 @@ Referenzregel widerspricht, darf REF/ORD ihn nicht ungeprüft weiterreichen.
   Scope-Gesetz: **jede imperiale Figur**, außer gedruckte Missionsdaten
   nennen Ausnahmen. DG-Listen sind Anweisungskarten-Artefakte.
 * Duty-OBJEKT: Marker = per ModifyMapEntity spawnende Token-Entities;
-  Zielfeld = Button-Entity; Namen kommen lokalisiert aus den Entity-Daten.
+  Zielfeld = Ziel-Entity. **Die Interaktions-OBERFLÄCHE ist
+  missionsindividuell und KEIN Bestandteil der Anweisung** (Thomas 08.11.
+  III): HOTH10 hat überhaupt KEINE Buttons in der ganzen Mission — der
+  Marker wird unsichtbar am Brett geführt, „Prisoner transferred" ist ein
+  wiederholbares globales Buchhaltungs-Event; andere Missionen mögen
+  Buttons am Marker oder am Zielfeld haben. Darum sagt die Duty-Zeile
+  niemals „klicke X", sondern immer nur „gemäß Missionsregel". Wo der
+  Mensch am Brett klickt (oder nicht), ist App-Buchhaltung, nicht
+  Taktikanweisung. Der Duty-Fakt steht allein auf Zähler + Gewinn-Seite;
+  Setter mit oder ohne Button ist dafür gleichwertig.
 * Duty-PARAMETER (Distanz/Aktionstyp): **KEINE Kuratur, keine Tabelle, kein
   Pflegen pro Mission** (Thomas 08.11. II: „Ich möchte KEINE spezielle
   Lösung für HOTH10"). Die Duty-Zeile verweist generisch auf die
@@ -192,6 +201,35 @@ Rebell, der {schutz}/ein Auftragsziel berührt") — Speisung des {schutz}
 aus dem Duty-Objekt-Anker (minierter Name, keine Koordinaten, kein neues
 Ranking). Wer die Marker anfasst, zieht Gefechts-Gruppen an; die Escort
 selbst wehrt sich (Gesetz 1+3).
+
+**Gesetz 5 — Abgrenzung gegen die MissionObjekt-Mechanik (EMPIRE3-
+Demonstranten; Thomas 08.11. III).** Die beiden Mechaniken sind
+klassen-, schicht- und datenmäßig getrennt, Beweise aus den echten Dateien
+(08.11. gelaufen):
+
+* **Klassen-Fence:** Die MissionObjekt-Feed-Klasse (P33-H4c) speist nur
+  Objekte mit **gedrucktem Angriffssatz** in eigenen Kanon-Texten
+  („can attack … (Health: N…)"/„angreifen"), Null-Law. Keiner der 8
+  Duty-Kandidaten besitzt eine Angriffssatz-Entity — der Feed kann dort
+  per Bauart keinen Fakt erzeugen. Umgekehrt verlangt der Duty-Detektor
+  Zähler + imperiale Gewinn-Seite; EMPIRE3s End-Events tragen keine
+  Imperiumsgewinn-Phrase (Hideaway-Ereignisse, Side-Check = False) — der
+  Detektor ist dort stumm. **Keine Mission gehört aktuell zu beiden
+  Klassen.**
+* **Schicht-Fence:** objactor/TryObjectTarget wirkt ausschließlich in der
+  Angriffs-/Zielschicht; der Duty-Ast ausschließlich im Bewegungs-Zweig
+  (Gesetz 1). Zwei Mechaniken, zwei Slots, kein doppelt gedruckter Satz.
+* **Dedup-Fürsorge (Zukunfts-Missionen):** Sollte je dasselbe Objekt
+  (GUID) in beiden Klassen erschiene, gilt: **objactor behält die
+  Ziel-Schicht, Gesetz-4-Speisung des Duty wird für diese GUID
+  unterdrückt** — nie zwei Popup-Zeilen über dasselbe Objekt. QA-Assertion
+  pro Duty-Mission: keine Duplikat-Zeile; EMPIRE3-Popup **bit-identisch**
+  zum P36-Stand (wird als Vektor gegengeprüft).
+
+Für den Menschen heißt das: in EMPIRE3 sieht er exakt die ihm vertrauten
+objactor-Zeilen, nie eine Duty-Zeile; in Duty-Missionen sieht er den
+Duty-Ast, nie objactor-Zeilen; Missionen, die der Detektor nicht meldet,
+bleiben komplett unberührt.
 
 **Spaß-Kriterium als Abnahmegesetz (QA, §7):** Es darf in keiner Runde
 einer Duty-Mission ein Popup geben, in dem ALLE Gruppen nur schubsen.
@@ -421,5 +459,9 @@ Aktivierung, gemischt-Vektor über 3 Runden (Seed-Stabilität der
 Muster-Zeile), Bedrohungs-Override-Vektor (Escort unter Feuer →
 Vergeltungsast), und die 130 Nicht-Duty-Missionen **bit-identisch**.
 Keine Mission, die der Detektor nicht meldet, bekommt je einen Duty-Block;
-kein Duty-Block ohne QA-Vektor. Spaß-Kriterium (§1b) ist Teil der
+kein Duty-Block ohne QA-Vektor. **EMPIRE3 ist Pflicht-Gegenvektor**
+(Popup bit-identisch zu P36 — objactor-Zeilen unverändert, keine
+Duty-Zeile) und in jeder Duty-Mission die Duplikat-Assertion aus §1b
+Gesetz 5 (nie zwei Zeilen über dasselbe Objekt).
+Spaß-Kriterium (§1b) ist Teil der
 Abnahme, nicht Wunschbild.

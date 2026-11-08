@@ -198,13 +198,20 @@ aber höchstens ⌈n/2⌉ Gruppen und mindestens eine Gruppe Gefecht;
 überzellige Escorts werden nach seed-geordneter Rangfolge in den
 Gefechtsast zurückgestuft (am Seed ablesbar, reproduzierbar, im Explain
 zeigbar). „Nie alle nur geschubse" ist damit Konstrukt, nicht Hoffnung.
+**Band entschieden (§9.2): k ∈ [1 … ⌈n/2⌉]** — mindestens eine Gruppe
+dutyet, wenn ein Duty existiert; ruhende Runden (k=0) sind verboten, weil
+das Imperium sonst passiv seinen Gewinnweg verliert.
 
 **Gesetz 3 — Bedrohung schlägt Duty (innerhalb der Duty-Gruppe).**
 Der Duty-Ast im Bewegungs-Zweig ist ein gedruckter Wenn-Dann-Zweig wie
 alle Äste: „? kein Rebell in Drohungsreichweite von dir oder deinem
 Missionsmarker? → interagiere mit dem Missionsmarker gemäß Missionsregel.
 ? Marker nicht erreichbar? → bewege dich zum nächsten Missionsmarker.
-? Bedrohung? → regulärer Gefechtsast." Schubsen passiert nur, wenn niemand
+? Bedrohung? → regulärer Gefechtsast." **Drohungs-Definition entschieden
+(§9.4, wird mitgedruckt):** „Drohungsreichweite = jeder Rebell, der dich
+oder den Marker bis zum Ende seiner nächsten Aktivierung erreichen und
+angreifen könnte" — am Brett sichtbar über Speed/Deckung, keine neue Zahl,
+kein neues AI-Wissen (Reichweiten-Kriterium, kein fixer Radius). Schubsen passiert nur, wenn niemand
 auf sie schießt oder sie bedroht — das Kanonenfutter-Szenario ist
 strukturell ausgeschlossen, die Rebellen erzwingen mit Näherung selbst den
 Ausstieg ihrer Gegner aus dem Duty.
@@ -532,4 +539,32 @@ duty-frei, weil der Duty-Zweig KEINE neuen Aktionsparameter emittiert
 (gedruckte Anleitung; HOTH10-Marker ist offline-Buchhaltung, hat gar kein
 AI-Ziel); `TacticalShippedIds` (M11) bleibt, Duty gilt nur für ausgelieferte
 taktische Missionen; `PatternWeights`-Loader ist freier Key-Value-Raum
-(Duty-Modifikator ist DATEN-Zeile, kein Code).
+(dutyModifiers ist Daten-Zeile, kein Code pro Mission).
+
+## 9. Entscheidungen Runde II — ENT SCHIEDEN (Thomas, 08.11.2026 via Rückfrage-Runde II)
+
+1. **W1 Zählertyp:** ein neuer generischer Typ **`objectiveCounter`** für
+   alle Duty-Missionen — kein Mapping auf `capture` (würfe die
+   `killbare`-Regel an die eliminate-Posture und bräche Bit-Identität),
+   keine Verb-Typen. Whitelist-Eintrag + Validierung, sonst nichts.
+2. **G2-Band:** **k ∈ [1 … ⌈n/2⌉]** — mindestens eine Duty-Gruppe pro
+   Runde, solange der Duty existiert; ruhende Runden verboten.
+3. **Scrub-Umfang:** **nur die Duty-Missionen** (aktuell 7) werden
+   briefing-seitig REF-gereinigt (MedPac-Mechanik, Satz-Ebene,
+   sprachübergreifend); alle anderen Missionen bleiben bit-identisch. Das
+   volle Anti-Legacy-Programm über alle Override-Missionen bleibt als
+   eigenes, separiertes Thema bestehen — hier NICHT aufgenommen.
+4. **G3-Drohungsdefinition:** **Reichweiten-Kriterium** („erreichen und
+   angreifen können bis Ende seiner nächsten Aktivierung"), kein fester
+   Radius, kein Wachzone-Anker; Definition wird im Wenn-Dann-Zweig
+   mitgedruckt (Schlüssel in allen Sprachdateien, GO-Key-Schnürung).
+5. **Stufen-Scope:** Umsetzung mit den **7 sauberen Duty-Missionen**;
+   Grenzträge (CORE16 u. a.) und „Conditional Duty aus Gesetz-Zeilen"
+   (EMPIRE7/EMPIRE4) sind **getrennte Folgerunden** mit eigenen
+   Konzept-Punkten — nicht Mischbau.
+
+**Dokumentierte Annahme (kein Entscheidungspunkt, berührbar):** Der
+Mining-Anker kommt in einen **eigenen Kanal `dutyAnchors`** (eigene
+Validierung) statt in `protectedEntities` — Begründung §8 W3
+(Validierung wirft bei nicht-begehbaren Zielfeldern wie Fluchtrand;
+protect-Semantik bleibt unberührt).

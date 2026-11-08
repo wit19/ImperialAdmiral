@@ -12,6 +12,15 @@
 
 WORK/
 
+# root-level Unity leftovers + desktop garbage (lesson from 4df4e058: add -A
+# swallowed a .lnk, a build zip and a root ProjectSettings/ written when the
+# REPO ROOT was opened as a Unity project - the real project is one level
+# deeper and its ProjectSettings/ stays versioned)
+*.lnk
+*.zip
+/ProjectSettings/
+/[Uu]serSettings/
+
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 

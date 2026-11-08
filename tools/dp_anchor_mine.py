@@ -29,6 +29,18 @@
 # LANGUAGE NEUTRALITY: GUIDs and coordinates only - no name column at all
 # (a name can be localized, a GUID cannot).
 #
+# P37a dutyAnchors section (card t_1f4d7286, concept W7 dual path): the SAME
+# document additionally carries the duty anchors mined by the fourth rule.
+# One row per duty anchor entity: [missionFile, entityGuid, entityPosition,
+# sectionGuid, role] with role in {targetField, markerToken}. data-exists
+# again: every duty anchor GUID re-resolves against the real mission file,
+# the position is the authored entityPosition and the section is the live
+# mapSectionOwner; a swapped anchor entity FAILS the miner (authored
+# position would not be runtime truth - regenerate after re-authoring, never
+# a silent drop). Pfad-Doppelpfad law: the gate compares this rows section
+# against the Languages dutyAnchors block - the two loaders must read the
+# same set.
+#
 # Regenerate:  python3 tools/dp_anchor_mine.py   (from repo root)
 # Exit code 1 on any invariant violation (fail-closed).
 import json
@@ -63,7 +75,11 @@ META = {
              "entityPosition is the authored review copy; runtime truth is the "
              "live IMapEntity.entityPosition. Positions-Subtask-IDs are not "
              "anchor data and are deliberately absent; readers ignore unknown "
-             "columns. Language neutrality: GUIDs + coordinates only, no names."),
+             "columns. Language neutrality: GUIDs + coordinates only, no names. "
+             "P37a adds the dutyAnchors section (same document, own columns): "
+             "per duty mission the mined targetField/markerToken anchors of the "
+             "fourth mechanical rule, data-exists re-resolved - a separate "
+             "channel, never mixed into the DP rows."),
 }
 
 
@@ -124,8 +140,59 @@ def main():
 
     rows.sort(key=lambda r: (r[0].lower(), r[1]))
 
+    # --- P37a dutyAnchors section (fourth rule, dual path W7) --------------
+    DUTY_COLUMNS = ["missionFile", "entityGuid", "entityPosition", "sectionGuid", "role"]
+    file_paths = {}
+    for p in glob.glob(MISSIONS_GLOB):
+        file_paths[os.path.basename(p).lower()] = p
+    duty_rows = []
+    duty_missions = 0
+    for m in critical.get("missions", []):
+        mfile = m.get("file", "")
+        da = m.get("dutyAnchors") or {}
+        if da.get("class") == "duty":
+            duty_missions += 1
+        elif da.get("class") not in ("borderline", "none"):
+            fail("%s: dutyAnchors block missing/invalid (regenerate the S-A "
+                 "table first: tools/mission_critical_mine.py)" % mfile)
+        if da.get("class") != "duty":
+            continue
+        path = file_paths.get(mfile.lower())
+        if path is None:
+            fail("duty mission file %s not in shipped corpus" % mfile)
+        with open(path, encoding="utf-8") as f:
+            mission = json.load(f)
+        ents = {str(e.get("GUID", "")).lower(): e
+                for e in mission.get("mapEntities", []) if isinstance(e, dict)}
+        swapped = set()
+        for g in mission.get("entityGroups", []) or []:
+            swapped |= {str(x).lower() for x in (g.get("missionEntities") or [])}
+        anchors = []
+        for duty in da.get("duties", []) or []:
+            for tf in duty.get("targetFields", []) or []:
+                anchors.append((str(tf.get("entity", "")).lower(), "targetField"))
+            for mk in duty.get("markerTokens", []) or []:
+                anchors.append((str(mk.get("entity", "")).lower(), "markerToken"))
+        for guid, role in anchors:
+            e = ents.get(guid)
+            if e is None:
+                fail("%s: duty anchor %s not in mission mapEntities" % (mfile, guid))
+            if guid in swapped:
+                fail("%s: duty anchor %s is runtimeSwapped (authored position "
+                     "is not runtime truth - re-author, never drop silently)"
+                     % (mfile, guid))
+            pos = e.get("entityPosition")
+            if not isinstance(pos, str) or "," not in pos:
+                fail("%s: duty anchor %s has no authored entityPosition" % (mfile, guid))
+            duty_rows.append([mfile, guid, pos,
+                              str(e.get("mapSectionOwner", "")).lower(), role])
+    if duty_missions != 7:
+        fail("duty mission count %d != golden 7" % duty_missions)
+    duty_rows.sort(key=lambda r: (r[0].lower(), r[4], r[1]))
+
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    out = {"_meta": META, "columns": COLUMNS, "rows": rows}
+    out = {"_meta": META, "columns": COLUMNS, "rows": rows,
+           "dutyAnchors": {"columns": DUTY_COLUMNS, "rows": duty_rows}}
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
         f.write("\n")
@@ -134,6 +201,13 @@ def main():
         per[r[0]] = per.get(r[0], 0) + 1
     print("wrote %s: %d rows across %d missions" % (
         os.path.relpath(OUT, REPO), len(rows), len(per)))
+    for mf in sorted(per):
+        print("  %-20s %d" % (mf, per[mf]))
+    print("dutyAnchors: %d rows across %d duty missions (golden 7)" % (
+        len(duty_rows), duty_missions))
+    per = {}
+    for r in duty_rows:
+        per[r[0]] = per.get(r[0], 0) + 1
     for mf in sorted(per):
         print("  %-20s %d" % (mf, per[mf]))
 

@@ -3,7 +3,7 @@
   "file": "tactical_mission_critical.json",
   "schema": "tacai.mission_critical/1",
   "generated_by": "tools/mission_critical_mine.py - regenerate, never hand-edit",
-  "note": "PUBLIC reviewable data (fairness rule, format law like tactical_pattern_weights.json): per mission, the entities the Missionskritisch-Heuristik treats as mission-critical (reason terminal = printed console semantics; reason objective-event = ModifyMapEntity target inside an event body that also carries MapManagement or ChangeObjective - concept positionierung v1 5.3, mechanical; reason objective-variable = ModifyMapEntity target inside an event body that also carries ModifyVariable - interaction objectives whose claim mutates the mission variable economy (saga clue tokens), Thomas 06.11 coverage fix for the DP-anchor mining) plus sectionHypotheses: entity<->section hypothesis edges mined from event bodies whose MapManagement activates a section (app precedent MissionEventHandler MapManagement branch). HYPOTHESIS NEVER WALL (Grundgesetz): a missing edge keeps everything through-pass. runtimeSwapped = entityGroups member, ConfigureEntityGroups swaps its section at load - the authored section here is NOT runtime truth, the live EntityInteract feed reads the live object and is correct. Hole law: GUIDs and app-authored names only, no coordinates."
+  "note": "PUBLIC reviewable data (fairness rule, format law like tactical_pattern_weights.json): per mission, the entities the Missionskritisch-Heuristik treats as mission-critical (reason terminal = printed console semantics; reason objective-event = ModifyMapEntity target inside an event body that also carries MapManagement or ChangeObjective - concept positionierung v1 5.3, mechanical; reason objective-variable = ModifyMapEntity target inside an event body that also carries ModifyVariable - interaction objectives whose claim mutates the mission variable economy (saga clue tokens), Thomas 06.11 coverage fix for the DP-anchor mining) plus sectionHypotheses: entity<->section hypothesis edges mined from event bodies whose MapManagement activates a section (app precedent MissionEventHandler MapManagement branch). HYPOTHESIS NEVER WALL (Grundgesetz): a missing edge keeps everything through-pass. runtimeSwapped = entityGroups member, ConfigureEntityGroups swaps its section at load - the authored section here is NOT runtime truth, the live EntityInteract feed reads the live object and is correct. Hole law: GUIDs and app-authored names only, no coordinates. P37a dutyAnchors (fourth mechanical rule, card t_1f4d7286): per mission class duty|borderline|none - a mission variable thresholded (additionalTriggers) on an end event of the empire-win page (producer OutcomeSideOfText mirror, fixed order) whose setter channel is a button / direct field button / DG activation / input-prompt / threshold-chain with the imperial taeter direction; combat/round bookkeeping (dead- defeat-wound-round-story words, self-end events, defeat structures) never reaches duty; unresolved taeter lands in borderline (Text-QA list, concept 7). Golden vector fail- closed: 7 duty + 7 borderline + 124 ruhe."
  },
  "missions": [
   {
@@ -123,7 +123,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Bespin 2",
@@ -343,7 +348,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Bespin 3",
@@ -491,7 +501,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Bespin 4",
@@ -656,7 +671,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Bespin 5",
@@ -807,7 +827,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Bespin 6",
@@ -1025,7 +1050,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 1",
@@ -1153,7 +1183,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 10",
@@ -1291,7 +1326,61 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "Security Door Open",
+      "triggerGuid": "b4b19b07-af50-4f68-b7a4-77f10f46032c",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "channels": [
+       {
+        "event": "3912e9dc-40d0-49a8-b9b2-69a70ed2e210",
+        "name": "On Board",
+        "class": "UNRESOLVED",
+        "evidence": "no structural taeter"
+       }
+      ]
+     },
+     {
+      "variable": "Officer freed",
+      "triggerGuid": "f0a75a90-b70a-4a7e-a16f-f44de7b11406",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "1b61136b-334a-4295-9cd5-46d0692a4189",
+        "name": "End of Mission - Rebels lose 2"
+       }
+      ],
+      "channels": [
+       {
+        "event": "fe4d2a95-25d7-4215-a5e4-3ec11626b8ac",
+        "name": "All heroes wounded",
+        "class": "BOOK",
+        "evidence": "book-word in setter name"
+       },
+       {
+        "event": "",
+        "name": "button:Officer freed",
+        "class": "UNRESOLVED",
+        "evidence": "direct button on unmarked field Deploy Officer"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Core 11",
@@ -1306,7 +1395,12 @@
     }
    ],
    "criticalEntities": [],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 12",
@@ -1430,7 +1524,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 13",
@@ -1593,7 +1692,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 14",
@@ -1636,7 +1740,12 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 15",
@@ -1773,7 +1882,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 16",
@@ -1925,7 +2039,44 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "Terminals disabled",
+      "triggerGuid": "f43c948e-19c5-4234-b57b-b097135d3183",
+      "threshold": 3,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "channels": [
+       {
+        "event": "c70e30d9-cd27-42c4-8a39-d345b56a933a",
+        "name": "Discard Terminal 1",
+        "class": "UNRESOLVED",
+        "evidence": "no structural taeter"
+       },
+       {
+        "event": "1cf30222-4f56-47ab-80aa-d4dfb4f3a5c2",
+        "name": "Discard Terminal 2",
+        "class": "UNRESOLVED",
+        "evidence": "no structural taeter"
+       },
+       {
+        "event": "122b3c6a-ebb0-4898-927d-3576a0f1d3f6",
+        "name": "Discard Terminal 3",
+        "class": "UNRESOLVED",
+        "evidence": "no structural taeter"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Core 17",
@@ -1984,7 +2135,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 18",
@@ -2071,7 +2227,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 19",
@@ -2170,7 +2331,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 2",
@@ -2251,7 +2417,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 20",
@@ -2266,7 +2437,12 @@
     }
    ],
    "criticalEntities": [],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 21",
@@ -2373,7 +2549,12 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 22",
@@ -2418,7 +2599,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 23",
@@ -2433,7 +2619,101 @@
     }
    ],
    "criticalEntities": [],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Imperial Recruits",
+      "triggerGuid": "e88b6d78-802a-4fd0-9520-ae97b51f5621",
+      "threshold": 16,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       },
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "b9ddec27-82fb-4ab6-9270-2311b86d3788",
+        "name": "Empire 1 recruit",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "42d3992a-c0c1-44f6-8bd3-ad8374694937",
+        "name": "Empire 2 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "6751a3f9-4abe-41e4-b26e-dce0e149d4a3",
+        "name": "Empire 3 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "f773c9ba-3644-4a52-be13-06c9fd66d46b",
+        "name": "Empire 4 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "42a998bb-93b0-45af-a127-9c3f7213b81c",
+        "name": "Empire 5 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "8f5ea616-882a-4a66-a8c1-57519a60189e",
+        "name": "Empire 6 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "55f5512b-d9ce-4552-9a9b-6f383a9eebcc",
+        "name": "Empire 7 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       },
+       {
+        "event": "b31ab1f7-0fd7-4762-b902-2cb328219abc",
+        "name": "Empire 8 recruits",
+        "evidence": "input-prompt adjudication via 'Empire Count'"
+       }
+      ],
+      "targetFields": [],
+      "markerTokens": [],
+      "law": "input-prompt"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 24",
@@ -2515,7 +2795,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 25",
@@ -2560,7 +2845,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 26",
@@ -2706,7 +2996,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 27",
@@ -2745,7 +3040,41 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Imperials escape",
+      "triggerGuid": "dbe7f203-6c3b-46e2-8b11-815634402ac0",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "",
+        "name": "button:Imperial escapes with the core",
+        "evidence": "button-direct on Entrance"
+       }
+      ],
+      "targetFields": [
+       {
+        "entity": "a343a128-3b10-48ff-878f-71c89176d776",
+        "name": "Entrance",
+        "entityType": "Highlight",
+        "buttonText": "Imperial escapes with the core"
+       }
+      ],
+      "markerTokens": [],
+      "law": "button"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 28",
@@ -2833,7 +3162,118 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Caches destroyed",
+      "triggerGuid": "0eb88a46-61e3-45cf-95aa-02c851756b5a",
+      "threshold": 5,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "873a37dc-072e-4a73-a475-0a90a7cce4b9",
+        "name": "Destroy Cache 1",
+        "evidence": "button 'Destroy' on Supply Cache 1"
+       },
+       {
+        "event": "cf712249-4bae-4101-85ca-02052eedc600",
+        "name": "Destroy Cache 2",
+        "evidence": "button 'Destroy' on Supply Cache 2"
+       },
+       {
+        "event": "a80ed1e9-c0cc-49e7-b034-14e86fb51de7",
+        "name": "Destroy Cache 3",
+        "evidence": "button 'Destroy' on Supply Cache 3"
+       },
+       {
+        "event": "2d7c20f0-09a8-4343-8389-3f4191a7d10b",
+        "name": "Destroy Cache 4",
+        "evidence": "button 'Destroy' on Supply Cache 4"
+       },
+       {
+        "event": "4adf8d25-61f0-4560-9a00-ac126508e99d",
+        "name": "Destroy Cache 5",
+        "evidence": "button 'Destroy' on Supply Cache 5"
+       },
+       {
+        "event": "769b8d23-2ad7-480e-a6e6-cfa99d7325ed",
+        "name": "Destroy Cache 6",
+        "evidence": "button 'Destroy' on Supply Cache 6"
+       },
+       {
+        "event": "24f172fe-3c4c-4cd9-8e0f-89e0b9a183b5",
+        "name": "Destroy Cache 7",
+        "evidence": "button 'Destroy' on Supply Cache 7"
+       },
+       {
+        "event": "dd4e89bb-f0f5-4ec9-a125-5372f7962af2",
+        "name": "Destroy Cache 8",
+        "evidence": "button 'Destroy' on Supply Cache 8"
+       }
+      ],
+      "targetFields": [
+       {
+        "entity": "d5fded57-f50c-4a81-838e-bb74ed916653",
+        "name": "Supply Cache 1",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "3d66200f-6445-41ec-866b-9d15f5ff8a1c",
+        "name": "Supply Cache 2",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "fb62fe2f-fd55-43d9-96e7-4949f399bfd4",
+        "name": "Supply Cache 3",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "325684ef-fb55-4681-9101-d82be4fa1f31",
+        "name": "Supply Cache 4",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "8e5321fc-bb27-4c03-85ef-1b4d89159b93",
+        "name": "Supply Cache 5",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "0967e7b3-bef1-4861-bb4e-91adcc734425",
+        "name": "Supply Cache 6",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "3d1bfa4d-b1c3-46f1-b952-8c8918c8adfd",
+        "name": "Supply Cache 7",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       },
+       {
+        "entity": "e2f6237b-83f0-4881-abdd-f7c6d87cbca8",
+        "name": "Supply Cache 8",
+        "entityType": "Token",
+        "buttonText": "Destroy"
+       }
+      ],
+      "markerTokens": [],
+      "law": "button"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 29",
@@ -3064,7 +3504,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 3",
@@ -3140,7 +3585,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 30",
@@ -3254,7 +3704,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 31",
@@ -3360,7 +3815,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 32",
@@ -3456,7 +3916,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 4",
@@ -3624,7 +4089,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 5",
@@ -3700,7 +4170,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 6",
@@ -3782,7 +4257,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 7",
@@ -3930,7 +4410,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 8",
@@ -4044,7 +4529,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Core 9",
@@ -4225,7 +4715,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 1",
@@ -4381,7 +4876,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 10",
@@ -4513,7 +5013,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 11",
@@ -4599,7 +5104,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 12",
@@ -4830,7 +5340,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 13",
@@ -4898,7 +5413,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 14",
@@ -5132,7 +5652,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 15",
@@ -5349,7 +5874,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 16",
@@ -5510,7 +6040,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 2",
@@ -5653,7 +6188,55 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "Recording Active",
+      "triggerGuid": "7bf92991-5b15-4c06-b0b5-31fb03ab80db",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose - Recording Active"
+       }
+      ],
+      "channels": [
+       {
+        "event": "7c797f54-c171-418e-962b-c07e110f4906",
+        "name": "The Recording",
+        "class": "UNRESOLVED",
+        "evidence": "no structural taeter"
+       }
+      ]
+     },
+     {
+      "variable": "Defeat",
+      "triggerGuid": "fb711fa3-3ae8-40d3-9dc6-b62b1c138338",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose - Recording Active"
+       },
+       {
+        "event": "4fe58c6d-6419-4fb6-955c-4611aa8458b5",
+        "name": "End of Mission - Rebels lose - No Recording"
+       }
+      ],
+      "channels": [
+       {
+        "event": "0bb7257f-ba07-4576-af8b-caa943907fc2",
+        "name": "Rebel defeat",
+        "class": "BOOK",
+        "evidence": "book-word in setter name"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Empire 3",
@@ -6833,7 +7416,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 4",
@@ -6901,7 +7489,61 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "End Mission",
+      "triggerGuid": "35336467-5d3b-4e77-9d94-01f7a0ff859e",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "1e764237-0372-404c-826a-5fcaf978fefd",
+        "name": "Rebels Lose Bonus Credits"
+       },
+       {
+        "event": "6381b60d-b612-4eb5-be22-6befded031e0",
+        "name": "Rebels Lose No Bonus Credits"
+       }
+      ],
+      "channels": [
+       {
+        "event": "fac456cf-6c32-4b32-9708-84538d36ec5d",
+        "name": "Story 1",
+        "class": "BOOK",
+        "evidence": "book-word in setter name"
+       },
+       {
+        "event": "24142781-4f57-4d08-aa89-dec53e4c9c27",
+        "name": "Story 2",
+        "class": "BOOK",
+        "evidence": "book-word in setter name"
+       }
+      ]
+     },
+     {
+      "variable": "Round 7 started",
+      "triggerGuid": "8a64c461-717f-42f7-8574-341cd1e53c86",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "1e764237-0372-404c-826a-5fcaf978fefd",
+        "name": "Rebels Lose Bonus Credits"
+       }
+      ],
+      "channels": [
+       {
+        "event": "f2beeb78-c18d-4fa7-9971-fd6ae5e3fa2c",
+        "name": "Round 7 starts",
+        "class": "BOOK",
+        "evidence": "book-word in setter name"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Empire 5",
@@ -7024,7 +7666,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 6",
@@ -7883,7 +8530,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 7",
@@ -8119,7 +8771,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 8",
@@ -8304,7 +8961,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Empire 9",
@@ -10028,7 +10690,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 1",
@@ -10203,7 +10870,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 10",
@@ -10262,7 +10934,41 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Prisoners claimed",
+      "triggerGuid": "6011ce00-8b65-485c-ac81-4d6376889ef9",
+      "threshold": 4,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "75f7248d-873e-4906-9888-02e049601b86",
+        "name": "Prisoner transferred",
+        "evidence": "button 'Prisoner transferred' on Cell"
+       }
+      ],
+      "targetFields": [
+       {
+        "entity": "b8c5a23d-48dd-4941-a2af-df39552df1c0",
+        "name": "Cell",
+        "entityType": "Highlight",
+        "buttonText": "Prisoner transferred"
+       }
+      ],
+      "markerTokens": [],
+      "law": "button"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 11",
@@ -10349,7 +11055,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 12",
@@ -10450,7 +11161,39 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Draylen executed",
+      "triggerGuid": "657b6748-3d8d-4e1a-a3ef-d8d074a9ff4b",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "2af32c1f-e279-4bc5-9155-96266a2fb9e0",
+        "name": "Draylen executed",
+        "evidence": "chain:Loyalty Fulfilled"
+       }
+      ],
+      "targetFields": [],
+      "markerTokens": [
+       {
+        "entity": "3d67379d-0ddf-4d4c-b34d-789541cd4f05",
+        "name": "Draylen"
+       }
+      ],
+      "law": "chain"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 13",
@@ -10621,7 +11364,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 14",
@@ -10754,7 +11502,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 15",
@@ -11089,7 +11842,38 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "Rebels lose",
+      "triggerGuid": "9485cee6-14dc-4ba5-bf9f-f23bb1ae8025",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "channels": [
+       {
+        "event": "d98726f0-cee8-4a39-9a9b-a945601ec3a0",
+        "name": "Rebels Lose RL",
+        "class": "BOOK",
+        "evidence": "missionProperties bookkeeping reference"
+       },
+       {
+        "event": "b2eb0f28-f5c3-49ac-86e9-a85d025c2760",
+        "name": "Rebels lose wound",
+        "class": "BOOK",
+        "evidence": "book-word in setter name"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Hoth 16",
@@ -11246,7 +12030,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 2",
@@ -11485,7 +12274,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 3",
@@ -11692,7 +12486,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 4",
@@ -11834,7 +12633,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 5",
@@ -12127,7 +12931,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 6",
@@ -12293,7 +13102,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 7",
@@ -12467,7 +13281,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 8",
@@ -12617,7 +13436,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Hoth 9",
@@ -12763,7 +13587,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 1",
@@ -12957,7 +13786,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 10",
@@ -13143,7 +13977,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 11",
@@ -13239,7 +14078,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 12",
@@ -13428,7 +14272,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 13",
@@ -13673,7 +14522,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 14",
@@ -13872,7 +14726,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 15",
@@ -14108,7 +14967,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 16",
@@ -14390,7 +15254,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 2",
@@ -14543,7 +15412,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 3",
@@ -14762,7 +15636,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 4",
@@ -14821,7 +15700,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 5",
@@ -14903,7 +15787,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 6",
@@ -15228,7 +16117,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 7",
@@ -15566,7 +16460,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 8",
@@ -15782,7 +16681,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Jabba 9",
@@ -16015,7 +16919,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Lothal 1",
@@ -16186,7 +17095,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Lothal 2",
@@ -16385,7 +17299,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Lothal 3",
@@ -16738,7 +17657,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Lothal 4",
@@ -16947,7 +17871,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Lothal 5",
@@ -17085,7 +18014,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Lothal 6",
@@ -17312,7 +18246,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 1",
@@ -17446,7 +18385,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 10",
@@ -17594,7 +18538,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 11",
@@ -17676,7 +18625,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 12",
@@ -17888,7 +18842,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 13",
@@ -18058,7 +19017,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 14",
@@ -18272,7 +19236,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 15",
@@ -18452,7 +19421,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 16",
@@ -18651,7 +19625,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 17",
@@ -18784,7 +19763,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 18",
@@ -19020,7 +20004,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 19",
@@ -19177,7 +20166,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 2",
@@ -19245,7 +20239,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 20",
@@ -19302,7 +20301,12 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 21",
@@ -19431,7 +20435,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 22",
@@ -19598,7 +20607,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 23",
@@ -19821,7 +20835,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 24",
@@ -20392,7 +21411,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 25",
@@ -20582,7 +21606,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 26",
@@ -20715,7 +21744,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 27",
@@ -20959,7 +21993,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 28",
@@ -21060,7 +22099,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 29",
@@ -21231,7 +22275,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 3",
@@ -21276,7 +22325,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 30",
@@ -21517,7 +22571,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 31",
@@ -21753,7 +22812,39 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Rebels Lose",
+      "triggerGuid": "78d095c1-3fa6-4dd3-af6b-cd6d43eb5b10",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "ec6b3a3b-8ded-4afb-bd40-8fa3fe7d8b1c",
+        "name": "Cargo Position 16",
+        "evidence": "chain:Position +1"
+       }
+      ],
+      "targetFields": [],
+      "markerTokens": [
+       {
+        "entity": "7c435df3-24a0-4b4c-a6a6-a8a4ff5a4400",
+        "name": "Cargo 16"
+       }
+      ],
+      "law": "chain"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 32",
@@ -21886,7 +22977,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 33",
@@ -22086,7 +23182,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 34",
@@ -22455,7 +23556,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 35",
@@ -22574,7 +23680,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 36",
@@ -22814,7 +23925,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 37",
@@ -22997,7 +24113,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 38",
@@ -23027,7 +24148,12 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 39",
@@ -23174,7 +24300,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 4",
@@ -23275,7 +24406,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 40",
@@ -23439,7 +24575,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 5",
@@ -23563,7 +24704,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 6",
@@ -23692,7 +24838,32 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "Rebels Lose",
+      "triggerGuid": "00cf7b46-405c-4a59-8bba-1907ead294f2",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "channels": [
+       {
+        "event": "a269200d-343a-4fd8-b738-32093ac42d5a",
+        "name": "All Troopers Gone",
+        "class": "UNRESOLVED",
+        "evidence": "no structural taeter"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Other 7",
@@ -23858,7 +25029,32 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "borderline",
+    "duties": [],
+    "candidates": [
+     {
+      "variable": "Rebels Lose",
+      "triggerGuid": "f16ff293-65f9-44e3-abef-43838d477094",
+      "threshold": 1,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "channels": [
+       {
+        "event": "ed9db77d-bd12-42f0-ab4f-fdf5e8b3b95f",
+        "name": "Rebels Lose",
+        "class": "BOOK",
+        "evidence": "combat/round flag on setter"
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "mission": "Other 8",
@@ -23944,7 +25140,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Other 9",
@@ -24104,7 +25305,151 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "duty",
+    "duties": [
+     {
+      "variable": "Wookiees Bound",
+      "triggerGuid": "eab19ca8-13fd-4e7d-b210-52c7c4252487",
+      "threshold": 6,
+      "endEvents": [
+       {
+        "event": "9e960fce-d271-468c-8d6c-233bc752aa52",
+        "name": "End of Mission - Rebels lose"
+       }
+      ],
+      "setterEvents": [
+       {
+        "event": "4701a484-8970-44c6-a370-b70d51c87518",
+        "name": "Wookiee Blue 1 Bound",
+        "evidence": "button 'Bind' on Wookiee Blue 1 Free"
+       },
+       {
+        "event": "49da1ca9-071b-44e0-8bf9-ed232e454c59",
+        "name": "Wookiee Blue 2 Bound",
+        "evidence": "button 'Bind' on Wookiee Blue 2 Free"
+       },
+       {
+        "event": "d553af01-eb86-4a27-b2c7-d99e614d6c9f",
+        "name": "Wookiee Yellow 1 Bound",
+        "evidence": "button 'Bind' on Wookiee Yellow 1 Free"
+       },
+       {
+        "event": "804af453-45f2-4f9a-949b-e359fa5415b2",
+        "name": "Wookiee Red 1 Bound",
+        "evidence": "button 'Bind' on Wookiee Red 1 Free"
+       },
+       {
+        "event": "293ea33a-8dbe-47d5-a374-9f0fdc9e7d67",
+        "name": "Wookiee Red 2 Bound",
+        "evidence": "button 'Bind' on Wookiee Red 2 Free"
+       },
+       {
+        "event": "a29c0fc4-1f4f-4105-9e84-36f3a0c43f93",
+        "name": "Wookiee Yellow 2 Bound",
+        "evidence": "button 'Bind' on Wookiee Yellow 2 Free"
+       },
+       {
+        "event": "e09abfb6-4f08-482c-9695-fafc56d82f31",
+        "name": "Wookiee Green 1 Bound",
+        "evidence": "button 'Bind' on Wookiee Green 1 Free"
+       },
+       {
+        "event": "db0f164c-b925-45be-9ac7-80de35e5306b",
+        "name": "Wookiee Green 2 Bound",
+        "evidence": "button 'Bind' on Wookiee Green 2 Free"
+       }
+      ],
+      "targetFields": [
+       {
+        "entity": "ac9f6be7-b084-43e7-8c45-4940e75c91cd",
+        "name": "Wookiee Blue 1 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "b00a6391-e342-4d6e-9130-4de2397e6997",
+        "name": "Wookiee Blue 2 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "52bc756d-6981-40fb-80cc-f0ad9afa2ac7",
+        "name": "Wookiee Yellow 1 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "29acbd27-f327-42b9-a233-348baf8e0ca6",
+        "name": "Wookiee Red 1 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "091ae164-b54a-4a13-9077-18463de61691",
+        "name": "Wookiee Red 2 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "f9573dce-ded4-44b2-9b2f-27601dc766bb",
+        "name": "Wookiee Yellow 2 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "686979ff-f1bf-4f67-8799-03911a739247",
+        "name": "Wookiee Green 1 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       },
+       {
+        "entity": "e11619fd-e496-4ae5-a189-79affc26a16d",
+        "name": "Wookiee Green 2 Free",
+        "entityType": "Token",
+        "buttonText": "Bind"
+       }
+      ],
+      "markerTokens": [
+       {
+        "entity": "54286751-79aa-4e58-b77e-2f342f923b25",
+        "name": "Wookiee Blue 1 Bound"
+       },
+       {
+        "entity": "82d70b80-88bd-4824-9297-f75afbdd5619",
+        "name": "Wookiee Blue 2 Bound"
+       },
+       {
+        "entity": "a7fc7fb9-cf6b-4a84-96c9-512202065c84",
+        "name": "Wookiee Yellow 1 Bound"
+       },
+       {
+        "entity": "d47a58f8-1a2b-45b2-a1a7-17903289e3c0",
+        "name": "Wookiee Red 1 Bound"
+       },
+       {
+        "entity": "5c9fb44c-26bd-4be1-ba44-c6cf2f993fcc",
+        "name": "Wookiee Red 2 Bound"
+       },
+       {
+        "entity": "3bad6eeb-18d4-4e82-af69-f74922c81d1a",
+        "name": "Wookiee Yellow 2 Bound"
+       },
+       {
+        "entity": "f66bcf81-929d-445a-b19d-a84544eec8c9",
+        "name": "Wookiee Green 1 Bound"
+       },
+       {
+        "entity": "591ee771-b929-4dc3-9f40-5df502cc1a17",
+        "name": "Wookiee Green 2 Bound"
+       }
+      ],
+      "law": "button"
+     }
+    ],
+    "candidates": []
+   }
   },
   {
    "mission": "Twin 1",
@@ -24181,7 +25526,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Twin 2",
@@ -24258,7 +25608,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Twin 3",
@@ -24344,7 +25699,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Twin 4",
@@ -24442,7 +25802,12 @@
      "runtimeSwapped": false
     }
    ],
-   "sectionHypotheses": []
+   "sectionHypotheses": [],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Twin 5",
@@ -24599,7 +25964,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   },
   {
    "mission": "Twin 6",
@@ -24908,7 +26278,12 @@
       }
      ]
     }
-   ]
+   ],
+   "dutyAnchors": {
+    "class": "none",
+    "duties": [],
+    "candidates": []
+   }
   }
  ]
 }

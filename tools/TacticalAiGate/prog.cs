@@ -45,6 +45,7 @@ class P {
         UiCompletenessGate.Run();
         DeploymentFilterGate.Run();
         DpScoreGate.Run();
+        DutyMineGate.Run();    // P37a (t_1f4d7286): golden vector 7/7/124 + data-exists + Pfad-Doppelpfad, fail-closed
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }
 }

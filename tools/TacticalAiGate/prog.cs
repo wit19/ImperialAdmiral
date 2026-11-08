@@ -46,6 +46,7 @@ class P {
         DeploymentFilterGate.Run();
         DpScoreGate.Run();
         DutyMineGate.Run();    // P37a (t_1f4d7286): golden vector 7/7/124 + data-exists + Pfad-Doppelpfad, fail-closed
+        DutyCoreGate.Run();    // P37c (t_e80246ed): Escort-Quota golden rerun (hoth10/one/six/no_duty/shadow) + Purity + Fairness-Scan, zweiter Compile-Kontext
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }
 }

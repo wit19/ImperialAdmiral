@@ -88,6 +88,18 @@ namespace TacticalAI
         // group's activation popup (PersonaState.DescribeLine); null when no
         // persona plays. Pure display - changes no plan number.
         public string PersonaLine;
+        // P37c (card t_e80246ed, concept §1b G1/G3): the Core-Marker im Plan
+        // for the mission duty. Duty ∈ {none, escort} (DutyQuota constants) —
+        // the marker ONLY: the attack slot and the focus/target layer above
+        // are untouched (G1), the Duty-Ast itself is a printed Wenn-Dann
+        // instruction the renderer (Hop D) adds to the MOVEMENT branch from
+        // ui.json keys (null key => no line, Null-Law). DutyTarget is the
+        // anchor NAME (Zielfeld/Marker, never a coordinate); DutyQuotaLine is
+        // the raw ASCII disclosure (k, ranking, mode) of the round's quota.
+        // Default null on every pre-P37c path (legacy and no-duty missions).
+        public string Duty;
+        public string DutyTarget;
+        public string DutyQuotaLine;
     }
 
     public static class TacticalAIBridge
@@ -246,6 +258,10 @@ namespace TacticalAI
         static bool _personaQMAnnounced;
         static Dictionary<string, Tac.RiskDecision> _riskByGroup;
         static Dictionary<string, Tac.HeroThreatProfile> _profileByName;
+        // P37c (card t_e80246ed): this round's Escort-Quota decision (Core
+        // DutyQuota). NULL = no duty fact for this mission (Null-Law: the
+        // plan marker stays null, no popup line, tree bit-identical).
+        static Tac.DutyRound _dutyRound;
         static Tac.ThreatLedger _threatLedger;
         static int _ledgerRound = -1;
 
@@ -253,6 +269,7 @@ namespace TacticalAI
         {
             _catalog = null;
             _patternByCard = null;
+            _dutyRound = null;   // P37c: a stale escort cohort never crosses the session boundary
             _planRound = -1;
             _slots = new List<Tac.OrderSlot>();
             _publicLine = "";
@@ -667,6 +684,22 @@ namespace TacticalAI
                 _publicLine = "";
                 return;
             }
+            // P37c (card t_e80246ed, concept §1b G1-G4): the Escort-Quota of
+            // THIS round, computed ONCE from public inputs only — the rolled
+            // patterns (already decided above), the session key, the printed
+            // Tripod mobility law and the mission's parsed duty fact (the
+            // P37b fail-closed reader over the SHIPPED MissionCritical
+            // artifact + the app's live mapEntities truth — the same seam as
+            // the DP anchors). Null-Law: a mission without a duty row yields
+            // _dutyRound = null => plan markers stay null => popup and trees
+            // bit-identical (Canon vectors prove it). Meta-law: this line is
+            // inside EnsureRound, reached only behind ActiveNow(). The raw
+            // Debug line (Player-22 channel, no ui.json key) discloses
+            // k/ranking/mode exactly as the harness Explain pins it.
+            _dutyRound = ComputeDutyRound(roundNo, facts);
+            if (_dutyRound != null)
+                Debug.Log("TacticalAIBridge::dutyQuota " + _dutyRound.Explain +
+                          " target=\"" + _dutyRound.TargetName + "\"");
 
             var mode = EffectiveMissionMode();
             // M5 (concept 3.3.1b item 4): posture is DERIVED from mission
@@ -1139,6 +1172,28 @@ namespace TacticalAI
             // catalog record - see the block synthesis above.)
             plan.Pattern = _patternByCard != null && _patternByCard.TryGetValue(cd.id, out var pat)
                            && !string.IsNullOrEmpty(pat) ? pat : "aggressive";
+            // P37c (card t_e80246ed, concept §1b G1): the Core-Marker im Plan.
+            // The duty reads the pattern decided above and writes NOTHING
+            // else — the attack slot and the focus/target layer are untouched
+            // (G1). _dutyRound == null (no duty fact, tactical off, or any
+            // duty computation failure) keeps all three fields null: every
+            // pre-P37c popup ships byte-identical. The printed Duty-Ast text
+            // (G3, Reichweiten-Drohungsdefinition included) renders from the
+            // ui.json keys hop D owns; a missing key => no line, the marker
+            // alone changes no number. The QUOTA decision (k, cohort ranking)
+            // is disclosed on the raw debug channel in EnsureRound and rides
+            // on the plan for the gated explain section.
+            if (_dutyRound != null)
+            {
+                plan.Duty = _dutyRound.DutyOf(cd.id);
+                if (plan.Duty == Tac.DutyQuota.DutyEscort)
+                {
+                    plan.DutyTarget = _dutyRound.TargetName;
+                    plan.DutyQuotaLine = _dutyRound.Explain;
+                }
+                else if (_dutyRound.Escorts.Count > 0)
+                    plan.DutyQuotaLine = _dutyRound.Explain;
+            }
             // O-C supporter-codex tree variant + emergency why-line are now
             // resolved ABOVE (before the target choice, so the S-E supporter
             // mask-trust channel sees the emergency fact). plan.OfficerKeep /
@@ -1335,6 +1390,29 @@ namespace TacticalAI
             // definition carrier; the definition belongs in the tree - M6s-B5
             // lesson). Only set when TreeKindFor said Emergency.
             if (!string.IsNullOrEmpty(plan.EmergencyWhy)) outp.Add(plan.EmergencyWhy);
+            // P37c (card t_e80246ed, concept §1b G3/G4): the Duty-Ast — a
+            // PRINTED Wenn-Dann guidance for the BEWEGUNG slot only. G1: the
+            // attack slot and the focus/target layer are untouched — the
+            // pattern tree below stays printed in full and IS the "regulärer
+            // Gefechtsast" the branch's Bedrohung-arm points to (Mensch löst
+            // am Brett; the machine never computes board knowledge — the
+            // Drohungsdefinition is printed, not evaluated). Null-Law: no
+            // duty fact => no row, popup byte-identical. Fail-closed key
+            // guard (same law as the O-C notfall row): a missing key (asset
+            // state until hop D ships) or a stale placeholder renders
+            // NOTHING — the plan marker alone changes no number.
+            if (plan.Duty == Tac.DutyQuota.DutyEscort)
+            {
+                var dt = TF(L.apDutyEscortTree, plan.DutyTarget ?? "");
+                if (!string.IsNullOrEmpty(dt) && dt.IndexOf('{') < 0)
+                    foreach (var dl in dt.Replace("\r", "").Split('\n'))
+                        if (!string.IsNullOrEmpty(dl.Trim())) outp.Add(dl);
+            }
+            if (!string.IsNullOrEmpty(plan.DutyQuotaLine))
+            {
+                var dq = TF(L.apDutyQuotaLine, plan.DutyQuotaLine);
+                if (!string.IsNullOrEmpty(dq) && dq.IndexOf('{') < 0) outp.Add(dq);
+            }
             var tree = TreeFor(L, plan);
             var speed = (cd != null ? cd.speed : 0)
                 .ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -1754,6 +1832,74 @@ namespace TacticalAI
             chosen = best.GUID;
             Debug.Log($"TacticalAIBridge::DP -> {best.name} ({card?.name}) [deterministic, no RNG]");
             return true;
+        }
+
+        /// <summary>P37c (card t_e80246ed, concept §1b): this round's Escort-
+        /// Quota from public inputs ONLY — the P37b fail-closed DutyAnchors
+        /// reader over the SHIPPED MissionCritical artifact + the app's live
+        /// mapEntities name truth (same seam law as the DP anchors: an anchor
+        /// the mission file does not list drops), the pattern map rolled for
+        /// THIS round (never re-rolled here — the duty reads patterns, it does
+        /// not write them, G1), the printed Tripod mobility law from the
+        /// catalog (immobile groups never escort — the Duty-Ast replaces the
+        /// MOVEMENT branch they do not have) and the pattern-weight table's
+        /// dutyModifiers data row (Hop B key; absent => clean degradation to
+        /// base weights + quota ranking). Returns null = no duty fact (the
+        /// Null-Law branch: markers stay null, popup byte-identical). Any
+        /// exception => null (fail-closed, the legacy popup never dies on
+        /// the duty layer). Anchor target name: first TargetField name in
+        /// file order, else first MarkerToken name — deterministic, a NAME,
+        /// never a coordinate (Loch-Gesetz).</summary>
+        static Tac.DutyRound ComputeDutyRound(int roundNo, List<Tac.GroupFacts> facts)
+        {
+            try
+            {
+                var mission = DataStore.mission;
+                if (mission == null) return null;
+                // Entity truth = the mission FILE's mapEntities GUIDs (the
+                // reader's validation 3: a mined anchor whose entity left
+                // the roster is a GHOST and drops - fail-closed).
+                var truth = new HashSet<string>(StringComparer.Ordinal);
+                if (mission.mapEntities != null)
+                    foreach (var e in mission.mapEntities)
+                        if (e != null) truth.Add(e.GUID.ToString());   // same ToString convention as the DP anchors (both sides lowercase)
+                var duties = Tac.DutyAnchors.ForMission(
+                    TacticalAIAssets.MissionCriticalRoot, mission.fileName, truth);
+                if (duties == null || duties.Count == 0) return null;   // Null-Law
+                string target = "";
+                foreach (var d in duties)
+                {
+                    foreach (var t in d.TargetFields)
+                        if (!string.IsNullOrEmpty(t.Name)) { target = t.Name; break; }
+                    if (target.Length > 0) break;
+                    foreach (var t in d.MarkerTokens)
+                        if (!string.IsNullOrEmpty(t.Name)) { target = t.Name; break; }
+                    if (target.Length > 0) break;
+                }
+                EnsureCatalog();
+                var groups = new List<Tac.DutyGroup>();
+                foreach (var f in facts)
+                {
+                    if (f == null || string.IsNullOrEmpty(f.GroupId)) continue;
+                    Tac.DeploymentCard cc;
+                    bool mobile = !(_catalog != null && _catalog.TryGetValue(f.GroupId, out cc)
+                                    && cc != null && cc.IsTripod);
+                    groups.Add(new Tac.DutyGroup
+                    {
+                        CardId = f.GroupId,
+                        Pattern = _patternByCard != null && _patternByCard.TryGetValue(f.GroupId, out var fp)
+                                  ? fp : f.Pattern,
+                        Mobile = mobile,
+                    });
+                }
+                return Tac.DutyQuota.Compute(SessionKey(), roundNo, groups,
+                    PatternWeightTable(), target, true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::dutyQuota failed (no duty this mission): " + e.Message);
+                return null;
+            }
         }
 
         /// <summary>M14c-C2 adapter (card t_15ea0fba): anchor list for the

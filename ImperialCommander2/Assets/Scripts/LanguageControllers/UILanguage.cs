@@ -36,6 +36,16 @@ public class UITacticalAI
 	// tags are language-owned (ui.json law); solo/numbered labelling and the
 	// doctrineTreeLead/"Grundregel" removals of M13a/M13c stay in force.
 	public string apHead, apHeadAssault, apRule, apTreeAggressive, apTreeGuard, apTreeBlocker, apTreeHunter, apTreeSupport, apTreeAmbush, apTreeTripod, apTreeNoTarget, apEnd, apCustomHeader;
+	// P37c (card t_e80246ed, concept §1b G3/G4): the printed Duty-Ast rows.
+	// apDutyEscortTree = the Wenn-Dann movement guidance ({0} = duty anchor
+	// NAME, §1b Gesetz-3 text incl. the §9.4 Reichweiten-Drohungsdefinition,
+	// multi-line like every apTree* value); apDutyQuotaLine = the G4 quota
+	// disclosure ({0} = the raw Explain string: k, cap, cohort ranking).
+	// KEY DEFINITION ONLY — the 11-language VALUES are hop D's job (its card
+	// reads these two names from the P37c handoff). Until then the keys are
+	// null everywhere and the bridge renders NOTHING (Null-Law: popups
+	// byte-identical to pre-P37c, fail-closed like the O-C key guard).
+	public string apDutyEscortTree, apDutyQuotaLine;
 	// Thomas 02.11: command trees for cards that PRINT a command ability on
 	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
 	// rolled "guard" still commands, so every pattern keeps its own action

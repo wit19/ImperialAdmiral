@@ -168,6 +168,7 @@ namespace TacticalAiHarness
             Run("budget_rank.json", SecBudgetRank);    // P33-H5 (t_94d361bb): Beschaffungs-Ranking Kauf-vs-Verstaerken (hand-pinned weight table, Null-Law, Spare/dump, tie law, fail-closed reader)
             Run("marker_object.json", SecMarkerObject);    // P33-H4c (t_2ff1ba37): Objekt-Achse - MissionObject-Feed, Polaritaets-Leiter P1-P4 (P2 vor P1), Schutzgesetz-Schnittstelle, ziel=OBJEKT Wegwahl (Tuer sprengen), Null-Law-Pin
             Run("duty_loader.json", SecDutyLoader);    // P37b (t_1743a062): objectiveCounter-Whitelist + DutyAnchors-Leser (MissionCritical-Kanal) + dutyModifiers Null-Law (hand-pinned)
+            Run("duty_core.json", SecDutyCore);    // P37c (t_e80246ed): Escort-Quota (fmix64-Wuerfel + Rangfolge + k-Band) + Gefechts-/Escorts-Vektor auf echtem HOTH10-Duty + Seed-Stabilitaet + Schattenfall + Null-Law + Refs-Speisung + Meta-Law (hand-pinned)
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

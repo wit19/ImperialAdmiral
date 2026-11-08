@@ -1,0 +1,849 @@
+{
+ "_comment": "P37c duty-core section (card t_e80246ed, concept docs/CONCEPT_missions_duty.md §1b G1-G4 + §9.2 + §8 W4). Hand-pinned, additive section - existing Canon vectors untouched (git diff proves it; Canon totals ride unchanged). The law: sessionKey fnv (0-guard) -> per-round fmix64 quota draw k in [1..ceil(n/2)] over ALL groups (ranking by fmix64(fnv('dutyrank|id|rN')^seed), Ordinal tiebreak), candidates = the modifizierte Muster (dutyModifiers row sum > 0 rides; key absent = degraded: base weights + quota ranking - the SHIPPED-asset path), over-cap demotion by the ranking, §9.2 floor k>=1 whenever a duty + a mobile group exists, immobile (printed Stativ/Tripod) groups never escort. The escort/combat vectors read the REAL HOTH10 duty fact through the P37b reader (anchor 'Cell', the non-walkable Highlight stays valid - no Board check). Patterns are pinned INPUT facts (the pattern dice itself is Canon-pinned elsewhere - the duty layer only READS them, G1). Shadow cases Prime synthetic PatternWeight docs and RESTORE the shipped asset afterwards (same discipline as duty_loader's modifier_cases).",
+ "hoth10": {
+  "missionFile": "HOTH10.json",
+  "dir": "Hoth",
+  "targetName": "Cell",
+  "sessionKey": "dutycore-hoth10|HOTH10.json",
+  "groups": [
+   {
+    "cardId": "DG003",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG004",
+    "pattern": "hunter",
+    "mobile": true
+   }
+  ],
+  "rounds": [
+   {
+    "expect": {
+     "RoundNo": 1,
+     "Cap": 1,
+     "K": 1,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG004",
+      "DG003"
+     ],
+     "Escorts": [
+      "DG004"
+     ],
+     "Explain": "duty r1 mode=degradiert k=1/1 q=1 cand=2 ranking=DG004,DG003 escorts=DG004 patterns=DG003:aggressive,DG004:hunter",
+     "TargetName": "Cell"
+    },
+    "combat": [
+     "DG003"
+    ],
+    "dutyOf": "DG003=none,DG004=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 2,
+     "Cap": 1,
+     "K": 1,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG004",
+      "DG003"
+     ],
+     "Escorts": [
+      "DG004"
+     ],
+     "Explain": "duty r2 mode=degradiert k=1/1 q=1 cand=2 ranking=DG004,DG003 escorts=DG004 patterns=DG003:aggressive,DG004:hunter",
+     "TargetName": "Cell"
+    },
+    "combat": [
+     "DG003"
+    ],
+    "dutyOf": "DG003=none,DG004=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 3,
+     "Cap": 1,
+     "K": 1,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG003",
+      "DG004"
+     ],
+     "Escorts": [
+      "DG003"
+     ],
+     "Explain": "duty r3 mode=degradiert k=1/1 q=1 cand=2 ranking=DG003,DG004 escorts=DG003 patterns=DG003:aggressive,DG004:hunter",
+     "TargetName": "Cell"
+    },
+    "combat": [
+     "DG004"
+    ],
+    "dutyOf": "DG003=escort,DG004=none"
+   }
+  ],
+  "stability": "two full recomputations of all three rounds must equal each other AND these pins: seed-stabil by law (pure function of sessionKey+round+roster)"
+ },
+ "one_group": {
+  "sessionKey": "dutycore-one|X.json",
+  "round": 1,
+  "groups": [
+   {
+    "cardId": "DG003",
+    "pattern": "aggressive",
+    "mobile": true
+   }
+  ],
+  "expect": {
+   "RoundNo": 1,
+   "Cap": 1,
+   "K": 1,
+   "Mode": "degradiert",
+   "Ranking": [
+    "DG003"
+   ],
+   "Escorts": [
+    "DG003"
+   ],
+   "Explain": "duty r1 mode=degradiert k=1/1 q=1 cand=1 ranking=DG003 escorts=DG003 patterns=DG003:aggressive",
+   "TargetName": "Cell"
+  },
+  "combat": [],
+  "note": "Güte: 1 Gruppe => k=1 (band [1..ceil(1/2)]=[1..1]; §9.2 pins the floor above the combat remainder here)",
+  "dutyOf": "DG003=escort"
+ },
+ "six_groups": {
+  "sessionKey": "dutycore-six|EMPIRE3.json",
+  "groups": [
+   {
+    "cardId": "DG03",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG04",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG05",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG06",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG07",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG08",
+    "pattern": "aggressive",
+    "mobile": true
+   }
+  ],
+  "cap": 3,
+  "rounds": [
+   {
+    "expect": {
+     "RoundNo": 1,
+     "Cap": 3,
+     "K": 2,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG08",
+      "DG03",
+      "DG05",
+      "DG06",
+      "DG04",
+      "DG07"
+     ],
+     "Escorts": [
+      "DG08",
+      "DG03"
+     ],
+     "Explain": "duty r1 mode=degradiert k=2/3 q=2 cand=6 ranking=DG08,DG03,DG05,DG06,DG04,DG07 escorts=DG08,DG03 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG05",
+     "DG06",
+     "DG04",
+     "DG07"
+    ],
+    "dutyOf": "DG03=escort,DG04=none,DG05=none,DG06=none,DG07=none,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 2,
+     "Cap": 3,
+     "K": 3,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG05",
+      "DG03",
+      "DG04",
+      "DG06",
+      "DG08",
+      "DG07"
+     ],
+     "Escorts": [
+      "DG05",
+      "DG03",
+      "DG04"
+     ],
+     "Explain": "duty r2 mode=degradiert k=3/3 q=3 cand=6 ranking=DG05,DG03,DG04,DG06,DG08,DG07 escorts=DG05,DG03,DG04 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG06",
+     "DG08",
+     "DG07"
+    ],
+    "dutyOf": "DG03=escort,DG04=escort,DG05=escort,DG06=none,DG07=none,DG08=none"
+   },
+   {
+    "expect": {
+     "RoundNo": 3,
+     "Cap": 3,
+     "K": 2,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG08",
+      "DG03",
+      "DG06",
+      "DG04",
+      "DG05",
+      "DG07"
+     ],
+     "Escorts": [
+      "DG08",
+      "DG03"
+     ],
+     "Explain": "duty r3 mode=degradiert k=2/3 q=2 cand=6 ranking=DG08,DG03,DG06,DG04,DG05,DG07 escorts=DG08,DG03 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG06",
+     "DG04",
+     "DG05",
+     "DG07"
+    ],
+    "dutyOf": "DG03=escort,DG04=none,DG05=none,DG06=none,DG07=none,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 4,
+     "Cap": 3,
+     "K": 2,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG08",
+      "DG04",
+      "DG03",
+      "DG07",
+      "DG05",
+      "DG06"
+     ],
+     "Escorts": [
+      "DG08",
+      "DG04"
+     ],
+     "Explain": "duty r4 mode=degradiert k=2/3 q=2 cand=6 ranking=DG08,DG04,DG03,DG07,DG05,DG06 escorts=DG08,DG04 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG03",
+     "DG07",
+     "DG05",
+     "DG06"
+    ],
+    "dutyOf": "DG03=none,DG04=escort,DG05=none,DG06=none,DG07=none,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 5,
+     "Cap": 3,
+     "K": 3,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG08",
+      "DG03",
+      "DG07",
+      "DG06",
+      "DG04",
+      "DG05"
+     ],
+     "Escorts": [
+      "DG08",
+      "DG03",
+      "DG07"
+     ],
+     "Explain": "duty r5 mode=degradiert k=3/3 q=3 cand=6 ranking=DG08,DG03,DG07,DG06,DG04,DG05 escorts=DG08,DG03,DG07 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG06",
+     "DG04",
+     "DG05"
+    ],
+    "dutyOf": "DG03=escort,DG04=none,DG05=none,DG06=none,DG07=escort,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 6,
+     "Cap": 3,
+     "K": 2,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG08",
+      "DG07",
+      "DG06",
+      "DG03",
+      "DG05",
+      "DG04"
+     ],
+     "Escorts": [
+      "DG08",
+      "DG07"
+     ],
+     "Explain": "duty r6 mode=degradiert k=2/3 q=2 cand=6 ranking=DG08,DG07,DG06,DG03,DG05,DG04 escorts=DG08,DG07 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG06",
+     "DG03",
+     "DG05",
+     "DG04"
+    ],
+    "dutyOf": "DG03=none,DG04=none,DG05=none,DG06=none,DG07=escort,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 7,
+     "Cap": 3,
+     "K": 3,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG08",
+      "DG04",
+      "DG03",
+      "DG05",
+      "DG07",
+      "DG06"
+     ],
+     "Escorts": [
+      "DG08",
+      "DG04",
+      "DG03"
+     ],
+     "Explain": "duty r7 mode=degradiert k=3/3 q=3 cand=6 ranking=DG08,DG04,DG03,DG05,DG07,DG06 escorts=DG08,DG04,DG03 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG05",
+     "DG07",
+     "DG06"
+    ],
+    "dutyOf": "DG03=escort,DG04=escort,DG05=none,DG06=none,DG07=none,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 8,
+     "Cap": 3,
+     "K": 3,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG05",
+      "DG04",
+      "DG08",
+      "DG06",
+      "DG07",
+      "DG03"
+     ],
+     "Escorts": [
+      "DG05",
+      "DG04",
+      "DG08"
+     ],
+     "Explain": "duty r8 mode=degradiert k=3/3 q=3 cand=6 ranking=DG05,DG04,DG08,DG06,DG07,DG03 escorts=DG05,DG04,DG08 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG06",
+     "DG07",
+     "DG03"
+    ],
+    "dutyOf": "DG03=none,DG04=escort,DG05=escort,DG06=none,DG07=none,DG08=escort"
+   },
+   {
+    "expect": {
+     "RoundNo": 9,
+     "Cap": 3,
+     "K": 2,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG05",
+      "DG06",
+      "DG04",
+      "DG03",
+      "DG08",
+      "DG07"
+     ],
+     "Escorts": [
+      "DG05",
+      "DG06"
+     ],
+     "Explain": "duty r9 mode=degradiert k=2/3 q=2 cand=6 ranking=DG05,DG06,DG04,DG03,DG08,DG07 escorts=DG05,DG06 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG04",
+     "DG03",
+     "DG08",
+     "DG07"
+    ],
+    "dutyOf": "DG03=none,DG04=none,DG05=escort,DG06=escort,DG07=none,DG08=none"
+   },
+   {
+    "expect": {
+     "RoundNo": 10,
+     "Cap": 3,
+     "K": 1,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG07",
+      "DG05",
+      "DG03",
+      "DG04",
+      "DG06",
+      "DG08"
+     ],
+     "Escorts": [
+      "DG07"
+     ],
+     "Explain": "duty r10 mode=degradiert k=1/3 q=1 cand=6 ranking=DG07,DG05,DG03,DG04,DG06,DG08 escorts=DG07 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG05",
+     "DG03",
+     "DG04",
+     "DG06",
+     "DG08"
+    ],
+    "dutyOf": "DG03=none,DG04=none,DG05=none,DG06=none,DG07=escort,DG08=none"
+   },
+   {
+    "expect": {
+     "RoundNo": 11,
+     "Cap": 3,
+     "K": 3,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG03",
+      "DG07",
+      "DG04",
+      "DG06",
+      "DG08",
+      "DG05"
+     ],
+     "Escorts": [
+      "DG03",
+      "DG07",
+      "DG04"
+     ],
+     "Explain": "duty r11 mode=degradiert k=3/3 q=3 cand=6 ranking=DG03,DG07,DG04,DG06,DG08,DG05 escorts=DG03,DG07,DG04 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG06",
+     "DG08",
+     "DG05"
+    ],
+    "dutyOf": "DG03=escort,DG04=escort,DG05=none,DG06=none,DG07=escort,DG08=none"
+   },
+   {
+    "expect": {
+     "RoundNo": 12,
+     "Cap": 3,
+     "K": 2,
+     "Mode": "degradiert",
+     "Ranking": [
+      "DG03",
+      "DG06",
+      "DG05",
+      "DG04",
+      "DG07",
+      "DG08"
+     ],
+     "Escorts": [
+      "DG03",
+      "DG06"
+     ],
+     "Explain": "duty r12 mode=degradiert k=2/3 q=2 cand=6 ranking=DG03,DG06,DG05,DG04,DG07,DG08 escorts=DG03,DG06 patterns=DG03:aggressive,DG04:aggressive,DG05:aggressive,DG06:aggressive,DG07:aggressive,DG08:aggressive",
+     "TargetName": ""
+    },
+    "combat": [
+     "DG05",
+     "DG04",
+     "DG07",
+     "DG08"
+    ],
+    "dutyOf": "DG03=escort,DG04=none,DG05=none,DG06=escort,DG07=none,DG08=none"
+   }
+  ],
+  "invariants": "for EVERY round: 1 <= K <= 3 (nie 0; nie alle: K <= ceil(6/2) < 6); a rerun of every round equals the pin"
+ },
+ "shadow": {
+  "sessionKey": "dutycore-tri|SHADOW.json",
+  "groups": [
+   {
+    "cardId": "DG003",
+    "pattern": "guard",
+    "mobile": true
+   },
+   {
+    "cardId": "DG004",
+    "pattern": "hunter",
+    "mobile": true
+   },
+   {
+    "cardId": "DG007",
+    "pattern": "guard",
+    "mobile": false
+   }
+  ],
+  "note": "Schattenfall: DG007 rolls guard but is the printed Stativ (IsTripod) - immobile groups NEVER escort (the Duty-Ast replaces the movement branch they lack); a positive row (sum > 0) rides, a non-positive row shadows the pattern out and the §9.2 floor promotes the FIRST MOBILE group of the ranking (DG007 stays skipped).",
+  "matrix_positive": {
+   "dutyModifiers": {
+    "guard": {
+     "escort": 1
+    }
+   },
+   "rounds": [
+    {
+     "expect": {
+      "RoundNo": 1,
+      "Cap": 2,
+      "K": 1,
+      "Mode": "matrix",
+      "Ranking": [
+       "DG003",
+       "DG004",
+       "DG007"
+      ],
+      "Escorts": [
+       "DG003"
+      ],
+      "Explain": "duty r1 mode=matrix k=1/2 q=1 cand=1 ranking=DG003,DG004,DG007 escorts=DG003 patterns=DG003:guard,DG004:hunter,DG007:guard",
+      "TargetName": "Cell"
+     },
+     "combat": [
+      "DG004",
+      "DG007"
+     ],
+     "dutyOf": "DG003=escort,DG004=none,DG007=none"
+    },
+    {
+     "expect": {
+      "RoundNo": 2,
+      "Cap": 2,
+      "K": 1,
+      "Mode": "matrix",
+      "Ranking": [
+       "DG007",
+       "DG004",
+       "DG003"
+      ],
+      "Escorts": [
+       "DG003"
+      ],
+      "Explain": "duty r2 mode=matrix k=1/2 q=2 cand=1 ranking=DG007,DG004,DG003 escorts=DG003 patterns=DG003:guard,DG004:hunter,DG007:guard",
+      "TargetName": "Cell"
+     },
+     "combat": [
+      "DG007",
+      "DG004"
+     ],
+     "dutyOf": "DG003=escort,DG004=none,DG007=none"
+    },
+    {
+     "expect": {
+      "RoundNo": 3,
+      "Cap": 2,
+      "K": 1,
+      "Mode": "matrix",
+      "Ranking": [
+       "DG007",
+       "DG003",
+       "DG004"
+      ],
+      "Escorts": [
+       "DG003"
+      ],
+      "Explain": "duty r3 mode=matrix k=1/2 q=1 cand=1 ranking=DG007,DG003,DG004 escorts=DG003 patterns=DG003:guard,DG004:hunter,DG007:guard",
+      "TargetName": "Cell"
+     },
+     "combat": [
+      "DG007",
+      "DG004"
+     ],
+     "dutyOf": "DG003=escort,DG004=none,DG007=none"
+    }
+   ]
+  },
+  "matrix_nonpositive": {
+   "dutyModifiers": {
+    "guard": {
+     "escort": -1
+    }
+   },
+   "rounds": [
+    {
+     "expect": {
+      "RoundNo": 1,
+      "Cap": 2,
+      "K": 1,
+      "Mode": "matrix",
+      "Ranking": [
+       "DG003",
+       "DG004",
+       "DG007"
+      ],
+      "Escorts": [
+       "DG003"
+      ],
+      "Explain": "duty r1 mode=matrix k=1/2 q=1 cand=0 ranking=DG003,DG004,DG007 escorts=DG003 patterns=DG003:guard,DG004:hunter,DG007:guard",
+      "TargetName": "Cell"
+     },
+     "combat": [
+      "DG004",
+      "DG007"
+     ],
+     "dutyOf": "DG003=escort,DG004=none,DG007=none"
+    },
+    {
+     "expect": {
+      "RoundNo": 2,
+      "Cap": 2,
+      "K": 1,
+      "Mode": "matrix",
+      "Ranking": [
+       "DG007",
+       "DG004",
+       "DG003"
+      ],
+      "Escorts": [
+       "DG004"
+      ],
+      "Explain": "duty r2 mode=matrix k=1/2 q=2 cand=0 ranking=DG007,DG004,DG003 escorts=DG004 patterns=DG003:guard,DG004:hunter,DG007:guard",
+      "TargetName": "Cell"
+     },
+     "combat": [
+      "DG007",
+      "DG003"
+     ],
+     "dutyOf": "DG003=none,DG004=escort,DG007=none"
+    },
+    {
+     "expect": {
+      "RoundNo": 3,
+      "Cap": 2,
+      "K": 1,
+      "Mode": "matrix",
+      "Ranking": [
+       "DG007",
+       "DG003",
+       "DG004"
+      ],
+      "Escorts": [
+       "DG003"
+      ],
+      "Explain": "duty r3 mode=matrix k=1/2 q=1 cand=0 ranking=DG007,DG003,DG004 escorts=DG003 patterns=DG003:guard,DG004:hunter,DG007:guard",
+      "TargetName": "Cell"
+     },
+     "combat": [
+      "DG007",
+      "DG004"
+     ],
+     "dutyOf": "DG003=escort,DG004=none,DG007=none"
+    }
+   ]
+  }
+ },
+ "no_duty": {
+  "sessionKey": "dutycore-hoth10|HOTH10.json",
+  "round": 1,
+  "groups": [
+   {
+    "cardId": "DG003",
+    "pattern": "aggressive",
+    "mobile": true
+   },
+   {
+    "cardId": "DG004",
+    "pattern": "hunter",
+    "mobile": true
+   }
+  ],
+  "expect": {
+   "RoundNo": 1,
+   "Cap": 1,
+   "K": 0,
+   "Mode": "keinDuty",
+   "Ranking": [
+    "DG004",
+    "DG003"
+   ],
+   "Escorts": [],
+   "Explain": "duty r1 mode=keinDuty k=0/1 q=0 cand=0 ranking=DG004,DG003 escorts=- patterns=DG003:aggressive,DG004:hunter",
+   "TargetName": ""
+  },
+  "combat": [
+   "DG004",
+   "DG003"
+  ],
+  "note": "Null-Law at Core: no duty fact => mode keinDuty, K=0, no escorts, every DutyOf = none (the bridge additionally returns a null _dutyRound BEFORE calling - popup byte-identical; Canon-Beweise: the untouched pre-P37c sections in the SAME harness run + gate/build rc=0)",
+  "dutyOf": "DG003=none,DG004=none"
+ },
+ "refs_feed": {
+  "anchors": [
+   "Cell",
+   "Wookiee Blue 1 Bound"
+  ],
+  "views": [
+   {
+    "name": "minimal_eliminate",
+    "posture": "eliminate",
+    "counter": "incapacitateAll",
+    "objectives": [],
+    "contest": null
+   },
+   {
+    "name": "protect_nocontest",
+    "posture": "protect",
+    "counter": "objectiveCounter",
+    "objectives": [],
+    "contest": null
+   },
+   {
+    "name": "eliminate_contest",
+    "posture": "eliminate",
+    "counter": "incapacitateAll",
+    "objectives": [
+     {
+      "id": "Terminal A",
+      "zone": "Kaverne",
+      "done": false
+     },
+     {
+      "id": "Timer alt",
+      "zone": "Kaverne",
+      "done": true
+     }
+    ],
+    "contest": {
+     "zone": "Kaverne",
+     "door": "Tur C2",
+     "targets": [
+      "Luke"
+     ]
+    }
+   },
+   {
+    "name": "stall_nocontest",
+    "posture": "stall",
+    "counter": "surviveRounds",
+    "objectives": [],
+    "contest": null
+   },
+   {
+    "name": "deny_nocontest",
+    "posture": "deny",
+    "counter": "surviveRounds",
+    "objectives": [],
+    "contest": null
+   }
+  ],
+  "expect": [
+   {
+    "name": "minimal_eliminate",
+    "baseline_refs": [],
+    "fed_refs": [
+     "Cell",
+     "Wookiee Blue 1 Bound"
+    ]
+   },
+   {
+    "name": "protect_nocontest",
+    "baseline_refs": [],
+    "fed_refs": [
+     "Cell",
+     "Wookiee Blue 1 Bound"
+    ],
+    "rules": [
+     "gewinntraeger",
+     "objektbedroher",
+     "objektnaehe"
+    ]
+   },
+   {
+    "name": "eliminate_contest",
+    "baseline_refs": [
+     "Terminal A",
+     "Luke",
+     "Tur C2",
+     "Kaverne"
+    ],
+    "fed_refs": [
+     "Terminal A",
+     "Luke",
+     "Tur C2",
+     "Kaverne",
+     "Cell",
+     "Wookiee Blue 1 Bound"
+    ]
+   },
+   {
+    "name": "stall_nocontest",
+    "baseline_refs": [],
+    "fed_refs": [
+     "Cell",
+     "Wookiee Blue 1 Bound"
+    ]
+   },
+   {
+    "name": "deny_nocontest",
+    "baseline_refs": [],
+    "fed_refs": [
+     "Cell",
+     "Wookiee Blue 1 Bound"
+    ]
+   }
+  ],
+  "dedup_pin": {
+   "name": "eliminate_contest",
+   "anchors": [
+    "Luke",
+    "Cell",
+    "Cell"
+   ],
+   "fed_refs": [
+    "Terminal A",
+    "Luke",
+    "Tur C2",
+    "Kaverne",
+    "Cell"
+   ]
+  },
+  "cardtext_law": "CardText is byte-identical between the baseline and the fed doctrine of every view (Render reads Move/targets, not Refs - the {schutz}/protect placeholder path stays as it is, W4: einspeisen, nicht ersetzen)"
+ },
+ "meta_law": {
+  "note": "DutyQuota.Compute is a pure static function - no statics, no IO, no Unity: two calls with equal inputs are equal by construction (pinned per vector). The ONLY production caller chain is TacticalAIBridge.EnsureRound -> ComputeDutyRound (single call site, handoff grep), reached only behind ActiveNow(); tactical OFF == legacy bit-identical (Null-Law pins + untouched Canon)."
+ }
+}

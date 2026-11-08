@@ -312,8 +312,17 @@ namespace TacticalAI.Core
 
         // ------------------------------------------------------ selection
         /// Selection — AppView ONLY (type boundary).
+        /// P37c (card t_e80246ed, concept §8 W4): the optional
+        /// dutyAnchors parameter feeds the Duty-Anker NAMES into the refs
+        /// chain of the doctrine rendering. gewinntraeger runs in EVERY
+        /// posture and renders its Refs, so the anchor rides posturen-
+        /// independently — exactly W4's "einspeisen, nicht ersetzen": the
+        /// {schutz}/protect placeholder path stays untouched. Null/empty
+        /// (every pre-P37c caller, every mission without a duty fact)
+        /// keeps the refs chain bit-identical (Null-Law).
         public static Doctrine SelectDoctrine(AppView view, string pattern = "aggressive",
-                                              IEnumerable<string> denyIds = null)
+                                              IEnumerable<string> denyIds = null,
+                                              IEnumerable<string> dutyAnchors = null)
         {
             AppView.AssertAppView(view);
             string posture = string.IsNullOrEmpty(view.Posture) ? "eliminate" : view.Posture;
@@ -372,6 +381,13 @@ namespace TacticalAI.Core
             foreach (var t in targets) if (!refs.Contains(t)) refs.Add(t);
             if (!string.IsNullOrEmpty(door)) refs.Add(door);
             if (!string.IsNullOrEmpty(zone)) refs.Add(zone);
+            // P37c (concept §8 W4): the Duty-Anker ride at the END of the
+            // refs chain — existing entries never move, names dedup against
+            // it. No board knowledge: the names come from the DutyAnchors
+            // reader (name + type, never a coordinate, Loch-Gesetz).
+            if (dutyAnchors != null)
+                foreach (var a in dutyAnchors)
+                    if (!string.IsNullOrEmpty(a) && !refs.Contains(a)) refs.Add(a);
 
             string stance = StanceText.TryGetValue(pattern, out var st) ? st : StanceText["aggressive"];
             var denyList = new List<string>(denyIds ?? Array.Empty<string>());

@@ -1,0 +1,691 @@
+{
+ "_comment": "P37b duty-loader section (card t_1743a062, concept docs/CONCEPT_missions_duty.md 8 W1/W3/W7/W8 + 9.1). Hand-pinned, additive section - existing Canon vectors untouched. Pins: (a) objectiveCounter joins the Board.CounterTypes/VictoryCounter whitelist while every unknown type keeps throwing (transfer/deliver as the rejected W1 candidates, case-sensitivity intact); (b) the eliminate posture hangs NO rule on objectiveCounter - killbare stays capture/incapacitateAll-only, woundAll/capture rule lines untouched (Canon doctrine.json vectors stay authoritative for the shipped counters); (c) DutyAnchors.ForMission over the SHIPPED MissionCritical artifact + SHIPPED SagaMissions entity truth: all 7 duty missions parse (CORE23 anchorless duty legal, HOTH10 full-detail pin incl. the non-walkable Cell Highlight), borderline/none read empty (EMPIRE3 counter-vector, CORE10 borderline), sum of anchors 28 = DutyMineGate truth; synthetic docs pin the fail-closed drops (class gate, empty counter name, empty anchor name, ghost anchor vs caller entity truth, no-truth skip, missing threshold = 0-fact); (d) PatternWeights dutyModifiers Null-Law: shipped asset carries no key and the table stays empty; synthetic docs pin key-absent == key-empty == baseline signature and key-present keyed by pattern id.",
+ "counter_accept": [
+  {
+   "name": "objectiveCounter",
+   "counter": "objectiveCounter",
+   "accepts": true
+  },
+  {
+   "name": "capture",
+   "counter": "capture",
+   "accepts": true
+  },
+  {
+   "name": "woundAll",
+   "counter": "woundAll",
+   "accepts": true
+  },
+  {
+   "name": "incapacitateAll",
+   "counter": "incapacitateAll",
+   "accepts": true
+  },
+  {
+   "name": "surviveRounds",
+   "counter": "surviveRounds",
+   "accepts": true
+  },
+  {
+   "name": "transfer_rejected",
+   "counter": "transfer",
+   "accepts": false
+  },
+  {
+   "name": "deliver_rejected",
+   "counter": "deliver",
+   "accepts": false
+  },
+  {
+   "name": "ObjectiveCounter_case_rejected",
+   "counter": "ObjectiveCounter",
+   "accepts": false
+  },
+  {
+   "name": "empty_rejected",
+   "counter": "",
+   "accepts": false
+  }
+ ],
+ "board_doc": {
+  "schema": "tacai.board/1",
+  "name": "dutyLoader",
+  "width": 3,
+  "height": 3
+ },
+ "board_counter": [
+  {
+   "counter": "objectiveCounter",
+   "accepts": true
+  },
+  {
+   "counter": "capture",
+   "accepts": true
+  },
+  {
+   "counter": "transfer",
+   "accepts": false
+  },
+  {
+   "counter": "ObjectiveCounter",
+   "accepts": false
+  }
+ ],
+ "eliminate_rules": [
+  {
+   "name": "objectiveCounter_no_rule_hangs",
+   "counter": "objectiveCounter",
+   "rules": [
+    "gewinntraeger",
+    "heiler_hammer",
+    "naechster"
+   ]
+  },
+  {
+   "name": "capture_keeps_killbare",
+   "counter": "capture",
+   "rules": [
+    "gewinntraeger",
+    "killbare",
+    "heiler_hammer",
+    "naechster"
+   ]
+  },
+  {
+   "name": "incapacitateAll_keeps_killbare",
+   "counter": "incapacitateAll",
+   "rules": [
+    "gewinntraeger",
+    "killbare",
+    "heiler_hammer",
+    "naechster"
+   ]
+  },
+  {
+   "name": "woundAll_untouched",
+   "counter": "woundAll",
+   "rules": [
+    "gewinntraeger",
+    "gesunde_zuerst",
+    "verwundete",
+    "heiler_hammer",
+    "naechster"
+   ]
+  }
+ ],
+ "duty_shipped": [
+  {
+   "missionFile": "CORE23.json",
+   "dir": "Core",
+   "duties": 1,
+   "anchors": 0,
+   "variable": "Imperial Recruits",
+   "threshold": 16,
+   "law": "input-prompt",
+   "note": "anchorless variable duty - the shipped proof that a duty may carry zero anchors (reader must NOT require anchors)"
+  },
+  {
+   "missionFile": "CORE27.json",
+   "dir": "Core",
+   "duties": 1,
+   "anchors": 1,
+   "variable": "Imperials escape",
+   "threshold": 1,
+   "law": "button",
+   "tfNames": [
+    "Entrance"
+   ],
+   "note": "target Entrance is a Highlight NOT in criticalEntities - proves the entity truth must be the mission file's mapEntities, never the criticalEntities set"
+  },
+  {
+   "missionFile": "CORE28.json",
+   "dir": "Core",
+   "duties": 1,
+   "anchors": 8,
+   "variable": "Caches destroyed",
+   "threshold": 5,
+   "law": "button",
+   "tfNames": [
+    "Supply Cache 1",
+    "Supply Cache 2",
+    "Supply Cache 3",
+    "Supply Cache 4",
+    "Supply Cache 5",
+    "Supply Cache 6",
+    "Supply Cache 7",
+    "Supply Cache 8"
+   ]
+  },
+  {
+   "missionFile": "HOTH10.json",
+   "dir": "Hoth",
+   "duties": 1,
+   "anchors": 1,
+   "variable": "Prisoners claimed",
+   "threshold": 4,
+   "law": "button",
+   "tfNames": [
+    "Cell"
+   ],
+   "detail": [
+    {
+     "variable": "Prisoners claimed",
+     "threshold": 4,
+     "law": "button",
+     "targetFields": [
+      {
+       "entity": "b8c5a23d-48dd-4941-a2af-df39552df1c0",
+       "name": "Cell",
+       "entityType": "Highlight"
+      }
+     ],
+     "markerTokens": []
+    }
+   ],
+   "note": "the concept card line; Cell is NOT standable - own validation must not force a Board cell check"
+  },
+  {
+   "missionFile": "HOTH12.json",
+   "dir": "Hoth",
+   "duties": 1,
+   "anchors": 1,
+   "variable": "Draylen executed",
+   "threshold": 1,
+   "law": "chain",
+   "mtNames": [
+    "Draylen"
+   ],
+   "note": "markerToken rows carry no entityType key in the artifact - reader defaults it to empty string, never throws"
+  },
+  {
+   "missionFile": "OTHER31.json",
+   "dir": "Other",
+   "duties": 1,
+   "anchors": 1,
+   "variable": "Rebels Lose",
+   "threshold": 1,
+   "law": "chain",
+   "mtNames": [
+    "Cargo 16"
+   ]
+  },
+  {
+   "missionFile": "OTHER9.json",
+   "dir": "Other",
+   "duties": 1,
+   "anchors": 16,
+   "variable": "Wookiees Bound",
+   "threshold": 6,
+   "law": "button",
+   "tfNames": [
+    "Wookiee Blue 1 Free",
+    "Wookiee Blue 2 Free",
+    "Wookiee Yellow 1 Free",
+    "Wookiee Red 1 Free",
+    "Wookiee Red 2 Free",
+    "Wookiee Yellow 2 Free",
+    "Wookiee Green 1 Free",
+    "Wookiee Green 2 Free"
+   ],
+   "mtNames": [
+    "Wookiee Blue 1 Bound",
+    "Wookiee Blue 2 Bound",
+    "Wookiee Yellow 1 Bound",
+    "Wookiee Red 1 Bound",
+    "Wookiee Red 2 Bound",
+    "Wookiee Yellow 2 Bound",
+    "Wookiee Green 1 Bound",
+    "Wookiee Green 2 Bound"
+   ]
+  }
+ ],
+ "duty_shipped_sum_anchors": 28,
+ "duty_no_duty_missions": [
+  {
+   "missionFile": "EMPIRE3.json",
+   "dir": "Empire",
+   "note": "Pflicht-Gegenvektor (concept 8 popup law): class none, reader returns no duty rows"
+  },
+  {
+   "missionFile": "CORE10.json",
+   "dir": "Core",
+   "note": "borderline = Text-QA list (concept 7), never duty rows"
+  }
+ ],
+ "duty_synth_cases": [
+  {
+   "name": "class_none_with_duties_class_gate",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "none",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 1,
+         "law": "",
+         "targetFields": [],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "duties": []
+  },
+  {
+   "name": "class_borderline_gate",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "borderline",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 1,
+         "law": "",
+         "targetFields": [],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "duties": []
+  },
+  {
+   "name": "unknown_class_gate",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "dutyish",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 1,
+         "law": "",
+         "targetFields": [],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "duties": []
+  },
+  {
+   "name": "empty_counter_name_drops_duty",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "",
+         "threshold": 2,
+         "law": "button",
+         "targetFields": [],
+         "markerTokens": []
+        },
+        {
+         "variable": "ok",
+         "threshold": 1,
+         "law": "button",
+         "targetFields": [],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "duties": [
+    {
+     "variable": "ok",
+     "threshold": 1,
+     "law": "button",
+     "tfCount": 0,
+     "mtCount": 0
+    }
+   ]
+  },
+  {
+   "name": "empty_anchor_name_drops_anchor_keeps_duty",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 2,
+         "law": "dgb",
+         "targetFields": [
+          {
+           "entity": "aaaaaaaa-0000-0000-0000-000000000001",
+           "name": "",
+           "entityType": "Token"
+          },
+          {
+           "entity": "aaaaaaaa-0000-0000-0000-000000000002",
+           "name": "Gate",
+           "entityType": "Highlight"
+          }
+         ],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "known": [
+    "aaaaaaaa-0000-0000-0000-000000000001",
+    "aaaaaaaa-0000-0000-0000-000000000002"
+   ],
+   "duties": [
+    {
+     "variable": "v",
+     "threshold": 2,
+     "law": "dgb",
+     "tfCount": 1,
+     "mtCount": 0,
+     "tfNames": [
+      "Gate"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ghost_anchor_drops_against_entity_truth",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 1,
+         "law": "",
+         "targetFields": [
+          {
+           "entity": "aaaaaaaa-0000-0000-0000-000000000009",
+           "name": "Ghost",
+           "entityType": "Token"
+          }
+         ],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "known": [
+    "aaaaaaaa-0000-0000-0000-000000000001"
+   ],
+   "duties": [
+    {
+     "variable": "v",
+     "threshold": 1,
+     "law": "",
+     "tfCount": 0,
+     "mtCount": 0
+    }
+   ],
+   "note": "duty stays with zero anchors (fail-closed at ANCHOR level, never a wall at duty level)"
+  },
+  {
+   "name": "no_entity_truth_skips_resolution",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 1,
+         "law": "",
+         "targetFields": [
+          {
+           "entity": "aaaaaaaa-0000-0000-0000-000000000009",
+           "name": "Ghost",
+           "entityType": "Token"
+          }
+         ],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "known": null,
+   "duties": [
+    {
+     "variable": "v",
+     "threshold": 1,
+     "law": "",
+     "tfCount": 1,
+     "mtCount": 0,
+     "tfNames": [
+      "Ghost"
+     ]
+    }
+   ],
+   "note": "known=null = caller holds no entity truth (authoring corpus is pinned data-exists by DutyMineGate)"
+  },
+  {
+   "name": "marker_role_parses",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 3,
+         "law": "chain",
+         "targetFields": [],
+         "markerTokens": [
+          {
+           "entity": "aaaaaaaa-0000-0000-0000-000000000001",
+           "name": "M"
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "known": [
+    "aaaaaaaa-0000-0000-0000-000000000001"
+   ],
+   "duties": [
+    {
+     "variable": "v",
+     "threshold": 3,
+     "law": "chain",
+     "tfCount": 0,
+     "mtCount": 1,
+     "mtNames": [
+      "M"
+     ]
+    }
+   ],
+   "note": "anchor without entityType key -> empty string (HOTH12 shape)"
+  },
+  {
+   "name": "missing_threshold_is_zero_fact",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "v",
+         "law": "",
+         "targetFields": [],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "known": [],
+   "duties": [
+    {
+     "variable": "v",
+     "threshold": 0,
+     "law": "",
+     "tfCount": 0,
+     "mtCount": 0
+    }
+   ],
+   "note": "threshold is a FACT not a validation gate - consumer law (G2 quota), loader stays honest"
+  },
+  {
+   "name": "no_dutyAnchors_key",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "criticalEntities": []
+     }
+    ]
+   },
+   "duties": []
+  },
+  {
+   "name": "unknown_mission_file",
+   "doc": {
+    "missions": [
+     {
+      "file": "SYNTH.json",
+      "dutyAnchors": {
+       "class": "duty",
+       "duties": [
+        {
+         "variable": "v",
+         "threshold": 1,
+         "law": "",
+         "targetFields": [],
+         "markerTokens": []
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "missionFile": "GHOST99.json",
+   "duties": []
+  }
+ ],
+ "modifier_cases": {
+  "shipped_key_absent": true,
+  "baseline_doc": {
+   "postureModifiers": {
+    "defend": {
+     "aggressive": -2,
+     "cautious": 2
+    }
+   },
+   "rows": [
+    {
+     "nameMatch": "Rancor",
+     "weights": {
+      "aggressive": 30,
+      "cautious": 70
+     }
+    }
+   ]
+  },
+  "present_doc": {
+   "postureModifiers": {
+    "defend": {
+     "aggressive": -2,
+     "cautious": 2
+    }
+   },
+   "rows": [
+    {
+     "nameMatch": "Rancor",
+     "weights": {
+      "aggressive": 30,
+      "cautious": 70
+     }
+    }
+   ],
+   "dutyModifiers": {
+    "aggressive": {
+     "duty_focus": 5,
+     "duty_guard": 0
+    },
+    "cautious": {
+     "duty_focus": -1
+    }
+   }
+  },
+  "empty_doc": {
+   "postureModifiers": {
+    "defend": {
+     "aggressive": -2,
+     "cautious": 2
+    }
+   },
+   "rows": [
+    {
+     "nameMatch": "Rancor",
+     "weights": {
+      "aggressive": 30,
+      "cautious": 70
+     }
+    }
+   ],
+   "dutyModifiers": {}
+  },
+  "pins": {
+   "baseline": {
+    "dutymods": [],
+    "posture_sig": "defend|aggressive=-2,cautious=2",
+    "rows": 1
+   },
+   "empty": {
+    "dutymods": [],
+    "posture_sig": "defend|aggressive=-2,cautious=2",
+    "rows": 1
+   },
+   "present": {
+    "dutymods": [
+     "aggressive|duty_focus=5,duty_guard=0",
+     "cautious|duty_focus=-1"
+    ],
+    "posture_sig": "defend|aggressive=-2,cautious=2",
+    "rows": 1
+   }
+  }
+ }
+}

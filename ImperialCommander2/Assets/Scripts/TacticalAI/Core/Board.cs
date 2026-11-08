@@ -35,7 +35,16 @@ namespace TacticalAI.Core
         public static readonly string[] CellFlagNames = { "interior", "difficult", "blocking", "impassable" };
         public static readonly string[] EdgeTypeNames = { "wall", "blocking", "impassable" };
         public static readonly string[] PostureNames = { "eliminate", "stall", "protect", "deny" };
-        public static readonly string[] CounterTypes = { "woundAll", "incapacitateAll", "surviveRounds", "capture" };
+        // P37b (card t_1743a062, concept §9.1): objectiveCounter is the one
+        // NEW type — the generic "carry N markers to the objective" board
+        // build (HOTH10-Bauart, §8 W1). NO mapping onto "capture": capture
+        // hangs the killbare rule on the eliminate posture (Doctrine.cs), so
+        // a mapping would shift every duty mission's doctrine rules and
+        // break Bit-Identität; verb-typed counters stay forbidden. Whitelist
+        // entry + validation, nothing else — objectiveCounter carries NO
+        // doctrine rule of its own (killbare stays capture/incapacitateAll
+        // only) and no shipped board declares it yet (Null-Law).
+        public static readonly string[] CounterTypes = { "woundAll", "incapacitateAll", "surviveRounds", "capture", "objectiveCounter" };
 
         public string Name;
         public int Width, Height;

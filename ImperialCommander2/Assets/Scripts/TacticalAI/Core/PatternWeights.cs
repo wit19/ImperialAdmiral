@@ -64,6 +64,15 @@ namespace TacticalAI.Core
         public List<PatternWeightRow> Rows = new List<PatternWeightRow>();
         public Dictionary<string, Dictionary<string, int>> PostureMods =
             new Dictionary<string, Dictionary<string, int>>();
+        // P37b (card t_1743a062, concept §8 W8): the duty-side sibling of
+        // PostureMods - top-level "dutyModifiers", keyed by PATTERN id
+        // (Muster-Id), same free data-row space as postureModifiers. Loader
+        // only in this hop: NO consumer reads it yet (the duty consumers
+        // arrive in Hop C/D), and the shipped asset carries no key, so the
+        // table stays empty and today's behaviour is bit-identical
+        // (Null-Law: no key, no effect).
+        public Dictionary<string, Dictionary<string, int>> DutyMods =
+            new Dictionary<string, Dictionary<string, int>>();
 
         public bool IsActive { get { return Rows.Count > 0; } }
 
@@ -213,6 +222,25 @@ namespace TacticalAI.Core
                             d[e.Key] = (int)Json.AsLong(e.Value);
                         }
                         t.PostureMods[kv.Key] = d;
+                    }
+                // P37b (§8 W8): dutyModifiers - the same free data-row space
+                // keyed by PATTERN id (Muster-Id). Loader-only in this hop
+                // (no consumer yet); missing key leaves DutyMods empty =
+                // today's table, bit-identical (Null-Law).
+                object dutyModsObj;
+                if (_doc.TryGetValue("dutyModifiers", out dutyModsObj) &&
+                    dutyModsObj is Dictionary<string, object>)
+                    foreach (var kv in (Dictionary<string, object>)dutyModsObj)
+                    {
+                        var row = kv.Value as Dictionary<string, object>;
+                        if (row == null) continue;
+                        var d = new Dictionary<string, int>();
+                        foreach (var e in row)
+                        {
+                            if (e.Value == null) continue;
+                            d[e.Key] = (int)Json.AsLong(e.Value);
+                        }
+                        t.DutyMods[kv.Key] = d;
                     }
                 object rowsObj;
                 if (_doc.TryGetValue("rows", out rowsObj) && rowsObj != null)

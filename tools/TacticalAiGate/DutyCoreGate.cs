@@ -29,6 +29,14 @@ public static class DutyCoreGate
         if (!cond) fails++;
     }
 
+    // P39 MINOR-2 (card t_a697bc1a): DutyRound.Combat() was removed from Core
+    // (single source of the combat status = the per-group marker DutyOf, i.e.
+    // plan.Duty; the bulk list had zero runtime consumers). The gate derives
+    // the cohort LOCALLY against the unchanged duty_core.json pins - this gate
+    // keeps counting the combat vectors, it was not silently dropped.
+    static List<string> CombatOf(DutyRound r) =>
+        r.Ranking.Where(id => !r.Escorts.Contains(id)).ToList();
+
     static readonly string App =
         "/home/open/work/ia-ai/ImperialCommander2/ImperialCommander2";
 
@@ -155,7 +163,7 @@ public static class DutyCoreGate
         var roundOk = SameRound(r, ex);
         var dutyOk = e.ContainsKey("dutyOf") && DutyOfSig(r, groups) == Json.AsStr(e["dutyOf"]);
         var combatOk = !e.ContainsKey("combat") ||
-            string.Join(",", r.Combat()) == string.Join(",", Json.AsList(e["combat"]).Select(Json.AsStr));
+            string.Join(",", CombatOf(r)) == string.Join(",", Json.AsList(e["combat"]).Select(Json.AsStr));
         var tripodOk = !tripodNever || r.DutyOf("DG007") == DutyQuota.DutyNone;
         Ok(roundOk && dutyOk && combatOk && tripodOk,
            "dutyCore." + tag + ".r" + ex["RoundNo"] +

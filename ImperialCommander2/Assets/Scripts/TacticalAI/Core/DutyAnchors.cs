@@ -46,6 +46,20 @@ namespace TacticalAI.Core
     public sealed class DutyAnchor
     {
         public string Variable;       // the duty counter name (mission variable)
+        // P39 (card t_a697bc1a, MINOR-3) DECLARATION: Threshold and Law are
+        // LOADER/MINING EVIDENCE FIELDS, not runtime trigger fields.
+        // Threshold (printed threshold, 0 = not authored) is deliberately NOT
+        // consumed as an escort trigger: the escort rotation follows the
+        // per-round quota law G2 (DutyQuota.Compute), never a counter gate —
+        // reading Threshold at runtime would INVENT a law (quota laws are a
+        // different card). Evidence consumers: SectionsDutyLoader named pins
+        // (duty_shipped[*].threshold/.law, unconditional since P39) and
+        // DutyMineGate golden variable@threshold pairs for the 7 duty missions.
+        // Law (mined setter channel button|dgb|input-prompt|...) is likewise
+        // never rendered: the player-facing law text rides the authored
+        // briefing prose + the printed Wenn-Dann tree, not the raw channel.
+        // Evidence consumer: the same named pins. Removal only with the
+        // evidence chain, never silently (loader contract, header above).
         public long Threshold;        // printed threshold (0 = not authored)
         public string Law;            // mined setter channel (button|dgb|input-prompt|...)
         public List<DutyAnchorTarget> TargetFields = new List<DutyAnchorTarget>();

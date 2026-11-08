@@ -1,0 +1,19 @@
+{
+  "card": "P39 MINOR-1b (t_a697bc1a)",
+  "note": "Hand-pinned NAMELESS escort shape. The QA MINOR-1 claim 'anchor name missing from officer texts' is measured FALSE for the six anchored duty missions (escort popup names the anchor since P37d, duty_popup.json pins HOTH10 DE/EN). The real gap: CORE23 = shipped anchorless duty (duties=1, anchors=0 -> TargetName ''), the named key rendered a dangling 'Missionsobjekt  —'. apDutyEscortTreeNameless = same Wenn-Dann tree without the name slot; the bridge seam selects it on empty TargetName only. Expectations derived from the shipped artifact + De/En fleet law (9 byte-exact EN copies), harness: SectionsDutyPopup.SecDutyNameless.",
+  "langs": ["Br", "De", "En", "Es", "Fr", "Hu", "It", "Nl", "No", "Pl", "Ru"],
+  "de_head_contains": "MISSIONSDIENST: Missionsobjekt gemäß Missionsregel — der Bewegungspunkt dient zuerst dem Dienst",
+  "en_head_contains": "MISSION DUTY: objective per the mission rule — the movement point serves the duty first",
+  "de_umlaut_contains": "gemäß",
+  "named_de_head_contains": "MISSIONSDIENST: Missionsobjekt Cell",
+  "named_en_head_contains": "MISSION DUTY: objective Cell",
+  "core23": { "dir": "Core", "missionFile": "CORE23.json", "duties": 1, "anchors": 0, "target": "" },
+  "sessionKey": "dutycore-nameless|CORE23.json",
+  "round": 1,
+  "groups": [
+    { "cardId": "DG901", "pattern": "aggressive" },
+    { "cardId": "DG902", "pattern": "hunter" }
+  ],
+  "row_total": 9,
+  "quota_contains": "duty r1"
+}

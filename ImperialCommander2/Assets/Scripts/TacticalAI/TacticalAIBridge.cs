@@ -1557,7 +1557,16 @@ namespace TacticalAI
             // NOTHING — the plan marker alone changes no number.
             if (plan.Duty == Tac.DutyQuota.DutyEscort)
             {
-                var dt = TF(L.apDutyEscortTree, plan.DutyTarget ?? "");
+                // P39 (card t_a697bc1a, MINOR-1b): an ANCHORLESS duty (CORE23
+                // shape - the reader legally yields zero anchors) has no name
+                // to name: the named key would render "Missionsobjekt —" with
+                // a dangling gap. Empty TargetName selects the nameless tree
+                // (same Wenn-Dann rows, no name slot); non-empty keeps the
+                // named key bit-identical. Missing nameless key => nothing
+                // (same fail-closed guard).
+                var dt = string.IsNullOrEmpty(plan.DutyTarget)
+                    ? TF(L.apDutyEscortTreeNameless)
+                    : TF(L.apDutyEscortTree, plan.DutyTarget);
                 if (!string.IsNullOrEmpty(dt) && dt.IndexOf('{') < 0)
                     foreach (var dl in dt.Replace("\r", "").Split('\n'))
                         if (!string.IsNullOrEmpty(dl.Trim())) outp.Add(dl);

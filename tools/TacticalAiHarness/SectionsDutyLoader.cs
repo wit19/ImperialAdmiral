@@ -99,12 +99,21 @@ namespace TacticalAiHarness
                 Check("duty_shipped[" + missionFile + "].anchors", Json.AsLong(c["anchors"]),
                       (long)duties.Sum(d => d.AnchorCount));
                 sumAnchors += duties.Sum(d => d.AnchorCount);
-                if (duties.Count > 0)
-                {
-                    Check("duty_shipped[" + missionFile + "].variable", Json.AsStr(c["variable"]), duties[0].Variable);
-                    Check("duty_shipped[" + missionFile + "].threshold", Json.AsLong(c["threshold"]), duties[0].Threshold);
-                    Check("duty_shipped[" + missionFile + "].law", Json.AsStr(c["law"]), duties[0].Law);
-                }
+                // P39 MINOR-4 (card t_a697bc1a): the three law fields are read
+                // by NAMED checks EVEN when the reader yields no duty row.
+                // Before P39 they were gated behind duties.Count > 0, so a
+                // missing duty line silently dropped three checks from the
+                // harness total (46591->46588 in the QA mutation probe - an
+                // alarm that never named itself). Now: a missing duty line
+                // fails FOUR named checks and the check total is data-
+                // invariant; the sum pin below can no longer mask a delta.
+                var d0 = duties.Count > 0 ? duties[0] : null;
+                Check("duty_shipped[" + missionFile + "].variable", Json.AsStr(c["variable"]),
+                      d0 != null ? d0.Variable : "<no duty row read>");
+                Check("duty_shipped[" + missionFile + "].threshold", Json.AsLong(c["threshold"]),
+                      d0 != null ? d0.Threshold : long.MinValue);
+                Check("duty_shipped[" + missionFile + "].law", Json.AsStr(c["law"]),
+                      d0 != null ? d0.Law : "<no duty row read>");
                 if (c.ContainsKey("tfNames"))
                     Check("duty_shipped[" + missionFile + "].tfNames",
                           Json.AsList(c["tfNames"]).Select(x => (object)Json.AsStr(x)).ToList(),

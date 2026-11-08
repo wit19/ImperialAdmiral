@@ -54,17 +54,18 @@ namespace TacticalAI.Core
         public string TargetName = "";                 // anchor NAME (button/target-field/marker token)
         public string Explain = "";                    // ASCII disclosure line (k, ranking, seed-readable)
 
-        /// Core-Marker value for one group: "escort" | "none" (G1: marker only).
+        /// <summary>Core-Marker value for one group: "escort" | "none" (G1:
+        /// marker only). P39 (card t_a697bc1a, MINOR-2): this is the SINGLE
+        /// source of the combat status — runtime derives combat as "not
+        /// escort" (plan.Duty), exactly as the popup and the pattern layers
+        /// read it. The former bulk accessor DutyRound.Combat() (Ranking
+        /// minus Escorts) had zero runtime consumers and was removed; the
+        /// evidence consumers (SectionsDutyCore/SectionsDutyPopup/DutyCoreGate)
+        /// derive the cohort locally (CombatOf) against unchanged fixture
+        /// pins. Two derivations of one status in Core were a drift risk the
+        /// single-source law does not tolerate.</summary>
         public string DutyOf(string cardId) =>
             cardId != null && Escorts.Contains(cardId) ? DutyQuota.DutyEscort : DutyQuota.DutyNone;
-
-        /// Groups that stay in the (untouched) combat branch.
-        public List<string> Combat()
-        {
-            var outp = new List<string>();
-            foreach (var id in Ranking) if (!Escorts.Contains(id)) outp.Add(id);
-            return outp;
-        }
     }
 
     public static class DutyQuota

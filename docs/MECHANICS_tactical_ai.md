@@ -1627,3 +1627,72 @@ at this hop (docs-only change): harness `== summary: ALL PASS | checks=46591
 fails=0` (= canon 46298 + 107 + 103 + 83); gate rc=0 `ALL PASS`, 6243 `^PASS`
 lines; compile_check `APP: rc=0 errors=0 files=291` / `TESTS: rc=0 errors=0
 files=10`.
+
+## P39 — the four P37-QA MINORs, closed (2026-11-08, card t_a697bc1a)
+
+The P37-QA MINOR table was partially re-measured against the live seam before
+acting (controller correction): the Runtime duty pipeline was ALIVE —
+`TacticalAIBridge.ComputeDutyRound` calls `DutyAnchors.ForMission` with entity
+truth and feeds `DutyQuota.Compute`; the escort popup names the anchor via
+`apDutyEscortTree` since P37d. What was actually dead: `SelectDoctrine`
+(zero runtime callers), `DutyRound.Combat()` (zero runtime consumers),
+`DutyAnchor.Threshold`/`.Law` (zero runtime consumers). Dispositions, each
+with its own evidence:
+
+1. **MINOR-1a — SelectDoctrine/dutyAnchors: KEPT + DECLARED (App layer, no
+   runtime wiring).** Doctrine.cs header line 3 is the truth: selection is the
+   App's layer; the runtime never renders a doctrine CARD (DoctrineLine = the
+   pattern name from ui.json, the tree is TreeFor), so a runtime caller would
+   be Schein-Architektur with unused output. The W4 law „einspeisen, nicht
+   ersetzen" stays implemented and pinned HERE (duty_core.json refs_feed via
+   SectionsDutyCore; golden vectors: VectorRowTests, SectionsB). The decision
+   is written into the SelectDoctrine doc comment (P39 DECLARATION block).
+2. **MINOR-1b — officer/briefing texts: measured, one REAL gap closed.** The
+   QA claim „Officer-Texte nennen den Anker noch nicht" is FALSE for the six
+   anchored duty missions — the escort popup names the anchor (fixture-pinned
+   HOTH10 DE/EN since P37d; duty_loader.json measures every anchor name). The
+   gap: CORE23 is the shipped ANCHORLESS duty (duties=1, anchors=0 →
+   TargetName ""), and the named key rendered "Missionsobjekt  —" with a
+   dangling gap. Fix: NEW key `apDutyEscortTreeNameless` (same Wenn-Dann tree,
+   no {0} name slot) in all 11 ui.json (append-only +1/0, De genuine with
+   umlaut, 9 byte-exact EN copies), selected by the bridge seam ONLY when the
+   round's TargetName is empty; named targets render bit-identically. Pinned
+   by the new harness section duty_nameless.json (47 checks; the CORE23
+   premise is measured off the shipped artifact, never hardcoded).
+3. **MINOR-2 — DutyRound.Combat(): REMOVED (single source).** The runtime
+   derives combat as "not escort" from the per-group marker `DutyOf`
+   (plan.Duty) — the bulk complement list had zero runtime consumers and was a
+   second derivation of one status inside Core. Consumers adapted WITHOUT
+   touching any fixture pin: SectionsDutyCore/SectionsDutyPopup/DutyCoreGate
+   derive the cohort locally (`CombatOf`) — the gate keeps counting the combat
+   vectors (not silently dropped).
+4. **MINOR-3 — DutyAnchor.Threshold/.Law: DECLARED EVIDENCE FIELDS.** Not
+   consumed at runtime, and deliberately so: escort rotation is the per-round
+   quota law (G2), never a counter gate — reading Threshold would INVENT a law
+   owned by a different card; Law (setter channel) is never rendered (the
+   player-facing law rides briefing prose + printed tree). Both fields carry
+   a DECLARATION comment (DutyAnchors.cs) and remain pinned by the named
+   harness checks (now unconditional, see 4) plus DutyMineGate's golden
+   variable@threshold pairs for the 7 duty missions.
+5. **MINOR-4 — harness sum alarm: HARDENED.** The variable/threshold/law pins
+   in SectionsDutyLoader ran only `if (duties.Count > 0)`, so a missing duty
+   line silently dropped 3 checks (the QA mutation measured 46591→46588 — an
+   unnamed delta). The pins now run NAMED per case regardless; the check total
+   is data-invariant. Mutation re-measure at P39 HEAD: HOTH10 class→none gives
+   SIX named FAILs (duties, anchors, variable, threshold, law, tfNames) and
+   the total stays `checks=46883` exactly; surgical restore cmp-clean, harness
+   back `ALL PASS | checks=46883 fails=0`.
+
+**P39 measured trio (worker).** Harness `ALL PASS | checks=46883 fails=0`
+(= P38 basis 46836 + 47 duty_nameless; duty sections 107/103/83 UNCHANGED,
+prey 245 unchanged). Gate rc=0, 6260 `^PASS` lines (= P38 basis, gate counts
+untouched), DutyMineGate/DutyCoreGate/DutyScrubGate ALL PASS, UiCompleteness
+missing=0 across 11. compile_check `APP: rc=0 errors=0 files=293` / `TESTS:
+rc=0 errors=0 files=10` (= P38 basis, no new Assets/Scripts files). taboo_lint
+GREEN 12/12. Behaviour diff of the 7 duty missions: six anchored missions
+render bit-identically (named key path unchanged, popup pins green on the
+same fixtures); ONE disclosed change — CORE23's escort popup swaps the
+dangling named head for the nameless head; all other 131 missions Null-Law
+untouched. Mode aus / legacy bit-identical (every seam behind plan.Duty /
+ActiveNow, fields additive). Unity-machine TODO grows one line: .meta for
+duty_nameless.json (fixture precedent P37d/P38: JSON ships without meta).

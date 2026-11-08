@@ -67,7 +67,7 @@ namespace TacticalAiHarness
                     var tag = "hoth10.r" + e["RoundNo"] + (pass == 1 ? ".rerun" : "");
                     Check(tag + ".round", e, DutyDict(r));
                     Check(tag + ".combat", Names(c["combat"]),
-                          r.Combat().Select(x => (object)x).ToList());
+                          CombatOf(r).Select(x => (object)x).ToList());
                     Check(tag + ".dutyOf", Json.AsStr(c["dutyOf"]), DutySig(r, groups));
                 }
 
@@ -142,7 +142,7 @@ namespace TacticalAiHarness
                                        Json.AsStr(Json.Get(Json.AsDict(ndc["expect"]), "TargetName", "")), false);
             Check("no_duty.round", Json.AsDict(ndc["expect"]), DutyDict(nd));
             Check("no_duty.dutyOf", Json.AsStr(ndc["dutyOf"]), DutySig(nd, ndGroups));
-            Check("no_duty.combat", Names(ndc["combat"]), nd.Combat().Select(x => (object)x).ToList());
+            Check("no_duty.combat", Names(ndc["combat"]), CombatOf(nd).Select(x => (object)x).ToList());
 
             // ---------------------------------- Objectives/Refs feed (§8 W4)
             var rf = Json.AsDict(v["refs_feed"]);
@@ -226,6 +226,15 @@ namespace TacticalAiHarness
             return string.Join(",", groups.Select(g => g.CardId)
                 .Distinct().OrderBy(x => x, StringComparer.Ordinal)
                 .Select(id => id + "=" + r.DutyOf(id)));
+        }
+
+        // P39 MINOR-2 (card t_a697bc1a): the CORE bulk accessor DutyRound.
+        // Combat() was removed (single source: plan.Duty, i.e. DutyOf). The
+        // evidence sites derive the combat cohort LOCALLY - one reading of
+        // the inverse derivation, pinned against UNCHANGED fixture pins.
+        static List<string> CombatOf(DutyRound r)
+        {
+            return r.Ranking.Where(id => !r.Escorts.Contains(id)).ToList();
         }
 
         static List<object> Names(object raw) =>

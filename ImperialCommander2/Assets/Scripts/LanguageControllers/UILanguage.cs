@@ -46,6 +46,14 @@ public class UITacticalAI
 	// null everywhere and the bridge renders NOTHING (Null-Law: popups
 	// byte-identical to pre-P37c, fail-closed like the O-C key guard).
 	public string apDutyEscortTree, apDutyQuotaLine;
+	// P39 (card t_a697bc1a, MINOR-1b): the anchorless escort shape. A duty may
+	// legally carry ZERO anchors (CORE23 variable-duty: every anchor row is a
+	// ghost or there is none) — then the named tree would render "Missionsobjekt
+	// —" with a dangling gap. apDutyEscortTreeNameless = the identical
+	// Wenn-Dann tree WITHOUT the {0} name slot (same rows, same §9.4
+	// definition, head names no anchor). Rendered only when the round's
+	// TargetName is empty; missing key => no tree rows (same fail-closed law).
+	public string apDutyEscortTreeNameless;
 	// P38 (card t_11ebb843, playtest Empire3): the NEUTRALE-Beute rows.
 	// apPreyQuotaLine = the OBJEKTJAGD quota disclosure ({0}=k, {1}=n —
 	// 'Objektjagd: k von n Einheiten'); rides every Muster-cohort member's

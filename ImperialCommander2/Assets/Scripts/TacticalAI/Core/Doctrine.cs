@@ -320,6 +320,22 @@ namespace TacticalAI.Core
         /// {schutz}/protect placeholder path stays untouched. Null/empty
         /// (every pre-P37c caller, every mission without a duty fact)
         /// keeps the refs chain bit-identical (Null-Law).
+        /// P39 DECLARATION (card t_a697bc1a, MINOR-1a, decision disclosed in
+        /// the handoff): SelectDoctrine has ZERO callers in Assets/Scripts —
+        /// by design, this line (header above: "SELECTION ... is the App's
+        /// layer") is the truth of the shipped product. The runtime duty
+        /// disclosure is live on its OWN seam: DutyAnchors.ForMission inside
+        /// TacticalAIBridge.ComputeDutyRound feeds DutyQuota.Compute, whose
+        /// markers (plan.Duty/DutyTarget/DutyQuotaLine) render the escort
+        /// popup since P37d. The runtime never renders a doctrine CARD (its
+        /// DoctrineLine is the pattern name from ui.json, the tree is TreeFor)
+        /// — wiring SelectDoctrine into the bridge just to "consume" the
+        /// parameter would be Schein-Architektur producing unused output.
+        /// Consumers of this API are its pinned evidence: the doctrine.json
+        /// golden vectors (VectorRowTests, SectionsB, SectionsDutyLoader) and
+        /// the W4 refs_feed pins (duty_core.json via SectionsDutyCore). Keep
+        /// as App-layer API; build a runtime caller only the day the App
+        /// actually renders a doctrine card object (MECHANICS, dated P39 note).
         public static Doctrine SelectDoctrine(AppView view, string pattern = "aggressive",
                                               IEnumerable<string> denyIds = null,
                                               IEnumerable<string> dutyAnchors = null)

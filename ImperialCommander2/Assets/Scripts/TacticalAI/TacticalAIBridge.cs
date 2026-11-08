@@ -100,6 +100,18 @@ namespace TacticalAI
         public string Duty;
         public string DutyTarget;
         public string DutyQuotaLine;
+        // P38 (card t_11ebb843): the Core-Marker im Plan for the NEUTRALE
+        // Beute-Jagd. PreyQuotaLine = the raw ASCII quota disclosure ('Objekt-
+        // jagd: k von n Einheiten' renders from the ui.json key over the
+        // "k von n" argument); every Muster-cohort member carries it while
+        // the mission has bystander prey (disclosure duty — chosen AND over-
+        // quota units see WHO hunts). PreyThreatSec = the Bedrohungs-Sektion
+        // that suppressed THIS activation's bystander chase ("" = none); the
+        // renderer names the section ('Bedrohung in Sektion X') or falls back
+        // to the relative wording (§8.4 law). Default null: every pre-P38
+        // popup (legacy, out-of-scope missions) ships byte-identical.
+        public string PreyQuotaLine;
+        public string PreyThreatSec;
     }
 
     public static class TacticalAIBridge
@@ -262,6 +274,14 @@ namespace TacticalAI
         // DutyQuota). NULL = no duty fact for this mission (Null-Law: the
         // plan marker stays null, no popup line, tree bit-identical).
         static Tac.DutyRound _dutyRound;
+        // P38 (card t_11ebb843): this round's OBJEKTJAGD-Quota over the
+        // NEUTRAL-Beute cohort (Core PreyQuota). NULL = no bystander prey in
+        // this mission / no cohort (Null-Law: the TryObjectTarget path stays
+        // bit-identical to P36, no popup line). Seed-stable inside the round.
+        static Tac.PreyRound _preyRound;
+        // P38: the Bedrohungs-Sektion der AKTUELLEN Aktivierung ("" = keine);
+        // TryObjectTarget schreibt, der Plan-Marker liest, ResetSession löscht.
+        static string _preyThreatSecThis;
         static Tac.ThreatLedger _threatLedger;
         static int _ledgerRound = -1;
 
@@ -270,6 +290,8 @@ namespace TacticalAI
             _catalog = null;
             _patternByCard = null;
             _dutyRound = null;   // P37c: a stale escort cohort never crosses the session boundary
+            _preyRound = null;   // P38: same law for the prey-hunt cohort
+            _preyThreatSecThis = "";
             _planRound = -1;
             _slots = new List<Tac.OrderSlot>();
             _publicLine = "";
@@ -768,6 +790,15 @@ namespace TacticalAI
             if (_dutyRound != null)
                 Debug.Log("TacticalAIBridge::dutyQuota " + _dutyRound.Explain +
                           " target=\"" + _dutyRound.TargetName + "\"");
+            // P38 (card t_11ebb843, playtest Empire3): this round's prey-hunt
+            // quota over the NEUTRAL-Beute cohort. Null-Law: no bystander
+            // prey in the feed / no chase-pattern figure => _preyRound stays
+            // null => TryObjectTarget runs the P36 law bit-identically. The
+            // seed (session key + round) is CONSTANT inside the round, so a
+            // mid-round REPLAN re-derives the SAME k + selection (Gleichlauf).
+            _preyRound = ComputePreyRound(roundNo, facts, feedView);
+            if (_preyRound != null)
+                Debug.Log("TacticalAIBridge::preyQuota " + _preyRound.Explain);
 
             var mode = EffectiveMissionMode();
             // M5 (concept 3.3.1b item 4): posture is DERIVED from mission
@@ -1262,6 +1293,19 @@ namespace TacticalAI
                 else if (_dutyRound.Escorts.Count > 0)
                     plan.DutyQuotaLine = _dutyRound.Explain;
             }
+            // P38 (card t_11ebb843): the prey-hunt markers. The quota line
+            // rides EVERY Muster-cohort member's plan while the mission has
+            // neutral prey (the chosen unit sees its slot, the over-quota
+            // unit sees why it does not chase); units OUTSIDE the cohort and
+            // every out-of-scope mission keep both fields null -> the popup
+            // ships byte-identical. The threat marker exists only when THIS
+            // activation's bystander chase was suppressed by an observed
+            // rebel (TryObjectTarget wrote the section).
+            if (_preyRound != null && _preyRound.InCohort(cd.id))
+                plan.PreyQuotaLine = _preyRound.K.ToString(
+                    System.Globalization.CultureInfo.InvariantCulture) + "/" +
+                    _preyRound.N.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (!string.IsNullOrEmpty(_preyThreatSecThis)) plan.PreyThreatSec = _preyThreatSecThis;
             // O-C supporter-codex tree variant + emergency why-line are now
             // resolved ABOVE (before the target choice, so the S-E supporter
             // mask-trust channel sees the emergency fact). plan.OfficerKeep /
@@ -1442,6 +1486,48 @@ namespace TacticalAI
         // .HasAssault parses the printed Assault keyword from the card data
         // - E-Web Engineer x2 + AT-DP today, any future printed card
         // included automatically). Nothing on this surface is hardcoded.
+        // P38 (card t_11ebb843): the prey-hunt popup rows. The quota line is
+        // language-free on the plan ("k/n" ASCII); the WHY phrase lives in
+        // ui.json (apPreyQuotaLine, two args). The threat row names the
+        // Bedrohungs-Sektion by her AUTHORED name (§8.4 CleanSectionName law,
+        // same belt as the S-D/S-E lines); a name that does not inform
+        // switches to the RELATIVE wording (apPreyThreatRel) - never an id,
+        // never a coordinate. Fail-closed keys: missing/stale placeholder
+        // renders NOTHING (the plan markers alone change no number).
+        static void AppendPreyLines(ActivationPlanData plan, List<string> outp)
+        {
+            var L = UIx;
+            if (L == null) return;
+            if (!string.IsNullOrEmpty(plan.PreyQuotaLine))
+            {
+                var bits = (plan.PreyQuotaLine ?? "").Split('/');
+                int k, n;
+                if (bits.Length == 2
+                    && int.TryParse(bits[0], System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out k)
+                    && int.TryParse(bits[1], System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out n)
+                    && !string.IsNullOrEmpty(L.apPreyQuotaLine))
+                {
+                    var q = TF(L.apPreyQuotaLine, k, n);
+                    if (!string.IsNullOrEmpty(q) && q.IndexOf('{') < 0) outp.Add(q);
+                }
+            }
+            if (!string.IsNullOrEmpty(plan.PreyThreatSec))
+            {
+                string t = null;
+                var nm = LastSectionSpace != null
+                    ? Tac.SectionConsumers.CleanSectionName(
+                        LastSectionSpace.Graph.SectionName(plan.PreyThreatSec))
+                    : null;
+                if (nm != null && !string.IsNullOrEmpty(L.apPreyThreatLine))
+                    t = TF(L.apPreyThreatLine, nm);
+                else if (!string.IsNullOrEmpty(L.apPreyThreatRel))
+                    t = TF(L.apPreyThreatRel);
+                if (!string.IsNullOrEmpty(t) && t.IndexOf('{') < 0) outp.Add(t);
+            }
+        }
+
         static string[] RenderBlocks(ActivationPlanData plan, global::DeploymentCard cd)
         {
             var L = UIx;                    // Languages/<Lang>/ui.json: uiTacticalAI
@@ -1486,6 +1572,9 @@ namespace TacticalAI
                 var dq = TF(L.apDutyQuotaLine, plan.DutyQuotaLine);
                 if (!string.IsNullOrEmpty(dq) && dq.IndexOf('{') < 0) outp.Add(dq);
             }
+            // P38 (card t_11ebb843): the prey-hunt rows (quota disclosure +
+            // Bedrohung why). Null markers -> no row -> popup byte-identical.
+            AppendPreyLines(plan, outp);
             var tree = TreeFor(L, plan);
             var speed = (cd != null ? cd.speed : 0)
                 .ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -1971,6 +2060,50 @@ namespace TacticalAI
             catch (Exception e)
             {
                 Debug.LogWarning("TacticalAIBridge::dutyQuota failed (no duty this mission): " + e.Message);
+                return null;
+            }
+        }
+
+        // P38 (card t_11ebb843): does the CURRENT feed hold a bystander-prey
+        // row (POLAR jagt + NeutralPrey scope)? The quota law exists ONLY for
+        // such missions — every other mission keeps the P36 object law
+        // byte-identically (Null-Law). Feed rows are the only survey (the
+        // mission file is never re-parsed here).
+        static bool MissionHasPrey(Tac.FeedWorldView view)
+        {
+            if (view == null || view.Objects.Count == 0) return false;
+            foreach (var o in view.HuntObjects())
+                if (o != null && o.Bystander) return true;
+            return false;
+        }
+
+        /// P38: the round's OBJEKTJAGD quota (Core PreyQuota). Null when the
+        /// law has nothing to decide: no bystander prey in scope, no feed,
+        /// or an empty chase cohort (n = 0 => quota entfällt vollständig).
+        /// Cohort = the LIVING figures whose ROLLED pattern rides the chase
+        /// (hunter|aggressive — the exact OBJEKT-Ziel Muster-Gatter). No
+        /// board knowledge: ids + patterns + session key + round only.
+        static Tac.PreyRound ComputePreyRound(int roundNo, List<Tac.GroupFacts> facts,
+                                              Tac.FeedWorldView view)
+        {
+            try
+            {
+                if (!MissionHasPrey(view)) return null;
+                var hs = new List<Tac.PreyHunter>();
+                foreach (var f in facts)
+                {
+                    if (f == null || string.IsNullOrEmpty(f.GroupId)) continue;
+                    string pat = _patternByCard != null && _patternByCard.TryGetValue(f.GroupId, out var fp)
+                                 ? fp : f.Pattern;
+                    if (string.IsNullOrEmpty(pat)) pat = f.Pattern;
+                    if (!Tac.PreyQuota.IsChasePattern(pat)) continue;
+                    hs.Add(new Tac.PreyHunter { CardId = f.GroupId, Pattern = pat });
+                }
+                return Tac.PreyQuota.Compute(SessionKey(), roundNo, hs);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::preyQuota failed (P36 object law stays): " + e.Message);
                 return null;
             }
         }
@@ -2672,6 +2805,7 @@ namespace TacticalAI
                                     bool supporterMaskContext = false)
         {
             heroName = null; why = null; reactionTail = null;
+            _preyThreatSecThis = "";   // P38: fresh activation, fresh threat marker
             var heroes = DataStore.deployedHeroes;
             if (heroes == null || heroes.Count == 0) return false;
             var living = heroes.Where(h => h.heroState == null || !h.heroState.isDefeated).ToList();
@@ -3042,6 +3176,54 @@ namespace TacticalAI
                                 focusSec = space.HeroInSection(h.Name);
                                 if (!string.IsNullOrEmpty(focusSec)) break;
                             }
+                }
+                // ---- P38 (card t_11ebb843): NEUTRALE Beute nur in der Mischung.
+                // Gate order per card: Muster (oben) -> Neutral-Check ->
+                // Bedrohungs-Gatter -> Quota. The CORE ordering seam
+                // ObjectPlanTargetFor stays UNTOUCHED; combat rows (Kampf-
+                // objekte, Türen, Terminals, Warship) never pass the Neutral-
+                // Check, so every non-prey decision — including the chosen
+                // object in mixed missions — stays bit-identical to P36.
+                // _preyRound == null (no bystander in scope, no feed, n = 0,
+                // any computation failure) keeps the P36 law verbatim.
+                if (_preyRound != null)
+                {
+                    // The unit's OWN chase pool: bystander rows only while it
+                    // holds this round's quota slot; everything else always.
+                    var prey = hunt.FindAll(o => o != null && o.Bystander);
+                    List<Tac.FeedWorldView.MissionObjectFact> pool;
+                    if (prey.Count == 0) pool = hunt;                 // no neutral prey here: P36 verbatim
+                    else if (!_preyRound.InCohort(cd.id)) pool = hunt; // outside the Muster cohort: P36 verbatim
+                    else if (_preyRound.IsChosen(cd.id)) pool = hunt;  // quota slot: full law, prey included
+                    else
+                    {
+                        // Over-quota: NO bystander chase this round. The unit
+                        // does NOT stand still — combat rows (Türen, Geräte)
+                        // stay reachable, the fallback below (Fokus/Reaktion)
+                        // decides the rest. Why: the quota line on the popup.
+                        pool = hunt.FindAll(o => o != null && !o.Bystander);
+                        if (pool.Count == 0) return;   // prey-only mission: Fokus/Reaktion rule
+                    }
+                    var po = Tac.SectionConsumers.ObjectPlanTargetFor(
+                        space != null ? space.Graph : null, groupSec, focusSec, pool);
+                    if (po == null) return;
+                    if (po.Bystander)
+                    {
+                        // Bedrohungs-Gatter (fairness-fest, feed-Wissen nur):
+                        // ein beobachteter Rebell in der Sektion der Einheit
+                        // ODER der Beute -> keine Verfolgung (Popup: 'Bedrohung
+                        // in Sektion X'). The quota n was fixed at the round
+                        // seam BEFORE this gate by law — the gate never moves k.
+                        var tsec = Tac.PreyThreat.ThreatSectionOf(space, groupSec, po.Section);
+                        if (tsec != null)
+                        {
+                            _preyThreatSecThis = tsec;   // disclosure marker for the popup
+                            return;                      // Fokus/Reaktion rules instead
+                        }
+                    }
+                    fact = po;
+                    targetName = po.Name;
+                    return;
                 }
                 var o = Tac.SectionConsumers.ObjectPlanTargetFor(
                     space != null ? space.Graph : null, groupSec, focusSec, hunt);

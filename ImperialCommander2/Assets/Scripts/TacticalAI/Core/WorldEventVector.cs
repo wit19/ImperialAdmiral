@@ -144,6 +144,15 @@ namespace TacticalAI.Core
             public string OutcomeSide = ""; // losing side of the wired end event
             public string Polaritaet = "neutral";  // "jagt" | "schuetzt" | "neutral"
             public string Basis = "P4";            // "P1" | "P2" | "P3" | "P4"
+            // P38 (card t_11ebb843): the app's authored entity-type field,
+            // lower-cased enum name ("token" | "door" | "terminal" | ...),
+            // data-existence optional — a pre-P38 row carries NO key and
+            // stays "" (Null-Law: the bystander class never fires on it).
+            public string EntityType = "";
+            // P38: the CORE bystander verdict (NeutralPrey.IsBystander),
+            // derived in the SAME pass as the polaritaet — never a producer
+            // claim. Default false: every pre-P38 row/vector byte-identical.
+            public bool Bystander = false;
 
             /// The P1 evidence pool: button texts and wired event names.
             public List<string> EvidenceStrings()
@@ -364,7 +373,15 @@ namespace TacticalAI.Core
                       .Append(string.IsNullOrEmpty(o.Position) ? "-" : o.Position).Append('|')
                       .Append(o.Health.ToString(CultureInfo.InvariantCulture)).Append('|')
                       .Append(o.Defense.ToString(CultureInfo.InvariantCulture)).Append('|')
-                      .Append(o.Polaritaet).Append('|').Append(o.Basis).Append('\n');
+                      .Append(o.Polaritaet).Append('|').Append(o.Basis);
+                    // P38 data-existence law: the entityType segment appears
+                    // ONLY on rows that carry the key, the bystander marker
+                    // ONLY where the CORE law said yes — every pre-P38 row
+                    // keeps its exact Canon byte-identity (Null-Law).
+                    if (!string.IsNullOrEmpty(o.EntityType))
+                        sb.Append('|').Append(o.EntityType);
+                    if (o.Bystander) sb.Append("|bystander");
+                    sb.Append('\n');
                 }
             }
             foreach (var g in Groups)
@@ -718,6 +735,9 @@ namespace TacticalAI.Core
                             if (e.Has("buttons")) o.Buttons = e.Str("buttons") ?? "";
                             if (e.Has("eventNames")) o.EventNames = e.Str("eventNames") ?? "";
                             if (e.Has("outcomeSide")) o.OutcomeSide = e.Str("outcomeSide") ?? "";
+                            // P38: the authored entity type (data-existence:
+                            // pre-P38 rows carry no key -> "" stays unknown).
+                            if (e.Has("entityType")) o.EntityType = e.Str("entityType") ?? "";
                         }
                         break;
                     case "ThreatSpend":
@@ -1356,6 +1376,10 @@ namespace TacticalAI.Core
         public static void DeriveObjectPolarity(FeedWorldView.MissionObjectFact o,
                                                 string objective, bool objectiveForEmpire)
         {
+            // P38: the BYSTANDER flag is derived in the same pure pass (the
+            // ladder verdicts below stay bit-identical — the bystander class
+            // is orthogonal, see Core/NeutralPrey.cs).
+            o.Bystander = NeutralPrey.IsBystander(o);
             // P2 wins over P1 by ruling - evaluate it FIRST.
             if (NamesObject(objective, o.Name) && HasVerb(objective, P2Verbs))
             {

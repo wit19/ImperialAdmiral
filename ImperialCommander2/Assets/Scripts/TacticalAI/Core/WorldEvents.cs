@@ -232,7 +232,12 @@ namespace TacticalAI.Core
             // classifies, not a producer verdict; "outcomeSide" is the
             // losing side named by the WIRED end event's outcome sentence
             // (P3). failImperial/failRebel are dead and never enter here.
-            "defense", "buttons", "eventNames", "outcomeSide",
+            // P38 (card t_11ebb843): "entityType" is the app's AUTHORED
+            // entity-type enum name, lower-cased ("token"/"door"/"terminal"/
+            // "highlight"/...) - a public mission-file field, same category
+            // as the printed text; the CORE bystander law classifies it,
+            // the producer never judges. Data-existence optional.
+            "defense", "buttons", "eventNames", "outcomeSide", "entityType",
         };
 
         // P33-H4c: keys scoped to ONE kind (leak-guard law stays global for

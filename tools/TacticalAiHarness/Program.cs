@@ -170,6 +170,7 @@ namespace TacticalAiHarness
             Run("duty_loader.json", SecDutyLoader);    // P37b (t_1743a062): objectiveCounter-Whitelist + DutyAnchors-Leser (MissionCritical-Kanal) + dutyModifiers Null-Law (hand-pinned)
             Run("duty_core.json", SecDutyCore);    // P37c (t_e80246ed): Escort-Quota (fmix64-Wuerfel + Rangfolge + k-Band) + Gefechts-/Escorts-Vektor auf echtem HOTH10-Duty + Seed-Stabilitaet + Schattenfall + Null-Law + Refs-Speisung + Meta-Law (hand-pinned)
             Run("duty_popup.json", SecDutyPopup);    // P37d (t_ffc705af): Hop D - apDuty*-Keys 11/11 (De/En echt, 9 EN-Kopien byte-exakt) + Popup-Vektor: Escort zeigt Duty-Zeilen DE/EN, Gefecht keine, Null-Law (hand-pinned)
+            Run("prey_core.json", SecPreyCore);    // P38 (t_11ebb843): NEUTRALE BEUTE - EMPIRE3-Futter echte GUIDs + Bystander-Intension (Personenvokabel, Typ-Schiene, Null-Law) + Quota-Goldenvektoren (k-Band, nie alle, Session-Salz, Gleichlauf) + Bedrohungs-Gatter (Feed-Wissen, Sektion-Einheit zuerst) + apPrey*-Keys 11/11 + Popup-Seam-Spiegel (hand-pinned/golden, Twin: tools/p38_prey_twin.py)
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

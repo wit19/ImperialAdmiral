@@ -1224,6 +1224,12 @@ namespace TacticalAI
                         p["position"] = Num(src.entityPosition.X) + ";" + Num(src.entityPosition.Y);
                     p["health"] = health;
                     if (hasDef) p["defense"] = defense;
+                    // P38 (card t_11ebb843): the AUTHORED entity type, raw
+                    // enum name lower-cased (public mission-file field, the
+                    // CORE NeutralPrey law classifies it; data-existence:
+                    // an entity that does not carry the enum simply never
+                    // reaches this line - every parseable entity does).
+                    p["entityType"] = en.entityType.ToString().ToLowerInvariant();
 
                     // P1 raw evidence + the wired events behind the buttons.
                     var btns = new List<string>();

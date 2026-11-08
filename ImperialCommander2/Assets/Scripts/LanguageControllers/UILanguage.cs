@@ -46,6 +46,15 @@ public class UITacticalAI
 	// null everywhere and the bridge renders NOTHING (Null-Law: popups
 	// byte-identical to pre-P37c, fail-closed like the O-C key guard).
 	public string apDutyEscortTree, apDutyQuotaLine;
+	// P38 (card t_11ebb843, playtest Empire3): the NEUTRALE-Beute rows.
+	// apPreyQuotaLine = the OBJEKTJAGD quota disclosure ({0}=k, {1}=n —
+	// 'Objektjagd: k von n Einheiten'); rides every Muster-cohort member's
+	// popup while the mission carries bystander prey. apPreyThreatLine = the
+	// Bedrohungs-why ({0} = the section's AUTHORED name, §8.4-trusted);
+	// apPreyThreatRel = the relative fallback when the name does not inform
+	// (no {0} — never an id). Values ship in the 11 Languages/<L>/ui.json;
+	// missing key => no row (fail-closed, popup byte-identical).
+	public string apPreyQuotaLine, apPreyThreatLine, apPreyThreatRel;
 	// Thomas 02.11: command trees for cards that PRINT a command ability on
 	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
 	// rolled "guard" still commands, so every pattern keeps its own action

@@ -126,14 +126,16 @@ Referenzregel widerspricht, darf REF/ORD ihn nicht ungeprüft weiterreichen.
 * Duty-OBJEKT: Marker = per ModifyMapEntity spawnende Token-Entities;
   Zielfeld = Ziel-Entity. **Die Interaktions-OBERFLÄCHE ist
   missionsindividuell und KEIN Bestandteil der Anweisung** (Thomas 08.11.
-  III): HOTH10 hat überhaupt KEINE Buttons in der ganzen Mission — der
-  Marker wird unsichtbar am Brett geführt, „Prisoner transferred" ist ein
-  wiederholbares globales Buchhaltungs-Event; andere Missionen mögen
-  Buttons am Marker oder am Zielfeld haben. Darum sagt die Duty-Zeile
-  niemals „klicke X", sondern immer nur „gemäß Missionsregel". Wo der
-  Mensch am Brett klickt (oder nicht), ist App-Buchhaltung, nicht
-  Taktikanweisung. Der Duty-Fakt steht allein auf Zähler + Gewinn-Seite;
-  Setter mit oder ohne Button ist dafür gleichwertig.
+  III, Fresh-Beweis 08.11. auf richtiger JSON-Ebene
+  `entityProperties.buttonActions`): HOTH10 hat Buttons — aber am
+  **Zielfeld**: „Cell → Prisoner transferred"; die MARKER selbst haben
+  keinen, sie werden unsichtbar am Brett geführt. Andere Missionen tragen
+  den Button am Marker selbst (OTHER9: „Bind" an „Wookiee … Free").
+  Darum sagt die Duty-Zeile niemals „klicke X", sondern immer nur
+  „gemäß Missionsregel" — ob geklickt, gezogen oder unsichtbar gebucht
+  wird, ist App-Buchhaltung des Menschen, nicht Taktikanweisung. Der
+  Duty-Fakt steht allein auf Zähler + Gewinn-Seite; Setter am Button, an
+  DG-Aktivierung oder extern (CORE27 Flucht-Feld) ist gleichwertig.
 * Duty-PARAMETER (Distanz/Aktionstyp): **KEINE Kuratur, keine Tabelle, kein
   Pflegen pro Mission** (Thomas 08.11. II: „Ich möchte KEINE spezielle
   Lösung für HOTH10"). Die Duty-Zeile verweist generisch auf die
@@ -183,6 +185,19 @@ QA-stimmbar; pro Runde seed-stabil; im Explain offen gelegt. Kein neuer
 Zufall, kein Code-Zweig pro Mission — dieselbe Mechanik, die in M13u schon
 die Posture verschiebt. „Eine gesunde Mischung" ist damit kein Text,
 sondern die Würfel-Ökonomie selbst.
+**Rev 3.3-Präzisierung (zwei Ehrlichkeiten):** (a) `PatternWeights.Load()`
+liest heute ausschließlich `postureModifiers` (keyed nach Posture); der
+Duty-Modifikator braucht einen neuen generischen Top-Level-Key
+`dutyModifiers` — kleiner Loader-Code (generischer Leser, kein
+Code-Zweig pro Mission, im Geist der Loader-Zeile „DATA ROWS, never a
+code branch"), als W8 in §8 vermerkt. (b) Reine Muster-Würfel garantieren
+das Spaß-Kriterium NICHT — mit verschobenen Gewichten kann ein Seed
+zufällig alle Gruppen auf Escort würfeln. Darum **Quota-Deckel** als
+strukturelles Gesetz: Escort-Kohorte = die gewürfelten Duty-Muster,
+aber höchstens ⌈n/2⌉ Gruppen und mindestens eine Gruppe Gefecht;
+überzellige Escorts werden nach seed-geordneter Rangfolge in den
+Gefechtsast zurückgestuft (am Seed ablesbar, reproduzierbar, im Explain
+zeigbar). „Nie alle nur geschubse" ist damit Konstrukt, nicht Hoffnung.
 
 **Gesetz 3 — Bedrohung schlägt Duty (innerhalb der Duty-Gruppe).**
 Der Duty-Ast im Bewegungs-Zweig ist ein gedruckter Wenn-Dann-Zweig wie
@@ -207,15 +222,25 @@ Demonstranten; Thomas 08.11. III).** Die beiden Mechaniken sind
 klassen-, schicht- und datenmäßig getrennt, Beweise aus den echten Dateien
 (08.11. gelaufen):
 
-* **Klassen-Fence:** Die MissionObjekt-Feed-Klasse (P33-H4c) speist nur
-  Objekte mit **gedrucktem Angriffssatz** in eigenen Kanon-Texten
-  („can attack … (Health: N…)"/„angreifen"), Null-Law. Keiner der 8
-  Duty-Kandidaten besitzt eine Angriffssatz-Entity — der Feed kann dort
-  per Bauart keinen Fakt erzeugen. Umgekehrt verlangt der Duty-Detektor
-  Zähler + imperiale Gewinn-Seite; EMPIRE3s End-Events tragen keine
-  Imperiumsgewinn-Phrase (Hideaway-Ereignisse, Side-Check = False) — der
-  Detektor ist dort stumm. **Keine Mission gehört aktuell zu beiden
-  Klassen.**
+* **Klassen-Fence (Rev 3.3, auf richtiger Ebene `entityProperties.theText`
+  neu verifiziert — der frühere „8/8 ohne Angriffssatz"-Beweis war
+  wertlos, er scannte eine Ebene zu hoch):** Der Feed speist nur
+  Objekte mit gedrucktem **Plain-Number**-Angriffssatz im eigenen Text;
+  „Health: *N*" (variablengetrieben) ist nach Producer-Gesetz
+  NICHT parsebar. damit gilt: **Objekt-Ebene ist die Trennung disjunkt
+  und strukturell** — Duty-Anker sind Zähler-Setter-Objekte
+  (Supply Cache „Health: *2*", Terminal „*1*", Protest-… nein: Marker,
+  Zelle, Wookiee-Token), Feed-Row-Objekte sind Plain-Number-Entitys.
+  **Missions-Ebene gibt es Überlapp, dokumentiert und unvermeidlich:**
+  CORE16 (Door 1/2 Health 5), CORE27 (Northern/Southern Door 8),
+  CORE28 (Door West/East 5) sind objactor-Klasse — diese Zeilen sind
+  HEUTE schon da; der Duty betrifft ihre Zähler-Objekte (Terminals/
+  Caches/Courier) mit anderem GUID. Die 9 Demonstranten in EMPIRE3 sind
+  Health-5-Plain-Number — objactor-Klasse, wie P36 maß; EMPIRE3 hat
+  keinen Zähler an imperialem Gewinn-Event → kein Duty. **Kein Objekt
+  gehört je beiden Klassen an (GUID-Disjunktheit); Missionen dürfen
+  beide Klassen enthalten, und die Zeilen beantworten verschiedene
+  Fragen („auf wen schieße ich" vs. „zu welchem Ziel bewege ich").**
 * **Schicht-Fence:** objactor/TryObjectTarget wirkt ausschließlich in der
   Angriffs-/Zielschicht; der Duty-Ast ausschließlich im Bewegungs-Zweig
   (Gesetz 1). Zwei Mechaniken, zwei Slots, kein doppelt gedruckter Satz.
@@ -431,33 +456,49 @@ End-Event der **Imperiumsgewinn-Seite** („rebels lose") liegt;
 und **kein** reiner Kampf-/Runden-Blocker (dead/defeat/wound/round);
 (c) Schwellenwert als Ziel-Zähler.
 
-**Ergebnis (echt ausgeführt über `Resources/SagaMissions/*/*.json`):**
-18 Roh-Treffer, nach (b)/(c) gefiltert **8 saubere Duty-Kandidaten + 6
-Grenzfälle zur Text-QA**:
+**Ergebnis (echt ausgeführt über `Resources/SagaMissions/*/*.json`,
+138 Missionen):** 18 Roh-Treffer. **Rev 3.3-Polaritätsgesetz:** Die
+Seiten-Bestimmung muss durch die **kanonische Polarity-Leiter**
+(`OutcomeSideOfText` + One-Hop-Gesetz des Producers), nicht durch
+Ad-hoc-Regex; jeder Kandidat braucht außerdem die Richtungsprüfung
+**wer bewegt den Zähler** (Täter-Seite). Danach:
 
-| Mission | Variable@Ziel | Setter (Beleg) |
-|---|---|---|
-| CORE16 | Terminals disabled @3 | Discard Terminal 1-3 |
-| CORE23 | Imperial Recruits @16 | Empire 1-8 recruit (+Rebel Wounded) |
-| CORE27 | Imperials escape @1 | extern (Flucht-Feld) |
-| CORE28 | Caches destroyed @5 | Destroy Cache 1-8 |
-| HOTH10 | Prisoners claimed @4 | Prisoner transferred |
-| HOTH12 | Draylen executed @1 | Draylen executed |
-| OTHER9 | Wookiees Bound @6 | Wookiee Bound/Freed ×16 |
-| OTHER31 | Rebels Lose @1 | Cargo Position 16 (Bewegungsziel) |
+| Mission | Variable@Ziel | Setter/Beleg | Richtung |
+|---|---|---|---|
+| CORE23 | Imperial Recruits @16 | Empire 1-8 recruit | Imperium ✓ |
+| CORE27 | Imperials escape @1 | extern (Flucht-Feld, Courier) | Imperium ✓ |
+| CORE28 | Caches destroyed @5 | Destroy Cache 1-8 (Imperium-„Destroy"-Buttons) | Imperium ✓ |
+| HOTH10 | Prisoners claimed @4 | Prisoner transferred (Button an Cell) | Imperium ✓ |
+| HOTH12 | Draylen executed @1 | Draylen executed | Imperium ✓ |
+| OTHER9 | Wookiees Bound @6 | Wookiee … Bound (Bind-Button am Token) / Freed (−) | Imperium ✓ |
+| OTHER31 | Rebels Lose @1 | Cargo Position 16 (Bounty-Hunter laden) | Imperium ✓ |
 
-Grenzträge (Buchhaltungs-Verdacht, Text-QA bei Umsetzung): CORE10 (Officer
-freed/Door), EMPIRE2 (Recording Active), EMPIRE4 (Story-Flag), HOTH15,
-OTHER6, OTHER7 (Defeat-Flags — vermutlich KEIN Duty). **Nicht erfasst und
-ehrlich so benannt:** Duty-ohne-Zähler-Bauart (EMPIRE7 Push Lorn,
-EMPIRE4 Arrest) — die bleiben vorerst Regel-Zeilen; Ausbaustufe
+**Grenzträge (7) zur Text-QA — KEIN Duty ohne Freigabe:** **CORE16
+(Rev 3.3 neu hier:** „Terminals disabled" hängt an „rebels lose", aber
+der Terminal-Button „{A} Slice" führt zu „Slice Attempt" (Held!), der
+Setter „Discard Terminal 1" läuft über einen dritten Mechanismus —
+Täter/Richtung strukturell ungeklärt), CORE10, EMPIRE2, EMPIRE4, HOTH15,
+OTHER6, OTHER7** (Defeat-/Story-Flags — vermutlich KEIN Duty). **Nicht
+erfasst und ehrlich so benannt:** Duty-ohne-Zähler-Bauart (EMPIRE7 Push
+Lorn, EMPIRE4 Arrest) — die bleiben vorerst Regel-Zeilen; Ausbaustufe
 „Conditional-Duty aus Law-Zeilen" ist separierbar.
 
 **QA-Gesetz bei Umsetzung:** Diese Tabelle ist der Goldene Vektor.
 Pro Duty-Mission: Popup-Vektoren für EINE Escort- UND EINE Gefechts-
 Aktivierung, gemischt-Vektor über 3 Runden (Seed-Stabilität der
 Muster-Zeile), Bedrohungs-Override-Vektor (Escort unter Feuer →
-Vergeltungsast), und die 130 Nicht-Duty-Missionen **bit-identisch**.
+Vergeltungsast), und die **124** Nicht-Duty-Missionen (138 − 7 − 7)
+**bit-identisch**.
+**Abhängigkeits-Gesetz (Rev 3.3, Fresh-Befund):** Die Duty-Zeile verweist
+auf die Missionsregel — in Duty-Missionen muss die im taktischen Modus
+sichtbare Missions-/Briefing-Oberfläche **REF-sauber** sein, sonst
+verweist die Anweisung auf einen Legacy-Widerspruch (HOTH10-Briefing
+says Offiziere+Sturmtruppen, REF says jede Figur 6). Das ist exakt der
+MedPac-Präzedenz (Bridge ~343: Satz-Ebene-Scrubbing in REF/ORD,
+Sprachdatei-übergreifend, von Thomas dev15). Pflicht bei Umsetzung:
+JEDE Duty-Mission durch die bestehende Scrub-Mechanik prüfen; ist der
+Legacy-Satz nicht scrubbar, ist die Mission QA-blockiert, nicht der
+Duty-Block weglassbar.
 Keine Mission, die der Detektor nicht meldet, bekommt je einen Duty-Block;
 kein Duty-Block ohne QA-Vektor. **EMPIRE3 ist Pflicht-Gegenvektor**
 (Popup bit-identisch zu P36 — objactor-Zeilen unverändert, keine
@@ -476,10 +517,11 @@ Real geprüft in Board.cs/Doctrine.cs/TacticalAIBridge.cs/ActionBuilder.cs
 | W1 | `Board.CounterTypes` = {woundAll, incapacitateAll, surviveRounds, capture} | HOTH10-Bauart („N Marker ans Ziel") hat KEINEN Typen — Loader wirft `bad victoryCounter` | Typ ergänzen (z. B. `transfer`) ODER auf `capture` mappen — GO-Entscheidung, sonst stirbt der Duty im Loader wie objactor in P36 |
 | W2 | `Board.PostureNames` = {eliminate, stall, protect, deny} | vier Typen, alle belegt | KEIN neuer Posture-Typ — Duty-Modifikator schreibt nur in bestehende Zeilen |
 | W3 | `protectedEntities`-Kanal (Board.cs:313) | existiert, validiert (begehbar, vitality≥1, keine Duplikate) — in **allen** ausgelieferten Missionen leer (nur Fixture `m2a1_protect_npc.json`) | Duty-Mining liefert den ERSTEN echten Füller; wirft die Validierung (Zielfeld nicht begehbar), statt nachzubiegen: eigener Kanal `dutyAnchors` mit eigener Validierung |
-| W4 | `{schutz}`-Speisung (Doctrine.cs:157) | rendert aus `Contest[posture].targets`, bisher nur protect-Posture | Duty-Namen MUSS auch Escort-/Gefechts-Muster-Zeilen speisen (mustergeschützte Speisung, §1b Gesetz 4) |
+| W4 | `{schutz}`-Speisung (Doctrine.cs:157) | rendert aus `Contest[posture].targets`, bisher nur protect-Posture | **Rev 3.3: primärer Haken ist die `view.Objectives`-Liste** — die `gewinntraeger`-Regel („zuerst jeder Rebell, der ein Auftragsziel berührt") ist in JEDER Posture aktiv und rendert ihre Refs aus Objectives (Doctrine.cs:365ff). Duty-Anker dort einspeisen ⇒ Gesetz 4 wirkt posturen-unabhängig; `{schutz}` bleibt der protect-Pfad |
 | W5 | `FObjectThreatener` liest nur `Board.ProtectedEntities` (Figuren-zentriert, `Victory.cs:584` = `AliveOf("npc")`) | Marker/Tokens sind KEINE Figuren | Gesetz-4-Speisung läuft über die ZELLEN des Ankers (`VictoryHelpers.EntityCells`), nicht über Figuren-IDs — sonst toter Zweig |
 | W6 | `UILanguage`-Schlüssel (~1591 `switch (basis)`) | Basis-Labels sind fix | KEIN neuer Basis-Wert geplant (Ziel-Schicht unberührt) → nothing to do; falls Explain je „duty" als Basis zeigt: Fall + Label-Key in ALLEN Sprachdateien (QA-Lektion 07.11.) |
 | W7 | Mining-Artefakt-Doppelpfad (`Languages/En/tactical_mission_critical` + `Data/taktische_mission_critical`) | zwei Loader lesen denselben Satz | `duty`-Feld muss in BEIDEN regeneriert werden |
+| W8 | `PatternWeights.Load()` (Rev 3.3) | liest heute NUR `postureModifiers` + `rows` | generischer neuer Top-Level-Key `dutyModifiers` (Loader-Leser + Datenzeile, seed-Quota aus §1b G2) — ohne diesen Code-Punkt ist die Mischung reine Rede |
 
 **Bewusst NICHT erweitert (Gesetz-5-Umkehrung der P36-Lehre):**
 TryObjectTarget-Basis-Whitelist {card, economy, basis, proxy, objactor}

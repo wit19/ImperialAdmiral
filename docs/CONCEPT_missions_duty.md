@@ -463,5 +463,31 @@ kein Duty-Block ohne QA-Vektor. **EMPIRE3 ist Pflicht-Gegenvektor**
 (Popup bit-identisch zu P36 — objactor-Zeilen unverändert, keine
 Duty-Zeile) und in jeder Duty-Mission die Duplikat-Assertion aus §1b
 Gesetz 5 (nie zwei Zeilen über dasselbe Objekt).
-Spaß-Kriterium (§1b) ist Teil der
-Abnahme, nicht Wunschbild.
+**Spaß-Kriterium (§1b) ist Teil der
+Abnahme, nicht Wunschbild.**
+
+## 8. Whitelist-Karte (P36-Lehre: jede neue Sache ist ein Whitelist-Fall)
+
+Real geprüft in Board.cs/Doctrine.cs/TacticalAIBridge.cs/ActionBuilder.cs
+(08.11.). **Erweiterung nötig:**
+
+| # | Stelle | Befund | Folge für Duty |
+|---|---|---|---|
+| W1 | `Board.CounterTypes` = {woundAll, incapacitateAll, surviveRounds, capture} | HOTH10-Bauart („N Marker ans Ziel") hat KEINEN Typen — Loader wirft `bad victoryCounter` | Typ ergänzen (z. B. `transfer`) ODER auf `capture` mappen — GO-Entscheidung, sonst stirbt der Duty im Loader wie objactor in P36 |
+| W2 | `Board.PostureNames` = {eliminate, stall, protect, deny} | vier Typen, alle belegt | KEIN neuer Posture-Typ — Duty-Modifikator schreibt nur in bestehende Zeilen |
+| W3 | `protectedEntities`-Kanal (Board.cs:313) | existiert, validiert (begehbar, vitality≥1, keine Duplikate) — in **allen** ausgelieferten Missionen leer (nur Fixture `m2a1_protect_npc.json`) | Duty-Mining liefert den ERSTEN echten Füller; wirft die Validierung (Zielfeld nicht begehbar), statt nachzubiegen: eigener Kanal `dutyAnchors` mit eigener Validierung |
+| W4 | `{schutz}`-Speisung (Doctrine.cs:157) | rendert aus `Contest[posture].targets`, bisher nur protect-Posture | Duty-Namen MUSS auch Escort-/Gefechts-Muster-Zeilen speisen (mustergeschützte Speisung, §1b Gesetz 4) |
+| W5 | `FObjectThreatener` liest nur `Board.ProtectedEntities` (Figuren-zentriert, `Victory.cs:584` = `AliveOf("npc")`) | Marker/Tokens sind KEINE Figuren | Gesetz-4-Speisung läuft über die ZELLEN des Ankers (`VictoryHelpers.EntityCells`), nicht über Figuren-IDs — sonst toter Zweig |
+| W6 | `UILanguage`-Schlüssel (~1591 `switch (basis)`) | Basis-Labels sind fix | KEIN neuer Basis-Wert geplant (Ziel-Schicht unberührt) → nothing to do; falls Explain je „duty" als Basis zeigt: Fall + Label-Key in ALLEN Sprachdateien (QA-Lektion 07.11.) |
+| W7 | Mining-Artefakt-Doppelpfad (`Languages/En/tactical_mission_critical` + `Data/taktische_mission_critical`) | zwei Loader lesen denselben Satz | `duty`-Feld muss in BEIDEN regeneriert werden |
+
+**Bewusst NICHT erweitert (Gesetz-5-Umkehrung der P36-Lehre):**
+TryObjectTarget-Basis-Whitelist {card, economy, basis, proxy, objactor}
+bleibt duty-frei (OBJEKT-Slot gehört der objactor-Klasse — kein Doppel,
+keine Irritation); `ActionBuilder.allowed`
+{target_id, states, mp, purpose, focus_cost, door, special} bleibt
+duty-frei, weil der Duty-Zweig KEINE neuen Aktionsparameter emittiert
+(gedruckte Anleitung; HOTH10-Marker ist offline-Buchhaltung, hat gar kein
+AI-Ziel); `TacticalShippedIds` (M11) bleibt, Duty gilt nur für ausgelieferte
+taktische Missionen; `PatternWeights`-Loader ist freier Key-Value-Raum
+(Duty-Modifikator ist DATEN-Zeile, kein Code).

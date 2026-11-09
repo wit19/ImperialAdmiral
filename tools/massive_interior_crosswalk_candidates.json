@@ -1,0 +1,4147 @@
+{
+ "generated_by": "tools/massive_interior_census.py - regenerate, never hand-edit",
+ "law": "rows are CROSSWALK CANDIDATES only (spec D1/D2): the runtime crosswalk may hold RR core enumerations plus Thomas-SIGNED rows alone; candidate_status is the census reading, thomas_ruling is the signature slot (null until signed). An unverified expansion row reads fail-OPEN at runtime with a forensic log line (D2). Unmatched expansion ids must not enter the crosswalk - the MassiveInteriorGate hop ships a closed enum (D1).",
+ "rows": [
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 1
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 3
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 10,
+    "shipped_placements": 4
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 3
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 3
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 4
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 4
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Bespin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 18,
+    "shipped_placements": 11
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 38,
+    "shipped_placements": 14
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 30,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 49,
+    "shipped_placements": 16
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 26,
+    "shipped_placements": 7
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 22,
+    "shipped_placements": 12
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 15,
+    "shipped_placements": 10
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 3
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 12,
+    "shipped_placements": 16
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 32,
+    "shipped_placements": 19
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 2,
+    "dp_anchor_hits": 12,
+    "shipped_placements": 9
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 28,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 27,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 16,
+    "shipped_placements": 16
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 5
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 10,
+    "shipped_placements": 7
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 7,
+    "shipped_placements": 4
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 13
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 21,
+    "shipped_placements": 18
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 3
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 12
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 6
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 8
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 13
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 16,
+    "shipped_placements": 30
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 22,
+    "shipped_placements": 41
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 6
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 7
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 10
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 9
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 27
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 37
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 18,
+    "shipped_placements": 61
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 18
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 24,
+    "shipped_placements": 99
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 18
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 2,
+    "dp_anchor_hits": 28,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 19
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 17,
+    "shipped_placements": 7
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 19
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 22,
+    "shipped_placements": 14
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 20
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 17,
+    "shipped_placements": 14
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 20
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 33,
+    "shipped_placements": 24
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 21
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 19,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 21
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 17,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 22
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 20,
+    "shipped_placements": 22
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 22
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 42,
+    "shipped_placements": 34
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 23
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 23,
+    "shipped_placements": 19
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 23
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 13,
+    "shipped_placements": 17
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 24
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 17,
+    "shipped_placements": 23
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 24
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 16,
+    "shipped_placements": 12
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 25
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 17
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 25
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 6
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 26
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 7
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 26
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 15
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 27
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 10,
+    "shipped_placements": 8
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 27
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 26,
+    "shipped_placements": 28
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 28
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 16,
+    "shipped_placements": 24
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 28
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 9
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 29
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 16
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 29
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 5
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 30
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 5
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 30
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 7,
+    "shipped_placements": 17
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 31
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 17
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 31
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 16,
+    "shipped_placements": 45
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 32
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 19,
+    "shipped_placements": 50
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 32
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 17
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 33
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 17
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 33
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 14
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 34
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 9
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 34
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 23
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 35
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 40
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 35
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 21,
+    "shipped_placements": 110
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 36
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 20,
+    "shipped_placements": 137
+   },
+   "expansion": "Core",
+   "pinned_status": "BANNED",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 36
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 37
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 9
+   },
+   "expansion": "Core",
+   "pinned_status": "UNKNOWN",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 37
+  },
+  {
+   "biome": "None",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 14
+   },
+   "expansion": "Core",
+   "pinned_status": "OPEN",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 38
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 20
+   },
+   "expansion": "Core",
+   "pinned_status": "OPEN",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 38
+  },
+  {
+   "biome": "None",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 20
+   },
+   "expansion": "Core",
+   "pinned_status": "OPEN",
+   "rr_enumerated": true,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 39
+  },
+  {
+   "biome": "None",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 44
+   },
+   "expansion": "Core",
+   "pinned_status": "OPEN",
+   "rr_enumerated": true,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 39
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 3
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 2,
+    "dp_anchor_hits": 33,
+    "shipped_placements": 19
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 3
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 17,
+    "shipped_placements": 5
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 27,
+    "shipped_placements": 10
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 9,
+    "shipped_placements": 6
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 5
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 5
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 6
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 7,
+    "shipped_placements": 6
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 15,
+    "shipped_placements": 13
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 5
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 10,
+    "shipped_placements": 7
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 4
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 8
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 11
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 4
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 5
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 2
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 4
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 7
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 10
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 8
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 9
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 30
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Halls",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 39
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 18
+  },
+  {
+   "biome": "Streets",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 23,
+    "shipped_placements": 105
+   },
+   "expansion": "Empire",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 18
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 11,
+    "shipped_placements": 5
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 10,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 23,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 11,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 5
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 12,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 5
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 6
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 1
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 7,
+    "shipped_placements": 11
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 7
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 18
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 1
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 18
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 4
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 19
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 8
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 19
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 2,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 25
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 20
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 13
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 20
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 21
+  },
+  {
+   "biome": "Ice",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 21
+  },
+  {
+   "biome": "Snow",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 22
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 22
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 23
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 8
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 23
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 24
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 24
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 25
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 25
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 26
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 26
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 27
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 27
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 28
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Hoth",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 28
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 2
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 12,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 9,
+    "shipped_placements": 4
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 2
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 1
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 7,
+    "shipped_placements": 4
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 5
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 1
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 1
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 1
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 8,
+    "shipped_placements": 7
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 5
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 13
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 3
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 14
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 6
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 15
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 16
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Jabba",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Jabba",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 17
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 1
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 6,
+    "shipped_placements": 3
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 1
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 5,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 4,
+    "shipped_placements": 5
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 4
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Plains",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 10
+   },
+   "expansion": "Lothal",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 9,
+    "shipped_placements": 3
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 1
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 1
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 1
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 2
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 3
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 1
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 3
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 1,
+    "dp_anchor_hits": 13,
+    "shipped_placements": 3
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 4
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 3,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 5
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 1
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 6
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 1,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 2,
+    "shipped_placements": 2
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 7
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 8
+  },
+  {
+   "biome": "Forest",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Desert",
+   "candidate_status": "OPEN",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 9
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 10
+  },
+  {
+   "biome": "Imperial",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "Interior",
+   "candidate_status": "BANNED_CANDIDATE",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 11
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "A",
+   "thomas_ruling": null,
+   "tileID": 12
+  },
+  {
+   "biome": "None",
+   "candidate_status": "AMBIGUOUS",
+   "evidence": {
+    "authored_massive_placements": 0,
+    "dp_anchor_hits": 0,
+    "shipped_placements": 0
+   },
+   "expansion": "Twin",
+   "pinned_status": "UNPINNED",
+   "rr_enumerated": false,
+   "side": "B",
+   "thomas_ruling": null,
+   "tileID": 12
+  }
+ ],
+ "schema": "wa.massive_crosswalk/1"
+}

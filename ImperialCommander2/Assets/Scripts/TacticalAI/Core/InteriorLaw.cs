@@ -512,10 +512,13 @@ namespace TacticalAI.Core
         {
             int id;
             bool numeric = int.TryParse(row.TileId, out id);
-            if (row.RrEnumerated && numeric && (RrInterior("Core", id) || RrExterior("Core", id)))
+            // the enumeration is expansion-scoped: use the ROW's expansion,
+            // never a hardcoded "Core" - a non-Core row must never inherit
+            // the Core pin (spec section 7 numeric-overlap error class).
+            if (row.RrEnumerated && numeric && (RrInterior(row.Expansion, id) || RrExterior(row.Expansion, id)))
             {
                 reason = ReasonRrPin;
-                return RrInterior("Core", id) ? TileStatus.Banned : TileStatus.Open;
+                return RrInterior(row.Expansion, id) ? TileStatus.Banned : TileStatus.Open;
             }
             if (row.Ruling == "")
             {
@@ -643,7 +646,7 @@ namespace TacticalAI.Core
                 if (ns == null) continue;
                 var list = new List<string>();
                 foreach (var n in ns)
-                    if (n != null && !visited.Contains(n)) list.Add(n);
+                    if (n != null && !visited.Contains(n) && !list.Contains(n)) list.Add(n);
                 list.Sort(StringComparer.Ordinal);   // deterministic BFS expansion
                 foreach (var n in list)
                 {

@@ -101,6 +101,8 @@
     { "name": "hand_banned_plus_open", "status": ["Banned", "Open"], "expect": { "status": "Mixed", "forensic": false } },
     { "name": "hand_banned_plus_ambiguous", "status": ["Banned", "Ambiguous"], "expect": { "status": "Mixed", "forensic": true } },
     { "name": "hand_open_plus_ambiguous", "status": ["Open", "Ambiguous"], "expect": { "status": "Mixed", "forensic": true } },
+    { "name": "hand_banned_open_ambiguous", "status": ["Banned", "Open", "Ambiguous"], "expect": { "status": "Mixed", "forensic": true },
+      "_why": "the branch-order vector: Banned+Open decides MIXED before the unresolved tile is even consulted (census sec_state order B+O first) - all three states in one section, forensic still owed" },
     { "name": "hand_all_ambiguous", "status": ["Ambiguous", "Ambiguous"], "expect": { "status": "Ambiguous", "forensic": true } },
     { "name": "hand_no_tiles", "status": [], "expect": { "status": "Ambiguous", "forensic": true },
       "_why": "a section with no tile under it is unresolved by the D1 derivation law, never silently OPEN (census section 4 note; the fleet measures 7 such sections)" }

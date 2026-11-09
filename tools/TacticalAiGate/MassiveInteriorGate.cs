@@ -87,16 +87,20 @@ public static class MassiveInteriorGate
             var d = Json.AsDict(dRaw);
             string exp = Json.AsStr(Json.Get(d, "expansion", "Core"));
             int id = Json.AsInt(Json.Get(d, "id", 0L));
-            string[] biomes =
-            {
-                (string)Json.Get(d, "biomeA", null) ?? "None",
-                (string)Json.Get(d, "biomeB", null) ?? "None"
-            };
+            // census loader law (massive_interior_census.py: `e.get(biome) or
+            // "None"`): missing AND empty-string labels both read "None"
+            string[] biomes = { OrNone(Json.Get(d, "biomeA", null)), OrNone(Json.Get(d, "biomeB", null)) };
             Dictionary<int, string[]> byId;
             if (!dims.TryGetValue(exp, out byId)) { byId = new Dictionary<int, string[]>(); dims[exp] = byId; }
             byId[id] = biomes;
         }
         return dims;
+    }
+
+    static string OrNone(object v)
+    {
+        var s = v as string;
+        return string.IsNullOrEmpty(s) ? "None" : s;
     }
 
     static void RunCensusVsFileAndRrLaw()
@@ -160,7 +164,7 @@ public static class MassiveInteriorGate
             }
             // mapping verification (fail-closed): the candidate re-derives
             // from the shipped biome label by the D1 rule
-            string expected = null;
+            string expected;
             if (RrInterior(cExp, (int)Json.AsLong(c["tileID"]))) expected = "BANNED";
             else if (RrExterior(cExp, (int)Json.AsLong(c["tileID"]))) expected = "OPEN";
             else if (cBiome == InteriorLabel) expected = "BANNED_CANDIDATE";
@@ -296,7 +300,15 @@ public static class MassiveInteriorGate
             foreach (var tRaw in Json.AsList(Json.Get(s, "mapTiles", new List<object>())))
             {
                 var t = Json.AsDict(tRaw);
-                string exp = Expansions[(int)Json.AsLong(Json.Get(t, "expansion", 0L))];
+                int ei = (int)Json.AsLong(Json.Get(t, "expansion", 0L));
+                if (ei < 0 || ei >= Expansions.Length)
+                {
+                    // census loader guard (massive_interior_census.py names the
+                    // bad index instead of dying): fail the check, keep the run
+                    Fail("CORE4 tile carries unknown expansion index " + ei + " - shipped data changed shape");
+                    continue;
+                }
+                string exp = Expansions[ei];
                 string tileId = Json.AsStr(Json.Get(t, "tileID", ""));
                 string side = InteriorLaw.NormalizeSide((string)Json.Get(t, "tileSide", "A"));
                 // pass the SHIPPED biome from dimensions.json - the four-state

@@ -269,6 +269,19 @@ namespace TacticalAI
                     DataStore.deploymentCards.FirstOrDefault(x => x != null && x.isElite
                         && string.Equals(x.id, eliteId, StringComparison.OrdinalIgnoreCase));
                 if (elite == null) return card;   // no elite card behind the id: harmless
+                // P41e (card t_1f93d98d; spec 4-D3-C/C2): the swap rides the
+                // SAME USEFULNESS buy gate as the strict economy - one call
+                // into the bridge's ONE law (MassiveBuyUseful: mode-gated,
+                // Null-Law pass-through, D6 override => USEFUL by definition,
+                // fail-open on unknown facts). A persona never burns elite
+                // budget on a Massive whose USEFUL-DP set is empty (the buy
+                // that follows it would be skipped anyway - the swap-slot
+                // answer stays the mode-frozen plain card, no repricing, no
+                // second opinion). Non-Massive swaps and legacy missions are
+                // untouched by construction (the gate answers true).
+                if (!TacticalAIBridge.MassiveBuyUseful(card)
+                    || !TacticalAIBridge.MassiveBuyUseful(elite))
+                    return card;
                 _swapLedger.Book(PersonaSwaps.BaseOf(name));
                 Debug.Log("PersonaSwap::" + v.Id + " " + card.id + "->" + elite.id);
                 return elite;

@@ -205,11 +205,16 @@ namespace TacticalAiHarness
             // pinned seeds (seed-chain absolute winners are record-derived,
             // reviewed once - the dp_score.json discipline, never hand-
             // recomputed). The DROP RULE below is the pinned MIRROR of the
-            // three-condition law inline in TacticalAIBridge.
+            // LEGALITY lane of the law inline in
             // TryChooseDeploymentPoint; MassiveInteriorGate's source-contract
             // check fails the build when the bridge block drifts away from
             // the anchors this mirror reads (the bridge itself is Unity-side
-            // and not compile-visible here).
+            // and not compile-visible here). P41e (card t_1f93d98d) added a
+            // second drop condition behind this lane - DPs OUTSIDE the
+            // USEFUL-DP set (spec 4-D3-C2); that lane needs sections, edges
+            // and an op zone, so it is pinned by the useful block below and
+            // the gate's RunUsefulnessContract, not by these legality
+            // vectors (their values and pins are untouched).
             foreach (var raw in Json.AsList(v["dp_filter"]))
             {
                 var c = Json.AsDict(raw);
@@ -359,6 +364,122 @@ namespace TacticalAiHarness
                     Json.AsStr(exp["section"]), m.Section ?? "");
                 Check("interior[anchor." + name + "].fact",
                     Json.AsStr(exp["fact"]), m.Fact);
+            }
+
+            // ---- P41e USEFULNESS truth table (card t_1f93d98d; spec 9.4:
+            //      the USEFULNESS truth table incl. the D3-C2 named
+            //      vector) -------------------------------------------------
+            // The SAME InteriorLaw.UsefulDps the bridge's MassiveUsefulDps
+            // calls for the buy gates (TryRankProcurement +
+            // DataStore.GetStrictDeployable + PersonaState.SwapDeployCandidate),
+            // the DP scorer (TryChooseDeploymentPoint) and the refund guard
+            // (popup deploy trigger). Sections and edges hand-written (P41b
+            // law), the CORE4 vocabulary carried over from the anchor
+            // vectors; every DP carries its D3-B tile status. The buy/refund
+            // rows pin the DP-first economy outcome (skip + rerank + refund,
+            // Thomas 09.11); the bridge-side literals are pinned by the
+            // gate's RunUsefulnessContract (the bridge is Unity-side, not
+            // compile-visible here).
+            foreach (var raw in Json.AsList(v["useful"]))
+            {
+                var c = Json.AsDict(raw);
+                var name = Json.AsStr(c["name"]);
+                var status = new Dictionary<string, SectionStatusT>(StringComparer.Ordinal);
+                foreach (var kv in Json.AsDict(c["status"]))
+                    status[kv.Key] = SectionStatusOf(Json.AsStr(kv.Value));
+                var adj = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+                foreach (var kv in Json.AsDict(c["edges"]))
+                {
+                    var l = new List<string>();
+                    foreach (var n in Json.AsList(kv.Value)) l.Add(Json.AsStr(n));
+                    adj[kv.Key] = l;
+                }
+                Func<string, IEnumerable<string>> nb = s =>
+                    adj.ContainsKey(s) ? adj[s] : new List<string>();
+                Func<string, SectionStatusT> st = s =>
+                    status.ContainsKey(s) ? status[s] : SectionStatusT.Ambiguous;
+                var probes = new List<InteriorLaw.UsefulProbe>();
+                foreach (var draw in Json.AsList(c["dps"]))
+                {
+                    var dp = Json.AsDict(draw);
+                    probes.Add(new InteriorLaw.UsefulProbe
+                    {
+                        Key = Json.AsStr(dp["key"]),
+                        Section = Json.AsStr(dp["section"]),
+                        Tile = TileStatusOf(Json.AsStr(dp["tile"])),
+                    });
+                }
+                var zone = new List<string>();
+                foreach (var z in Json.AsList(c["opzone"])) zone.Add(Json.AsStr(z));
+                var res = InteriorLaw.UsefulDps(probes, st, nb, zone,
+                    Json.AsBool(c["massive"]), Json.AsBool(c["override"]));
+                var exp = Json.AsDict(c["expect"]);
+                Check("interior[useful." + name + "].active",
+                    Json.AsBool(exp["active"]), res.Active);
+                Check("interior[useful." + name + "].keys",
+                    Json.AsStr(exp["keys"]), string.Join(",", res.Keys.ToArray()));
+                Check("interior[useful." + name + "].fact",
+                    Json.AsStr(exp["fact"]), res.Fact);
+                var reasons = new List<string>();
+                foreach (var p in probes)
+                {
+                    string rr;
+                    reasons.Add(p.Key + ":" +
+                        (res.Reason.TryGetValue(p.Key, out rr) ? rr : "-"));
+                }
+                Check("interior[useful." + name + "].reasons",
+                    Json.AsStr(exp["reasons"]), string.Join(",", reasons.ToArray()));
+                // Named scenario part (a), blockade branch: the buy IS
+                // allowed and the order carries a pinned SEAL, never a
+                // chase - the P41d law over the SAME topology (spec 9.4
+                // "...a pinned SEAL order, never a chase"; 4-D3-C2
+                // blockade predicate DECIDED 09.11).
+                if (exp.ContainsKey("seal"))
+                {
+                    var m = InteriorLaw.AnchorMaskFor(Json.AsStr(exp["seal"]),
+                        true, false, nb, st);
+                    Check("interior[useful." + name + "].seal_section",
+                        Json.AsStr(exp["seal_section"]), m.Section ?? "");
+                    Check("interior[useful." + name + "].seal_fact",
+                        Json.AsStr(exp["seal_fact"]), m.Fact);
+                }
+                // Named scenario part (b), beyond branch: the USELESS
+                // Massive is skipped BEFORE scoring and the strongest
+                // USEFUL alternative at the same threat takes the slot -
+                // the strict buy law's own order (cost desc, ties by id
+                // Ordinal), never a repricing (spec 4-D3-C "the gate just
+                // removes dead candidates before scoring"). Rows carry
+                // their useful answer; useful=false models the empty
+                // USEFUL-DP set of this vector's topology.
+                if (exp.ContainsKey("buy"))
+                {
+                    var b = Json.AsDict(exp["buy"]);
+                    long budget = Json.AsLong(b["budget"]);
+                    string winner = ""; long best = -1;
+                    foreach (var rRaw in Json.AsList(b["rows"]))
+                    {
+                        var r = Json.AsDict(rRaw);
+                        long cost = Json.AsLong(r["cost"]);
+                        if (!Json.AsBool(r["useful"]) || cost > budget) continue;
+                        var id = Json.AsStr(r["id"]);
+                        if (cost > best ||
+                            (cost == best && string.CompareOrdinal(id, winner) < 0))
+                        { best = cost; winner = id; }
+                    }
+                    Check("interior[useful." + name + "].buy_winner",
+                        Json.AsStr(b["expect_winner"]), winner);
+                }
+                if (exp.ContainsKey("refund"))
+                {
+                    var rf = Json.AsDict(exp["refund"]);
+                    // the spec forensics shape (9.3-4) incl. the EXACT
+                    // deterministic fact of this vector's emptied set
+                    var line = "[dp-massive] refund card=" + Json.AsStr(rf["card"])
+                               + " ap=" + Json.AsLong(rf["ap"])
+                               + " reason=no_useful_dp_after=" + res.Fact;
+                    Check("interior[useful." + name + "].refund_line",
+                        Json.AsStr(rf["line"]), line);
+                }
             }
 
             // ---- P41d (spec 9.3-3/5-H4): REPLAN fact 4, interior ingress --

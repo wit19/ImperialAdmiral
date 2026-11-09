@@ -815,5 +815,211 @@ namespace TacticalAI.Core
                     : OverrideUnverified;
             }
         }
+
+        // ---------------------------- USEFULNESS (D3-C/C2, P41e; card t_1f93d98d) --
+        // spec 4-D3-C/C2 v1.3 + 9.3-4:
+        //   USEFUL-DP(card) = { DP | tile(DP) not Banned for this card (D3-B
+        //                       filter law) AND component(DP over the
+        //                       not-Banned subgraph) satisfies the op-zone
+        //                       predicate }
+        //   Massive USEFUL  <=>  USEFUL-DP(card) is not empty
+        // The operation zone is the FUTURE truth - the caller passes the
+        // union of today's contested/believed elements (ThreatZone rail) and
+        // the authored MissionCritical endgame sections; the predicate below
+        // checks EVERY element of that union. Thomas' decisions of 09.11,
+        // all three pinned here:
+        //  * blockade predicate: reach OR adjacency-blockade = USEFUL (the
+        //    D1/D3-A patrol-the-room-exits doctrine - the order then carries
+        //    the seal explain line, a patrol, never a chase);
+        //  * union-reach: the endgame never vetoes alone - a DP is useful
+        //    when ITS OWN component reaches OR adjoins ANY op-zone element;
+        //    the veto bites only when the whole union is beyond reach and
+        //    adjacency ("ab diesem Zeitpunkt");
+        //  * a D6 override short-circuits to ALL-OPEN: the mission itself
+        //    says otherwise, so the card is USEFUL by definition (the
+        //    economy gate never fights a registered lift).
+        // Unknown op zone (empty) AND unknown reachability (no graph) =>
+        // every DP useful + the caller logs: fail-open at the economy layer
+        // (spec 4-C: buying nothing at all is also a rules-visible decision
+        // the Empire would not make). Legality stays UPSTREAM: a Banned-tile
+        // DP never enters the set even when its component would reach -
+        // usefulness resurrects nothing the D3-B filter already buried.
+        public const string UsefulReach = "reach";
+        public const string UsefulBlockade = "blockade";
+        public const string DropBannedTile = "banned_tile";
+        public const string DropSectionBanned = "section_banned";
+        public const string DropBeyond = "beyond";
+        public const string UsefulFactOverride = "override_allopen";
+        public const string UsefulFactFailOpen = "opzone_unknown_failopen";
+        public const string UsefulFactNoDps = "no_dps";
+
+        /// <summary>One candidate DP for the USEFULNESS law (lowercase-key
+        /// lane - InteriorUnity.DpKey is the runtime key law).</summary>
+        public sealed class UsefulProbe
+        {
+            public string Key;          // dp guid lowercased
+            public string Section;      // the DP's own section (graph node lane)
+            public TileStatus Tile;     // D3-B status of the DP's own tile
+        }
+
+        public sealed class UsefulResult
+        {
+            /// <summary>The USEFUL-DP set, caller order (deterministic).</summary>
+            public readonly List<string> Keys = new List<string>();
+            /// <summary>key -> per-DP reason token (every probe answered).</summary>
+            public readonly Dictionary<string, string> Reason =
+                new Dictionary<string, string>(StringComparer.Ordinal);
+            /// <summary>false => non-Massive call, law INACTIVE: the caller
+            /// keeps its pool and its buys untouched (Null-Law lane).</summary>
+            public bool Active;
+            /// <summary>Deterministic aggregate fact:
+            /// "opzone=&lt;sorted joined '+'&gt;;&lt;key:reason per DP, caller order&gt;".
+            /// This exact string is the &lt;fact&gt; of the refund forensic line
+            /// (reason=no_useful_dp_after=&lt;fact&gt;, spec 9.3-4).</summary>
+            public string Fact = "";
+        }
+
+        /// <summary>The ONE USEFUL-DP law (DP-first: the set is computed
+        /// BEFORE any score or spend; the buy gates only ask it non-empty
+        /// and the DP scorer consumes the SAME set, so buy-side and
+        /// deploy-side can never disagree about which DPs are on the
+        /// table - spec 4-D3-C2 point 1). sections/edges are the caller's
+        /// graph view; a section the status map does not know reads
+        /// Ambiguous - the snapshot's own unknown law (D2 fail-open,
+        /// traversable). BFS components never mutate anything.</summary>
+        public static UsefulResult UsefulDps(
+            IList<UsefulProbe> dps,
+            Func<string, SectionStatusT> sectionStatusOf,
+            Func<string, IEnumerable<string>> neighborsOf,
+            ICollection<string> opZone,
+            bool isMassive,
+            bool overrideCovers)
+        {
+            var r = new UsefulResult();
+            if (!isMassive) return r;               // Active=false: non-Massive untouched
+            if (dps == null || dps.Count == 0)
+            {
+                r.Active = true;
+                r.Fact = UsefulFactNoDps;
+                return r;
+            }
+            if (overrideCovers)
+            {
+                // D6 lift: USEFUL by definition, all-open (spec 9.3-4).
+                r.Active = true;
+                r.Fact = UsefulFactOverride;
+                foreach (var p in dps) { r.Keys.Add(p.Key); r.Reason[p.Key] = "override"; }
+                return r;
+            }
+            // Economy-layer fail-open (spec 4-C): unknown op zone AND no
+            // graph = unknown reachability. Every DP passes; the caller
+            // logs (it owns the card id for the [dp-massive] line).
+            if (opZone == null || opZone.Count == 0 || neighborsOf == null)
+            {
+                r.Active = true;
+                r.Fact = UsefulFactFailOpen;
+                foreach (var p in dps) { r.Keys.Add(p.Key); r.Reason[p.Key] = "failopen"; }
+                return r;
+            }
+
+            // op-zone elements, deduped + sorted (deterministic fact lane).
+            var zone = new List<string>();
+            foreach (var z in opZone)
+                if (!string.IsNullOrEmpty(z) && !zone.Contains(z)) zone.Add(z);
+            zone.Sort(StringComparer.Ordinal);
+
+            // per-section status memo (bounded, deterministic)
+            var memo = new Dictionary<string, SectionStatusT>(StringComparer.Ordinal);
+            Func<string, SectionStatusT> status = sec =>
+            {
+                SectionStatusT s;
+                if (memo.TryGetValue(sec ?? "", out s)) return s;
+                s = sectionStatusOf == null || sec == null || sec.Length == 0
+                    ? SectionStatusT.Ambiguous : sectionStatusOf(sec);
+                memo[sec ?? ""] = s;
+                return s;
+            };
+
+            var perDp = new List<string>();         // fact part "key:reason"
+            foreach (var p in dps)
+            {
+                string reason;
+                if (p.Tile == TileStatus.Banned)
+                    reason = DropBannedTile;         // legality UPSTREAM
+                else if (p.Section != null && p.Section.Length > 0 &&
+                         status(p.Section) == SectionStatusT.Banned)
+                    reason = DropSectionBanned;      // defensive: the 4-state law makes
+                else                                 // this unreachable, never a silent pass
+                {
+                    // component over the not-Banned subgraph (Open/Mixed/
+                    // Ambiguous traversable - D2 fail-open rides the walk).
+                    var comp = new HashSet<string>(StringComparer.Ordinal);
+                    var q = new Queue<string>();
+                    if (!string.IsNullOrEmpty(p.Section))
+                    {
+                        comp.Add(p.Section);
+                        q.Enqueue(p.Section);
+                    }
+                    while (q.Count > 0)
+                    {
+                        var cur = q.Dequeue();
+                        var nb = neighborsOf(cur);
+                        if (nb == null) continue;
+                        foreach (var n in nb)
+                        {
+                            if (string.IsNullOrEmpty(n) || comp.Contains(n)) continue;
+                            if (status(n) == SectionStatusT.Banned) continue;
+                            comp.Add(n);
+                            q.Enqueue(n);
+                        }
+                    }
+                    // reach: ANY op-zone element INSIDE the component.
+                    bool hit = false;
+                    foreach (var z in zone)
+                        if (comp.Contains(z)) { hit = true; break; }
+                    if (hit) reason = UsefulReach;
+                    else
+                    {
+                        // adjacency-blockade: ANY op-zone element that is
+                        // Banned and adjoins the component (both edge
+                        // directions asked - the authored graph is undirected
+                        // by construction, the hand-written vectors are too,
+                        // but the law never trusts an asymmetric input).
+                        bool block = false;
+                        foreach (var z in zone)
+                        {
+                            if (status(z) != SectionStatusT.Banned) continue;
+                            var zn = neighborsOf(z);
+                            if (zn != null)
+                                foreach (var n in zn)
+                                    if (comp.Contains(n)) { block = true; break; }
+                            if (block) break;
+                            var qn = new List<string>(comp);
+                            foreach (var csec in qn)
+                            {
+                                var cn = neighborsOf(csec);
+                                if (cn == null) continue;
+                                foreach (var n in cn)
+                                    if (string.Equals(n, z, StringComparison.Ordinal))
+                                    { block = true; break; }
+                                if (block) break;
+                            }
+                            if (block) break;
+                        }
+                        reason = block ? UsefulBlockade : DropBeyond;
+                    }
+                }
+                r.Reason[p.Key] = reason;
+                perDp.Add(p.Key + ":" + reason);
+                if (reason == UsefulReach || reason == UsefulBlockade) r.Keys.Add(p.Key);
+            }
+
+            var fact = new List<string>();
+            fact.Add("opzone=" + string.Join("+", zone.ToArray()));
+            fact.Add(string.Join(",", perDp.ToArray()));
+            r.Fact = string.Join(";", fact.ToArray());
+            r.Active = true;
+            return r;
+        }
     }
 }

@@ -41,6 +41,9 @@ namespace Saga
 		DeploymentGroupOverride deploymentOverride;
 		bool acceptInput = true;
 		DeployMode lastMode;//TAC final-round dump: which mode this popup ran
+		bool lastManual;//P41e: the manual window's groups are the DM's own
+		                //picks - "app proposes, table acts": the refund
+		                //guard never second-guesses a human pick.
 
 		//M13c/M13g: tactical optional deployment -> the chosen DP marker is
 		//revealed (Thomas 28.10: the marker IS the placement instruction for
@@ -125,6 +128,7 @@ namespace Saga
 			onslaughtDWarning.gameObject.SetActive( false );
 
 			lastMode = mode;//TAC final-round dump
+			lastManual = manual;//P41e: refund guard reads this at the trigger
 			switch ( mode )
 			{
 				case DeployMode.Calm:
@@ -220,13 +224,60 @@ namespace Saga
 				//runs until the strict budget affords nothing; every link
 				//removes a card from the hand AND bills its threat, so it
 				//terminates with the hand or the account, never beyond.
+				bool dumpChained41e = false;
 				if ( lastMode != DeployMode.Onslaught && FinalRoundThreatDump() )
 				{
+					dumpChained41e = true;
 					var prevDump = afterDeploy;
 					afterDeploy = () =>
 					{
 						Debug.Log( "SagaDeploymentPopup()::FINAL-ROUND THREAT DUMP: threat must not rot - extra Landing" );
 						Show( DeployMode.Landing, true, true, prevDump );
+					};
+				}
+
+				//P41e (card t_1f93d98d; spec 4-D3-C2 decision 2, 9.3-4): the
+				//ONE deploy-trigger point asks the bridge's refund guard for
+				//every held group. A Massive whose USEFUL-DP set is EMPTY
+				//when the facts moved indoors (outdoor DPs, mission progress
+				//indoors) does NOT deploy to idleness: the trigger does not
+				//fire for it (no spawn anywhere), the attack-point spend is
+				//refunded to the axis budget and the card returns to the hand
+				//(Thomas 09.11: refund, not hold - no zombie purchases), all
+				//inside the bridge helper (forensic [dp-massive] refund line,
+				//the ONE ModifyThreat(+) of the law). Human picks (manual
+				//window) and legacy missions are excluded - the table's call
+				//and the untouched legacy stay as they were. The buy ranking
+				//re-runs on the refunded budget: the FINAL-ROUND-DUMP chain
+				//law mirrors it (a follow-up Landing window re-enters the
+				//mode's own ranking). Terminates: the buy gates never re-buy
+				//the refunded USELESS card, so no further window can refund
+				//it again.
+				int refunded41e = 0;
+				{
+					var keep41e = new List<DeploymentCard>( groupsToDeploy.Count );
+					foreach ( var g41e in groupsToDeploy )
+					{
+						int ap41e;
+						if ( TacticalAI.TacticalAIBridge.TryRefundUselessMassive( g41e,
+								lastMode == DeployMode.Onslaught, deploymentOverride, lastManual, out ap41e ) )
+							refunded41e++;
+						else
+							keep41e.Add( g41e );
+					}
+					if ( refunded41e > 0 )
+					{
+						groupsToDeploy.Clear();
+						groupsToDeploy.AddRange( keep41e );
+					}
+				}
+				if ( refunded41e > 0 && lastMode != DeployMode.Onslaught && !dumpChained41e )
+				{
+					var prevRefund = afterDeploy;
+					afterDeploy = () =>
+					{
+						Debug.Log( "SagaDeploymentPopup()::P41e REFUND CHAIN: refunded threat re-enters the buy ranking - extra Landing" );
+						Show( DeployMode.Landing, true, true, prevRefund );
 					};
 				}
 

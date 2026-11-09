@@ -2024,6 +2024,184 @@ namespace TacticalAI
             return r.Section;
         }
 
+        // ---- P41e USEFULNESS, DP-first (card t_1f93d98d; spec 4-D3-C/C2
+        // v1.3, 9.3-4). The USEFUL-DP set is computed FIRST (the ONE Core
+        // law InteriorLaw.UsefulDps below), the buy gates only ask it
+        // non-empty (skip + rerank, never a repricing) and the DP scorer
+        // in TryChooseDeploymentPoint consumes the SAME set - buy-side and
+        // deploy-side can never disagree about which DPs are on the table.
+        // A held Massive whose set empties when the facts move indoors:
+        // the deploy trigger does NOT fire, the attack-point spend is
+        // REFUNDED to the axis budget and the buy ranking re-runs (Thomas
+        // 09.11: refund, not hold, no zombie purchases). Everything here
+        // rides the ActiveNow()/TacticalMissionActive() gate - a legacy
+        // mission never sees a line of it.
+
+        /// <summary>The FUTURE operation zone (spec 4-D3-C v1.3): today's
+        /// contested/believed elements (the P33-H4 Kampfzone: anchor
+        /// sections + fresh S-D zones) UNION the authored MissionCritical
+        /// endgame sections (LastCriticalSections - the same trusted
+        /// artifact the D6/D3-D rails read). Round 1 / no belief: the
+        /// Kampfzone is empty and the critical sections alone carry the
+        /// objective truth (reach semantics make the objective
+        /// neighbourhood part of any component that touches them). Nothing
+        /// known at all => empty list => the Core economy-layer fail-open
+        /// (spec 4-C), never a silent veto.</summary>
+        static List<string> OpZoneFuture()
+        {
+            var zone = new List<string>();
+            try
+            {
+                foreach (var z in DpBattleZones(MissionDpAnchors()))
+                    if (!string.IsNullOrEmpty(z) && !zone.Contains(z)) zone.Add(z);
+                var crit = LastCriticalSections;
+                if (crit != null)
+                    foreach (var s in crit)
+                        if (!string.IsNullOrEmpty(s) && !zone.Contains(s)) zone.Add(s);
+            }
+            catch { /* Null-Law: what was collected so far is honest */ }
+            return zone;
+        }
+
+        // The ONE USEFUL-DP decision the whole rail shares (buy gates, DP
+        // scorer, refund guard). null => law INACTIVE (Null-Law snapshot:
+        // caller keeps its pool). The D3-B legality drop stays the P41c
+        // block's own decision - the Core set never contains a Banned-tile
+        // DP, so usefulness can only make a legal DP fewer, never more.
+        // No caching: recomputed per ask over the fresh live pool + fresh
+        // op zone (the corpus is <=35 DPs; correctness over an "once per
+        // snapshot+op-zone" hint - the result is the same by construction).
+        static Tac.InteriorLaw.UsefulResult MassiveUsefulDps(
+            global::DeploymentCard card, List<Saga.IMapEntity> dps,
+            MissionInteriorSnapshot snap)
+        {
+            if (snap == null || snap.IsEmpty) return null;
+            var graph = LastSectionSpace != null ? LastSectionSpace.Graph : null;
+            var probes = new List<Tac.InteriorLaw.UsefulProbe>(dps.Count);
+            foreach (var x in dps)
+            {
+                if (x == null) continue;
+                var key = InteriorUnity.DpKey(x.GUID);
+                probes.Add(new Tac.InteriorLaw.UsefulProbe
+                {
+                    Key = key,
+                    Section = x.mapSectionOwner == Guid.Empty
+                        ? "" : x.mapSectionOwner.ToString(),
+                    Tile = snap.StatusForDp(key),
+                });
+            }
+            return Tac.InteriorLaw.UsefulDps(
+                probes,
+                sec => snap.SectionStatusOf(sec),
+                sec => graph != null ? (IEnumerable<string>)graph.NeighborsOf(sec) : null,
+                OpZoneFuture(),
+                true,
+                snap.Overrides.Covers(card.id));
+        }
+
+        /// <summary>P41e buy gate (spec 9.3-4): a Massive buy asks
+        /// USEFUL-DP != {} against the SAME set the DP scorer will consume
+        /// (the M13c single DP truth: GetValidDeploymentPoints - the same
+        /// list GetActiveDeploymentPoint picks from). true = allowed (mode
+        /// off, not Massive, Null-Law snapshot, D6 override => USEFUL per
+        /// definition, unknown-pool fail-open, or useful). false = the
+        /// candidate is SKIPPED and the ranking re-ranks - no cost is ever
+        /// re-priced (spec 4-D3-C: "the gate just removes dead candidates
+        /// before scoring"). Public because DataStore.GetStrictDeployable
+        /// and PersonaState.SwapDeployCandidate call THIS one gate; a
+        /// second implementation is a drift, not a feature.</summary>
+        public static bool MassiveBuyUseful(global::DeploymentCard card)
+        {
+            try
+            {
+                if (card == null || !ActiveNow()) return true;      // legacy untouched
+                if (!CatalogCardIsMassive(card.id)) return true;
+                var snap = EnsureInteriorSnapshot();
+                if (snap == null || snap.IsEmpty) return true;      // Null-Law
+                var em = UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>();
+                if (em == null) return true;                        // unknown reachability
+                var pool = em.GetValidDeploymentPoints(card);
+                var r = MassiveUsefulDps(card, pool, snap);
+                if (r == null) return true;                         // law inactive
+                if (r.Fact == Tac.InteriorLaw.UsefulFactOverride) return true;
+                if (r.Fact == Tac.InteriorLaw.UsefulFactFailOpen)
+                {
+                    // fail-open at the economy layer, LOUD (spec 4-C: the
+                    // decision stays rules-visible).
+                    Debug.Log("[dp-massive] usefulness=failopen card=" + card.id +
+                              " fact=" + r.Fact);
+                    return true;
+                }
+                if (r.Keys.Count > 0) return true;
+                Debug.Log("[dp-massive] usefulness=skip card=" + card.id +
+                          " fact=" + r.Fact +
+                          " (USEFUL-DP empty - skipped before scoring, the strongest" +
+                          " USEFUL alternative at the same threat takes the slot)");
+                return false;
+            }
+            catch { return true; }   // a law hiccup may never starve the economy
+        }
+
+        /// <summary>P41e REFUND (spec 4-D3-C2 decision 2 + 9.3-4): the ONE
+        /// Deploy-Trigger-Stelle (the deployment popup's deploy call) asks
+        /// this guard for every held group. true => the deploy trigger does
+        /// NOT fire for this card: the caller drops it from the deploy list
+        /// (no spawn anywhere - interior stays D3-B-lawed, no outdoor
+        /// standstill), the attack-point spend returns to the axis budget
+        /// (the ONE ModifyThreat(+) of this law), the card goes back to the
+        /// deployment hand (refund, not hold - no zombie purchase) and the
+        /// buy ranking re-runs on the refunded budget (the caller chains a
+        /// follow-up window). The ap mirrors the bill of the rail that paid
+        /// it (DeployCost persona law, onslaught reductions resp. override
+        /// threatCost) so refund == spend, never more - "wir cheaten
+        /// nicht". A human pick (manual window) is the table's call and
+        /// never refunded. The forensic line is the spec shape:
+        /// [dp-massive] refund card=&lt;c&gt; ap=&lt;n&gt; reason=no_useful_dp_after=&lt;fact&gt;.
+        /// </summary>
+        public static bool TryRefundUselessMassive(global::DeploymentCard card,
+                                                   bool wasOnslaught,
+                                                   Saga.DeploymentGroupOverride ovrd,
+                                                   bool humanPick,
+                                                   out int ap)
+        {
+            ap = 0;
+            try
+            {
+                if (card == null || humanPick) return false;   // table's call, keep
+                if (!ActiveNow()) return false;                // legacy bit-identical
+                if (!CatalogCardIsMassive(card.id)) return false;
+                var snap = EnsureInteriorSnapshot();
+                if (snap == null || snap.IsEmpty) return false;      // Null-Law
+                var em = UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>();
+                if (em == null) return false;                        // unknown: keep deploy
+                var pool = em.GetValidDeploymentPoints(card);
+                var r = MassiveUsefulDps(card, pool, snap);
+                // useful / law inactive / D6 override (= USEFUL by
+                // definition) / fail-open (= treat as useful): the trigger
+                // fires as today. Only a KNOWN-empty set stops it.
+                if (r == null || r.Keys.Count > 0 ||
+                    r.Fact == Tac.InteriorLaw.UsefulFactOverride ||
+                    r.Fact == Tac.InteriorLaw.UsefulFactFailOpen) return false;
+                int spent = global::DataStore.DeployCost(card, wasOnslaught);
+                if (ovrd != null && ovrd.useThreat)
+                    spent = UnityEngine.Mathf.Clamp(spent + ovrd.threatCost, 0, 100);
+                ap = spent;
+                if (ap > 0) DataStore.sagaSessionData.ModifyThreat(ap);
+                var hand = DataStore.deploymentHand;
+                if (hand != null && !hand.Contains(card)) hand.Add(card);
+                Debug.Log("[dp-massive] refund card=" + card.id + " ap=" + ap +
+                          " reason=no_useful_dp_after=" + r.Fact +
+                          " (trigger did not fire - nothing spawns, the buy ranking" +
+                          " re-runs on the refunded budget)");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::refund guard failed: " + e.Message);
+                return false;   // a hiccup never blocks a deploy the table can see
+            }
+        }
+
         /// <summary>GetActiveDeploymentPoint hook: deterministic choice among
         /// the already-filtered active DPs instead of the uniform random pick
         /// (concept 3.4.2: random DP = exploitable unfairness; the legacy
@@ -2085,14 +2263,31 @@ namespace TacticalAI
             if (interior != null && !interior.IsEmpty && CatalogCardIsMassive(card.id))
             {
                 bool covered = interior.Overrides.Covers(card.id);
+                // P41e (spec 4-D3-C2 point 1, 9.3-1 last clause): the DP
+                // scorer may only score DPs FROM the USEFUL set - legality
+                // AND usefulness are decided BEFORE the score, never after.
+                // covered keeps the untouched pool (D6 = USEFUL by
+                // definition, all-open); the Core fail-open answer keeps it
+                // too (its Keys = every DP, its fact names the case). The
+                // buy gates (MassiveBuyUseful) ask the SAME law on the SAME
+                // pool law (GetValidDeploymentPoints), so buy-side and
+                // deploy-side can never disagree about the DPs on the table.
+                var useful = covered ? null : MassiveUsefulDps(card, dps, interior);
+                var keepKeys = useful == null ? null : useful.Keys;
+                if (useful != null)
+                    Debug.Log("[dp-massive] card=" + card.id +
+                              " useful-set fact=" + useful.Fact);
                 var keepDps = new List<Saga.IMapEntity>(dps.Count);
                 int dropped = 0;
                 foreach (var x in dps)
                 {
-                    var st = interior.StatusForDp(InteriorUnity.DpKey(x.GUID));
-                    bool drop = !covered && st == Tac.TileStatus.Banned;
+                    var key = InteriorUnity.DpKey(x.GUID);
+                    var st = interior.StatusForDp(key);
+                    bool useless = keepKeys != null && !keepKeys.Contains(key);
+                    bool drop = !covered && (st == Tac.TileStatus.Banned || useless);
                     Debug.Log("[dp-massive] card=" + card.id + " dp=" + (x.name ?? "") +
                               " status=" + st + " override=" + (covered ? 1 : 0) +
+                              " useful=" + (useless ? 0 : 1) +
                               " drop=" + (drop ? 1 : 0));
                     if (drop) dropped++;
                     else keepDps.Add(x);
@@ -2814,6 +3009,17 @@ namespace TacticalAI
                             futureCosts.Add(cost);
                             continue;
                         }
+                        // P41e USEFULNESS buy gate (card t_1f93d98d; spec
+                        // 4-D3-C/C2, 9.3-4): a Massive asks USEFUL-DP != {}
+                        // (override => USEFUL by definition) against the
+                        // SAME set the DP scorer will consume. Dead
+                        // candidates are removed BEFORE scoring - the rest
+                        // re-ranks untouched (skip + rerank, the printed
+                        // price is never re-priced and no cost math moves
+                        // here). The skipped card stays in the hand: if the
+                        // facts later move back outdoors the next ranking
+                        // may buy it again.
+                        if (!MassiveBuyUseful(cd)) continue;
                         var act = new Tac.BudgetAction
                         {
                             Kind = Tac.BudgetPlanner.KindBuy,

@@ -69,6 +69,7 @@ public static class MassiveInteriorGate
         RunMassiveFilterPins();
         RunSeamSourceContract();
         RunAnchorMaskContract();   // P41d (card t_59ba21ee): spec 9.3-2/9.3-3 seams + the two ui rails
+        RunUsefulnessContract();   // P41e (card t_1f93d98d): spec 5-D3-C/C2 + 9.3-4 (predicate, one refund point, economy skip)
         Console.WriteLine("MassiveInteriorGate: " + (fails == 0 ? "ALL PASS" : "FAILURES") +
                           " | checks=" + checks + " fails=" + fails);
         if (fails > 0) Environment.ExitCode = 1;
@@ -734,19 +735,20 @@ public static class MassiveInteriorGate
         int iGuard = bridge.IndexOf("|| !ActiveNow()) return false;", StringComparison.Ordinal);
         int iNull  = bridge.IndexOf("if (card == null) return false;", StringComparison.Ordinal);
         int iBuild = bridge.IndexOf("var interior = EnsureInteriorSnapshot();", StringComparison.Ordinal);
-        int iLaw   = bridge.IndexOf("bool drop = !covered && st == Tac.TileStatus.Banned;", StringComparison.Ordinal);
-        int iForen = bridge.IndexOf("\"[dp-massive] card=\"", StringComparison.Ordinal);
+        int iLaw   = bridge.IndexOf("bool drop = !covered && (st == Tac.TileStatus.Banned || useless);", StringComparison.Ordinal);
+        int iUseful = bridge.IndexOf("var useful = covered ? null : MassiveUsefulDps(card, dps, interior);", StringComparison.Ordinal);
+        int iForen = bridge.IndexOf("\"[dp-massive] card=\" + card.id + \" dp=\"", StringComparison.Ordinal);
         int iFail  = bridge.IndexOf("zero-usable-dps", StringComparison.Ordinal);
         int iHonest = bridge.IndexOf("chosen=Guid.Empty, honest no-deploy", StringComparison.Ordinal);
         int iCand  = bridge.IndexOf("cands.Add(new Tac.DeployCandidate", StringComparison.Ordinal);
-        if (iGuard < 0 || iNull < 0 || iBuild < 0 || iLaw < 0 || iForen < 0 || iFail < 0 || iHonest < 0 || iCand < 0)
+        if (iGuard < 0 || iNull < 0 || iBuild < 0 || iUseful < 0 || iLaw < 0 || iForen < 0 || iFail < 0 || iHonest < 0 || iCand < 0)
             Fail("bridge seam contract: marker missing (guard=" + iGuard + " null=" + iNull +
-                 " build=" + iBuild + " law=" + iLaw + " forensic=" + iForen +
+                 " build=" + iBuild + " useful=" + iUseful + " law=" + iLaw + " forensic=" + iForen +
                  " zerofail=" + iFail + " honest=" + iHonest + " cands=" + iCand + ")");
-        else if (!(iGuard < iNull && iNull < iBuild && iBuild < iLaw && iLaw < iForen &&
-                   iForen < iFail && iFail < iHonest && iHonest < iCand))
-            Fail("bridge seam contract: block order moved - the interior filter belongs behind the mode gate and in front of the candidate rows");
-        else Ok("bridge: interior block behind ActiveNow gate + card==null probe lane, in front of candidate rows; drop law, [dp-massive] forensic, zero-usable honest no-deploy (chosen=Guid.Empty, never false - MAJOR-4) all pinned");
+        else if (!(iGuard < iNull && iNull < iBuild && iBuild < iUseful && iUseful < iLaw &&
+                   iLaw < iForen && iForen < iFail && iFail < iHonest && iHonest < iCand))
+            Fail("bridge seam contract: block order moved - the interior filter belongs behind the mode gate and in front of the candidate rows, the USEFUL-set read (P41e) BEFORE the drop law (set decided before score - spec 4-D3-C2 point 1)");
+        else Ok("bridge: interior block behind ActiveNow gate + card==null probe lane, in front of candidate rows; P41e scorer consumes the USEFUL set before the drop law (illegal OR useless for Massive), [dp-massive] forensic, zero-usable honest no-deploy (chosen=Guid.Empty, never false - MAJOR-4) all pinned");
 
         // --- the rails census (spec 4-D3-B v1.3): every REAL deploy supplies
         // the card; one seam; legacy law intact.
@@ -979,5 +981,109 @@ public static class MassiveInteriorGate
                 }
             }
         }
+    }
+
+    // ---------------------------------- P41e usefulness/refund contract --
+    // spec 4-D3-C/C2 v1.3 + 9.3-4 (card t_1f93d98d). The 12 harness vectors
+    // prove the PREDICATE law; this pins the WIRES the vectors cannot see:
+    // the single law home in Core, the ONE refund point at the deploy
+    // trigger, and the three economy seams asking the SAME gate (skip +
+    // rerank - spec 4-D3-C: "the gate just removes dead candidates before
+    // scoring", no cost is ever re-priced).
+    static void RunUsefulnessContract()
+    {
+        // --- the predicate has exactly one law home (Core, UnityEngine-free).
+        var ilaw = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/Core/InteriorLaw.cs");
+        if (CountActive(ilaw, "public static UsefulResult UsefulDps(") != 1)
+            Fail("usefulness: UsefulDps declaration missing/not unique - the predicate must have ONE home");
+        else Ok("usefulness: the USEFUL-DP predicate has exactly one law home (Core/InteriorLaw.cs)");
+        foreach (var tok in new[] { "\"reach\"", "\"blockade\"", "\"beyond\"", "\"banned_tile\"",
+                                    "\"section_banned\"", "\"override_allopen\"",
+                                    "\"opzone_unknown_failopen\"", "\"no_dps\"" })
+            if (ilaw.IndexOf(tok, StringComparison.Ordinal) < 0)
+                Fail("usefulness: reason/fact token " + tok + " missing - the forensic vocabulary is frozen (9.3-4 refund fact rides it)");
+        if (CountActive(ilaw, "if (!isMassive) return r;") != 1)
+            Fail("usefulness: the law's own inactive lane (non-Massive => Active=false, pool untouched) moved - tactical-OFF bit-identity is enforced IN the predicate too");
+        else Ok("usefulness: defensive inactive-lane inside the predicate (INVARIABLE META-LAW belt behind every caller's ActiveNow gate)");
+        if (CountActive(ilaw, "zone.Sort(StringComparer.Ordinal);") != 1 ||
+            CountActive(ilaw, "fact.Add(\"opzone=\"") != 1)
+            Fail("usefulness: the deterministic fact aggregate (sorted opzone join) moved - the refund forensic <fact> must stay reproducible");
+        else Ok("usefulness: fact aggregate deterministic (sorted, ordinal, no Linq) - refund reason=no_useful_dp_after=<fact> reproducible");
+
+        // --- the bridge: ONE shared decision + ONE refund point.
+        var bridge = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/TacticalAIBridge.cs");
+        if (CountActive(bridge, "MassiveUsefulDps(") != 4)
+            Fail("usefulness: MassiveUsefulDps sites " + CountActive(bridge, "MassiveUsefulDps(") +
+                 " != 4 (declaration + buy gate + refund guard + DP scorer - ALL ask the ONE set)");
+        else Ok("usefulness: buy gate, refund guard and DP scorer consume the ONE MassiveUsefulDps decision (buy-side and deploy-side can never disagree)");
+        if (CountActive(bridge, "public static bool MassiveBuyUseful(") != 1 ||
+            CountActive(bridge, "if (!MassiveBuyUseful(cd)) continue;") != 1)
+            Fail("usefulness: the buy gate's single declaration or the attack-point buy-loop skip moved");
+        else Ok("usefulness: attack-point buy loop skips dead Massive BEFORE scoring (skip + rerank, no repricing - spec 4-D3-C)");
+        if (CountActive(bridge, "static List<string> OpZoneFuture()") != 1 ||
+            CountActive(bridge, "var crit = LastCriticalSections;") != 1)
+            Fail("usefulness: the FUTURE op zone (Kampfzone UNION MissionCritical endgame, spec 4-D3-C v1.3 finding 5) moved");
+        else Ok("usefulness: op zone = today's contested UNION the authored endgame (union-reach semantics wired at the bridge)");
+        int iHuman  = bridge.IndexOf("if (card == null || humanPick) return false;", StringComparison.Ordinal);
+        int iMode   = bridge.IndexOf("if (!ActiveNow()) return false;                // legacy bit-identical", StringComparison.Ordinal);
+        int iCredit = bridge.IndexOf("DataStore.sagaSessionData.ModifyThreat(ap)", StringComparison.Ordinal);
+        int iLog    = bridge.IndexOf("\"[dp-massive] refund card=\"", StringComparison.Ordinal);
+        if (iHuman < 0 || iMode < 0 || iCredit < 0 || iLog < 0)
+            Fail("usefulness: refund guard markers missing (human=" + iHuman + " mode=" + iMode +
+                 " credit=" + iCredit + " log=" + iLog + ")");
+        else if (!(iHuman < iMode && iMode < iCredit && iCredit < iLog))
+            Fail("usefulness: refund block order moved - human-pick exclusion and the ActiveNow gate must precede the ONE ModifyThreat(+) credit, the forensic line last");
+        else Ok("usefulness: ONE refund point (human picks and legacy never refunded; exactly one ModifyThreat(+) credit; [dp-massive] refund forensic pinned)");
+        if (CountActive(bridge, "\"[dp-massive] usefulness=failopen card=\"") != 1 ||
+            CountActive(bridge, "\"[dp-massive] usefulness=skip card=\"") != 1)
+            Fail("usefulness: the loud fail-open / skip forensics moved - economy decisions stay rules-visible (spec 4-C)");
+        else Ok("usefulness: fail-open and skip decisions log LOUD at the economy layer (rules-visible)");
+
+        // --- the strict economy rail (DataStore) + the persona swap rail: the
+        // SAME single gate, each exactly once, each BEFORE its ranking/booking.
+        var ds = ReadSrc("ImperialCommander2/Assets/Scripts/GameCore/DataStore.cs");
+        if (CountActive(ds, "TacticalAI.TacticalAIBridge.MassiveBuyUseful( x )") != 1)
+            Fail("usefulness: DataStore buy gate not exactly once (one call into the bridge's ONE law - a second implementation is drift)");
+        else
+        {
+            int iHand  = ds.IndexOf("deploymentHand.MinusDeployed()", StringComparison.Ordinal);
+            int iGate  = ds.IndexOf("TacticalAI.TacticalAIBridge.MassiveBuyUseful( x )", StringComparison.Ordinal);
+            int iCount = ds.IndexOf("if ( candidates.Count == 0 )", StringComparison.Ordinal);
+            if (!(iHand >= 0 && iHand < iGate && iGate < iCount))
+                Fail("usefulness: DataStore gate order moved - the USEFUL filter belongs between the hand and the candidate list (dead candidates gone BEFORE the OrderBy rerank)");
+            else Ok("usefulness: strict economy filters dead Massive BEFORE the OrderBy (skip + rerank on the untouched cost law)");
+        }
+        var ps = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/PersonaState.cs");
+        if (CountActive(ps, "TacticalAIBridge.MassiveBuyUseful(") != 2)
+            Fail("usefulness: swap rail gate calls " + CountActive(ps, "TacticalAIBridge.MassiveBuyUseful(") +
+                 " != 2 (plain card AND elite asked - neither burns budget on a useless Massive)");
+        else
+        {
+            int iGate2 = ps.IndexOf("TacticalAIBridge.MassiveBuyUseful(", StringComparison.Ordinal);
+            int iBook  = ps.IndexOf("_swapLedger.Book(PersonaSwaps.BaseOf(name));", StringComparison.Ordinal);
+            if (!(iGate2 >= 0 && iGate2 < iBook))
+                Fail("usefulness: the swap gate must precede the ledger booking - a refused swap books nothing");
+            else Ok("usefulness: persona swap asks the SAME gate BEFORE booking (mode-frozen rails, one law)");
+        }
+
+        // --- the ONE deploy-trigger point (spec 4-D3-C2): the popup.
+        var popup = ReadSrc("ImperialCommander2/Assets/Scripts/Saga/UI/SagaDeploymentPopup.cs");
+        if (CountActive(popup, "TryRefundUselessMassive(") != 1)
+            Fail("usefulness: refund asked " + CountActive(popup, "TryRefundUselessMassive(") +
+                 " times != 1 - the refund lives at the ONE deploy trigger, nowhere else");
+        else Ok("usefulness: the refund fires at exactly ONE place, the deploy trigger in the popup (no economy rebuild)");
+        if (popup.IndexOf("deploymentOverride, lastManual, out ap41e", StringComparison.Ordinal) < 0 ||
+            popup.IndexOf("lastManual = manual;", StringComparison.Ordinal) < 0)
+            Fail("usefulness: the manual-window exclusion (app proposes, table acts) vanished from the trigger call");
+        else Ok("usefulness: human picks are excluded at the trigger (the table's call is never second-guessed)");
+        if (popup.IndexOf("P41e REFUND CHAIN", StringComparison.Ordinal) < 0)
+            Fail("usefulness: the rerank chain (refunded budget re-enters the buy ranking) vanished");
+        else Ok("usefulness: refunded threat re-enters the buy ranking (chain law mirrors the final-round-dump lane)");
+        // the never-touch rails (card law): HandleReinforcements and the
+        // reinforcement chooser stay untouched by P41e.
+        if (CountActive(popup, "HandleReinforcements") < 1 ||
+            CountActive(popup, "TryRefundUselessMassive(") > 1)
+            Fail("usefulness: the reinforcement rail (HandleReinforcements) must stay untouched and single-lane");
+        else Ok("usefulness: reinforcement selection rails untouched (spec: never rewrite the selection logics)");
     }
 }

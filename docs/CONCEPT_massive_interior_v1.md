@@ -33,7 +33,11 @@ override lifts the ban everywhere — it must never ride an unverified mapping
 row); (5) D3-C rewritten **DP-first** (new D3-C2): outdoor DP + indoor-only
 mission progress must buy nothing and must not deploy an already-held Massive to
 idleness — the USEFUL-DP set is computed first, buy asks it non-empty, the DP
-scorer consumes the SAME set.
+scorer consumes the SAME set. (6) first D3-C2 decisions recorded same day
+(Thomas clarify): blockade predicate = reach OR adjacency-blockade (seal order,
+explain line); held-Massive empty set = REFUND the attack-point spend + re-rank
+(no holds, no zombie purchases); endgame veto = union-reach (veto only when the
+whole contested+critical union is beyond reach-and-adjacency).
 
 Every "verified" statement below was measured on this tree (08.11, post-P36; v1.3
 items re-measured 09.11 on release HEAD 13c022b) or against the shipped rules
@@ -258,27 +262,33 @@ mission's endgame. The inversion closes both by construction:
    `USEFUL-DP != {}` against the SAME set: buy-side and deploy-side can never
    disagree about which DPs exist (this IS the DP-first ordering: DP set first,
    card answer second).
-2. **Held Massive, mid-mission flip (deploy-side):** interior status is STATIC
-   (public map data — nothing re-pins mid-mission); what moves is the OP ZONE
-   (hero-ingress facts, objective/mission-critical facts). If a Massive was
-   bought while progress was outdoor and the facts later move the op zone
-   exclusively into BANNED sections, its USEFUL-DP set empties and the
-   reinforcement trigger DEFERS instead of spawning a group to idleness: no
-   interior spawn (D3-B unchanged), no outdoor standstill deploy, forensic
-   `[dp-massive] defer card=<c> reason=no_useful_dp_after=<fact>`; the trigger
-   re-arms on the next replan round. A deferred group is a HELD purchase, not a
-   lost one (hold-vs-refund: Thomas gate, see below).
+2. **Held Massive, mid-mission flip (deploy-side — DECIDED 09.11: REFUND):**
+   interior status is STATIC (public map data — nothing re-pins mid-mission);
+   what moves is the OP ZONE (hero-ingress facts, objective/mission-critical
+   facts). If a Massive was bought while progress was outdoor and the facts
+   later move the op zone exclusively beyond reach, its USEFUL-DP set empties
+   and the deploy trigger does NOT fire: no interior spawn (D3-B unchanged),
+   no outdoor standstill deploy — the attack-point spend is **refunded to the
+   axis budget and the buy ranking re-runs** (Thomas 09.11: refund, not hold;
+   no zombie purchases), forensic `[dp-massive] refund card=<c> ap=<n>
+   reason=no_useful_dp_after=<fact>`. The refunded budget may buy a Massive
+   again if the facts later move back outdoors.
 3. **Op zone = FUTURE truth:** MissionCritical objective sections (authored,
    already public feed) carry the endgame into the purchase decision, so the
    "fight moves indoors later" case is priced in at buy time; belief fail-open
    stays for missions without that data (C unchanged).
 
-Open predicate policy (Thomas gate before H5, H1 census informs): is an outdoor
-Massive USEFUL when the WHOLE op zone is BANNED but its sections ADJOIN open ones —
-the blockade doctrine of D1/D3-A (patrol the room exits)? Strict-reach says no and
-would let our own economy gate kill the blockade the concept deliberately
-preserves; reach-OR-adjacency says yes. **Proposed default: reach OR
-adjacency-blockade** — flagged, not silently frozen.
+Blockade predicate — **DECIDED (Thomas 09.11): reach OR adjacency-blockade =
+USEFUL.** When the WHOLE op zone is BANNED but its sections ADJOIN the DP's open
+component (the D1/D3-A blockade doctrine — patrol the room exits), the Massive
+IS useful and the buy is allowed; the order then carries the seal explain line
+(`ordExplainMassiveSeal`) so the visible decision says WHY it is a patrol and
+not a chase. The no-buy answer applies only when NO DP component reaches OR
+adjoins any op-zone element. Union-reach semantics also **decided 09.11**: the
+predicate checks TODAY's contested elements UNION the MissionCritical endgame
+sections — the endgame never vetoes alone while any element (today OR endgame)
+is still reachable; the veto bites only when the ENTIRE union is beyond
+reach-and-adjacency (Thomas: „ab diesem Zeitpunkt").
 
 **D. Two Massives one space.**
 RR defines it at "space" granularity; the app plans at section granularity and
@@ -410,9 +420,9 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   rail actually enforces at that point.
 * **H5 — economy usefulness (demand 2).** buy/swap ranking gate (C + C2,
   DP-first) + Strongest-Alternative rerouting + **D6 short-circuit (override ⇒
-  USEFUL by definition)** + gate fixtures + **two Thomas gates: the blockade
-  predicate (reach vs reach-OR-adjacency) and hold-vs-refund for deferred
-  triggers**. Deliberately last: it needs the playtest
+  USEFUL by definition)** + gate fixtures. Blockade predicate (reach OR
+  adjacency) and refund-on-empty (spend back, ranking re-runs) are **decided
+  09.11** and get pinned fixtures. Deliberately last: it needs the playtest
   data H3/H4's forensic lines produce.
 
 ## 6. Fairness invariants (each one gets a test)
@@ -466,12 +476,14 @@ green gate alone, closes the chain.
 
 **Named scenario (Thomas 09.11, D3-C2):** a mission whose DPs are all outdoor and
 whose progress (hero ingress + MissionCritical sections) is indoor from some point
-on: the app buys NO AT-ST/AT-DP once the op zone is indoor-only
-(`usefulness=skip`); an AT-ST/AT-DP bought EARLIER does not land to idleness — its
-trigger defers (`[dp-massive] defer ... reason=no_useful_dp_after`) and re-arms at
-the next replan; nothing ever spawns indoors. Pinned as a harness vector derived
-from a real census mission (unless the blockade predicate says the outdoor patrol
-IS useful there — then the buy is allowed and the explain line must say why).
+on. Decided semantics (09.11): the app buys NO AT-ST/AT-DP once the indoor op-zone
+sections are beyond reach AND adjacency (`usefulness=skip`); if they merely adjoin
+the DPs' open component, the buy IS allowed — as a SEAL/patrol order with
+`ordExplainMassiveSeal` visible, never a chase. An AT-ST/AT-DP bought EARLIER does
+not land to idleness: the deploy trigger does not fire, the attack-point spend is
+**refunded** and the ranking re-runs (`[dp-massive] refund ...
+reason=no_useful_dp_after`). Nothing ever spawns indoors. Pinned as a harness
+vector derived from a real census mission.
 
 ## 9. Implementation blueprint (feasibility walked against the live code, 08.11)
 
@@ -599,10 +611,13 @@ exist before the first DP choice and before the first order render).
    gates (`CostFor` ranking + `SwapDeployCandidate`, both mode-frozen, plus the
    attack-point buy loop) ask only `UsefulDps != {}`; the DP scorer (seam 1)
    consumes the SAME set for Massive cards, so buy-side and deploy-side can
-   never disagree about which DPs are on the table. A held Massive whose set
-   empties mid-mission DEFERS its trigger
-   (`[dp-massive] defer ... reason=no_useful_dp_after=<fact>`), re-arming on
-   the next replan — hold-vs-refund is the open Thomas gate (D3-C2).
+   never disagree about which DPs are on the table. Predicate (DECIDED 09.11):
+   component reaches ANY op-zone element (union-reach: today's contested OR
+   endgame MissionCritical — endgame never vetoes alone) OR adjoins a BANNED
+   op-zone section (adjacency-blockade, seal order). A held Massive whose set
+   empties mid-mission: the deploy trigger does not fire, the spend is
+   REFUNDED and the buy ranking re-runs (DECIDED 09.11):
+   `[dp-massive] refund card=<c> ap=<n> reason=no_useful_dp_after=<fact>`.
    Unreachable-but-cheap never outranks reachable-alternative: reuse
    `DeploymentAnchors.StrongestAlternative` for the reroute decision.
 
@@ -615,9 +630,10 @@ exist before the first DP choice and before the first order render).
   the v1.3 fail-closed case: an authored DP resolving AMBIGUOUS registers NO
   override), Null-Law (empty snapshot ⇒ plan bit-identical to canon),
   USEFULNESS truth table incl. the D3-C2 named vector (outdoor DPs +
-  indoor-only progress ⇒ no buy; held Massive ⇒ trigger defers, nothing
-  spawns). Canonical fixture vectors come OUT of the H1 census (real missions),
-  hand-written vectors only for edges.
+  indoor-only progress ⇒ no buy unless adjacency-blockade applies ⇒ then a
+  pinned SEAL order, never a chase; held Massive ⇒ spend refunded, ranking
+  re-runs, nothing spawns). Canonical fixture vectors come OUT of the H1 census
+  (real missions), hand-written vectors only for edges.
 * Gate: `MassiveInteriorGate.cs` in `tools/TacticalAiGate/` (zero-fixture live
   gate, UiCompletenessGate pattern): reads real `dimensions.json` + one real
   mission file, pins the RR enumeration (every 19..36 core id resolves Banned;

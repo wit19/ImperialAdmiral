@@ -172,6 +172,12 @@ namespace TacticalAiHarness
             Run("duty_popup.json", SecDutyPopup);    // P37d (t_ffc705af): Hop D - apDuty*-Keys 11/11 (De/En echt, 9 EN-Kopien byte-exakt) + Popup-Vektor: Escort zeigt Duty-Zeilen DE/EN, Gefecht keine, Null-Law (hand-pinned)
             Run("duty_nameless.json", SecDutyNameless);    // P39 (t_a697bc1a) MINOR-1b: ANKERLOSE Duty-Form (CORE23 duties=1/anchors=0, Zielname gemessen "") + apDutyEscortTreeNameless 11/11 (De echt mit Umlaut, 9 EN-Kopien byte-exakt) + Naht-Spiegel: leerer Zielname => namenloser Baum, benannter => benannter Baum bitgleich, fehlender Key => nichts, Gefecht => nichts (hand-pinned)
             Run("prey_core.json", SecPreyCore);    // P38 (t_11ebb843): NEUTRALE BEUTE - EMPIRE3-Futter echte GUIDs + Bystander-Intension (Personenvokabel, Typ-Schiene, Null-Law) + Quota-Goldenvektoren (k-Band, nie alle, Session-Salz, Gleichlauf) + Bedrohungs-Gatter (Feed-Wissen, Sektion-Einheit zuerst) + apPrey*-Keys 11/11 + Popup-Seam-Spiegel (hand-pinned/golden, Twin: tools/p38_prey_twin.py)
+            // P41b (t_1b28a273): interior law for Massive figures - tile/section
+            // four-state derivation, D6 override registration, NotBanned mask,
+            // seal-the-approach BFS. Hand-pinned vectors out of the P41a census
+            // (no RNG, no --record): Core/InteriorLaw.cs is the law,
+            // massive_interior.json is the ground truth.
+            Run("massive_interior.json", SecInterior);
 
             Console.WriteLine("== summary: " + (TotalFails == 0 ? "ALL PASS" : "FAILURES") +
                               " | checks=" + TotalChecks + " fails=" + TotalFails);

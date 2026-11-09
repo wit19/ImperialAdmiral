@@ -736,15 +736,16 @@ public static class MassiveInteriorGate
         int iLaw   = bridge.IndexOf("bool drop = !covered && st == Tac.TileStatus.Banned;", StringComparison.Ordinal);
         int iForen = bridge.IndexOf("\"[dp-massive] card=\"", StringComparison.Ordinal);
         int iFail  = bridge.IndexOf("zero-usable-dps", StringComparison.Ordinal);
+        int iHonest = bridge.IndexOf("chosen=Guid.Empty, honest no-deploy", StringComparison.Ordinal);
         int iCand  = bridge.IndexOf("cands.Add(new Tac.DeployCandidate", StringComparison.Ordinal);
-        if (iGuard < 0 || iNull < 0 || iBuild < 0 || iLaw < 0 || iForen < 0 || iFail < 0 || iCand < 0)
+        if (iGuard < 0 || iNull < 0 || iBuild < 0 || iLaw < 0 || iForen < 0 || iFail < 0 || iHonest < 0 || iCand < 0)
             Fail("bridge seam contract: marker missing (guard=" + iGuard + " null=" + iNull +
                  " build=" + iBuild + " law=" + iLaw + " forensic=" + iForen +
-                 " zerofail=" + iFail + " cands=" + iCand + ")");
+                 " zerofail=" + iFail + " honest=" + iHonest + " cands=" + iCand + ")");
         else if (!(iGuard < iNull && iNull < iBuild && iBuild < iLaw && iLaw < iForen &&
-                   iForen < iFail && iFail < iCand))
+                   iForen < iFail && iFail < iHonest && iHonest < iCand))
             Fail("bridge seam contract: block order moved - the interior filter belongs behind the mode gate and in front of the candidate rows");
-        else Ok("bridge: interior block behind ActiveNow gate + card==null probe lane, in front of candidate rows; drop law, [dp-massive] forensic, zero-usable honest fail all pinned");
+        else Ok("bridge: interior block behind ActiveNow gate + card==null probe lane, in front of candidate rows; drop law, [dp-massive] forensic, zero-usable honest no-deploy (chosen=Guid.Empty, never false - MAJOR-4) all pinned");
 
         // --- the rails census (spec 4-D3-B v1.3): every REAL deploy supplies
         // the card; one seam; legacy law intact.
@@ -764,17 +765,59 @@ public static class MassiveInteriorGate
         if (!f.LegacyRandom) Fail("legacy random fallback line moved - tactical-OFF bit-identity broken at the source");
         else Ok("legacy random line intact verbatim (tactical-OFF bit-identity, source side)");
 
+        // --- MAJOR-4 caller contract (fresh-look 09.11): the caller's
+        // count-guard at :521 passes BEFORE the seam call, so a bridge that
+        // empties the pool in-place and returns FALSE would hand control to
+        // the legacy draw dps[GenerateRandomNumbers(dps.Count)[0]] with an
+        // EMPTY list - GlowEngine.GenerateRandomNumbers(0) returns [0]
+        // (GlowEngine.cs:334-341) and dps[0] IndexRange-crashes the deploy;
+        // restoring the pool instead would let the same draw pick a BANNED
+        // DP (silent ban bypass). Pinned: the guard sits between nothing and
+        // the seam, the legacy draw AFTER the seam (structure that makes the
+        // quirk reachable) AND the bridge's zero-usable lane answers TRUE
+        // with the app's own no-DP marker (chosen=Guid.Empty) - the only
+        // honest exit. Both wrong turns additionally stay closed by the
+        // harness vector (interior dp_filter zero-usable).
+        var mem = ReadSrc("ImperialCommander2/Assets/Scripts/Saga/Managers/MapEntityManager.cs");
+        int iEmptyGuard = mem.IndexOf("if ( dps.Count > 0 )", StringComparison.Ordinal);
+        int iSeam = mem.IndexOf("TryChooseDeploymentPoint(", StringComparison.Ordinal);
+        int iRndDraw = mem.IndexOf("dps[GlowEngine.GenerateRandomNumbers( dps.Count )[0]].GUID", StringComparison.Ordinal);
+        if (!(iEmptyGuard >= 0 && iEmptyGuard < iSeam && iSeam < iRndDraw))
+            Fail("caller contract: guard/seam/legacy-draw order moved - the structural reason the zero-usable lane must NEVER return false (MAJOR-4)");
+        else Ok("caller contract pinned: count-guard precedes the seam, legacy draw follows it - zero-usable cannot use the false lane (MAJOR-4 structure)");
+
         // --- the builder (InteriorUnity.cs): Unity-side law lines.
         var ib = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/InteriorUnity.cs");
         if (CountActive(ib, "FindObjectsOfTypeAll<Saga.TileRenderer>()") != 1) Fail("builder: the TileRenderer scan (the only legal object scan - MapTile is plain) moved");
         else Ok("builder scans the placed map through TileRenderer.mapTile (M13r MedPac pattern, FindObjectsOfTypeAll keeps hidden tiles)");
         if (CountActive(ib, "FindObjectsOfTypeAll<MapTile>") >= 1) Fail("builder: live FindObjectsOfTypeAll<MapTile> - MapTile is a plain class, it does not compile");
         else Ok("builder: no live FindObjectsOfTypeAll<MapTile> (plain-class law; the header note naming the forbidden form stays a comment)");
-        if (ib.IndexOf("row.origin != \"authored\"", StringComparison.Ordinal) < 0 ||
-            ib.IndexOf("[interior] override_unverified", StringComparison.Ordinal) < 0 ||
-            ib.IndexOf("RegisterAuthored", StringComparison.Ordinal) < 0)
-            Fail("builder: the fail-closed D6 lane moved (authored-origin guard / override_unverified / RegisterAuthored)");
-        else Ok("builder D6 lane pinned: deployLedger 'authored' rows only, fail-closed, [interior] override_unverified stays");
+        // D6 lane (MAJOR-1/2/3 fix, fresh-look 09.11): the authored lanes
+        // come from the MISSION'S OWN JSON (missionStringified, the exact
+        // string ParseMission consumes) mirroring InteriorDpProbe 353-425 -
+        // NOT from deployLedger, whose rows are campaign-scoped (stale lifts)
+        // and whose event lane only lands at deployment time (after the
+        // build). deployLedger consumption in the builder is a regression.
+        if (CountActive(ib, "deployLedger") != 0)
+            Fail("builder consumes deployLedger again - campaign-scoped rows leak lifts across missions (MAJOR-1/2, fresh-look 09.11)");
+        else Ok("builder D6 source = mission's own lanes, no deployLedger (mission-scoped by construction, event lanes complete at t=0 - MAJOR-1/2)");
+        if (ib.IndexOf("missionStringified", StringComparison.Ordinal) < 0 ||
+            ib.IndexOf("\"eventActionType\"", StringComparison.Ordinal) < 0 ||
+            ib.IndexOf("SectionSentinel", StringComparison.Ordinal) < 0 ||
+            ib.IndexOf("NullGuid", StringComparison.Ordinal) < 0)
+            Fail("builder: the mission-lane law moved (missionStringified / eventActionType lanes / sentinel rules - InteriorDpProbe mirror)");
+        else Ok("builder mission lanes mirror InteriorDpProbe 353-425: missionStringified, eventActionType 6/7/21, sentinel + Specific rules pinned");
+        if (ib.IndexOf("[interior] override_unverified", StringComparison.Ordinal) < 0 ||
+            ib.IndexOf("RegisterAuthored", StringComparison.Ordinal) < 0 ||
+            ib.IndexOf("isMassiveCard == null || !isMassiveCard(", StringComparison.Ordinal) < 0)
+            Fail("builder: the fail-closed D6 lane moved (override_unverified / RegisterAuthored / spec-9.2 IsMassive gate)");
+        else Ok("builder D6 lane pinned: fail-closed registration, [interior] override_unverified stays, IsMassive gate (MAJOR-3)");
+        // The Massive view must be HANDED to the builder - a null predicate
+        // registers nothing (fail-closed), which would silently strip every
+        // legitimate CORE4-style lift if the bridge ever stopped passing it.
+        if (CountActive(bridge, "CatalogCardIsMassive);") != 1)
+            Fail("bridge no longer hands CatalogCardIsMassive to InteriorUnity.Build - the IsMassive gate would fail closed on every real lift (MAJOR-3)");
+        else Ok("bridge hands the runtime Massive view to the builder (spec 9.2 IsMassive gate live)");
         if (ib.IndexOf("[interior] massive-override", StringComparison.Ordinal) < 0)
             Fail("builder: the D6 forensic line (spec 'massive-override::card<-mission') moved");
         else Ok("builder forensic lane pinned: [interior] massive-override registers the (mission, card) lift");

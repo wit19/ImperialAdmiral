@@ -1894,7 +1894,8 @@ namespace TacticalAI
             {
                 snap = InteriorUnity.Build(
                     UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>(),
-                    DataStore.mission, DataStore.sagaSessionData);
+                    DataStore.mission, DataStore.sagaSessionData,
+                    CatalogCardIsMassive);
             }
             catch (Exception e)
             {
@@ -2000,9 +2001,31 @@ namespace TacticalAI
                     dps.AddRange(keepDps);
                     if (dps.Count == 0)
                     {
+                        // Zero usable DPs after the hard filter - and the
+                        // only legal exit is TRUE with chosen = Guid.Empty.
+                        // Fresh-look review MAJOR-4 (09.11) closed both wrong
+                        // turns: (a) returning FALSE hands control to the
+                        // legacy draw at MapEntityManager.cs:530 - the
+                        // caller's count guard at :521 already passed BEFORE
+                        // this call mutated the list, so the draw would run
+                        // dps[GlowEngine.GenerateRandomNumbers(0)[0]] on the
+                        // emptied list (the GenerateRandomNumbers(0)==[0]
+                        // quirk) and IndexOutOfRange-crash the deploy - and
+                        // had the pool been restored instead, the same draw
+                        // would RANDOMLY PICK A BANNED DP: silent ban bypass;
+                        // (b) picking any surviving Banned DP would break the
+                        // ban. Guid.Empty is the app's OWN no-DP marker - the
+                        // exact value this function returns from its own
+                        // no-active-DP else lane - and every caller treats it
+                        // as no-deploy (DeploymentManager.cs:412 `if ( adp !=
+                        // Guid.Empty )`, the popup names ""), so the deploy
+                        // fails HONEST: no spawn, threat stays reserved. The
+                        // in-place emptying stands: the caller returns at the
+                        // seam the moment this says true.
+                        chosen = Guid.Empty;
                         Debug.Log("[dp-massive] card=" + card.id +
-                                  " zero-usable-dps - honest deploy fail, no spawn, threat stays reserved");
-                        return false;   // caller sees its own empty pool: Guid.Empty lane
+                                  " zero-usable-dps - chosen=Guid.Empty, honest no-deploy (app's own no-DP marker)");
+                        return true;
                     }
                 }
             }

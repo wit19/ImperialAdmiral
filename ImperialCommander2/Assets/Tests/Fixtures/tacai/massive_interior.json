@@ -398,7 +398,7 @@
      ],
      "winner": "357d453c-1a9e-47af-9bb9-2b86385a8acb"
     },
-    "_why": "THE authored indoor Massive case of census section 6 (the shipped override_candidate row verbatim): event6 authors DG073 General Weiss onto DP Yellow on Core19A; the authored ledger row + the VERIFIED-BANNED (RR-pinned) tile read registers the D6 override -> the filter does NOT fire for DG073 in this mission: the pool stays complete (all four keep candidates) - \"Override, DP bleibt\". DP Yellow itself is authored INACTIVE, pool=false mirrors that; it exists only as the authored-row identity."
+    "_why": "THE authored indoor Massive case of census section 6 (the shipped override_candidate row verbatim): event6 authors DG073 General Weiss onto DP Yellow on Core19A; the mission's own authored event lane + the VERIFIED-BANNED (RR-pinned) tile read registers the D6 override -> the filter does NOT fire for DG073 in this mission: the pool stays complete (all four keep candidates) - \"Override, DP bleibt\". DP Yellow itself is authored INACTIVE, pool=false mirrors that; it exists only as the authored-lane identity (the handler feeds these pinned authored pairs straight into OverrideSet.RegisterAuthored)."
    },
    {
     "name": "core3_zero_usable_honest_fail",
@@ -479,7 +479,7 @@
      "winner": "",
      "honest_fail": true
     },
-    "_why": "census section 7 pinned the ONLY mission whose Massive groups have no DP outside the banned set: every CORE3 DP sits on Core21A/23A/22A (RR 19..36 -> BANNED). The zero-usable pool after the filter is an HONEST deploy fail (no spawn, threat stays reserved, spec 4-D3-B) - never a silent pick onto a banned tile. DG073 CORE3 authored lane carries only the GUIDOne sentinel (not a placement, no ledger row, no override - census section 6 authored-slot accounting)."
+    "_why": "census section 7 pinned the ONLY mission whose Massive groups have no DP outside the banned set: every CORE3 DP sits on Core21A/23A/22A (RR 19..36 -> BANNED). The zero-usable pool after the filter is an HONEST no-deploy (no spawn, threat stays reserved, spec 4-D3-B; bridge lane: TRUE + chosen=Guid.Empty, the app's own no-DP marker - never the false lane, never a silent pick onto a banned tile, MAJOR-4 pin in SectionsInterior). DG073 CORE3 authored lane carries only the GUIDOne sentinel (not a placement, no mission-lane pair, no override - census section 6 authored-slot accounting)."
    },
    {
     "name": "nulllaw_empty_snapshot_bit_identical",

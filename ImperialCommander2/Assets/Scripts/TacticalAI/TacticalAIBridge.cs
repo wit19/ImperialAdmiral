@@ -1874,6 +1874,54 @@ namespace TacticalAI
 
         // ------------------------------------------------------- deployment hook
 
+        // P41c (card t_a2e54ec9; CONCEPT_massive_interior_v1.md v1.3 9.2):
+        // the per-mission interior snapshot (builder: InteriorUnity.cs). It is
+        // DERIVED state - rebuilt once per mission identity, exactly the
+        // rebuild-on-identity pattern of MissionCounter() above: SessionKey()
+        // (campaign GUID | missionID) changed => fresh build. A failed build
+        // leaves the snapshot null => the interior block below stays inactive
+        // => today's behaviour (fail-open, the law never half-applies).
+        static MissionInteriorSnapshot _interior;
+        static string _interiorKey;
+
+        static MissionInteriorSnapshot EnsureInteriorSnapshot()
+        {
+            var key = SessionKey();
+            if (key == null) return null;                       // no session up: Null-Law
+            if (_interior != null && key == _interiorKey) return _interior;
+            MissionInteriorSnapshot snap = null;
+            try
+            {
+                snap = InteriorUnity.Build(
+                    UnityEngine.Object.FindObjectOfType<Saga.MapEntityManager>(),
+                    DataStore.mission, DataStore.sagaSessionData,
+                    CatalogCardIsMassive);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::interior build failed: " + e.Message);
+                snap = null;
+            }
+            _interior = snap;
+            _interiorKey = key;
+            return snap;
+        }
+
+        // Massive identity = the CATALOG keyword view (bridge:1173 law: the
+        // Keywords of the CATALOG card, injected from the printed ability lane
+        // + DG belt by ToRecord). NOT card.traits: SetCardTranslations
+        // localizes that lane (DG013 law), and custom imports never enter the
+        // catalog - an unresolvable card is not Massive for the law, which is
+        // the same fail-open the whole D2 lane reads (custom 'Massive\r' gap:
+        // disclosed in the census, stays a later hop).
+        static bool CatalogCardIsMassive(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId)) return false;
+            EnsureCatalog();
+            Tac.DeploymentCard core;
+            return _catalog != null && _catalog.TryGetValue(cardId, out core) && core.IsMassive;
+        }
+
         /// <summary>GetActiveDeploymentPoint hook: deterministic choice among
         /// the already-filtered active DPs instead of the uniform random pick
         /// (concept 3.4.2: random DP = exploitable unfairness; the legacy
@@ -1918,6 +1966,69 @@ namespace TacticalAI
             // projection - a section the mission activated after the last
             // plan pull still counts for THIS purchase).
             var zones = DpBattleZones(anchors);
+            // P41c (card t_a2e54ec9; spec 4-D3-B v1.3 + 9.3-1): the Massive
+            // DP HARD FILTER - a legality, not a preference, and it sits in
+            // front of the tiers. It runs on the caller's list IN PLACE so
+            // both pick paths (the scored ladder below AND the legacy
+            // fallback line at the end) consume the same legal pool - no rail
+            // can reach a Banned-tile DP afterwards. Untouched pools (not
+            // Massive, D6-covered card, Null-Law snapshot, probe callers that
+            // already returned on card==null) keep every behaviour bit (9.4
+            // Legacy bit-identity). A zero-usable pool after the filter fails
+            // the deploy HONEST (the caller's own empty-pool lane: no spawn,
+            // threat stays reserved) - never a silent fallback onto a Banned
+            // DP. [dp-massive] forensic line per pass (card, dp, status,
+            // override) - the census the spec owes.
+            var interior = EnsureInteriorSnapshot();
+            if (interior != null && !interior.IsEmpty && CatalogCardIsMassive(card.id))
+            {
+                bool covered = interior.Overrides.Covers(card.id);
+                var keepDps = new List<Saga.IMapEntity>(dps.Count);
+                int dropped = 0;
+                foreach (var x in dps)
+                {
+                    var st = interior.StatusForDp(InteriorUnity.DpKey(x.GUID));
+                    bool drop = !covered && st == Tac.TileStatus.Banned;
+                    Debug.Log("[dp-massive] card=" + card.id + " dp=" + (x.name ?? "") +
+                              " status=" + st + " override=" + (covered ? 1 : 0) +
+                              " drop=" + (drop ? 1 : 0));
+                    if (drop) dropped++;
+                    else keepDps.Add(x);
+                }
+                if (dropped > 0)
+                {
+                    dps.Clear();
+                    dps.AddRange(keepDps);
+                    if (dps.Count == 0)
+                    {
+                        // Zero usable DPs after the hard filter - and the
+                        // only legal exit is TRUE with chosen = Guid.Empty.
+                        // Fresh-look review MAJOR-4 (09.11) closed both wrong
+                        // turns: (a) returning FALSE hands control to the
+                        // legacy draw at MapEntityManager.cs:530 - the
+                        // caller's count guard at :521 already passed BEFORE
+                        // this call mutated the list, so the draw would run
+                        // dps[GlowEngine.GenerateRandomNumbers(0)[0]] on the
+                        // emptied list (the GenerateRandomNumbers(0)==[0]
+                        // quirk) and IndexOutOfRange-crash the deploy - and
+                        // had the pool been restored instead, the same draw
+                        // would RANDOMLY PICK A BANNED DP: silent ban bypass;
+                        // (b) picking any surviving Banned DP would break the
+                        // ban. Guid.Empty is the app's OWN no-DP marker - the
+                        // exact value this function returns from its own
+                        // no-active-DP else lane - and every caller treats it
+                        // as no-deploy (DeploymentManager.cs:412 `if ( adp !=
+                        // Guid.Empty )`, the popup names ""), so the deploy
+                        // fails HONEST: no spawn, threat stays reserved. The
+                        // in-place emptying stands: the caller returns at the
+                        // seam the moment this says true.
+                        chosen = Guid.Empty;
+                        Debug.Log("[dp-massive] card=" + card.id +
+                                  " zero-usable-dps - chosen=Guid.Empty, honest no-deploy (app's own no-DP marker)");
+                        return true;
+                    }
+                }
+            }
             if (anchors.Count > 0 || zones.Count > 0 ||
                 ownSecs.Count > 0 || usedDps.Count > 0)
             {

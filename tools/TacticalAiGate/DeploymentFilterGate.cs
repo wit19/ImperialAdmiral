@@ -31,6 +31,12 @@ public static class DeploymentFilterGate
     static readonly string App =
         "/home/open/work/ia-ai/ImperialCommander2/ImperialCommander2";
 
+    static void Ok(bool cond, string what)
+    {
+        Console.WriteLine((cond ? "PASS " : "FAIL ") + what);
+        if (!cond) { fails++; Environment.ExitCode = 1; }
+    }
+
     // A droid card as the props law sees it: faction/size lanes neutral, so
     // every flip below is exactly the trait-filter law under test.
     static Saga.DeploymentCard Card(string[] traits, string[] traitsEn)
@@ -126,6 +132,28 @@ public static class DeploymentFilterGate
            "DG013 real DE bytes + EN cache pass the droid DP (Player-25 spawn law restored)");
         Eq(true, DroidDp().IsFilteredOut(Card(de13Traits, null)),
            "DG013 real DE bytes without cache still self-forbid (pre-fix state pinned)");
+
+        // ------------------------------------------------- P41c Massive rows --
+        // (card t_a2e54ec9; spec 4-D3-B v1.3 + 9.4 last bullet, controller
+        // note from P41b-QA): this gate's trait filter and the NEW Massive
+        // TILE filter are two layers. The lines below pin the rails whose
+        // pools the tile filter consumes - every real deploy supplies the
+        // card to the one tactical seam, the legacy property law is untouched
+        // (the tile filter is an ADDITION, not a replacement) - plus the
+        // corpus-wide pool delta from the DP probe (third engine, same run
+        // the FilterPoolPin table was measured on). Sources/pools read the
+        // tree under test (InteriorDpProbe.DataRoot: CWD first).
+        var rf = MassiveInteriorGate.CollectRailFacts();
+        Ok(rf.DepManWithCard == 3,
+           "massive rails 2-4 (attack/reinforce, popup-event/landing/onslaught, DoMultipleDeployment): all three seam callers supply the card");
+        Ok(rf.DepManCardlessLive == 0,
+           "no live card-less seam caller - the hard filter never sees an identity-free deploy (NEW-Ground-2 law)");
+        Ok(rf.SeamCalls == 1 && rf.PopupInteriorRefs == 0,
+           "one tactical seam, no second entry: no rail bypasses the hard filter (popup carries no own filter)");
+        Ok(rf.FilterDpCalls == 2 && rf.LegacyRandom,
+           "trait filter intact (both FilterDP sites) + legacy random line verbatim: the Massive tile filter sits BEHIND both, tactical-OFF stays bit-identical");
+        Ok(rf.SumActive == 523 && rf.SumBannedActive == 167 && rf.MissionsWithBannedActive == 78,
+           "filtered pool delta pinned: 167 of 523 authored-active DPs (78 missions) drop for Massive cards without a D6 override");
 
         Console.WriteLine(fails == 0 ? "DeploymentFilterGate: ALL PASS"
                                      : "DeploymentFilterGate: " + fails + " FAILURES");

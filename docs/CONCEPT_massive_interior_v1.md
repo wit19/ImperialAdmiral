@@ -108,8 +108,10 @@ New Unity-free `Core/InteriorLaw.cs` (mirror of `TrackerBindLaw.cs` shape):
 
 ```
 tile level (what the table holds):     section level (what D2-D6 consume):
-enum TileStatus     { Open, Banned,    enum SectionStatus { Open, Banned,
+enum TileStatus     { Open, Banned,    enum SectionStatusT { Open, Banned,
                       Ambiguous }                             Mixed, Ambiguous }
+(the section enum is SectionStatusT because the law file carries a method
+named SectionStatus(...) — D1 and §9.1 use the same name, 09.11 alignment)
 ```
 (Unified v1.3, finding 3: v1.2 ran ONE name `InteriorStatus` over TWO different
 state sets — D1's tile enum had no MIXED, §9.1's had no tile-level set and

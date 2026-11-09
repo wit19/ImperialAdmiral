@@ -176,4 +176,458 @@
       "status": { "R": "Banned", "O": "Open" }, "edges": { "R": ["R", "O"], "O": ["R"] }, "expect": "O",
       "_why": "a self-edge never seals the target onto itself (the target is the banned room, visited from the start)" }
   ]
+,
+  "dp_filter": [
+   {
+    "name": "core4_massive_uncovered_greens_drop",
+    "mission": "Core/CORE4.json",
+    "seed": 6840123409045651457,
+    "round": 1,
+    "card": {
+     "id": "DG014",
+     "massive": true
+    },
+    "tiles": [
+     {
+      "expansion": "Core",
+      "tileId": "28",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "20",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "2",
+      "side": "B",
+      "biome": "Forest"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "18",
+      "side": "B",
+      "biome": "Desert"
+     }
+    ],
+    "dps": [
+     {
+      "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "name": "DP Green 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "28",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "name": "DP Green 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "20",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "name": "DP Red 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "2",
+       "side": "B",
+       "biome": "Forest"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     },
+     {
+      "guid": "0a24c3aa-591a-4a7f-8ee1-e2f3b826a4db",
+      "name": "DP Red 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "18",
+       "side": "B",
+       "biome": "Desert"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     }
+    ],
+    "authored": [],
+    "expect": {
+     "covered": false,
+     "drop": [
+      "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "5bdffef2-c7c7-4e16-ab66-dca82b0481fd"
+     ],
+     "survivors": [
+      "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "0a24c3aa-591a-4a7f-8ee1-e2f3b826a4db"
+     ],
+     "winner": "357d453c-1a9e-47af-9bb9-2b86385a8acb"
+    },
+    "_why": "the REAL census mission Core/CORE4.json, active pool as authored (DP Green 1/2 on Core28A/Core20A - RR-pinned BANNED - and DP Red 1/2 on Core2B/Core18B). Reinforce/attack card DG014 AT-ST is Massive and CORE4 carries NO authored row for it (census section 6 has none) -> the DP hard filter (spec 4-D3-B, 9.3-1) drops BOTH banned DPs and the pick runs on the remaining pool. Winner hand-pinned from ONE real Core ChooseScored run (seed pinned, seed-chain tie -> first-wins-by-key; reviewed, same route as the record vectors)."
+   },
+   {
+    "name": "core4_weiss_authored_override_keeps_pool",
+    "mission": "Core/CORE4.json",
+    "seed": 6840123409045651458,
+    "round": 1,
+    "card": {
+     "id": "DG073",
+     "massive": true
+    },
+    "tiles": [
+     {
+      "expansion": "Core",
+      "tileId": "19",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "28",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "20",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "2",
+      "side": "B",
+      "biome": "Forest"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "18",
+      "side": "B",
+      "biome": "Desert"
+     }
+    ],
+    "dps": [
+     {
+      "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "name": "DP Green 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "28",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "name": "DP Green 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "20",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "name": "DP Red 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "2",
+       "side": "B",
+       "biome": "Forest"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     },
+     {
+      "guid": "0a24c3aa-591a-4a7f-8ee1-e2f3b826a4db",
+      "name": "DP Red 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "18",
+       "side": "B",
+       "biome": "Desert"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     },
+     {
+      "guid": "1390e70b-96fc-4759-a422-129c5eb175cd",
+      "name": "DP Yellow",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "19",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11932fb9-d358-42d8-bcd2-d4570e507299",
+      "pool": false
+     }
+    ],
+    "authored": [
+     {
+      "card_id": "DG073",
+      "dp": "1390e70b-96fc-4759-a422-129c5eb175cd"
+     }
+    ],
+    "expect": {
+     "covered": true,
+     "drop": [],
+     "survivors": [
+      "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "0a24c3aa-591a-4a7f-8ee1-e2f3b826a4db"
+     ],
+     "winner": "357d453c-1a9e-47af-9bb9-2b86385a8acb"
+    },
+    "_why": "THE authored indoor Massive case of census section 6 (the shipped override_candidate row verbatim): event6 authors DG073 General Weiss onto DP Yellow on Core19A; the authored ledger row + the VERIFIED-BANNED (RR-pinned) tile read registers the D6 override -> the filter does NOT fire for DG073 in this mission: the pool stays complete (all four keep candidates) - \"Override, DP bleibt\". DP Yellow itself is authored INACTIVE, pool=false mirrors that; it exists only as the authored-row identity."
+   },
+   {
+    "name": "core3_zero_usable_honest_fail",
+    "mission": "Core/CORE3.json",
+    "seed": 6840123409045651457,
+    "round": 1,
+    "card": {
+     "id": "DG014",
+     "massive": true
+    },
+    "tiles": [
+     {
+      "expansion": "Core",
+      "tileId": "21",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "23",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "22",
+      "side": "A",
+      "biome": "Imperial"
+     }
+    ],
+    "dps": [
+     {
+      "guid": "64b4dbf2-4e39-4ce7-a5fe-94eed25c16d2",
+      "name": "DP Green 3",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "22",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "name": "DP Green 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "23",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "name": "DP Green 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "21",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     }
+    ],
+    "authored": [],
+    "expect": {
+     "covered": false,
+     "drop": [
+      "64b4dbf2-4e39-4ce7-a5fe-94eed25c16d2",
+      "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "c8062d94-a52f-4458-b2cf-3c7b515747e5"
+     ],
+     "survivors": [],
+     "winner": "",
+     "honest_fail": true
+    },
+    "_why": "census section 7 pinned the ONLY mission whose Massive groups have no DP outside the banned set: every CORE3 DP sits on Core21A/23A/22A (RR 19..36 -> BANNED). The zero-usable pool after the filter is an HONEST deploy fail (no spawn, threat stays reserved, spec 4-D3-B) - never a silent pick onto a banned tile. DG073 CORE3 authored lane carries only the GUIDOne sentinel (not a placement, no ledger row, no override - census section 6 authored-slot accounting)."
+   },
+   {
+    "name": "nulllaw_empty_snapshot_bit_identical",
+    "mission": "Core/CORE4.json (shape)",
+    "seed": 6840123409045651459,
+    "round": 1,
+    "card": {
+     "id": "DG014",
+     "massive": true
+    },
+    "tiles": [],
+    "dps": [
+     {
+      "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "name": "DP Green 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "28",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "name": "DP Red 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "2",
+       "side": "B",
+       "biome": "Forest"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     }
+    ],
+    "authored": [],
+    "expect": {
+     "covered": false,
+     "drop": [],
+     "survivors": [
+      "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "357d453c-1a9e-47af-9bb9-2b86385a8acb"
+     ],
+     "winner": "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+     "identical": true
+    },
+    "_why": "D2/D5 Null-Law at the filter seam: an empty index (0 tiles -> IsEmpty) makes the block INACTIVE even for a Massive card - the pool keeps the DP that WOULD be Banned under a built index, the pick lands on the same winner as the unfiltered pool (identity check in the section: survivors==pool AND winner equality against the unfiltered run). This is the Beweispunkt \"Legacy bit-identity\" of the card, vector side (the gate side pins the source-order anchors)."
+   },
+   {
+    "name": "non_massive_pool_untouched",
+    "mission": "Core/CORE4.json",
+    "seed": 6840123409045651457,
+    "round": 1,
+    "card": {
+     "id": "DG001",
+     "massive": false
+    },
+    "tiles": [
+     {
+      "expansion": "Core",
+      "tileId": "28",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "20",
+      "side": "A",
+      "biome": "Imperial"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "2",
+      "side": "B",
+      "biome": "Forest"
+     },
+     {
+      "expansion": "Core",
+      "tileId": "18",
+      "side": "B",
+      "biome": "Desert"
+     }
+    ],
+    "dps": [
+     {
+      "guid": "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "name": "DP Green 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "28",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "name": "DP Green 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "20",
+       "side": "A",
+       "biome": "Imperial"
+      },
+      "section": "11111111-1111-1111-1111-111111111111",
+      "pool": true
+     },
+     {
+      "guid": "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "name": "DP Red 1",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "2",
+       "side": "B",
+       "biome": "Forest"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     },
+     {
+      "guid": "0a24c3aa-591a-4a7f-8ee1-e2f3b826a4db",
+      "name": "DP Red 2",
+      "tile": {
+       "expansion": "Core",
+       "tileId": "18",
+       "side": "B",
+       "biome": "Desert"
+      },
+      "section": "b81a7731-254d-4c36-9d83-a04b045e480f",
+      "pool": true
+     }
+    ],
+    "authored": [],
+    "expect": {
+     "covered": false,
+     "drop": [],
+     "survivors": [
+      "c8062d94-a52f-4458-b2cf-3c7b515747e5",
+      "5bdffef2-c7c7-4e16-ab66-dca82b0481fd",
+      "357d453c-1a9e-47af-9bb9-2b86385a8acb",
+      "0a24c3aa-591a-4a7f-8ee1-e2f3b826a4db"
+     ],
+     "winner": "357d453c-1a9e-47af-9bb9-2b86385a8acb"
+    },
+    "_why": "NUR fuer Massive-Karten (card title, spec 9.3-1): DG001 Stormtrooper (census section 1 non-Massive keyword lane) on the SAME banned-tile pool keeps all four candidates - the interior block never reads the non-Massive rail. Winner = the unfiltered S1 run above (DP Red 1): the filter genuinely changes only the Massive path."
+   }
+  ]
 }

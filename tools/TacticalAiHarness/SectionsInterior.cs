@@ -380,7 +380,9 @@ namespace TacticalAiHarness
             // Thomas 09.11); the bridge-side literals are pinned by the
             // gate's RunUsefulnessContract (the bridge is Unity-side, not
             // compile-visible here).
-            foreach (var raw in Json.AsList(v["useful"]))
+            // The block is OPTIONAL per file (additive-block law): a tree
+            // without P41e vectors still runs every other interior section.
+            foreach (var raw in Json.AsList(v.ContainsKey("useful") ? v["useful"] : new List<object>()))
             {
                 var c = Json.AsDict(raw);
                 var name = Json.AsStr(c["name"]);

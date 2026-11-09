@@ -49,6 +49,7 @@ class P {
         DutyCoreGate.Run();    // P37c (t_e80246ed): Escort-Quota golden rerun (hoth10/one/six/no_duty/shadow) + Purity + Fairness-Scan, zweiter Compile-Kontext
         DutyScrubGate.Run();   // P37d (t_ffc705af): Briefing-Scrub Zaehlt gescrubte Saetze je Duty-Mission x Sprache gegen Inventar (7x11), QA-BLOCKED-Liste, Corpus-Leak-Scan (andere Missionen byte-identisch), Mission-Liste aus dem dutyAnchors-Artefakt
         NeutralPreyGate.Run(args);   // P38 (t_11ebb843): NEUTRALE-Beute-Zensus - Producer-Mirror + echte Core-Ableitung ueber alle ausgelieferten Missionen, docs/CENSUS_beute_objekte.md fail-closed gegen-gerechnet (Modus 'census': Tabelle drucken)
+        MassiveInteriorGate.Run();   // P41b (t_1b28a273): Interior-Gesetz Massive - Census-vs-Datei-Gleichheit der Crosswalk-Zeilentabelle, RR-Vollstaendigkeit 19..36/38/39 fail-closed, Numeric-Overlap-Guard (Hoth), Vier-Zustands-Ableitung auf echter CORE4-Karte; Override runtime==census kommt erst mit H3
         Console.WriteLine(Environment.ExitCode == 0 ? "ALL PASS" : "FAILURES");
     }
 }

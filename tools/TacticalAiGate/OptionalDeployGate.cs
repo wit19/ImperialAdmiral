@@ -81,6 +81,28 @@ public static class OptionalDeployGate
         Eq("tactical", OptionalDeploy.Path(true, "overlord", "S1"), "badge S1 -> tactical");
         Eq("tactical", OptionalDeploy.Path(true, "reference", ""), "AUTO over global reference -> tactical");
 
+        // ---- P41c rail-5 Massive rows (card t_a2e54ec9; spec 4-D3-B v1.3
+        // rails census + 9.4 last bullet, controller note from P41b-QA). The
+        // optional window is ONE of the five rails: its Active-spot deploys
+        // resolve through the single tactical seam (DeploymentManager
+        // :534 DoMultipleDeployment -> GetActiveDeploymentPoint(card) ->
+        // bridge hard filter) and the announce re-roll names a DP that was
+        // really used (SagaDeploymentPopup :878, card-supplied). The popup
+        // itself must NEVER grow its own interior filter (single-seam law) -
+        // and the human's explicit DP pick becomes a Specific-slot override
+        // (:1136-1139), the human-authored placement lane: by spec design the
+        // hard filter governs the AI rails, the human command channel stays
+        // the human's (D6 doctrine: the AI proposes, the human acts).
+        var rf5 = MassiveInteriorGate.CollectRailFacts();
+        Ok(rf5.PopupReRoll == 1,
+           "rail5 announce re-roll supplies the card to the seam exactly once (M13f one-DP truth kept)");
+        Ok(rf5.PopupInteriorRefs == 0,
+           "rail5 inherits the Massive hard filter through the seam only - no interior logic grew in the popup");
+        Ok(rf5.Core4CoversDg073,
+           "rail5 CORE4: DG073 (authored indoor) carries the D6 override - its window keeps the full pool");
+        Ok(!rf5.Core4CoversDg014,
+           "rail5 CORE4: DG014 has no authored row - its window drops the Banned greens");
+
         Console.WriteLine(fails == 0 ? "OptionalDeployGate: ALL PASS" : "OptionalDeployGate: FAILURES=" + fails);
         return fails;
     }

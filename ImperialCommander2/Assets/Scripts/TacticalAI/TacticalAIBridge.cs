@@ -2059,7 +2059,18 @@ namespace TacticalAI
                     foreach (var s in crit)
                         if (!string.IsNullOrEmpty(s) && !zone.Contains(s)) zone.Add(s);
             }
-            catch { /* Null-Law: what was collected so far is honest */ }
+            catch (Exception e)
+            {
+                // P41e fresh-look (MINOR): a partial zone is NOT the truth.
+                // Mid-collection failure degrades to the DOCUMENTED unknown:
+                // empty list => the Core fail-open (every DP useful, loud
+                // log), never a silently shrunk zone that would skip buys
+                // and fire refunds toward not-buying (law direction: unknown
+                // facts => treat as useful).
+                Debug.LogWarning("TacticalAIBridge::op-zone failed: " + e.Message +
+                                 " - degraded to unknown (usefulness fail-open)");
+                return new List<string>();
+            }
             return zone;
         }
 
@@ -2151,20 +2162,22 @@ namespace TacticalAI
         /// (the ONE ModifyThreat(+) of this law), the card goes back to the
         /// deployment hand (refund, not hold - no zombie purchase) and the
         /// buy ranking re-runs on the refunded budget (the caller chains a
-        /// follow-up window). The ap mirrors the bill of the rail that paid
-        /// it (DeployCost persona law, onslaught reductions resp. override
-        /// threatCost) so refund == spend, never more - "wir cheaten
-        /// nicht". A human pick (manual window) is the table's call and
-        /// never refunded. The forensic line is the spec shape:
+        /// follow-up window). <c>spent</c> is the EXACT bill the paying rail
+        /// booked - the popup records every ModifyThreat(-) it books per
+        /// deployed instance (spentBy41e) and hands the guard the recorded
+        /// value. The guard NEVER models a cost itself (P41e fresh-look
+        /// MAJOR-1/2): a persona-swapped elite instance, a zero-bill
+        /// override rail (useThreat==false) or the onslaught bill shape can
+        /// never make refund != spend - refund == spend holds BY CONSTRUCTION
+        /// of the ledger, "wir cheaten nicht". A human pick (manual window)
+        /// is the table's call and never refunded. The forensic line is the
+        /// spec shape:
         /// [dp-massive] refund card=&lt;c&gt; ap=&lt;n&gt; reason=no_useful_dp_after=&lt;fact&gt;.
         /// </summary>
         public static bool TryRefundUselessMassive(global::DeploymentCard card,
-                                                   bool wasOnslaught,
-                                                   Saga.DeploymentGroupOverride ovrd,
                                                    bool humanPick,
-                                                   out int ap)
+                                                   int spent)
         {
-            ap = 0;
             try
             {
                 if (card == null || humanPick) return false;   // table's call, keep
@@ -2182,14 +2195,12 @@ namespace TacticalAI
                 if (r == null || r.Keys.Count > 0 ||
                     r.Fact == Tac.InteriorLaw.UsefulFactOverride ||
                     r.Fact == Tac.InteriorLaw.UsefulFactFailOpen) return false;
-                int spent = global::DataStore.DeployCost(card, wasOnslaught);
-                if (ovrd != null && ovrd.useThreat)
-                    spent = UnityEngine.Mathf.Clamp(spent + ovrd.threatCost, 0, 100);
-                ap = spent;
-                if (ap > 0) DataStore.sagaSessionData.ModifyThreat(ap);
                 var hand = DataStore.deploymentHand;
-                if (hand != null && !hand.Contains(card)) hand.Add(card);
-                Debug.Log("[dp-massive] refund card=" + card.id + " ap=" + ap +
+                if (hand == null) return false;   // no hand to return into:
+                                                  // full deploy proceeds (no half refund)
+                if (spent > 0) DataStore.sagaSessionData.ModifyThreat(spent);
+                if (!hand.Contains(card)) hand.Add(card);
+                Debug.Log("[dp-massive] refund card=" + card.id + " ap=" + spent +
                           " reason=no_useful_dp_after=" + r.Fact +
                           " (trigger did not fire - nothing spawns, the buy ranking" +
                           " re-runs on the refunded budget)");

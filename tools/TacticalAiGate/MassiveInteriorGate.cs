@@ -1026,14 +1026,18 @@ public static class MassiveInteriorGate
         else Ok("usefulness: op zone = today's contested UNION the authored endgame (union-reach semantics wired at the bridge)");
         int iHuman  = bridge.IndexOf("if (card == null || humanPick) return false;", StringComparison.Ordinal);
         int iMode   = bridge.IndexOf("if (!ActiveNow()) return false;                // legacy bit-identical", StringComparison.Ordinal);
-        int iCredit = bridge.IndexOf("DataStore.sagaSessionData.ModifyThreat(ap)", StringComparison.Ordinal);
+        int iHandChk = bridge.IndexOf("if (hand == null) return false;   // no hand to return into:", StringComparison.Ordinal);
+        int iCredit = bridge.IndexOf("DataStore.sagaSessionData.ModifyThreat(spent)", StringComparison.Ordinal);
         int iLog    = bridge.IndexOf("\"[dp-massive] refund card=\"", StringComparison.Ordinal);
-        if (iHuman < 0 || iMode < 0 || iCredit < 0 || iLog < 0)
+        if (iHuman < 0 || iMode < 0 || iHandChk < 0 || iCredit < 0 || iLog < 0)
             Fail("usefulness: refund guard markers missing (human=" + iHuman + " mode=" + iMode +
-                 " credit=" + iCredit + " log=" + iLog + ")");
-        else if (!(iHuman < iMode && iMode < iCredit && iCredit < iLog))
-            Fail("usefulness: refund block order moved - human-pick exclusion and the ActiveNow gate must precede the ONE ModifyThreat(+) credit, the forensic line last");
-        else Ok("usefulness: ONE refund point (human picks and legacy never refunded; exactly one ModifyThreat(+) credit; [dp-massive] refund forensic pinned)");
+                 " hand=" + iHandChk + " credit=" + iCredit + " log=" + iLog + ")");
+        else if (!(iHuman < iMode && iMode < iHandChk && iHandChk < iCredit && iCredit < iLog))
+            Fail("usefulness: refund block order moved - human-pick exclusion, the ActiveNow gate and the hand-presence check must precede the ONE ModifyThreat(+) credit, the forensic line last");
+        else Ok("usefulness: ONE refund point (human picks and legacy never refunded; no half-refund without a hand; exactly one ModifyThreat(+) credit of the RECORDED bill; [dp-massive] refund forensic pinned)");
+        if (CountActive(bridge, "int spent)") < 1)
+            Fail("usefulness: the refund guard must TAKE the recorded bill (int spent) - a guard that models DeployCost itself re-opens the swap/zero-bill divergence (fresh-look MAJOR-1/2)");
+        else Ok("usefulness: refund == spend by CONSTRUCTION - the guard receives the exact booked bill, it never re-computes a cost");
         if (CountActive(bridge, "\"[dp-massive] usefulness=failopen card=\"") != 1 ||
             CountActive(bridge, "\"[dp-massive] usefulness=skip card=\"") != 1)
             Fail("usefulness: the loud fail-open / skip forensics moved - economy decisions stay rules-visible (spec 4-C)");
@@ -1072,10 +1076,14 @@ public static class MassiveInteriorGate
             Fail("usefulness: refund asked " + CountActive(popup, "TryRefundUselessMassive(") +
                  " times != 1 - the refund lives at the ONE deploy trigger, nowhere else");
         else Ok("usefulness: the refund fires at exactly ONE place, the deploy trigger in the popup (no economy rebuild)");
-        if (popup.IndexOf("deploymentOverride, lastManual, out ap41e", StringComparison.Ordinal) < 0 ||
+        if (popup.IndexOf("TryRefundUselessMassive( g41e, lastManual, ap41e )", StringComparison.Ordinal) < 0 ||
             popup.IndexOf("lastManual = manual;", StringComparison.Ordinal) < 0)
             Fail("usefulness: the manual-window exclusion (app proposes, table acts) vanished from the trigger call");
         else Ok("usefulness: human picks are excluded at the trigger (the table's call is never second-guessed)");
+        if (CountActive(popup, "spentBy41e[") != 13 ||
+            popup.IndexOf("spentBy41e.TryGetValue( g41e, out ap41e )", StringComparison.Ordinal) < 0)
+            Fail("usefulness: the refund ledger changed shape - expected 13 exact-bill records (landing/mixed/d1/d2/onslaught incl. the zero-bill override lanes) and the trigger read");
+        else Ok("usefulness: every paying rail records its EXACT bill per deployed instance (persona-swap and zero-bill override safe - refund == spend by construction)");
         if (popup.IndexOf("P41e REFUND CHAIN", StringComparison.Ordinal) < 0)
             Fail("usefulness: the rerank chain (refunded budget re-enters the buy ranking) vanished");
         else Ok("usefulness: refunded threat re-enters the buy ranking (chain law mirrors the final-round-dump lane)");

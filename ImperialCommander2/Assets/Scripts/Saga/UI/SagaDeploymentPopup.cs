@@ -44,6 +44,13 @@ namespace Saga
 		bool lastManual;//P41e: the manual window's groups are the DM's own
 		                //picks - "app proposes, table acts": the refund
 		                //guard never second-guesses a human pick.
+		Dictionary<DeploymentCard, int> spentBy41e;//P41e fresh-look (MAJOR-1/2):
+			//the EXACT threat each paying rail booked per deployed instance
+			//(persona swaps bill the REGULAR, override rails may bill 0).
+			//The refund guard gets this recorded value - refund == spend
+			//holds by construction, the guard never models a cost. A group
+			//without a record (rails that bill nothing, e.g. reinforcements)
+			//is never refunded: full deploy proceeds.
 
 		//M13c/M13g: tactical optional deployment -> the chosen DP marker is
 		//revealed (Thomas 28.10: the marker IS the placement instruction for
@@ -104,6 +111,7 @@ namespace Saga
 			deploymentOverride = ovrd;
 			postAction = callback;
 			groupsToDeploy = new List<DeploymentCard>();
+			spentBy41e = new Dictionary<DeploymentCard, int>();//P41e refund ledger
 			warning.gameObject.SetActive( false );
 			//M13c: reset the manual-mode state + marker-reveal flag on every Show.
 			tacticalOptionalReveal = isOptionalDeployment && manual == false
@@ -258,9 +266,15 @@ namespace Saga
 					var keep41e = new List<DeploymentCard>( groupsToDeploy.Count );
 					foreach ( var g41e in groupsToDeploy )
 					{
+						//P41e fresh-look (MAJOR-1/2): the guard gets the EXACT
+						//bill this window's rail booked (refund ledger) - a
+						//persona-swapped instance or a zero-bill override rail
+						//can never make refund != spend. A group without a
+						//record (rails that bill nothing, e.g. reinforcements)
+						//is never refunded: it deploys as before.
 						int ap41e;
-						if ( TacticalAI.TacticalAIBridge.TryRefundUselessMassive( g41e,
-								lastMode == DeployMode.Onslaught, deploymentOverride, lastManual, out ap41e ) )
+						if ( spentBy41e.TryGetValue( g41e, out ap41e ) &&
+							TacticalAI.TacticalAIBridge.TryRefundUselessMassive( g41e, lastManual, ap41e ) )
 							refunded41e++;
 						else
 							keep41e.Add( g41e );
@@ -586,10 +600,21 @@ namespace Saga
 					if ( deploymentOverride != null )
 					{
 						if ( deploymentOverride.useThreat )
-							DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( DataStore.DeployCost( p.Card, false ) + deploymentOverride.threatCost, 0, 100 )) );
+						{
+							//P41e refund ledger: record the EXACT bill this
+							//rail booked on the deployed instance.
+							int bill41e = Mathf.Clamp( DataStore.DeployCost( p.Card, false ) + deploymentOverride.threatCost, 0, 100 );
+							DataStore.sagaSessionData.ModifyThreat( -bill41e );
+							spentBy41e[ deploy ] = bill41e;
+						}
+						else spentBy41e[ deploy ] = 0;//override window without threat consumption: nothing to refund
 					}
 					else
-						DataStore.sagaSessionData.ModifyThreat( -DataStore.DeployCost( p.Card, false ) );
+					{
+						int bill41e = DataStore.DeployCost( p.Card, false );
+						DataStore.sagaSessionData.ModifyThreat( -bill41e );
+						spentBy41e[ deploy ] = bill41e;
+					}
 				}
 				else
 				{
@@ -667,10 +692,19 @@ namespace Saga
 					if ( deploymentOverride != null )
 					{
 						if ( deploymentOverride.useThreat )
-							DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( DataStore.DeployCost( p.Card, false ) + deploymentOverride.threatCost, 0, 100 )) );
+						{
+							int bill41e = Mathf.Clamp( DataStore.DeployCost( p.Card, false ) + deploymentOverride.threatCost, 0, 100 );
+							DataStore.sagaSessionData.ModifyThreat( -bill41e );
+							spentBy41e[ deploy ] = bill41e;
+						}
+						else spentBy41e[ deploy ] = 0;//override window without threat consumption: nothing to refund
 					}
 					else
-						DataStore.sagaSessionData.ModifyThreat( -TacticalAI.PersonaState.CostFor( p.Card, p.Card.cost ) );
+					{
+						int bill41e = TacticalAI.PersonaState.CostFor( p.Card, p.Card.cost );
+						DataStore.sagaSessionData.ModifyThreat( -bill41e );
+						spentBy41e[ deploy ] = bill41e;
+					}
 				}
 
 			if ( slot == 0 && !hadCandidates )
@@ -748,13 +782,20 @@ namespace Saga
 					if ( deploymentOverride.useThreat )
 					{
 						// Personas (M2): the persona discount rides the PRINTED
-					// cost, the event modifier is added on top (public math,
-					// PersonaState.CostFor - printed value stays untouched).
-					DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( TacticalAI.PersonaState.CostFor( d1, d1.cost ) + deploymentOverride.threatCost, 0, 100 )) );
+						// cost, the event modifier is added on top (public math,
+						// PersonaState.CostFor - printed value stays untouched).
+						int bill41e = Mathf.Clamp( TacticalAI.PersonaState.CostFor( d1, d1.cost ) + deploymentOverride.threatCost, 0, 100 );
+						DataStore.sagaSessionData.ModifyThreat( -bill41e );
+						spentBy41e[ d1Deploy ] = bill41e;
 					}
+					else spentBy41e[ d1Deploy ] = 0;//override window without threat consumption
 				}
 				else//update threat just spent
-					DataStore.sagaSessionData.ModifyThreat( -TacticalAI.PersonaState.CostFor( d1, d1.cost ) );
+				{
+					int bill41e = TacticalAI.PersonaState.CostFor( d1, d1.cost );
+					DataStore.sagaSessionData.ModifyThreat( -bill41e );
+					spentBy41e[ d1Deploy ] = bill41e;
+				}
 			}
 
 			DeploymentCard d2 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
@@ -776,11 +817,18 @@ namespace Saga
 					if ( deploymentOverride.useThreat )
 					{
 						// Personas (M2): discount on the printed cost (see d1).
-					DataStore.sagaSessionData.ModifyThreat( -(Mathf.Clamp( TacticalAI.PersonaState.CostFor( d2, d2.cost ) + deploymentOverride.threatCost, 0, 100 )) );
+						int bill41e = Mathf.Clamp( TacticalAI.PersonaState.CostFor( d2, d2.cost ) + deploymentOverride.threatCost, 0, 100 );
+						DataStore.sagaSessionData.ModifyThreat( -bill41e );
+						spentBy41e[ d2Deploy ] = bill41e;
 					}
+					else spentBy41e[ d2Deploy ] = 0;//override window without threat consumption
 				}
 				else//update threat just spent
-					DataStore.sagaSessionData.ModifyThreat( -TacticalAI.PersonaState.CostFor( d2, d2.cost ) );
+				{
+					int bill41e = TacticalAI.PersonaState.CostFor( d2, d2.cost );
+					DataStore.sagaSessionData.ModifyThreat( -bill41e );
+					spentBy41e[ d2Deploy ] = bill41e;
+				}
 			}
 
 			if ( d1 == null && d2 == null )
@@ -882,7 +930,9 @@ namespace Saga
 					//onslaught reductions second, floored at 0). Check and
 					//bill can no longer diverge (the old lines ignored the
 					//persona discount entirely here).
-					DataStore.sagaSessionData.ModifyThreat( -DataStore.DeployCost( dep, true ) );
+					int bill41e = DataStore.DeployCost( dep, true );
+					DataStore.sagaSessionData.ModifyThreat( -bill41e );
+					spentBy41e[ depDeploy ] = bill41e;//P41e: onslaught bills no override branch
 				}
 			}
 			while ( dep != null );

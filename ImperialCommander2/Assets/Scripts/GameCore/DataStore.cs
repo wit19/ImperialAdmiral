@@ -1110,6 +1110,17 @@ public static class DataStore
 	{
 		var candidates = deploymentHand.MinusDeployed()
 			.Where( x => DeployCost( x, isOnslaught ) <= currentThreat )
+			// P41e USEFULNESS buy gate (card t_1f93d98d; spec 4-D3-C/C2,
+			// 9.3-4): a Massive asks USEFUL-DP != {} (D6 override => USEFUL
+			// by definition; fail-open on unknown facts). The gate is one
+			// call into the bridge's ONE law (MassiveBuyUseful) - it only
+			// removes dead candidates BEFORE the OrderBy below, so the
+			// strongest USEFUL alternative at the same threat wins the slot
+			// (skip + rerank; no cost is re-priced, the printed bill law
+			// stays untouched). This function is tactical-only by
+			// construction (GetFuzzyDeployable's mode gate); the legacy
+			// fuzzy branch above stays VERBATIM for mode-off.
+			.Where( x => TacticalAI.TacticalAIBridge.MassiveBuyUseful( x ) )
 			.ToList();
 		if ( candidates.Count == 0 )
 			return null;

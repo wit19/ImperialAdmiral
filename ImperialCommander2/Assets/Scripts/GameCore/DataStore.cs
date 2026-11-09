@@ -23,7 +23,7 @@ public static class DataStore
 	// the release); a release build resets it to the plain tag and turns
 	// green again. A GitHub RELEASE is only ever created when Thomas says
 	// so (04.11, after an auto-created #1007 release was deleted).
-	public static readonly string appVersion = "v1.0.1-dev.16";	// dev tree between releases; the 07.11 versioning law bakes the next-planned version with a -dev.N push counter here (release act resets it to the plain vX.Y.Z tag Thomas cuts; the update check only honours strict v<maj>.<min>.<pat> tags, so a -dev build honestly shows orange). P35 lockstep law (07.11): every dev tag commit bumps THIS constant and TacticalAiBuildStamp.Value in the same commit - the title badge must tell the same truth as the build stamp.
+	public static readonly string appVersion = "v1.0.1";	// dev tree between releases; the 07.11 versioning law bakes the next-planned version with a -dev.N push counter here (release act resets it to the plain vX.Y.Z tag Thomas cuts; the update check only honours strict v<maj>.<min>.<pat> tags, so a -dev build honestly shows orange). P35 lockstep law (07.11): every dev tag commit bumps THIS constant and TacticalAiBuildStamp.Value in the same commit - the title badge must tell the same truth as the build stamp.
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;

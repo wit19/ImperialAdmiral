@@ -8,6 +8,6 @@ namespace TacticalAI
     /// release section). No game behavior reads it; log-only.</summary>
     public static class TacticalAiBuildStamp
     {
-        public const string Value = "v1.0.1-dev.17";
+        public const string Value = "v1.0.1";
     }
 }

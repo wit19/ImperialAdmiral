@@ -1,4 +1,4 @@
-# CONCEPT: Interior law for Massive figures, live (v1, 2026-11-08)
+# CONCEPT: Interior law for Massive figures, live (v1.1, 2026-11-08)
 
 Status: CONCEPT — nothing in this document is implemented yet. Thomas asked for a
 feasibility concept (08.11: "Erstelle mal ein Konzept wie das realisierbar wäre"),
@@ -7,6 +7,11 @@ with two binding application demands from him:
 1. the law must hold when the AI **steers/rejects movement** for a Massive figure, and
 2. it must hold at **buy/deploy** time — the AI must not spend threat on a Massive
    that can never operate **in the area where the rebels are currently acting**.
+
+v1.1 (same day, Thomas: "lese kritisch gegen; finde eine Logik für Missionen mit
+erlaubten Massive-Figuren"): adds **D6 (mission override law)**, corrects D1
+(section coarseness — the any-tile-bans-section rule was rejected), rewords the
+seal-the-approach and inverse-error claims to what the data can actually back.
 
 Every "verified" statement below was measured on this tree (08.11, post-P36) or
 against the shipped rules text; every forward decision is marked as such.
@@ -82,9 +87,27 @@ predates (expansion ids), the biome label is the crosswalk
 The crosswalk table is data, shipped in the Core file, covered by a harness
 section — so a later ruling changes a row, not a code path.
 
-A SECTION's status derives from its owning tile(s): every tile under the section
-OPEN → OPEN; any tile BANNED → BANNED (a section the app cannot fully occupy with
-a Massive is not a Massive destination); no tile data / ambiguous tile → AMBIGUOUS.
+A SECTION's status derives from its owning tile(s) — **but the section is coarse**
+(07.11 section census: median 2, bulk 1-6 sections per mission while a mission
+carries ~17 tiles on average), so a section is NOT an interior property carrier.
+Three derived states, never two:
+
+* **OPEN** — no BANNED tile under the section: full Massive use.
+* **BANNED** — EVERY tile under the section is BANNED (a pure-interior section;
+  happens in room-shaped missions): a real hole in the Massive graph.
+* **MIXED** — interior tiles and exterior tiles share the section (the common
+  case in street-plus-room maps): the Massive graph treats the section as
+  traversable (the street half IS legal ground), but the law may not pretend
+  room-tiles are fine: the group's orders carry the printed reminder that it
+  must stay on exterior spaces **inside** that section (advisory line, D3-A).
+
+Consequence the concept must state plainly (self-correction 08.11): **enforcement
+is exact only where the app touches a tile — deployment points** (a DP resolves to
+its tile; BANNED tile → hard filter). **Movement lives at section granularity and
+can therefore only be exact against pure-interior (BANNED) sections; against MIXED
+sections it is advisory** (goal allowed + printed stay-out reminder). An earlier
+draft claimed "any BANNED tile bans the section" — that would have banned half the
+map over one interior tile; rejected.
 
 ### D2 — AMBIGUOUS policy (Thomas gate, census decides)
 
@@ -103,16 +126,22 @@ AMBIGUOUS under each candidate row — the decision is cheap once the numbers ex
 ### D3 — application points (Thomas' two demands + the two the design forces)
 
 **A. Steering / movement (demand 1).**
-* Goal candidates for a Massive group are filtered to OPEN sections; the
-  reachability/distance math (DistanceLowerBound over the observed graph) gains a
-  Massive variant computed on the OPEN-only subgraph. BANNED sections are holes in
-  the graph — never "unknown=permeable": the permeability law is for HERO belief
-  (hidden movement); interior status is static public map data, so holes are facts.
+* Goal candidates for a Massive group are filtered to OPEN **and MIXED** sections
+  (D1: only pure-BANNED sections are holes; MIXED is legal ground with a printed
+  stay-out reminder riding the order); the reachability/distance math
+  (DistanceLowerBound over the observed graph) gains a Massive variant computed
+  on the not-BANNED subgraph. BANNED sections are holes in the graph — never
+  "unknown=permeable": the permeability law is for HERO belief (hidden movement);
+  interior status is static public map data, so holes are facts.
+  A registered D6 override on the card disables the filter for that card entirely.
 * A Massive's target/focus that sits in a BANNED section (hero hides in a room —
   RR-legal for heroes) must never produce "move into the room" orders. Doctrine
   fallback: **seal the approach** — take/hold the nearest OPEN section adjacent to
   the target's section (blocker-law analogy already in the pattern tree), stated
-  honestly in the explain line: the printed rule, not a hiding of it.
+  honestly in the explain line: the printed rule, not a hiding of it. Honest
+  caveat (07.11 geometry census): which edge of the section carries the actual
+  door is UNKNOWABLE to the app — "seal" is a soft goal (hold the nearest lawful
+  neighbour), never a claim of door-blocking legality.
 * Mid-round: hero observation inside a BANNED section while a Massive is
   advancing = a plan-relevant fact INSIDE the round → rides the existing P33-H4b
   same-round REPLAN channel (fourth trigger fact).
@@ -120,11 +149,14 @@ AMBIGUOUS under each candidate row — the decision is cheap once the numbers ex
 **B. Deployment / landing (before the demand 2 economy question).**
 `DeploymentAnchors.ChooseScored` runs the tier table over candidate DPs
 (`TacticalAIBridge.cs:1935,2159`). The interior law sits **before** the tiers as a
-hard filter (a legality, not a preference): for a Massive card, candidate DPs on
-BANNED sections are removed; if the candidate set empties, the deployment fails
+hard filter (a legality, not a preference): **first the D6 override check (a
+registered override skips the filter for that card),** then for a Massive card,
+candidate DPs whose own tile resolves BANNED are removed — this layer is EXACT,
+because a DP sits on a known tile (no section coarseness involved); if the
+candidate set empties, the deployment fails
 honest (no spawn — the group simply does not arrive that stage) and the forensic
 line says why. Rails to cover (all of them, one seam each): mission-start is
-mission-authored and untouchable (mission wins — warn only, D4), attack/reinforce
+mission-authored and untouchable (its indoor placement registers the D6 override), attack/reinforce
 DP choice, landing d1/d2, onslaught loop, M13c optional-deploy window.
 `[dp-massive]` forensics row: `card,dp,section,status` per candidate pass.
 
@@ -161,12 +193,76 @@ Full table enforcement stays human, and the docs must say so (it already says
 
 ### D4 — what the app must NOT do
 
-* Never refuse a mission-authored initial Massive (mission rules override; Golden
-  Rules). It may log + show a passive warning line when such a group's belief
-  neighbourhood is BANNED-only — the mission author owns that contradiction.
+* Never refuse a mission-authored Massive placement — but an authored indoor
+  placement is not a mere warning case: it **registers the mission override**
+  (D6). Warning + veto-free behaviour without the override would paralyse the
+  mission's own figure (an indoor-starting Massive under an unlifted ban has no
+  legal re-entry and, in a pure-interior section, no lawful chase at all — the
+  app would fight its own deployment).
 * Never touch the legacy rail: every consumer sits behind `TacticalMissionActive()`
   (standing law), legacy bit-identical, Null-Law: no biome data for a mission →
   bit-identical to today's canon (pinned by fixture like `nahe_plan.null_eq_*`).
+
+### D6 — mission-permitted Massives (the "erlaubte Massive" law, Thomas 08.11)
+
+RR Golden Rules: *"Mission rules can override both card abilities and rules from
+this guide"* — the interior ban is a guide rule, so a mission may lift it. (The
+absoluteness clause covers "cannot" printed on **cards or missions**, not guide
+rules; and nothing on a card may lift the ban — card abilities are not an
+override source here.)
+
+The design insight: **the override does not need text understanding.** Mission
+authors express "here Massives may go indoors" **structurally** — by placing the
+Massive indoors themselves. Both placement channels are already structured,
+authored and persisted on this tree:
+
+1. **Initial deployment**: the `authored` origin of the M14e `deployLedger`
+   (mission file's own pointList, 293/297 start groups).
+2. **Event reinforcements**: the authored Specific-event DPs written at deploy
+   time (same ledger).
+
+**Override law (deterministic, fail-closed, zero text parsing):**
+
+```
+at mission start, per group the mission authors:
+  card IsMassive AND its authored DP(s) resolve to BANNED tiles
+      => register override (mission, card)  [forensics: massive-override::card<-mission(author-placement)]
+for a registered (mission, card):
+  the interior ban is INACTIVE for that card's groups in that mission
+  (BANNED sections are treated OPEN by goal choice, DP filter and USEFULNESS)
+```
+
+Semantics decisions (each one a candidate Thomas gate; default = the conservative
+middle):
+
+* **Scope: card × mission.** The narrowest defensible scope is the single group;
+  but the mission's statement is about the figure type in its spaces, and keeping
+  two behaviours alive for two groups of one card is a law the printed rules do
+  not contain. Default: card × mission; other missions keep the ban untouched.
+* **Full lift vs. leave-only.** RR only forbids *entering*; a figure already
+  indoors could legally leave even without any override. A "leave-only" variant
+  (indoor start tolerated, indoor re-entry still banned) is mechanically
+  constructible, but it is an invented halfway state no mission text uses —
+  an authored indoor placement plus event-respawn indoors (e.g., throne-room
+  guards) would break under it. Default: full lift for that (mission, card).
+* **Two-Massive rule untouched**: the override is permission for *interior*, not
+  a general keyword suspension — `two_massive_same_space` and the push rules stay.
+* **Economy interacts cleanly**: a registered override makes the card USEFUL by
+  definition in that mission (D3-C gate short-circuits — the mission itself
+  proved indoor relevance by placing it there).
+
+**Residual case that stays honest (documented, not silently swallowed):** a
+mission that *textually* permits indoor Massive use **without ever placing one
+indoors** (e.g., "in this mission the AT-ST may enter the compound"). That
+permission lives only in free multilingual text; auto-applying a phrase-scan
+risks false-positive rule violations. v1 stance: a conservative audit pattern
+(interior-noun AND permission-verb, per language) emits a **log line + census
+entry only** — no behaviour change; the table human decides (the orders are
+advisory by doctrine: the AI proposes, the human acts, and the popup INFO line
+will say the ban holds *unless the mission says otherwise*). H1 census measures
+how many shipped missions hit text-permit-without-indoor-placement — if the list
+is empty or tiny, this residual can be closed by hand-inspection into the pinned
+crosswalk data instead of by any parser.
 
 ### D5 — persistence
 
@@ -181,23 +277,34 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   `tools/massive_interior_census.py`, fail-closed like the geometry census:
   over all shipped missions: Massive-bearing groups (keyword field in
   `wiki_data/imperial_units.json` cross-checked against live `card.IsMassive`
-  source), each DP's section status under candidate crosswalks, AMBIGUOUS share
-  per expansion, per-mission "Massive has zero usable DP" count. Output
+  source), each DP's TILE status under candidate crosswalks, MIXED share per
+  expansion, AMBIGUOUS share per expansion, per-mission "Massive has zero usable
+  DP" count, **D6 counts: authored-indoor Massive placements (initial + event DPs)
+  = override-candidate list, and the text-permit-without-placement residual list**
+  (audit pattern hits only, no behaviour). Output
   `docs/MASSIVE_interior_census.md` (EN, generated). **Thomas gate: D2 policy +
-  Halls/Jabba/Imperial rows.**
+  Halls/Jabba/Imperial rows + D6 semantics (scope, full-lift).**
 * **H2 — Core law + fixtures.** `InteriorLaw.cs`, harness section
-  `massive_interior.json`: status derivation, OPEN-subgraph distance law, Null-Law
-  bit-identity, seal-the-approach adjacency law. No Unity calls.
+  `massive_interior.json`: OPEN/BANNED/MIXED derivation, not-BANNED-subgraph
+  distance law, **D6 override law (register from authored placements; card×mission
+  scoping; override survives resync/replay as derived-not-stored)** , Null-Law
+  bit-identity, seal-the-approach adjacency law (soft-goal wording pinned). No
+  Unity calls.
 * **H3 — live plumbing + deployment rails.** section→tile→status map in the bridge
-  (ActiveNow seam), hard DP filter on all five rails (B), `[dp-massive]` forensics,
+  (ActiveNow seam), override registry built from the deployLedger authored rows,
+  hard DP filter on all five rails (B, override-first), `[dp-massive]` +
+  `massive-override::` forensics,
   DeploymentFilterGate extension (or new MassiveInteriorGate) pinning the rails.
 * **H4 — steering + player words.** Massive subgraph goals + seal-the-approach
-  doctrine branch (A), REPLAN trigger (A), explain/info keys ×11 languages
-  (`ordExplainMassiveSeal`, `ordInfoMassiveInterior`; UiCompletenessGate), WIKI +
+  doctrine branch (A), MIXED-section stay-out reminder on the order, REPLAN
+  trigger (A), explain/info keys ×11 languages
+  (`ordExplainMassiveSeal`, `ordInfoMassiveInterior` — the info text states the
+  ban "unless the mission says otherwise"; UiCompletenessGate), WIKI +
   MECHANICS sections, and the legacy-diff table row corrected to what the live
   rail actually enforces at that point.
 * **H5 — economy usefulness (demand 2).** buy/swap ranking gate (C) + Strongest-
-  Alternative rerouting + gate fixtures. Deliberately last: it needs the playtest
+  Alternative rerouting + **D6 short-circuit (override ⇒ USEFUL by definition)** +
+  gate fixtures. Deliberately last: it needs the playtest
   data H3/H4's forensic lines produce.
 
 ## 6. Fairness invariants (each one gets a test)
@@ -206,7 +313,8 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
    hidden information, no dice.
 2. Legacy bit-identical (seam law).
 3. Null-Law: no biome/tile data → today's canon exactly.
-4. Mission-authored content outranks the app's opinion (warn, never veto).
+4. Mission-authored content outranks the app's opinion (register the D6 override
+   from authored placements; never veto).
 5. Every rejection of a DP/goal/buy is forensic-loggable and human-readable
    (status + section + rule), like every other law on this rail.
 
@@ -219,17 +327,27 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   the RR enumeration is the identity check.
 * Whether `Halls`/`Jabba`/`Imperial` biomes are interiors in their campaigns —
   Thomas rules after H1.
-* Section-level coarseness: a section that spans a full interior tile is BANNED
-  wholesale; the RR "space" granularity is finer than our planning layer. The
-  consequence is conservative at deployment (a Massive skips a whole room section
-  — correct) and conservative at movement goals (never sends it inside). The
-  inverse error (declaring an interior section OPEN) cannot occur for enumerated
-  tiles because the whole tile is interior by RR text.
+* Section-level coarseness (revised by the D1 self-correction): MIXED sections
+  stay traversable — so the app CAN place a Massive goal in a section that also
+  contains interior tiles. That is a deliberate, disclosed trade: the ORDER names
+  the section, the printed stay-out reminder governs the tile-level detail, and
+  the human at the board executes (advisory doctrine). What the law guarantees
+  exactly is the DP layer (tile-known) and pure-BANNED sections (whole-section
+  interior). The earlier draft's claim "the inverse error cannot occur" was wrong
+  under the any-tile rule it assumed; it is replaced by this honest split.
+* The whole crosswalk stands on the tile-id mapping (`dimensions.json` ids vs the
+  RR "19A–36A" numbering vs expansion id spaces). A wrong mapping row is the ONE
+  error class that could wrongly-allow interiors even at the DP layer — H1 must
+  not just generate the mapping, it must VERIFY it against every RR-enumerated id
+  and fail closed (refusing to ship the law) if any enumerated id is unmatched.
 
 ## 8. Playtest validation (definition of done)
 
 Next playtests' forensic lines carry the evidence: `[dp-massive]` rows on every
-reinforcement decision with non-empty status; `SD-ZONES`/explain lines showing a
-Massive sealing instead of chasing when a hero ducks indoors; zero `massive into
-BANNED` orders across all missions of the session. That, not a green gate alone,
-closes the chain.
+reinforcement decision with non-empty status; `massive-override::` rows for every
+mission that authored an indoor Massive (the D6 list must match the H1 census
+prediction exactly — an override that appears at runtime but was not in the
+census means the census and the live data disagree); `SD-ZONES`/explain lines
+showing a Massive sealing instead of chasing when a hero ducks indoors; zero
+`massive into BANNED` orders across all missions of the session. That, not a
+green gate alone, closes the chain.

@@ -325,6 +325,72 @@ namespace TacticalAiHarness
                     Check("interior[dpfilter." + name + "].identical.winner", pick(pool), pick(surv));
                 }
             }
+
+            // ---- P41d (card t_59ba21ee; spec 9.3-2): the anchor mask ----
+            // The SAME InteriorLaw.AnchorMaskFor the bridge helper
+            // MassiveAnchorMask calls at every HeroInSection read site.
+            // Section statuses come from the P41b census rows above (CORE4
+            // four-state map); edges are hand-written (P41b law: hand-
+            // written vectors only for edges). An unknown section reads
+            // Ambiguous - the snapshot's own SectionStatusOf unknown law.
+            foreach (var raw in Json.AsList(v["anchor"]))
+            {
+                var c = Json.AsDict(raw);
+                var name = Json.AsStr(c["name"]);
+                var status = new Dictionary<string, SectionStatusT>(StringComparer.Ordinal);
+                foreach (var kv in Json.AsDict(c["status"]))
+                    status[kv.Key] = SectionStatusOf(Json.AsStr(kv.Value));
+                var adj = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+                foreach (var kv in Json.AsDict(c["edges"]))
+                {
+                    var l = new List<string>();
+                    foreach (var n in Json.AsList(kv.Value)) l.Add(Json.AsStr(n));
+                    adj[kv.Key] = l;
+                }
+                Func<string, IEnumerable<string>> nb = s =>
+                    adj.ContainsKey(s) ? adj[s] : new List<string>();
+                Func<string, SectionStatusT> st = s =>
+                    status.ContainsKey(s) ? status[s] : SectionStatusT.Ambiguous;
+                var m = InteriorLaw.AnchorMaskFor(
+                    Json.AsStr(c["anchor"]),
+                    Json.AsBool(c["massive"]), Json.AsBool(c["override"]), nb, st);
+                var exp = Json.AsDict(c["expect"]);
+                Check("interior[anchor." + name + "].section",
+                    Json.AsStr(exp["section"]), m.Section ?? "");
+                Check("interior[anchor." + name + "].fact",
+                    Json.AsStr(exp["fact"]), m.Fact);
+            }
+
+            // ---- P41d (spec 9.3-3/5-H4): REPLAN fact 4, interior ingress --
+            // The SAME InteriorLaw.IngressFact the EnsureRound seam calls
+            // behind the three P33-H4b feed facts. anchors = [hero,
+            // section-at-build] in caller (capture) order; current = the
+            // hero's section as read mid-round. expect = the hit hero, ""
+            // = the fact stays silent.
+            foreach (var raw in Json.AsList(v["replan"]))
+            {
+                var c = Json.AsDict(raw);
+                var name = Json.AsStr(c["name"]);
+                var status = new Dictionary<string, SectionStatusT>(StringComparer.Ordinal);
+                foreach (var kv in Json.AsDict(c["status"]))
+                    status[kv.Key] = SectionStatusOf(Json.AsStr(kv.Value));
+                Func<string, SectionStatusT> st = s =>
+                    status.ContainsKey(s) ? status[s] : SectionStatusT.Ambiguous;
+                var cur = new Dictionary<string, string>(StringComparer.Ordinal);
+                foreach (var kv in Json.AsDict(c["current"]))
+                    cur[kv.Key] = Json.AsStr(kv.Value);
+                var anchors = new List<KeyValuePair<string, string>>();
+                foreach (var raw2 in Json.AsList(c["anchors"]))
+                {
+                    var a = Json.AsList(raw2);
+                    anchors.Add(new KeyValuePair<string, string>(
+                        Json.AsStr(a[0]), Json.AsStr(a[1])));
+                }
+                var hit = InteriorLaw.IngressFact(anchors,
+                    h => cur.ContainsKey(h) ? cur[h] : "", st);
+                Check("interior[replan." + name + "].hit",
+                    Json.AsStr(c["expect"]), hit ?? "");
+            }
         }
     }
 }

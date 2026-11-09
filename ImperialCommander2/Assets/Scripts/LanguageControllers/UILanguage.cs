@@ -244,6 +244,17 @@ public class UITacticalAI
 	// ziel=OBJEKT:<name> log notation stays language-neutral.
 	public string ordTargetObjekt, ordExplainObjekt,
 		ordPolarJagt, ordPolarSchuetzt, ordPolarNeutral;
+	// P41d (card t_59ba21ee; CONCEPT_massive_interior_v1.md v1.3 9.3-2,
+	// 4-D3-A, 5-H4): the two Massive interior rails. ordExplainMassiveSeal
+	// rides the gated EXPLAIN block when the anchor mask sealed a BANNED
+	// goal anchor (the printed rule, honestly stated); ordInfoMassiveInterior
+	// rides the existing INFO-TEXT block on Massive activations whose goal
+	// anchor reads MIXED (ban + "unless the mission says otherwise" + the
+	// printed stay-out reminder). Both carry NO argument (coord-free-Law:
+	// no names, no tile lists, no coordinates). Reader null-safe: a missing
+	// key skips the line (no-blank-row law); UiCompletenessGate pins all 11
+	// languages against En.
+	public string ordExplainMassiveSeal, ordInfoMassiveInterior;
 	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
 	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }

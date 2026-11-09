@@ -3198,13 +3198,14 @@ namespace TacticalAI
                     // any popup/order consumer sees it - every Massive
                     // activation, not just the TryObjectTarget whitelist
                     // lane (basis=mark/achse rows veto the object seam but
-                    // their order still names this hero). The fact sets the
-                    // disclosure markers the EXPLAIN/INFO seams read; the
-                    // masked value itself is this activation's legal goal
-                    // anchor (Banned hole -> seal section or honest
-                    // absence "", Mixed stays the goal with the stay-out
-                    // reminder). Non-Massive/covered/snapshot-less: fact ""
-                    // and no marker - canon line bit-identical.
+                    // their order still names this hero). This read's fact
+                    // sets the disclosure markers the EXPLAIN/INFO seams
+                    // read (seal => explain, MIXED => stay-out info); the
+                    // substituted anchor VALUE is consumed where the goal
+                    // acts - the TryObjectTarget focus read runs the same
+                    // helper and masks the anchor itself. Non-Massive/
+                    // covered/snapshot-less: fact "" and no marker - canon
+                    // line bit-identical.
                     _interiorAnchorFactThis = "";
                     MassiveAnchorMask(cd.id,
                         sdSpace != null ? sdSpace.HeroInSection(dec.HeroId) : null,

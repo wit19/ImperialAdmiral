@@ -897,7 +897,9 @@ public static class MassiveInteriorGate
         int iGuard = bridge.IndexOf("if (replan == null)\n                {", StringComparison.Ordinal);
         if (iFeed < 0 || iFact < 0)
             Fail("P41d: fact-4 wiring missing (feed trigger=" + iFeed + " ingress trigger=" + iFact + ")");
-        else if (iGuard >= 0 && (iGuard < iFeed || iGuard > iFact))
+        else if (iGuard < 0)
+            Fail("P41d: the second-check guard moved off the ingress block - the precedence law went unwatched");
+        else if (iGuard < iFeed || iGuard > iFact)
             Fail("P41d: the interior fact check is not the SECOND check behind the feed facts - the three P33 facts lost precedence");
         else Ok("P41d: REPLAN fact 4 rides the P33-H4b block, second behind the three feed facts (spec 9.3-3)");
         if (bridge.IndexOf("[interior-ingress] hero=", StringComparison.Ordinal) < 0)

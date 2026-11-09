@@ -282,6 +282,19 @@ namespace TacticalAI
         // P38: the Bedrohungs-Sektion der AKTUELLEN Aktivierung ("" = keine);
         // TryObjectTarget schreibt, der Plan-Marker liest, ResetSession löscht.
         static string _preyThreatSecThis;
+        // P41d (card t_59ba21ee; spec 9.3-2/9.3-3): per-activation
+        // disclosure marker of the anchor-mask read - "" | seal |
+        // seal_missing | advisory | ambiguous (InteriorLaw.Mask*). The
+        // EXPLAIN seam reads seal/seal_missing (ordExplainMassiveSeal), the
+        // INFO seam reads advisory (ordInfoMassiveInterior). Reset per
+        // TrySelectTarget call - the same law as _preyThreatSecThis above.
+        static string _interiorAnchorFactThis;
+        // P41d ingress capture for REPLAN fact 4 (9.3-3): the anchor heroes
+        // the round plan consumed -> their section AT BUILD TIME, insertion
+        // order deterministic (round focus first, then the block axis
+        // actor). null = not captured (no Massive-without-override in the
+        // roster, no snapshot, reference mode) - the fact stays silent.
+        static List<KeyValuePair<string, string>> _interiorAnchorsAtBuild;
         static Tac.ThreatLedger _threatLedger;
         static int _ledgerRound = -1;
 
@@ -323,6 +336,11 @@ namespace TacticalAI
             _roundFocusRanked = null;
             _focusCandsDbg = null;
             _roundFocusPosture = null;
+            // P41d: the interior per-activation fact and the build-time
+            // ingress capture die with the session too (stale anchors must
+            // never fire a REPLAN from the previous mission - same law).
+            _interiorAnchorFactThis = "";
+            _interiorAnchorsAtBuild = null;
             _doctrineBase = null;
             _doctrineEffective = null;
             _patternRoll.Clear();
@@ -740,6 +758,40 @@ namespace TacticalAI
                             Feed.Events, _planSeqAtBuild, roundNo);
                 }
                 catch { replan = null; }
+                // P41d REPLAN FACT 4 (card t_59ba21ee; spec 9.3-3, 5-H4):
+                // the fourth staleness fact, not a new machine - a tracked
+                // anchor hero (round focus, block axis) whose section
+                // SWAPPED into a BANNED interior section mid-round makes
+                // this round's plan stale the same way a feed fact does:
+                // one same-round rebuild through the SAME deterministic
+                // path. The three feed facts keep precedence (checked
+                // first); the interior fact speaks only while they are
+                // silent. No capture, no snapshot, no flip -> the fact
+                // stays silent (Null-Law) and the return is exactly
+                // today's.
+                if (replan == null)
+                {
+                    try
+                    {
+                        var cap = _interiorAnchorsAtBuild;
+                        var spc = cap != null && cap.Count > 0 ? LastSectionSpace : null;
+                        var snapRe = spc != null ? EnsureInteriorSnapshot() : null;
+                        if (snapRe != null && !snapRe.IsEmpty)
+                        {
+                            var hit = Tac.InteriorLaw.IngressFact(cap,
+                                hero => spc.HeroInSection(hero),
+                                sec => snapRe.SectionStatusOf(sec));
+                            if (hit != null)
+                            {
+                                replan = "InteriorIngress";
+                                Debug.Log("[interior-ingress] hero=\"" + hit +
+                                          "\" entered a BANNED interior section inside round " + roundNo +
+                                          " - fact 4 for the P33-H4b replan block (spec 9.3-3)");
+                            }
+                        }
+                    }
+                    catch { replan = null; }   // fail-open: a broken fact never forces a rebuild
+                }
                 if (replan == null) return;
                 Debug.Log("TacticalAIBridge::REPLAN r" + roundNo + " trigger=" + replan +
                           " [P33-H4b: mission fact moved inside the round - focus + order rebuilt same-round]");
@@ -1385,6 +1437,19 @@ namespace TacticalAI
                 // doctrine line, M6p law); InfoText switch keeps its gate.
                 if (plan.Pattern == "guard" && !string.IsNullOrEmpty(Li.ordInfoGuardZone))
                     infoLines.Add(Li.ordInfoGuardZone);
+                // P41d (card t_59ba21ee; spec 9.3-2/4-D3-A): the MIXED
+                // anchor advisory. A Mixed goal stays the goal (D1: mixed
+                // ground is legal for Massive - the ban covers pure-interior
+                // sections only); the order carries the printed stay-out
+                // reminder, and the key states the ban honestly WITH its
+                // "unless the mission says otherwise" clause (5-H4). No
+                // tile list, no invented reasons (4-D3-A). The line rides
+                // the EXISTING INFO-TEXT switch inside the existing merged
+                // INFO block (popup declutter law 9.6: no new always-on
+                // block); missing key skips the sentence (no-blank-row law).
+                if (_interiorAnchorFactThis == Tac.InteriorLaw.MaskAdvisory &&
+                    !string.IsNullOrEmpty(Li.ordInfoMassiveInterior))
+                    infoLines.Add(Li.ordInfoMassiveInterior);
                 if (infoLines.Count > 0)
                 {
                     var withInfo = new List<string>(plan.Blocks ?? new string[0]);
@@ -1920,6 +1985,43 @@ namespace TacticalAI
             EnsureCatalog();
             Tac.DeploymentCard core;
             return _catalog != null && _catalog.TryGetValue(cardId, out core) && core.IsMassive;
+        }
+
+        // P41d (card t_59ba21ee; CONCEPT_massive_interior_v1.md v1.3 9.3-2):
+        // the ONE anchor-mask decision every HeroInSection read site shares.
+        // The gates (Null-Law snapshot, Massive, D6 override, four-state)
+        // live in InteriorLaw.AnchorMaskFor - one law, read at each site,
+        // never a second implementation. A Banned anchor returns the seal-
+        // the-approach section (spec 4-D3-A) or "" (honest absence - the
+        // consumer gets no goal, never a chase into the hole); Mixed keeps
+        // the anchor and says advisory (the printed stay-out reminder rides
+        // the order); Ambiguous passes fail-open (D2) with its fact. The
+        // [interior-anchor] forensic line mirrors the [dp-massive] shape:
+        // card, fact, anchor as read, masked value - the printed rule is
+        // never hidden from the log (the explain/INFO popups state it to
+        // the players, keys ordExplainMassiveSeal / ordInfoMassiveInterior).
+        static readonly List<string> NoNeighbours = new List<string>();
+
+        static string MassiveAnchorMask(string cardId, string anchorSec, out string fact)
+        {
+            fact = Tac.InteriorLaw.MaskNone;
+            if (string.IsNullOrEmpty(anchorSec)) return anchorSec;   // Null-Law
+            var snap = EnsureInteriorSnapshot();
+            if (snap == null || snap.IsEmpty) return anchorSec;      // no derived map: law inactive
+            var graph = LastSectionSpace != null ? LastSectionSpace.Graph : null;
+            var r = Tac.InteriorLaw.AnchorMaskFor(
+                anchorSec,
+                CatalogCardIsMassive(cardId),
+                snap.Overrides.Covers(cardId),
+                sec => graph != null ? (IEnumerable<string>)graph.NeighborsOf(sec) : NoNeighbours,
+                sec => snap.SectionStatusOf(sec));
+            fact = r.Fact;
+            if (r.Fact != Tac.InteriorLaw.MaskNone)
+                Debug.Log("[interior-anchor] card=" + cardId + " fact=" + r.Fact +
+                          " anchor=" + anchorSec + " masked=" +
+                          (string.IsNullOrEmpty(r.Section) ? "-" : r.Section) +
+                          " (spec 4-D3-A: Banned hole -> seal, Mixed -> advisory, Ambiguous -> fail-open)");
+            return r.Section;
         }
 
         /// <summary>GetActiveDeploymentPoint hook: deterministic choice among
@@ -2794,7 +2896,33 @@ namespace TacticalAI
                          && LastSectionSpace != null)
                 {
                     var sec = LastSectionSpace.HeroInSection(view.AxisActorName);
-                    if (!string.IsNullOrEmpty(sec)) outp.Add(sec);
+                    if (!string.IsNullOrEmpty(sec))
+                    {
+                        // P41d (spec 9.3-2 third pinned anchor read,
+                        // bridge:2685 before the shifts): the axis zone an
+                        // anchor stands on can be a BANNED hole for Massive
+                        // cards. This list is a SHARED scoring input for all
+                        // buy/reinforce candidates (BudgetPlanner.Rank) -
+                        // substituting the hole here would bend non-Massive
+                        // and covered scoring too, which the law limits to
+                        // Massive-without-override only. The per-card view
+                        // on the buy lane is the economy USEFULNESS seam
+                        // (spec 5-H5 "buy question = USEFUL-DP != {}"), the
+                        // hop the law deliberately places last; P41e wires
+                        // it through the per-action BudgetAction lane. What
+                        // this hop honestly owes HERE is the forensic line.
+                        var snapAx = EnsureInteriorSnapshot();
+                        if (snapAx != null && !snapAx.IsEmpty)
+                        {
+                            var stAx = snapAx.SectionStatusOf(sec);
+                            if (stAx == Tac.SectionStatusT.Banned ||
+                                stAx == Tac.SectionStatusT.Ambiguous)
+                                Debug.Log("[interior-anchor] rail=procurement anchor=" + sec +
+                                          " status=" + stAx +
+                                          " - shared axis zone stays (per-card Massive view rides the economy seam, spec 5-H5)");
+                        }
+                        outp.Add(sec);
+                    }
                 }
             }
             catch { return new List<string>(); }
@@ -2926,6 +3054,7 @@ namespace TacticalAI
         {
             heroName = null; why = null; reactionTail = null;
             _preyThreatSecThis = "";   // P38: fresh activation, fresh threat marker
+            _interiorAnchorFactThis = "";   // P41d: same law for the anchor-mask fact
             var heroes = DataStore.deployedHeroes;
             if (heroes == null || heroes.Count == 0) return false;
             var living = heroes.Where(h => h.heroState == null || !h.heroState.isDefeated).ToList();
@@ -3063,6 +3192,24 @@ namespace TacticalAI
                     _roundFocus = dec;
                     _roundFocusHero = dec.HeroId;
                     _roundFocusRound = ordView.Round;
+                    // P41d (card t_59ba21ee; spec 9.3-2 "wherever the move-
+                    // toward zone is resolved"): the GOAL anchor read for
+                    // this activation goes through the anchor mask BEFORE
+                    // any popup/order consumer sees it - every Massive
+                    // activation, not just the TryObjectTarget whitelist
+                    // lane (basis=mark/achse rows veto the object seam but
+                    // their order still names this hero). This read's fact
+                    // sets the disclosure markers the EXPLAIN/INFO seams
+                    // read (seal => explain, MIXED => stay-out info); the
+                    // substituted anchor VALUE is consumed where the goal
+                    // acts - the TryObjectTarget focus read runs the same
+                    // helper and masks the anchor itself. Non-Massive/
+                    // covered/snapshot-less: fact "" and no marker - canon
+                    // line bit-identical.
+                    _interiorAnchorFactThis = "";
+                    MassiveAnchorMask(cd.id,
+                        sdSpace != null ? sdSpace.HeroInSection(dec.HeroId) : null,
+                        out _interiorAnchorFactThis);
                     var L0 = UIx;
                     if (L0 != null)     // broken language asset -> reference path (legacy popup)
                     {
@@ -3297,6 +3444,25 @@ namespace TacticalAI
                                 if (!string.IsNullOrEmpty(focusSec)) break;
                             }
                 }
+                // P41d (card t_59ba21ee; spec 9.3-2 - this is the pinned
+                // HeroInSection anchor read, 3180/3185 before the P41c
+                // shift): the focus anchor of a Massive card WITHOUT a D6
+                // override never reaches the Core distance math as a Banned
+                // hole. Banned -> seal-the-approach section (4-D3-A); with
+                // no open ground reachable the seam answers with honest
+                // absence (no object target this activation - the canon
+                // Fokus/Reaktion fallback law decides, never a chase into
+                // the hole). Mixed keeps the anchor and marks advisory
+                // (stay-out reminder rides the INFO block); Ambiguous
+                // passes fail-open (D2). Non-Massive and covered cards: the
+                // value passes untouched - their line stays bit-identical.
+                string maskFact;
+                var focusSecMasked = MassiveAnchorMask(cd.id, focusSec, out maskFact);
+                if (maskFact == Tac.InteriorLaw.MaskSealMissing) return;   // honest absence, never a chase
+                if (maskFact != Tac.InteriorLaw.MaskNone &&
+                    string.IsNullOrEmpty(_interiorAnchorFactThis))
+                    _interiorAnchorFactThis = maskFact;
+                focusSec = focusSecMasked;
                 // ---- P38 (card t_11ebb843): NEUTRALE Beute nur in der Mischung.
                 // Gate order per card: Muster (oben) -> Neutral-Check ->
                 // Bedrohungs-Gatter -> Quota. The CORE ordering seam
@@ -3792,6 +3958,7 @@ namespace TacticalAI
             // null: today's Konten-Punkt fallback, bit-identical (Null-Law,
             // risk.json pinned).
             string blockHold = null;
+            string axisAnchor = null;   // P41d: the anchor as read, for the anchor-mask seam
             try
             {
                 if (view != null && !view.ObjectiveForEmpire
@@ -3807,6 +3974,7 @@ namespace TacticalAI
                             anchor = space.HeroInSection(view.AxisActor);
                         if (!string.IsNullOrEmpty(anchor))
                         {
+                            axisAnchor = anchor;   // P41d
                             var live = LiveEscapeZones(view.EscapeSections);
                             if (live.Count > 0)
                                 blockHold = Tac.SectionConsumers.BlockSchnittstelle(
@@ -3835,6 +4003,20 @@ namespace TacticalAI
             // route (-1 neutral) -> null -> the Konten-Punkt clause stays
             // bit-identical (risk.json pinned).
             string objectHold = null;
+            // P41d prologue (moved up from below the block-achse block so
+            // the object-guard's pinned hero reads can use it - spec §9.0
+            // mask-point table '+3738+3739'). Same calls, same order of
+            // derivation - the snapshot is cached, facts is a method param.
+            var snapHold = EnsureInteriorSnapshot();
+            bool interiorHoldVariant = false;   // anchor reads as a hole for Massive-without-override
+            string blockHoldMassive = null;     // sealed hold (null = honest absence -> Konten fallback)
+            bool anyUncoveredMassive = false;
+            if (snapHold != null && !snapHold.IsEmpty)
+                foreach (var f0 in facts)
+                    if (CatalogCardIsMassive(f0.CardId) && !snapHold.Overrides.Covers(f0.CardId))
+                    { anyUncoveredMassive = true; break; }
+            string objectHoldMassive = null;    // masked hero-set hold (pinned read site)
+            bool objectGuardVariant = false;    // a hero read sealed -> per-group slot engages
             try
             {
                 if (view != null)
@@ -3859,6 +4041,53 @@ namespace TacticalAI
                         if (heroSections.Count > 0 && liveObj.Count > 0)
                             objectHold = Tac.SectionConsumers.ObjectGuardSchnittstelle(
                                 oSpace.Graph, heroSections, liveObj);
+                        // P41d (spec §9.0/§9.3-2 mask-point '+3738+3739'):
+                        // these per-hero reads are Massive-legality reads
+                        // too - a hero hiding in a hole is watched via its
+                        // SEAL section ("patrol the room exits"), never a
+                        // guard line that treats the room as transit. The
+                        // canon heroSections above stay raw (bit-identity);
+                        // MIXED/AMBIGUOUS heroes keep their raw section
+                        // (AnchorMaskFor substitutes Banned only). A sealed
+                        // hero with no open neighbour drops out (no lawful
+                        // watch post) - all dropped => honest absence.
+                        if (anyUncoveredMassive && snapHold != null && !snapHold.IsEmpty &&
+                            heroSections.Count > 0 && liveObj.Count > 0)
+                        {
+                            var maskedHeroes = new List<string>();
+                            bool sealedAny = false;
+                            foreach (var hsec in heroSections)
+                            {
+                                var mres = Tac.InteriorLaw.AnchorMaskFor(
+                                    hsec, true, false,
+                                    sec => (IEnumerable<string>)oSpace.Graph.NeighborsOf(sec),
+                                    sec => snapHold.SectionStatusOf(sec));
+                                if (mres.Fact == Tac.InteriorLaw.MaskSeal) sealedAny = true;
+                                else if (mres.Fact != Tac.InteriorLaw.MaskSealMissing)
+                                {
+                                    if (!string.IsNullOrEmpty(mres.Section) &&
+                                        !maskedHeroes.Contains(mres.Section))
+                                        maskedHeroes.Add(mres.Section);
+                                    continue;
+                                }
+                                else continue;   // seal_missing: no lawful watch post for this hero
+                                if (!string.IsNullOrEmpty(mres.Section) &&
+                                    !maskedHeroes.Contains(mres.Section))
+                                    maskedHeroes.Add(mres.Section);
+                            }
+                            if (sealedAny)
+                            {
+                                objectGuardVariant = true;
+                                objectHoldMassive = maskedHeroes.Count > 0
+                                    ? Tac.SectionConsumers.ObjectGuardSchnittstelle(
+                                        oSpace.Graph, maskedHeroes, liveObj)
+                                    : null;   // honest absence -> Konten-Punkt
+                                Debug.Log("[interior-anchor] rail=object-guard fact=seal heroes=" +
+                                          heroSections.Count + " masked=" + maskedHeroes.Count +
+                                          " sealedHold=" + (objectHoldMassive ?? "-") +
+                                          " (per-group variant, spec 9.3-2)");
+                            }
+                        }
                     }
                 }
             }
@@ -3868,13 +4097,107 @@ namespace TacticalAI
                 Debug.LogWarning("TacticalAIBridge::object guard failed (Konten-Punkt fallback): " + e.Message);
             }
             if (blockHold == null) blockHold = objectHold;
+            // P41d: the object-guard hold only rides the free slot - when
+            // the mission-END block wiring already provided a hold, no
+            // variant may replace it (canon priority, bit-identity).
+            bool canonHoldFromObjectGuard = blockHold != null && blockHold == objectHold;
             _blockHoldDbg = blockHold ?? "";
+            // ---- P41d seam 2, second pinned anchor read (bridge:3694/3696
+            // before the shifts; spec 9.3-2): the block-achse anchor through
+            // the interior law - but ONLY as a per-group variant. The canon
+            // blockHold above stays derived from the raw anchor: non-Massive
+            // groups and D6-covered cards keep their line bit-identical.
+            // A Banned anchor (the axis actor stands in a hole) yields a
+            // sealed Schnittstelle over the seal section instead; with no
+            // open ground reachable the Massive group gets NO hold at all
+            // (the Konten-Punkt fallback, never a hold on the hole). MIXED/
+            // AMBIGUOUS need no replacement (4-D3-A): the stand duty holds a
+            // Schnittstelle OUTSIDE the section, it never enters - the
+            // stay-out reminder would have nothing to remind about.
+            // The capture block below feeds REPLAN fact 4 (9.3-3/5-H4).
+            // (snapHold/anyUncoveredMassive/interiorHoldVariant/blockHoldMassive
+            // declarations moved up with the P41d prologue - same scope.)
+            try
+            {
+                var ispc = LastSectionSpace;
+                if (anyUncoveredMassive && ispc != null && !string.IsNullOrEmpty(axisAnchor))
+                {
+                    var ares = Tac.InteriorLaw.AnchorMaskFor(
+                        axisAnchor, true, false,
+                        sec => (IEnumerable<string>)ispc.Graph.NeighborsOf(sec),
+                        sec => snapHold.SectionStatusOf(sec));
+                    if (ares.Fact == Tac.InteriorLaw.MaskSeal)
+                    {
+                        interiorHoldVariant = true;
+                        var liveM = view != null ? LiveEscapeZones(view.EscapeSections) : new List<string>();
+                        if (liveM.Count > 0)
+                            blockHoldMassive = Tac.SectionConsumers.BlockSchnittstelle(
+                                ispc.Graph, ares.Section, liveM);
+                        Debug.Log("[interior-anchor] rail=block-achse anchor=" + axisAnchor +
+                                  " fact=seal masked=" + ares.Section +
+                                  " sealedHold=" + (blockHoldMassive ?? "-") +
+                                  " (per-group variant, spec 9.3-2)");
+                    }
+                    else if (ares.Fact == Tac.InteriorLaw.MaskSealMissing)
+                    {
+                        interiorHoldVariant = true;   // blockHoldMassive stays null: honest absence
+                        Debug.Log("[interior-anchor] rail=block-achse anchor=" + axisAnchor +
+                                  " fact=seal_missing - no open ground reachable, Massive hold falls back to the Konten-Punkt (never a hold on the hole)");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("TacticalAIBridge::interior block-achse mask failed (canon hold): " + e.Message);
+            }
+            // REPLAN fact 4 capture (spec 9.3-3): the anchor heroes this
+            // round's plan consumed -> their section AT BUILD TIME. Fresh
+            // list per build: after a rebuild the capture is the NEW
+            // baseline, so an anchor that already sits in the hole never
+            // re-triggers (no trigger loop, deterministic).
+            _interiorAnchorsAtBuild = null;
+            try
+            {
+                var spcCap = LastSectionSpace;
+                if (anyUncoveredMassive && spcCap != null && view != null)
+                {
+                    var cap = new List<KeyValuePair<string, string>>();
+                    if (!string.IsNullOrEmpty(_roundFocusHero))
+                        cap.Add(new KeyValuePair<string, string>(
+                            _roundFocusHero, spcCap.HeroInSection(_roundFocusHero)));
+                    if (!string.IsNullOrEmpty(view.AxisActorName))
+                        cap.Add(new KeyValuePair<string, string>(
+                            view.AxisActorName, spcCap.HeroInSection(view.AxisActorName)));
+                    if (!string.IsNullOrEmpty(view.AxisActor) &&
+                        view.AxisActor != view.AxisActorName)
+                        cap.Add(new KeyValuePair<string, string>(
+                            view.AxisActor, spcCap.HeroInSection(view.AxisActor)));
+                    if (cap.Count > 0) _interiorAnchorsAtBuild = cap;
+                }
+            }
+            catch (Exception e)
+            {
+                _interiorAnchorsAtBuild = null;   // Null-Law: no capture, the fact stays silent
+                Debug.LogWarning("TacticalAIBridge::interior ingress capture failed: " + e.Message);
+            }
             foreach (var f in facts)
             {
                 var gv = view.FindGroup(f.GroupId);
                 int? replaces = null;
                 if (_catalog != null && _catalog.TryGetValue(f.CardId, out var core))
                     replaces = core.Cost;
+                // P41d (spec 9.3-2): the sealed block-achse variant rides
+                // ONLY the Massive groups without a D6 override; every
+                // other group reads exactly blockHold ?? "" as before
+                // (bit-identity).
+                string holdThis = blockHold ?? "";
+                if (interiorHoldVariant && snapHold != null && !snapHold.IsEmpty &&
+                    CatalogCardIsMassive(f.CardId) && !snapHold.Overrides.Covers(f.CardId))
+                    holdThis = blockHoldMassive ?? "";   // null = honest absence -> Konten-Punkt
+                else if (objectGuardVariant && canonHoldFromObjectGuard &&
+                    snapHold != null && !snapHold.IsEmpty &&
+                    CatalogCardIsMassive(f.CardId) && !snapHold.Overrides.Covers(f.CardId))
+                    holdThis = objectHoldMassive ?? "";  // sealed hero-set (pinned read '+3738+3739')
                 var rf = new Tac.RiskFacts
                 {
                     GroupId = f.GroupId,
@@ -3892,9 +4215,11 @@ namespace TacticalAI
                     LedgerBalance = RiskLedgerBalance(view),
                     ThreatIgnoreLos = focusProf != null && focusProf.IgnoreLos,
                     ThreatRangeMax = focusProf != null ? focusProf.RangeMax : 0,
-                    // P33-H4b: resolved ONCE per round above; only the
+                    // P33-H4b: the block Schnittstelle resolved ONCE per round above; only the
                     // stand duties (blocker/guard) read it in RiskPosture.
-                    BlockHold = blockHold ?? "",
+                    // P41d: per-group the sealed variant may replace it
+                    // (Massive without override only - holdThis above).
+                    BlockHold = holdThis,
                 };
                 try { _riskByGroup[f.GroupId] = Tac.RiskPosture.RiskPosition(rf, skill != null ? skill.Rho : 3); }
                 catch (Exception e) { Debug.LogWarning("TacticalAIBridge::risk " + f.GroupId + ": " + e.Message); }
@@ -4047,6 +4372,21 @@ namespace TacticalAI
                 // play against, rank, active bonuses (self-labelled line).
                 if (plan != null && !string.IsNullOrEmpty(plan.PersonaLine))
                     line = (line == null ? "" : line + "\n") + plan.PersonaLine;
+                // P41d (card t_59ba21ee; spec 9.3-2, 4-D3-A "stated honestly
+                // in the explain line: the printed rule, not a hiding of
+                // it"): the seal explanation - printed ONLY when this
+                // activation's goal anchor read as a BANNED hole and the
+                // anchor mask sealed or withheld it. The key states the
+                // printed rule itself (no-chase law + seal-the-approach
+                // doctrine, honest "where open ground exists"); no invented
+                // reasons, no tile list, no coordinates, no name that could
+                // be junk (coord-free-Law) - therefore no {0} argument.
+                // EXPLAIN switch only (rides the gated block; popup
+                // declutter law 9.6: no new always-on block).
+                if ((_interiorAnchorFactThis == Tac.InteriorLaw.MaskSeal ||
+                     _interiorAnchorFactThis == Tac.InteriorLaw.MaskSealMissing) &&
+                    Lh != null && !string.IsNullOrEmpty(Lh.ordExplainMassiveSeal))
+                    line = (line == null ? "" : line + "\n") + Lh.ordExplainMassiveSeal;
                 // P33-H4b ACHSE:: (explain=full ONLY): the mission's win
                 // wiring the engine actually reads - axis type, actor,
                 // polarity, block zone, resolved Schnittstelle. Raw log

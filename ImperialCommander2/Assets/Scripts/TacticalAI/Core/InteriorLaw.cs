@@ -671,6 +671,93 @@ namespace TacticalAI.Core
             return best;
         }
 
+        // -------------------------- P41d: anchor mask + ingress fact --------
+        // (CONCEPT_massive_interior_v1.md v1.3 9.3-2/9.3-3, 4-D3-A, 5-H4.)
+        // Two PURE decisions - the same functions the live bridge seams
+        // call (anchor mask at the HeroInSection read sites; REPLAN fact 4
+        // at the MIDROUND-REPLAN block). Harness: massive_interior.json
+        // vectors "anchor" + "replan" (SectionsInterior.cs) - mirror-of-one,
+        // no second implementation.
+
+        /// <summary>Result of one anchor-mask decision: the section the
+        /// consumer must actually use plus the fact that drives its
+        /// disclosure line. NEVER null - pass-through always echoes the
+        /// input.</summary>
+        public sealed class AnchorMaskResult
+        {
+            public string Section;    // anchor to hand to the consumer ("" = honest absence: no anchor at all)
+            public string Fact;       // one of the Mask* constants below
+            public string Original;   // the anchor as read (forensic line input)
+        }
+
+        public const string MaskNone = "";
+        public const string MaskSeal = "seal";                    // 9.3-2: Banned anchor replaced by SealSection
+        public const string MaskSealMissing = "seal_missing";     // Banned, no open ground reachable: NO anchor, never a chase
+        public const string MaskAdvisory = "advisory";            // Mixed goal: stays allowed, order carries the printed stay-out reminder (4-D3-A)
+        public const string MaskAmbiguous = "ambiguous";          // D2 fail-open; the caller owes the forensic line
+
+        /// <summary>9.3-2 goal masking at an anchor read: when the anchor
+        /// section is Banned for THIS card (Massive, no D6 override), the
+        /// consumer gets the seal-the-approach section instead of the hole
+        /// (nearest open neighbour, 4-D3-A) - and with SealSection's null
+        /// answer it gets NO anchor at all: the honest absence, never a
+        /// chase into the hole. MIXED is legal ground (D1): the goal stays,
+        /// the fact says advisory (the printed stay-out reminder rides the
+        /// order). AMBIGUOUS passes fail-open (D2) with its fact for the
+        /// forensic line. Non-Massive cards and D6-covered cards return the
+        /// input untouched - their line stays bit-identical (mode/massive/
+        /// override gates live here so every read site reads one law).</summary>
+        public static AnchorMaskResult AnchorMaskFor(string anchorSection,
+                                                     bool isMassive, bool overrideCovers,
+                                                     Func<string, IEnumerable<string>> neighbours,
+                                                     Func<string, SectionStatusT> statusOf)
+        {
+            var r = new AnchorMaskResult
+            {
+                Section = anchorSection ?? "",
+                Fact = MaskNone,
+                Original = anchorSection ?? "",
+            };
+            if (string.IsNullOrEmpty(anchorSection)) return r;   // Null-Law: no anchor, no claim
+            if (neighbours == null || statusOf == null) return r; // no graph/no map: no claim, untouched
+            if (!isMassive || overrideCovers) return r;           // today's line, bit-identical
+            var st = statusOf(anchorSection);
+            if (st == SectionStatusT.Open) return r;              // legal ground: bit-identical
+            if (st == SectionStatusT.Mixed) { r.Fact = MaskAdvisory; return r; }
+            if (st == SectionStatusT.Ambiguous) { r.Fact = MaskAmbiguous; return r; }
+            // Banned (the only hole): the consumer never sees it.
+            var seal = SealSection(anchorSection, neighbours, statusOf);
+            r.Section = seal ?? "";
+            r.Fact = seal != null ? MaskSeal : MaskSealMissing;
+            return r;
+        }
+
+        /// <summary>9.3-3 REPLAN fact 4 (InteriorIngress): a tracked anchor
+        /// hero whose CURRENT section is Banned and DIFFERENT from the
+        /// section the plan was built against flipped into a hole mid-round
+        /// - the same-round rebuild trigger. Returns the hero key of the
+        /// first hit in CALLER order (the caller's order is deterministic;
+        /// the fact carries no ranking of its own). Null = fact silent:
+        /// no anchor moved into a hole. An anchor that already sat in the
+        /// same Banned section at build time is NOT a flip - that plan was
+        /// built masked (no trigger loop, the rebuild re-captures).</summary>
+        public static string IngressFact(
+            IEnumerable<KeyValuePair<string, string>> anchorAtBuild,
+            Func<string, string> currentSectionOf,
+            Func<string, SectionStatusT> statusOf)
+        {
+            if (anchorAtBuild == null || currentSectionOf == null || statusOf == null) return null;
+            foreach (var kv in anchorAtBuild)
+            {
+                if (string.IsNullOrEmpty(kv.Key)) continue;
+                var cur = currentSectionOf(kv.Key);
+                if (string.IsNullOrEmpty(cur)) continue;   // no observed fact, no claim (Null-Law)
+                if (string.Equals(cur, kv.Value, StringComparison.Ordinal)) continue;  // no switch, no ingress
+                if (statusOf(cur) == SectionStatusT.Banned) return kv.Key;
+            }
+            return null;
+        }
+
         // ------------------------------------------------- D6 overrides -----
         /// <summary>D6 registry, card x mission scope. Derived never stored
         /// (D5): the Unity side rebuilds it per mission identity from the

@@ -68,6 +68,7 @@ public static class MassiveInteriorGate
         RunDpOverrideCensusEquality();
         RunMassiveFilterPins();
         RunSeamSourceContract();
+        RunAnchorMaskContract();   // P41d (card t_59ba21ee): spec 9.3-2/9.3-3 seams + the two ui rails
         Console.WriteLine("MassiveInteriorGate: " + (fails == 0 ? "ALL PASS" : "FAILURES") +
                           " | checks=" + checks + " fails=" + fails);
         if (fails > 0) Environment.ExitCode = 1;
@@ -825,5 +826,158 @@ public static class MassiveInteriorGate
             ib.IndexOf("[interior] snapshot tiles=", StringComparison.Ordinal) < 0)
             Fail("builder: the Null-Law / summary log lines moved");
         else Ok("builder Null-Law lane pinned: empty index -> empty snapshot -> one log line, law inactive");
+    }
+
+    // ------------------------------------------- P41d anchor-mask contract --
+    // spec 9.3-2 (goal masking + seal at the HeroInSection read sites),
+    // 9.3-3 (REPLAN fact 4 behind the three feed facts) and the two ui.json
+    // rails. Exact-text probes, never line numbers; the bridge lines live
+    // in no fixture, so THIS is their law home (same rule as
+    // RunSeamSourceContract). Same tree-under-test rule: ReadSrc resolves
+    // through InteriorDpProbe.DataRoot (CWD first -> the worktree).
+    static void RunAnchorMaskContract()
+    {
+        var bridge = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/TacticalAIBridge.cs");
+
+        // --- the helper: one decision, gates inside Core, forensic line ---
+        if (bridge.IndexOf("static string MassiveAnchorMask(string cardId, string anchorSec, out string fact)",
+                StringComparison.Ordinal) < 0)
+            Fail("P41d: the ONE anchor-mask helper signature moved - read sites would drift apart");
+        else Ok("P41d: single MassiveAnchorMask helper (one decision for every HeroInSection read site)");
+        if (CountActive(bridge, "Tac.InteriorLaw.AnchorMaskFor(") != 3)
+            Fail("P41d: InteriorLaw.AnchorMaskFor active call sites " +
+                 CountActive(bridge, "Tac.InteriorLaw.AnchorMaskFor(") +
+                 " != 3 (helper + block-achse + object-guard per-group variants) - a mirror is drifting");
+        else Ok("P41d: exactly three Core mask calls (helper + both hold variants) - no fourth mirror of the law");
+
+        // --- read site 1 (bridge:3180/3185 law): the object-seam focus read
+        if (bridge.IndexOf("var focusSecMasked = MassiveAnchorMask(cd.id, focusSec, out maskFact);",
+                StringComparison.Ordinal) < 0)
+            Fail("P41d: the TryObjectTarget focus-sec mask moved off the pinned HeroInSection read");
+        else Ok("P41d: pinned focus read masked behind the HeroInSection read (spec 9.3-2 site 1)");
+        if (bridge.IndexOf("if (maskFact == Tac.InteriorLaw.MaskSealMissing) return;",
+                StringComparison.Ordinal) < 0)
+            Fail("P41d: the honest-absence lane (seal_missing -> no object target, never a chase) moved");
+        else Ok("P41d: seal_missing answers with honest absence - the canon Fokus/Reaktion fallback decides");
+
+        // --- goal resolution: per-activation disclosure for EVERY Massive
+        if (CountActive(bridge, "MassiveAnchorMask(cd.id,") != 2)
+            Fail("P41d: goal-lane mask call sites " + CountActive(bridge, "MassiveAnchorMask(cd.id,") +
+                 " != 2 (goal resolution + object seam) - an activation lane lost its disclosure");
+        else Ok("P41d: both activation-lane reads masked (goal resolution covers basis-veto rows too)");
+        if (bridge.IndexOf("_interiorAnchorFactThis = \"\";   // P41d: same law for the anchor-mask fact",
+                StringComparison.Ordinal) < 0)
+            Fail("P41d: the per-activation fact reset moved - stale facts would ride the next popup");
+        else Ok("P41d: anchor-mask fact resets per TrySelectTarget (P38 marker law)");
+
+        // --- read site 2 (bridge:3694/3696 law): block-achse per-group variant
+        if (bridge.IndexOf("holdThis = blockHoldMassive ?? \"\";", StringComparison.Ordinal) < 0 ||
+            bridge.IndexOf("BlockHold = holdThis,", StringComparison.Ordinal) < 0)
+            Fail("P41d: the per-group sealed BlockHold selection moved - the hole would reach RiskFacts");
+        else Ok("P41d: block-achse sealed variant rides ONLY Massive-without-override groups (canon bit-identity)");
+
+        // --- read site 2b (spec 9.0 table '+3738+3739'): object-guard hero reads
+        if (bridge.IndexOf("rail=object-guard fact=seal", StringComparison.Ordinal) < 0)
+            Fail("P41d: the object-guard seal forensic line moved - the pinned per-hero reads lost their interior view");
+        else Ok("P41d: object-guard hero reads masked behind the seal (patrol-the-room-exits doctrine)");
+        if (bridge.IndexOf("bool canonHoldFromObjectGuard = blockHold != null && blockHold == objectHold;",
+                StringComparison.Ordinal) < 0 ||
+            bridge.IndexOf("objectGuardVariant && canonHoldFromObjectGuard &&", StringComparison.Ordinal) < 0)
+            Fail("P41d: the object-guard variant lost its free-slot gate - it could override the mission-END block hold");
+        else Ok("P41d: object-guard variant engages only on the free slot (canon block wiring keeps priority)");
+
+        // --- read site 3 (bridge:2685 law): procurement rail instrumented
+        if (bridge.IndexOf("rail=procurement anchor=", StringComparison.Ordinal) < 0)
+            Fail("P41d: the procurement anchor forensic line moved - the axis-zone read lost its interior view (economy seam P41e builds on it)");
+        else Ok("P41d: procurement axis-zone read instrumented (shared list stays; per-card USEFULNESS rides 5-H5)");
+
+        // --- REPLAN fact 4: BEHIND the three feed facts, same block
+        int iFeed = bridge.IndexOf("Tac.WorldEventVector.MidroundReplanTrigger(", StringComparison.Ordinal);
+        int iFact = bridge.IndexOf("replan = \"InteriorIngress\";", StringComparison.Ordinal);
+        int iGuard = bridge.IndexOf("if (replan == null)\n                {", StringComparison.Ordinal);
+        if (iFeed < 0 || iFact < 0)
+            Fail("P41d: fact-4 wiring missing (feed trigger=" + iFeed + " ingress trigger=" + iFact + ")");
+        else if (iGuard < 0)
+            Fail("P41d: the second-check guard moved off the ingress block - the precedence law went unwatched");
+        else if (iGuard < iFeed || iGuard > iFact)
+            Fail("P41d: the interior fact check is not the SECOND check behind the feed facts - the three P33 facts lost precedence");
+        else Ok("P41d: REPLAN fact 4 rides the P33-H4b block, second behind the three feed facts (spec 9.3-3)");
+        if (bridge.IndexOf("[interior-ingress] hero=", StringComparison.Ordinal) < 0)
+            Fail("P41d: the ingress forensic line moved - the trigger would print without its fact");
+        else Ok("P41d: ingress trigger carries its [interior-ingress] forensic line");
+        if (bridge.IndexOf("_roundFocusHero, spcCap.HeroInSection(_roundFocusHero)", StringComparison.Ordinal) < 0)
+            Fail("P41d: the build-time anchor capture (focus hero first) moved - fact 4 would track nothing");
+        else Ok("P41d: ingress capture at build: focus hero first, then block axis (deterministic caller order)");
+
+        // --- the two popup rails: reader + field + 11 languages ---
+        if (bridge.IndexOf("Lh.ordExplainMassiveSeal", StringComparison.Ordinal) < 0)
+            Fail("P41d: the EXPLAIN seam stopped reading ordExplainMassiveSeal");
+        else Ok("P41d: seal explanation rides the gated EXPLAIN block (reader null-safe, declutter law 9.6)");
+        if (bridge.IndexOf("Li.ordInfoMassiveInterior", StringComparison.Ordinal) < 0)
+            Fail("P41d: the INFO seam stopped reading ordInfoMassiveInterior");
+        else Ok("P41d: stay-out advisory rides the existing INFO-TEXT block (missing key skips the line)");
+
+        var ui = ReadSrc("ImperialCommander2/Assets/Scripts/LanguageControllers/UILanguage.cs");
+        if (ui.IndexOf("public string ordExplainMassiveSeal, ordInfoMassiveInterior;",
+                StringComparison.Ordinal) < 0)
+            Fail("P41d: UILanguage.cs lost the two rail fields (they ship in the SAME commit as the keys)");
+        else Ok("P41d: UILanguage.cs fields present (same-commit contract with the ui.json keys)");
+
+        var langRoot = Path.Combine(InteriorDpProbe.DataRoot(), "ImperialCommander2",
+                                    "Assets", "Resources", "Languages");
+        var langs = Directory.GetDirectories(langRoot);
+        Array.Sort(langs);   // Br sorts BEFORE En - so the rails are read
+        if (langs.Length != 11) { Fail("11 shipped language dirs expected, found " + langs.Length); }
+        var sealBy = new Dictionary<string, string>(StringComparer.Ordinal);
+        var infoBy = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var dir in langs)
+        {
+            var leaf = Path.GetFileName(dir);
+            var doc = Json.AsDict(ReadJsonFile(Path.Combine(dir, "ui.json")));
+            object railBag;
+            if (!doc.TryGetValue("uiTacticalAI", out railBag))
+            { Fail(leaf + ": ui.json has no uiTacticalAI block"); continue; }
+            var t = Json.AsDict(railBag);
+            object seal, info;
+            if (!t.TryGetValue("ordExplainMassiveSeal", out seal) || !(seal is string) ||
+                ((string)seal).Length == 0 ||
+                !t.TryGetValue("ordInfoMassiveInterior", out info) || !(info is string) ||
+                ((string)info).Length == 0)
+            { Fail(leaf + ": the two P41d rails missing/empty"); continue; }
+            sealBy[leaf] = (string)seal;
+            infoBy[leaf] = (string)info;
+            Ok(leaf + ": both P41d rails present and non-empty");
+        }
+        {
+            string enSeal, enInfo;
+            if (!sealBy.TryGetValue("En", out enSeal) || !infoBy.TryGetValue("En", out enInfo))
+                Fail("En/ui.json carries no P41d rails - the inventory root is missing");
+            else
+            {
+                var order = new List<string>(infoBy.Keys);
+                order.Sort(StringComparer.Ordinal);   // deterministic gate output
+                foreach (var leaf in order)
+                {
+                    if (leaf == "En") continue;
+                    if (leaf == "De")
+                    {
+                        // De is the shipped reference translation
+                        // (UiCompletenessGate law): real umlauts, and the
+                        // printed stay-out reminder in German -
+                        // 'Außenfeldern', never the EN copy.
+                        if (infoBy["De"].IndexOf("Au\u00dfenfeldern", StringComparison.Ordinal) < 0 ||
+                            sealBy["De"].IndexOf("d\u00fcrfen", StringComparison.Ordinal) < 0 ||
+                            string.Equals(infoBy["De"], enInfo, StringComparison.Ordinal))
+                            Fail("De: the P41d rails are not a real German translation (umlaut lanes / EN copy?)");
+                        else Ok("De: both P41d rails are real German (true umlauts, stay-out reminder translated)");
+                        continue;
+                    }
+                    if (!string.Equals(sealBy[leaf], enSeal, StringComparison.Ordinal) ||
+                        !string.Equals(infoBy[leaf], enInfo, StringComparison.Ordinal))
+                        Fail(leaf + ": the P41d rails diverge from En (byte-exact EN copy law)");
+                    else Ok(leaf + ": both P41d rails byte-exact vs En");
+                }
+            }
+        }
     }
 }

@@ -37,7 +37,11 @@ scorer consumes the SAME set. (6) first D3-C2 decisions recorded same day
 (Thomas clarify): blockade predicate = reach OR adjacency-blockade (seal order,
 explain line); held-Massive empty set = REFUND the attack-point spend + re-rank
 (no holds, no zombie purchases); endgame veto = union-reach (veto only when the
-whole contested+critical union is beyond reach-and-adjacency).
+whole contested+critical union is beyond reach-and-adjacency). (7) remaining
+policy gates closed same day: D2 = fail-open (expansion biomes legal until
+census refutes); D6 = full-lift card×mission re-confirmed (D10). H1 demotes
+from policy gate to census artifact — the concept now has no open design
+questions, only data collection.
 
 Every "verified" statement below was measured on this tree (08.11, post-P36; v1.3
 items re-measured 09.11 on release HEAD 13c022b) or against the shipped rules
@@ -133,7 +137,9 @@ Four derived states, never two:
   room-tiles are fine: the group's orders carry the printed reminder that it
   must stay on exterior spaces **inside** that section (advisory line, D3-A).
 * **AMBIGUOUS** — at least one tile under the section is unresolved (or no tile
-  under it resolves at all): D2 policy decides its reading; never silently OPEN
+  under it resolves at all): resolved by the D2 policy (DECIDED 09.11:
+  fail-open ⇒ reads OPEN) but always with its `[interior] ambigious-tile`
+  forensic line — open by policy, never silently
   (v1.3: this state existed in the tile enum but had no section-level consumer
   law — it now has one).
 
@@ -145,19 +151,26 @@ sections it is advisory** (goal allowed + printed stay-out reminder). An earlier
 draft claimed "any BANNED tile bans the section" — that would have banned half the
 map over one interior tile; rejected.
 
-### D2 — AMBIGUOUS policy (Thomas gate, census decides)
+### D2 — AMBIGUOUS policy (DECIDED 09.11: fail-open + log)
 
-Two candidate policies:
+Two candidate policies were on the table:
 * **fail-open + log** (never over-restrict; ambiguous sections usable; the
   forensic line names each one) — keeps Massives playable in expansion campaigns
   if the expansion enumeration is incomplete;
 * **fail-closed** (never wrongly-allow; Massive treats ambiguous like interior) —
   strict to the printed ban but can silently neuter Massives in whole campaigns.
 
+**Thomas ruled 09.11: fail-open.** Only RR-enumerated core tiles (19–36) are
+BANNED; everything unresolved reads OPEN **with its `[interior] ambigious-tile`
+forensic line** — open by policy, never silently, and the §7 fail-open clause
+still exempts fully-interior missions. The distinction that stays fail-CLOSED is
+the MAPPING verification: RR-enumerated core ids must all resolve through the
+verified table or the build gate fails (§9.4), and expansion-biome rows are
+pinned per row by the H1 census — a machine guess is never a BANNED row.
 The 07.11 census tool pattern (`tools/section_census.py`, fail-closed output) is
-repeated: **H1 measures, Thomas rules, then the policy is frozen in code.** The
-census will quantify exactly how many sections/DPer per campaign land in
-AMBIGUOUS under each candidate row — the decision is cheap once the numbers exist.
+repeated: **H1 measures, Thomas rules row by row, then the table is frozen in
+code.** The census still quantifies how many sections/DPs per campaign land in
+AMBIGUOUS — that number now feeds the per-row pinning, not a policy question.
 
 ### D3 — application points (Thomas' two demands + the two the design forces)
 
@@ -347,8 +360,8 @@ for a registered (mission, card):
   (BANNED sections are treated OPEN by goal choice, DP filter and USEFULNESS)
 ```
 
-Semantics decisions (each one a candidate Thomas gate; default = the conservative
-middle):
+Semantics decisions (v1.3: all three RULED — Thomas 08.11 pattern, re-confirmed
+09.11 for scope/lift; persistence follows the derived-not-stored law):
 
 * **Scope: card × mission.** The narrowest defensible scope is the single group;
   but the mission's statement is about the figure type in its spaces, and keeping
@@ -397,8 +410,13 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   DP" count, **D6 counts: authored-indoor Massive placements (initial + event DPs)
   = override-candidate list, and the text-permit-without-placement residual list**
   (audit pattern hits only, no behaviour). Output
-  `docs/MASSIVE_interior_census.md` (EN, generated). **Thomas gate: D2 policy +
-  Halls/Jabba/Imperial rows + D6 semantics (scope, full-lift).**
+  `docs/MASSIVE_interior_census.md` (EN, generated). The 09.11 answers: **D2 =
+  fail-open** (only RR-enumerated core ids are BANNED; expansion biomes are
+  legal ground until census evidence refutes) and **D6 = full-lift card×mission**
+  (D10 re-confirmed: one authored indoor placement authorizes the card for the
+  whole mission — a later-bought second AT-ST of that card MAY go indoor in that
+  mission). What remains from the old gate is the per-row pinning work (Halls/
+  Jabba/Imperial rows) — a census product, not a policy question.
 * **H2 — Core law + fixtures.** `InteriorLaw.cs`, harness section
   `massive_interior.json`: OPEN/BANNED/MIXED/AMBIGUOUS derivation (four-state,
   v1.3), not-BANNED-subgraph

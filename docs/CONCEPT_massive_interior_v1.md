@@ -1,4 +1,4 @@
-# CONCEPT: Interior law for Massive figures, live (v1.1, 2026-11-08)
+# CONCEPT: Interior law for Massive figures, live (v1.3, 2026-11-09)
 
 Status: CONCEPT — nothing in this document is implemented yet. Thomas asked for a
 feasibility concept (08.11: "Erstelle mal ein Konzept wie das realisierbar wäre"),
@@ -21,8 +21,23 @@ file + one builder + four rider-seams + gate + census); §7's biomeA/B unknown
 resolved at code level (`MapTile.GetBiomeType()`/`textureName` pin the A/B = RR
 tile-sides reading).
 
-Every "verified" statement below was measured on this tree (08.11, post-P36) or
-against the shipped rules text; every forward decision is marked as such.
+v1.3 (09.11, Thomas: "korrigiere die 4 echten Funde; prüfe: DP draußen, aber
+Missionsfortschritt nur noch drin — dürfte kein AT-ST/AT-DP kaufen/deployen; erst
+DP wählen, dann gucken was deploybar ist"): review against release HEAD `13c022b`
+(v1.0.1). (1) all drifted file:line anchors re-pinned + anchor law (§9 intro);
+(2) D3-B card-availability rail census recorded (the `card == null` callers are
+existence probes, never card deploys — the filter is never card-blind on a real
+deploy); (3) D1/§9.1 enums unified: tile-level vs section-level, one derivation;
+(4) D6 override registration fail-closed on VERIFIED-BANNED rows only (an
+override lifts the ban everywhere — it must never ride an unverified mapping
+row); (5) D3-C rewritten **DP-first** (new D3-C2): outdoor DP + indoor-only
+mission progress must buy nothing and must not deploy an already-held Massive to
+idleness — the USEFUL-DP set is computed first, buy asks it non-empty, the DP
+scorer consumes the SAME set.
+
+Every "verified" statement below was measured on this tree (08.11, post-P36; v1.3
+items re-measured 09.11 on release HEAD 13c022b) or against the shipped rules
+text; every forward decision is marked as such.
 
 ---
 
@@ -84,8 +99,13 @@ it is the same entity query the entry ledger already performs.
 New Unity-free `Core/InteriorLaw.cs` (mirror of `TrackerBindLaw.cs` shape):
 
 ```
-enum InteriorStatus { OPEN, BANNED, AMBIGUOUS }
+tile level (what the table holds):     section level (what D2-D6 consume):
+enum TileStatus     { Open, Banned,    enum SectionStatus { Open, Banned,
+                      Ambiguous }                             Mixed, Ambiguous }
 ```
+(Unified v1.3, finding 3: v1.2 ran ONE name `InteriorStatus` over TWO different
+state sets — D1's tile enum had no MIXED, §9.1's had no tile-level set and
+silently moved MIXED/Ambiguous between levels. Two enums, one derivation law.)
 
 A tile id is BANNED iff it is in the RR enumeration (core: 19A–36A, 19B–36B);
 38A/39A/38B/39B are pinned OPEN by the RR text itself. For tiles the RR text
@@ -98,7 +118,7 @@ section — so a later ruling changes a row, not a code path.
 A SECTION's status derives from its owning tile(s) — **but the section is coarse**
 (07.11 section census: median 2, bulk 1-6 sections per mission while a mission
 carries ~17 tiles on average), so a section is NOT an interior property carrier.
-Three derived states, never two:
+Four derived states, never two:
 
 * **OPEN** — no BANNED tile under the section: full Massive use.
 * **BANNED** — EVERY tile under the section is BANNED (a pure-interior section;
@@ -108,6 +128,10 @@ Three derived states, never two:
   traversable (the street half IS legal ground), but the law may not pretend
   room-tiles are fine: the group's orders carry the printed reminder that it
   must stay on exterior spaces **inside** that section (advisory line, D3-A).
+* **AMBIGUOUS** — at least one tile under the section is unresolved (or no tile
+  under it resolves at all): D2 policy decides its reading; never silently OPEN
+  (v1.3: this state existed in the tile enum but had no section-level consumer
+  law — it now has one).
 
 Consequence the concept must state plainly (self-correction 08.11): **enforcement
 is exact only where the app touches a tile — deployment points** (a DP resolves to
@@ -168,6 +192,25 @@ mission-authored and untouchable (its indoor placement registers the D6 override
 DP choice, landing d1/d2, onslaught loop, M13c optional-deploy window.
 `[dp-massive]` forensics row: `card,dp,section,status` per candidate pass.
 
+**Card-availability rail census (v1.3, finding 2 — verified on 13c022b).** The
+filter keys on the card, so every claimed rail must actually hand one over. Live
+truth: EVERY real deploy carries the card into the seam — `DeploymentManager.cs`
+`:411` (ovrd.Active), `:482` (ovrd==null: round popups, event reinforcements,
+landing), `:534` (`DoMultipleDeployment`) all call
+`GetActiveDeploymentPoint(enemyToAdd)`, and the popup's defensive re-roll passes
+the card too (`SagaDeploymentPopup.cs:878`). The `card == null` callers
+(`SagaController.cs:610`, `MissionEventHandler.cs:730,803`) are the M13c
+**existence probes** for the optional-deploy popup ("is there ANY active DP? →
+open the Landing popup / delay the deployment") — they pick no card's DP, and
+`TryChooseDeploymentPoint` returns false on null (`bridge:1892`, audit FINAL-QA
+law: a fixed point there would cluster every reinforcement wave). So the filter
+is never card-blind on a real deploy; the probe/announce lines stay card-free BY
+DESIGN (M13f "One DP truth": they name a DP that was really used, never choose
+one). The authored-property `FilterDP` (`MapEntityManager.cs:480,518`, def
+`:536`) sits UPSTREAM of the bridge and gates even the legacy random line —
+deliberately NOT extended: touching it would break the legacy bit-identity law
+(D4).
+
 **C. Buy-time usefulness (demand 2 — the economy question).**
 A Massive bought into a fight it can never reach is wasted threat — worse than
 wasted: it is the AI spending the Empire's printed budget on an illegal plan.
@@ -175,14 +218,19 @@ Usefulness gate at reinforcement/purchase decision time (attack-point economics 
 persona `SwapDeployCandidate`/`CostFor`, all already mission-frozen seams):
 
 ```
-Massive USEFUL  <=>  exists a non-BANNED DP  AND
-                     the operation zone is reachable from an OPEN DP over the
-                     OPEN subgraph
-operation zone   =  contested/believed sections (ThreatZone, M14f) UNION
-                    mission-critical objective sections (MissionCritical data,
-                    authored) UNION (fallback, round 1 / no belief): the objective
+USEFUL-DP(card) = { DP | tile(DP) not BANNED for this card (D3-B filter law)
+                       AND component(DP over the not-BANNED subgraph) satisfies
+                       the op-zone predicate (D3-C2) }
+Massive USEFUL  <=>  USEFUL-DP(card) is not empty
+operation zone (FUTURE, v1.3) = contested/believed sections (ThreatZone, M14f)
+                    UNION mission-critical objective sections (MissionCritical
+                    data, authored — the mission's ENDGAME truth, not today's
+                    belief) UNION (fallback, round 1 / no belief): the objective
                     neighbourhood
 ```
+(v1.3 rewrite, finding 5: v1.2 quantified EXISTENTIALLY over "an OPEN DP" and read
+TODAY's op zone — both holes are closed by the component-anchored set + the
+FUTURE op zone; the full inversion is D3-C2.)
 
 Not useful → the Massive is skipped in the buy ranking and the strongest USEFUL
 alternative at the same threat cost is taken instead (the P33-H4
@@ -190,6 +238,47 @@ StrongestAlternative/DecideStage machinery already scores exactly this way — t
 gate just removes dead candidates before scoring). Unknown operation zone AND
 unknown reachability → treat as useful, log (fail-open at the economy layer:
 buying nothing at all is also a rules-visible decision the Empire would not make).
+
+**C2. DP first, then load (v1.3 — Thomas 09.11).** Demand in Thomas' words:
+*erst den Deploypunkt auswählen und dann gucken, was kann ich da deployen.* The
+scenario he named: all DPs outdoor and legal, but the mission's progress from some
+point on happens ONLY indoors (heroes duck into rooms, the mission-critical
+sections are interior) — an AT-ST/AT-DP then lands legally on an outdoor DP and is
+pure dead threat: the DEPLOY POINT is legal, the DEPLOY is pointless. v1.2 had two
+holes here: its USEFULNESS quantified over ANY open DP (the scorer could still pick
+a DP in another, useless open component), and it read TODAY's op zone, not the
+mission's endgame. The inversion closes both by construction:
+
+1. **The USEFUL-DP set is the pre-selection (exact, computed once per
+   snapshot + op-zone).** A DP enters the set only if its tile passes the D3-B
+   hard filter AND its own component on the not-BANNED subgraph satisfies the
+   op-zone predicate. The DP scorer (seam 1) may only score DPs FROM this set
+   for Massive cards — a pick can no longer be useless-by-component, because
+   only useful DPs are on the table. The buy question is then just
+   `USEFUL-DP != {}` against the SAME set: buy-side and deploy-side can never
+   disagree about which DPs exist (this IS the DP-first ordering: DP set first,
+   card answer second).
+2. **Held Massive, mid-mission flip (deploy-side):** interior status is STATIC
+   (public map data — nothing re-pins mid-mission); what moves is the OP ZONE
+   (hero-ingress facts, objective/mission-critical facts). If a Massive was
+   bought while progress was outdoor and the facts later move the op zone
+   exclusively into BANNED sections, its USEFUL-DP set empties and the
+   reinforcement trigger DEFERS instead of spawning a group to idleness: no
+   interior spawn (D3-B unchanged), no outdoor standstill deploy, forensic
+   `[dp-massive] defer card=<c> reason=no_useful_dp_after=<fact>`; the trigger
+   re-arms on the next replan round. A deferred group is a HELD purchase, not a
+   lost one (hold-vs-refund: Thomas gate, see below).
+3. **Op zone = FUTURE truth:** MissionCritical objective sections (authored,
+   already public feed) carry the endgame into the purchase decision, so the
+   "fight moves indoors later" case is priced in at buy time; belief fail-open
+   stays for missions without that data (C unchanged).
+
+Open predicate policy (Thomas gate before H5, H1 census informs): is an outdoor
+Massive USEFUL when the WHOLE op zone is BANNED but its sections ADJOIN open ones —
+the blockade doctrine of D1/D3-A (patrol the room exits)? Strict-reach says no and
+would let our own economy gate kill the blockade the concept deliberately
+preserves; reach-OR-adjacency says yes. **Proposed default: reach OR
+adjacency-blockade** — flagged, not silently frozen.
 
 **D. Two Massives one space.**
 RR defines it at "space" granularity; the app plans at section granularity and
@@ -233,8 +322,16 @@ authored and persisted on this tree:
 
 ```
 at mission start, per group the mission authors:
-  card IsMassive AND its authored DP(s) resolve to BANNED tiles
+  card IsMassive AND its authored DP(s) resolve to VERIFIED-BANNED tiles
       => register override (mission, card)  [forensics: massive-override::card<-mission(author-placement)]
+  VERIFIED-BANNED (v1.3, finding 4): the tile's mapping row is in the PINNED,
+  H1-verified table — a crosswalk row that was only machine-classified (or
+  missing) resolves Ambiguous and registers NOTHING. An override switches the
+  ban off for that card EVERYWHERE in the mission, so it must never ride an
+  unverified mapping row: fail-closed means `[interior] override_unverified
+  card=<c> dp=<d> tile=<t>` and the ban STAYS until the table is fixed. H1's
+  authored-indoor census list makes exactly those tiles mandatory pinned rows,
+  and §9.4 asserts runtime-override-set == census set (both directions).
 for a registered (mission, card):
   the interior ban is INACTIVE for that card's groups in that mission
   (BANNED sections are treated OPEN by goal choice, DP filter and USEFULNESS)
@@ -293,7 +390,8 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   `docs/MASSIVE_interior_census.md` (EN, generated). **Thomas gate: D2 policy +
   Halls/Jabba/Imperial rows + D6 semantics (scope, full-lift).**
 * **H2 — Core law + fixtures.** `InteriorLaw.cs`, harness section
-  `massive_interior.json`: OPEN/BANNED/MIXED derivation, not-BANNED-subgraph
+  `massive_interior.json`: OPEN/BANNED/MIXED/AMBIGUOUS derivation (four-state,
+  v1.3), not-BANNED-subgraph
   distance law, **D6 override law (register from authored placements; card×mission
   scoping; override survives resync/replay as derived-not-stored)** , Null-Law
   bit-identity, seal-the-approach adjacency law (soft-goal wording pinned). No
@@ -310,9 +408,11 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   ban "unless the mission says otherwise"; UiCompletenessGate), WIKI +
   MECHANICS sections, and the legacy-diff table row corrected to what the live
   rail actually enforces at that point.
-* **H5 — economy usefulness (demand 2).** buy/swap ranking gate (C) + Strongest-
-  Alternative rerouting + **D6 short-circuit (override ⇒ USEFUL by definition)** +
-  gate fixtures. Deliberately last: it needs the playtest
+* **H5 — economy usefulness (demand 2).** buy/swap ranking gate (C + C2,
+  DP-first) + Strongest-Alternative rerouting + **D6 short-circuit (override ⇒
+  USEFUL by definition)** + gate fixtures + **two Thomas gates: the blockade
+  predicate (reach vs reach-OR-adjacency) and hold-vs-refund for deferred
+  triggers**. Deliberately last: it needs the playtest
   data H3/H4's forensic lines produce.
 
 ## 6. Fairness invariants (each one gets a test)
@@ -364,10 +464,26 @@ showing a Massive sealing instead of chasing when a hero ducks indoors; zero
 `massive into BANNED` orders across all missions of the session. That, not a
 green gate alone, closes the chain.
 
+**Named scenario (Thomas 09.11, D3-C2):** a mission whose DPs are all outdoor and
+whose progress (hero ingress + MissionCritical sections) is indoor from some point
+on: the app buys NO AT-ST/AT-DP once the op zone is indoor-only
+(`usefulness=skip`); an AT-ST/AT-DP bought EARLIER does not land to idleness — its
+trigger defers (`[dp-massive] defer ... reason=no_useful_dp_after`) and re-arms at
+the next replan; nothing ever spawns indoors. Pinned as a harness vector derived
+from a real census mission (unless the blockade predicate says the outdoor patrol
+IS useful there — then the buy is allowed and the explain line must say why).
+
 ## 9. Implementation blueprint (feasibility walked against the live code, 08.11)
 
-Every seam below was opened and read on today's tree — the concept ships only on
-anchors that exist. File:line refs are of today's HEAD.
+Every seam below was opened and read on the live tree — the concept ships only on
+anchors that exist. **Anchor law (v1.3, finding 1):** refs re-pinned 09.11 against
+release HEAD `13c022b` (v1.0.1); line numbers drift with every commit, so the
+semantic anchor (function/member name) is the contract and the line is a hint —
+re-pin before editing. Known drift since v1.2: `HeroInSection` bridge reads
+2818/3284/3328 → **2685 / 3180+3185 / 3694+3696 (+3738+3739)**; ActiveNow guard
+1888 → **1887** (`card == null` early-exit at **1892**). Path note: `Core/` in the
+rows below is shorthand for `TacticalAI/Core/`; `WorldEventsUnity.cs` lives in
+`TacticalAI/`, NOT in `Core/`.
 
 ### 9.0 Verified anchors
 
@@ -375,16 +491,16 @@ anchors that exist. File:line refs are of today's HEAD.
 |---|---|---|
 | per-card legal DP set (app's own) | `MapEntityManager.GetValidDeploymentPoints(DeploymentCard)` | `Saga/Managers/MapEntityManager.cs:470` |
 | DP candidate pass with GUID+section | `TryChooseDeploymentPoint(card, List<IMapEntity> dps, out Guid)` builds `DeployCandidate{Guid, SectionGuid}` rows | `TacticalAI/TacticalAIBridge.cs:1883,1925` |
-| active-mode seam (legacy bit-identity) | `ActiveNow()` guards `TryChooseDeploymentPoint` entry | bridge:1888 |
+| active-mode seam (legacy bit-identity) | `ActiveNow()` guards `TryChooseDeploymentPoint` entry | bridge:1887 (guard line; `card == null` early-exit :1892 — re-pinned 09.11) |
 | tile identity + placement | `MapTile : IMapEntity { tileID, tileSide, expansion, entityPosition, entityRotation, mapSectionOwner, GetBiomeType() }` | `Saga/MissionModels/MapEntities/MapTile.cs` |
 | tile scan pattern (no scene edits) | `Resources.FindObjectsOfTypeAll<T>()` walk (used by the M13r MedPac policy over TooltipHandler) | `Screens/SagaController.cs:1018ff` |
 | entity by guid | `MapEntityManager.GetEntity(Guid)` | `:451` |
 | Massive recognition (live) | Core card resolver: `IsMassive => Keywords.Contains("Massive")`, keywords injected from PRINTED card data (M13t law); bridge already resolves live→Core cards everywhere (`catCard.Keywords` uses at bridge:1173,4851) | `Core/DeploymentCard.cs:49` |
-| belief/focus anchor reads (goal masking point) | `space.HeroInSection(...)` sites: focus sec, axis anchor | bridge:2818,3284,3328; `Core/SectionConsumers.cs:188,279,390` |
+| belief/focus anchor reads (goal masking point) | `space.HeroInSection(...)` sites: focus sec, axis anchor | bridge:2685,3180/3185,3694/3696,3738/3739 (re-pinned 09.11); `Core/SectionConsumers.cs:188,279,390,676,720,816` (these held) |
 | SD zone derivation (belief — NOT the masking point) | `SectionConsumers.PlanZones` (trust-gated) | bridge:653 |
 | mid-round REPLAN fact channel | P33-H4b block with `trigger=` forensics line | bridge:726-744 |
 | economy seams (persona) | `PersonaState.CostFor` / `SwapDeployCandidate` (both already mode-frozen, reset on mission identity change) | `PersonaState.cs:169,225,330` |
-| deployment ledger authored rows (D6 source) | `SagaSession.deployLedger` (`authored` initial pointList + Specific-event DPs), `TryGetDeployEntry` | M14e rail, `WorldEventsUnity.cs:1671+` |
+| deployment ledger authored rows (D6 source) | `SagaSession.deployLedger` (`authored` initial pointList + Specific-event DPs), `TryGetDeployEntry` | M14e rail, `TacticalAI/WorldEventsUnity.cs:1671+` (path corrected 09.11: file is in `TacticalAI/`, not `Core/`) |
 | popup text rails | `ActivationPlanData.Blocks` + `ordInfo*`/`ordExplain*` keys ×11 langs, UiCompletenessGate auto-inventory | bridge:1128-1155 pattern |
 
 **Feasibility verdict: implementable end to end with zero scene/prefab edits and
@@ -394,17 +510,18 @@ rider-edits at four existing seams, one gate extension, one census tool.
 ### 9.1 New Core file — `Core/InteriorLaw.cs` (Unity-free, harness-testable)
 
 ```csharp
-enum InteriorStatus { Open, Banned, Mixed, Ambiguous }
+enum TileStatus     { Open, Banned, Ambiguous }          // tile level  (D1 v1.3)
+enum SectionStatusT { Open, Banned, Mixed, Ambiguous }   // section level (D1 v1.3)
 
 static class InteriorLaw {
   // RR enumeration by (expansion, tileID, tileSide) - CORE only:
   //   19..36 (both sides) -> Banned;  38/39 -> Open (RR names them explicitly).
   // Expansion tiles: crosswalk row by per-side BiomeType (data table, Thomas-
   //   gated after H1; missing row -> Ambiguous).
-  static InteriorStatus StatusForTile(string expansion, string tileId,
-                                      string side, string biome);
-  // section derivation over the tile->section table (D1 three-state law):
-  static InteriorStatus SectionStatus(IList<InteriorStatus> tilesUnderSection);
+  static TileStatus StatusForTile(string expansion, string tileId,
+                                  string side, string biome);
+  // section derivation over the tile->section table (D1 four-state law):
+  static SectionStatusT SectionStatus(IList<TileStatus> tilesUnderSection);
   // D6 registry: derived, never stored:
   sealed class OverrideSet { bool Covers(string cardName); /* card x mission */ }
   // graph mask helper for the Massive goal/distance view:
@@ -432,7 +549,9 @@ MissionInteriorSnapshot BuildInteriorSnapshot(mapEntityManager):
             that tile's status (EXACT layer; rect math mirrors the existing
             space-cell mapping the planner already uses for its own cells)
   overrides: for every deployLedger 'authored' row whose card IsMassive AND
-            whose dpStatus is Banned -> register (mission, cardName)
+            whose dpStatus is VERIFIED-BANNED (pinned verified rows ONLY;
+            Ambiguous -> NO override + `[interior] override_unverified` log;
+            D6 v1.3 fail-closed law) -> register (mission, cardName)
   empty index (0 tiles / no DeploymentPoints) -> snapshot EMPTY -> every
             consumer Null-Laws (today's canon exactly, log one line)
 ```
@@ -452,9 +571,15 @@ exist before the first DP choice and before the first order render).
    per pass (`card,dp,status,override`). `GetValidDeploymentPoints` itself is
    NOT touched — legacy callers of it stay bit-identical; the filter is the
    tactical bridge's rider decision, consistent with the DP-anchor law already
-   living on the same rail.
-2. **Goal/focus masking + seal** — at the three `HeroInSection` anchor reads
-   (bridge:2818/3284/3328) and wherever the move-toward zone resolves: if the
+   living on the same rail. Card availability is verified per rail (D3-B v1.3
+   census): every real deploy passes the card (`DeploymentManager.cs:411,482,534`
+   + popup re-roll `:878`); the only `card == null` callers are the M13c
+   existence probes, which pick no card's DP. For Massive cards the candidate
+   rows are additionally restricted to `InteriorLaw.UsefulDps(...)` (D3-C2):
+   legality AND usefulness are decided BEFORE the score, never after.
+2. **Goal/focus masking + seal** — at the `HeroInSection` anchor reads
+   (bridge:2685,3180/3185,3694/3696 — re-pinned 09.11, read sites; function
+   name is the contract) and wherever the move-toward zone resolves: if the
    anchor's section is Banned for this card (and no override), substitute
    `InteriorLaw.SealSection(anchor)`; explain line `ordExplainMassiveSeal`
    states the printed rule; MIXED sections need NO substitution — the order
@@ -465,28 +590,42 @@ exist before the first DP choice and before the first order render).
 3. **REPLAN fact 4** — extend the P33-H4b fact set: `HeroInSection` anchor of a
    currently-planned Massive's target flips INTO a Banned section mid-round ->
    `trigger=InteriorIngress`, same-round re-plan through the existing machinery.
-4. **Economy USEFULNESS** — helper `InteriorLaw.Useful(snapshot, card, opZone)`:
-   false iff every DP of the mission is Banned for the card, or no non-Banned DP
-   reaches `opZone` (ThreatZone UNION MissionCritical sections; r1 fallback:
-   objective neighbourhood) over the not-Banned subgraph. Called inside the two
-   existing mode-frozen persona seams (`CostFor` ranking +
-   `SwapDeployCandidate`) and the attack-point buy loop; override short-circuits
-   to USEFUL. Unreachable-but-cheap never outranks reachable-alternative: reuse
+4. **Economy USEFULNESS (DP-first, v1.3/D3-C2)** — helper
+   `InteriorLaw.UsefulDps(snapshot, card, opZoneFuture)` returns the USEFUL-DP
+   set: DPs whose tile is not Banned for the card AND whose own component on
+   the not-Banned subgraph satisfies the op-zone predicate (ThreatZone UNION
+   MissionCritical — the ENDGAME sections, not today's belief; r1 fallback:
+   objective neighbourhood; D6 override short-circuits to all-open). The BUY
+   gates (`CostFor` ranking + `SwapDeployCandidate`, both mode-frozen, plus the
+   attack-point buy loop) ask only `UsefulDps != {}`; the DP scorer (seam 1)
+   consumes the SAME set for Massive cards, so buy-side and deploy-side can
+   never disagree about which DPs are on the table. A held Massive whose set
+   empties mid-mission DEFERS its trigger
+   (`[dp-massive] defer ... reason=no_useful_dp_after=<fact>`), re-arming on
+   the next replan — hold-vs-refund is the open Thomas gate (D3-C2).
+   Unreachable-but-cheap never outranks reachable-alternative: reuse
    `DeploymentAnchors.StrongestAlternative` for the reroute decision.
 
 ### 9.4 Fixtures + gates
 
 * Harness: new `SectionsInterior.cs` reading fixture `massive_interior.json` —
-  tile→section derivation table, three-state law (incl. MIXED), seal BFS tie
-  law, D6 registration from authored rows (incl. multi-event respawn case),
-  Null-Law (empty snapshot ⇒ plan bit-identical to canon), USEFULNESS truth
-  table. Canonical fixture vectors come OUT of the H1 census (real missions),
+  tile→section derivation table, four-state law (D1 v1.3: incl. MIXED and
+  AMBIGUOUS derivation), seal BFS tie
+  law, D6 registration from authored rows (incl. multi-event respawn case AND
+  the v1.3 fail-closed case: an authored DP resolving AMBIGUOUS registers NO
+  override), Null-Law (empty snapshot ⇒ plan bit-identical to canon),
+  USEFULNESS truth table incl. the D3-C2 named vector (outdoor DPs +
+  indoor-only progress ⇒ no buy; held Massive ⇒ trigger defers, nothing
+  spawns). Canonical fixture vectors come OUT of the H1 census (real missions),
   hand-written vectors only for edges.
 * Gate: `MassiveInteriorGate.cs` in `tools/TacticalAiGate/` (zero-fixture live
   gate, UiCompletenessGate pattern): reads real `dimensions.json` + one real
   mission file, pins the RR enumeration (every 19..36 core id resolves Banned;
   38/39 resolve Open), and fails the build if the H1 verification table has an
-  unmatched RR id (D1 fail-closed law as a gate, not a hope).
+  unmatched RR id (D1 fail-closed law as a gate, not a hope) AND asserts the
+  override-set equality in BOTH directions: runtime override set == H1 census
+  set == VERIFIED-BANNED authored rows only — a runtime override born from an
+  unverified mapping row fails the build (D6 v1.3, finding 4).
 * DeploymentFilterGate/OptionalDeployGate: extend with the Massive rows so the
   five rails' filtered DP sets are pinned alongside the existing anchor law.
 

@@ -62,6 +62,7 @@ in [`ANDROID_build.md`](ANDROID_build.md).
 19. [Procurement — buying is a decision (November 2026)](#procurement)
 20. [The mission axis — win conditions, objectives, polarity (November 2026)](#mission-axis)
 21. [Mission objective duty — the round serves the objective (November 2026)](#mission-duty)
+22. [Massive figures and interior spaces (November 2026)](#massive-interior)
 
 ---
 
@@ -738,7 +739,7 @@ Rules that always hold (verified in `Core/PersonaSwaps.cs` + the swap canon):
 | Difficulty | One behaviour for everyone | S1–S5 ladder = decision quality only; per-mission badges |
 | Hidden power | Legacy hidden bonus-effect rolls can fire | Never fire in tactical missions; printed stat cards only |
 | MedPac | App convenience HUD available | Switched off for tactical missions (wounded stay wounded in-mission; between-mission recovery unchanged); crates/rewards stop dispensing them |
-| Massive figures | Some printed restrictions relaxed | Printed restrictions enforced: no interiors, no two Massives in one space; every proposed move is legality-checked first |
+| Massive figures | Some printed restrictions relaxed | Interior ban enforced live where the app can see the tiles: Massives never deploy onto interior points, never chase into a pure-interior section (the order seals the approach instead), mixed sections carry a printed stay-out reminder, and a Massive with nothing lawful to reach is not bought — or its threat is refunded and the Empire re-decides; a mission that places a Massive indoors lifts the ban for that mission; two Massives in one space stays the table's call |
 | Reinforcement entry | Rolled/drawn deployment points | Deterministic **scored** deployment choice: mission anchors (the mission file's own points *plus* sections the mission activates while playing), battle-zone distance, a friendly leash toward the Imperium's own located groups, and DP-diversity so landings stop piling on one point (same seed → same landing zones) |
 | Imperial growth | Baked-in convenience growth | Unchanged — no Imperial purchases in this release (see [what this release does not include](#not-included)) |
 | Wound status | Cosmetic in places | Machine-grade input: from Veteran up the AI *reads your marks* and finishes wounded heroes |
@@ -1209,3 +1210,63 @@ never invent an interaction the mission doesn't print — with nothing on the
 board to serve it says *move towards the nearest marker* and stops. And the
 duty never touches the attack layer: who gets shot at is still decided by the
 focus law described [above](#the-activation-pop-up), unchanged.
+
+---
+
+<a name="massive-interior"></a>
+## Massive figures and interior spaces (November 2026)
+
+The rulebook is blunt: some map tiles are **interior spaces** (it names
+them by tile number), and during a campaign a Massive figure — AT-ST,
+AT-DP, Rancor, Repulsor Tank, Bantha Rider, General Weiss — may never
+enter one. The table has always policed that itself; in Tactical mode the
+app now does too — at the landing, at the goal, and at the till. (Classic
+mode is untouched: switch off, everything stays as it was.)
+
+**They never land indoors.** A Massive group is no longer offered an
+indoor deployment point — not as reinforcements, not as a landing, not in
+an onslaught wave. If every remaining point would put it inside, the
+landing simply fails honestly: nothing spawns, and the threat the Empire
+set aside stays set aside rather than being spent on an illegal drop.
+
+**If you hide in a room, the walker does not follow you in.** When a
+Massive's focus hero ducks into a pure-interior section, the order now
+takes the lawful neighbour instead: hold the nearest open section next to
+the room and *seal the approach* — the exits get watched, the door itself
+is the rebels' problem. Turn on EXPLAIN and the pop-up prints the reason
+in plain words, printed rule and all. And if there is no lawful neighbour
+to hold at all, the walker gets no goal — it never throws itself at a
+wall, and you never have to argue an impossible order.
+
+**Mixed sections say it out loud.** When the target's section holds both
+street tiles and room tiles, the order stands — the street half is legal
+ground — but the pop-up's INFO line rides along with it: inside this
+section the Massive stays on exterior spaces. The rule travels with the
+order instead of being quietly assumed.
+
+**No more dead threat.** Before the Empire spends on an AT-ST it asks the
+other half of the question: is there anywhere this walker could *land and
+matter*? The answer weighs the fight where it is happening now *and*
+where the mission is heading — the objective rooms count, even while the
+streets are still contested. If the whole fight is beyond the walker's
+reach for good, the purchase is skipped and the same threat buys the
+strongest figure that *can* fight. And a walker bought earlier is never
+landed to stand idle when the mission moves indoors: it stays off the
+board, its threat returns to the budget, and the Empire re-decides that
+same round — no zombie purchases. If the fight merely retreats next door,
+the walker still deploys — as the patrol that watches the exits, not as a
+chase.
+
+**The mission outranks the rule.** Missions may make their own law here,
+and the app reads that permission the way missions actually write it: a
+mission that starts or reinforces a Massive figure *indoors* has spoken —
+for that mission, that figure type may go indoors, full stop. That is the
+printed "unless the mission says otherwise", applied only where the
+mission itself demonstrated the intent, never guessed from wording.
+
+**What still stays yours.** The second Massive restriction — two Massive
+figures may not share one space — remains the humans' call at the board:
+the app plans at section granularity and cannot see open-space regions,
+and it will keep its hands off that ruling. And an order, as ever, is a
+proposal: the Imperial player at the table executes, and the printed
+cards outrank any pop-up.

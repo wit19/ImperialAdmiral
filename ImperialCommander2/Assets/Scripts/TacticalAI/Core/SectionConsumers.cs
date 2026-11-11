@@ -202,11 +202,18 @@ namespace TacticalAI.Core
                 if (catalog != null && !string.IsNullOrEmpty(gf.CardId))
                     catalog.TryGetValue(gf.CardId, out card);
                 var have = card != null;
-                var secName = space.Graph.SectionName(wf.Section);
-                if (string.IsNullOrEmpty(secName)) secName = wf.Section;
-                // Loch-Gesetz: the line names the hero and the section's
-                // APP-AUTHORED name; the bare section id is the identity
-                // fallback, never a coordinate or a section number.
+                // §8.4 CleanSectionName law (M14f R3) AT THE PRODUCER, not
+                // the render site: an authored name may ride ONLY when it
+                // informs; junk/absent -> null and the consumer falls back
+                // to a RELATIVE wording. The raw section id/GUID is never
+                // quoted (09.11 fresh-look: the old bare-id fallback put
+                // 36-char GUIDs into the Wachzone popup line - exactly the
+                // "never an id" the law forbids).
+                var secName = CleanSectionName(space.Graph.SectionName(wf.Section));
+                // Loch-Gesetz: the line names the hero and, when it
+                // informs, the section's APP-AUTHORED cleaned name;
+                // otherwise it stays RELATIVE - never an id, never a
+                // coordinate, never a section number.
                 var d = new WachzoneDecision
                 {
                     Group = wf.GuardGroup,
@@ -216,8 +223,10 @@ namespace TacticalAI.Core
                     Round = wf.Round,
                     ThreatKnown = have,
                     Threat = have ? OrderPlanner.WithEv(gf, card).PrintedEvTotal : Rational.Zero,
-                    Reason = "Wachzone: " + wf.Hero + " am Missionsobjekt in " + secName +
-                             " (Runde " + wf.Round + ")",
+                    Reason = secName != null
+                        ? "Wachzone: " + wf.Hero + " am Missionsobjekt in " + secName +
+                          " (Runde " + wf.Round + ")"
+                        : "Wachzone: " + wf.Hero + " am Missionsobjekt (Runde " + wf.Round + ")",
                 };
                 map[wf.GuardGroup] = d;
             }
@@ -625,9 +634,13 @@ namespace TacticalAI.Core
         // M14f R3 text law (Thomas 07.11, concept §8.4): an authored
         // section name may ride a popup ONLY when it informs. The editor
         // boilerplate prefix "Section <n> - " is stripped; junk is refused
-        // (bare "Start Section"/"Section", grid labels like "R1"/"L5",
-        // digits only). null = not trustworthy -> the consumer must fall
-        // back to a RELATIVE wording; an id or GUID is never quoted.
+        // (bare "Start Section"/"Section"/"Section <n>", grid labels like
+        // "R1"/"L5", digits only). null = not trustworthy -> the consumer
+        // must fall back to a RELATIVE wording; an id or GUID is never
+        // quoted. (09.11 fresh-look: the bare "Section <n>" tail WITHOUT a
+        // dash passed the old checks - shipping LOTHAL3 names ARE exactly
+        // that, and quoting a bare section number is what the Loch-Gesetz
+        // forbids, so the junk set now covers it.)
         public static string CleanSectionName(string raw)
         {
             if (string.IsNullOrEmpty(raw)) return null;
@@ -639,6 +652,9 @@ namespace TacticalAI.Core
             if (n.Length == 0) return null;
             if (string.Equals(n, "Start Section", System.StringComparison.OrdinalIgnoreCase)
                 || string.Equals(n, "Section", System.StringComparison.OrdinalIgnoreCase))
+                return null;
+            if (System.Text.RegularExpressions.Regex.IsMatch(n, @"^Section\s*\d+$",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase))
                 return null;
             if (System.Text.RegularExpressions.Regex.IsMatch(n, @"^[A-Za-z]{1,2}[0-9]{1,2}$")
                 || System.Text.RegularExpressions.Regex.IsMatch(n, @"^[0-9]+$"))

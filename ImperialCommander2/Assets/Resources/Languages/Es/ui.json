@@ -348,6 +348,7 @@
     "ordExplainHead": "EXPLANATION",
     "ordExplainFocusWhy": "Focus target {0}: {1}",
     "ordExplainWachzone": "{0} is working at the mission-critical object in {1} — {2} acts first.",
+    "ordExplainWachzoneRel": "{0} is guarding the mission-critical object — {1} acts first.",
     "ordExplainThreeC": "{0} pushed into the newly activated section {1} — {2} reacts first.",
     "ordExplainVergeltung": "{0} was shot at this round — {1} is suspected as the shooter.",
     "ordExplainNahe": "Próxima respuesta: {0} — {1} limita directamente con la acción.",

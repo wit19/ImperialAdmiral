@@ -228,10 +228,12 @@ public class UITacticalAI
 	public string ordExplainHead, ordExplainFocusWhy;
 	// S-D (card t_c52dd34b): the section-space EXPLAIN chain lines
 	// (Ereignis -> Entscheidung). Wachzone {0}=hero {1}=section {2}=group;
+	// the WachzoneRel variant carries {0}=hero {1}=group (junk/absent name
+	// -> relative wording, §8.4 law - never an id, never a GUID);
 	// ThreeC {0}=hero {1}=section {2}=group; Vergeltung {0}=group {1}=hero;
 	// Clamp carries no argument. All figure-/object-naming (Loch-Gesetz:
 	// never a coordinate, never a section number).
-	public string ordExplainWachzone, ordExplainThreeC, ordExplainVergeltung, ordExplainClamp, ordExplainFokuszone;
+	public string ordExplainWachzone, ordExplainWachzoneRel, ordExplainThreeC, ordExplainVergeltung, ordExplainClamp, ordExplainFokuszone;
 	// M14f Naehesuch: {0}=group, {1}=cleaned reaction-zone name; the Rel
 	// variant carries only {0} (junk name -> relative wording, §8.4 law).
 	public string ordExplainNahe, ordExplainNaheRel;

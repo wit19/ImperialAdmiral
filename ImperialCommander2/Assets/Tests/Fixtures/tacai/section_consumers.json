@@ -104,6 +104,210 @@
       }
     },
     {
+      "name": "sd_wachzone_boilerplate_name",
+      "_comment": "Same held-Wachzone vector as sd_wachzone_held but the authored name carries the editor boilerplate prefix. The S8.4 CleanSectionName law rides the DECISION layer now, so the watch vector names Guard Den (prefix stripped) - the popup consumer renders the named line; the harness pin proves the producer cleaned it.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Section 7 - Guard Den"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Outer Bay"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_G",
+          "name": "Shield Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "GUARD",
+          "CARD_G",
+          "Shield Guard",
+          "guard",
+          2
+        ]
+      ],
+      "watchProbe": [
+        "GUARD"
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_wachzone_boilerplate_name\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Section 7 - Guard Den\nsec s-b name=Outer Bay\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-1 section=s-a round=2\n",
+        "readout": "watch.GUARD=LU|Guard Den|r2|thr5/3|known\nwachHeroFor.GUARD=LU"
+      }
+    },
+    {
+      "name": "sd_wachzone_junk_name",
+      "_comment": "Junk name (bare \"Section <n>\" - informs nothing): the producer refuses it (SectionName null), the consumer switches to the RELATIVE popup wording (ordExplainWachzoneRel). The watch vector pins the empty name slot: the raw id/GUID must NEVER appear here.",
+      "events": [
+        {
+          "kind": "MissionStart",
+          "round": 1,
+          "payload": {
+            "objective": "Secure the vault.",
+            "priorityTarget": "REBEL",
+            "roundLimit": 8,
+            "mission": "SD1"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-a",
+            "name": "Section 4"
+          }
+        },
+        {
+          "kind": "SectionActivated",
+          "round": 1,
+          "payload": {
+            "section": "s-b",
+            "name": "Outer Bay"
+          }
+        },
+        {
+          "kind": "Spawn",
+          "round": 1,
+          "payload": {
+            "group": "GUARD",
+            "size": 2,
+            "section": "s-a"
+          }
+        },
+        {
+          "kind": "HeroActivationStart",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        },
+        {
+          "kind": "EntityInteract",
+          "round": 2,
+          "payload": {
+            "section": "s-a",
+            "entity": "t-1"
+          }
+        },
+        {
+          "kind": "HeroActivated",
+          "round": 2,
+          "payload": {
+            "hero": "LU"
+          }
+        }
+      ],
+      "deploySeeds": {
+        "GUARD": [
+          "s-a"
+        ]
+      },
+      "critical": [
+        "s-a"
+      ],
+      "cards": [
+        {
+          "id": "CARD_G",
+          "name": "Shield Guard",
+          "miniSize": "Small1x1",
+          "speed": 4,
+          "health": 3,
+          "attackType": "Ranged",
+          "attacks": [
+            "Blue"
+          ],
+          "isElite": false
+        }
+      ],
+      "facts": [
+        [
+          "GUARD",
+          "CARD_G",
+          "Shield Guard",
+          "guard",
+          2
+        ]
+      ],
+      "watchProbe": [
+        "GUARD"
+      ],
+      "expect": {
+        "canon": "mission=vector|sd_wachzone_junk_name\nround=2\nposture=stall\nobjective=Secure the vault.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=7\nG|GUARD|GUARD|1|0|2|2|1|0|1\nH|LU|LU|0|0|1|2|0|0\nseen=LU zone=sec:s-a kind=fact seq=6 round=2\n",
+        "dump": "round=2 speedSectionsPerWindow=1\nsec s-a name=Section 4\nsec s-b name=Outer Bay\nspeed LU round=2 crossings=0 touched=1\ngroup GUARD alive=2 fallen=0 anonVictim=no woundedDisjunctive=no\nfig 0\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nfig 1\nobs round=1 src=deploy alts=s-a:fact\ncands s-a\ndom 1\nhero LU section=s-a round=2\ninteract LU t-1 section=s-a round=2\n",
+        "readout": "watch.GUARD=LU||r2|thr5/3|known\nwachHeroFor.GUARD=LU"
+      }
+    },
+    {
       "name": "sd_wachzone_released",
       "_comment": "Same stream plus round 3: the hero moves and works OUTER BAY. The fact anchor leaves the object section, so the HELD law releases the duty (state-based, no invented departure).",
       "events": [

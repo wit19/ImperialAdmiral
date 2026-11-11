@@ -4749,11 +4749,21 @@ namespace TacticalAI
                     if (_sdWatchByGroup != null)
                     {
                         Tac.WachzoneDecision wz;
-                        if (_sdWatchByGroup.TryGetValue(groupId, out wz)
-                            && !string.IsNullOrEmpty(UIx.ordExplainWachzone))
-                            sdLine = TF(UIx.ordExplainWachzone,
-                                HeroDisplay(wz.Hero), wz.SectionName,
-                                GroupDisplay(groupId));
+                        if (_sdWatchByGroup.TryGetValue(groupId, out wz))
+                        {
+                            // §8.4 law at the consumer (apPreyThreat/
+                            // ordExplainNahe pattern): authored name when
+                            // it informs, RELATIVE wording otherwise - the
+                            // decision layer already refused id/GUID junk.
+                            if (!string.IsNullOrEmpty(wz.SectionName)
+                                && !string.IsNullOrEmpty(UIx.ordExplainWachzone))
+                                sdLine = TF(UIx.ordExplainWachzone,
+                                    HeroDisplay(wz.Hero), wz.SectionName,
+                                    GroupDisplay(groupId));
+                            else if (!string.IsNullOrEmpty(UIx.ordExplainWachzoneRel))
+                                sdLine = TF(UIx.ordExplainWachzoneRel,
+                                    HeroDisplay(wz.Hero), GroupDisplay(groupId));
+                        }
                     }
                     if (sdLine == null && _sdThreeCByGroup != null)
                     {

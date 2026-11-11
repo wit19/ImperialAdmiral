@@ -343,6 +343,7 @@
     "ordExplainHead": "ERKLÄRUNG",
     "ordExplainFocusWhy": "Fokus-Ziel {0}: {1}",
     "ordExplainWachzone": "{0} arbeitet am Missionsobjekt in {1} — {2} greift zuerst ein.",
+    "ordExplainWachzoneRel": "{0} hält Wache am Missionsobjekt — {1} greift zuerst ein.",
     "ordExplainThreeC": "{0} drang in die neu aktivierte Sektion {1} ein — {2} reagiert zuerst.",
     "ordExplainVergeltung": "Auf {0} wurde in dieser Runde geschossen — als Schütze wird {1} vermutet.",
     "ordExplainNahe": "Nächste Reaktion: {0} — {1} grenzt direkt an das Geschehen.",

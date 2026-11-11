@@ -578,6 +578,14 @@ namespace TacticalAiHarness
                   SectionConsumers.CleanSectionName("Start Section"));
             Check("nahe_name.section_junk", null,
                   SectionConsumers.CleanSectionName("Section 1 - Section"));
+            // 09.11 fresh-look: bare "Section <n>" WITHOUT a dash informs
+            // nothing (shipping LOTHAL3 names ARE this) - junk.
+            Check("nahe_name.bare_section_junk", null,
+                  SectionConsumers.CleanSectionName("Section 4"));
+            Check("nahe_name.bare_section_junk_case", null,
+                  SectionConsumers.CleanSectionName("section 12"));
+            Check("nahe_name.bare_guard", "Sector 4",
+                  SectionConsumers.CleanSectionName("Sector 4"));
             Check("nahe_name.grid_junk", null,
                   SectionConsumers.CleanSectionName("R1"));
             Check("nahe_name.grid_junk2", null,

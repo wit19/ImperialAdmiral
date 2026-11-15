@@ -114,6 +114,36 @@ public static class WoundFocusGate
         Eq(new Rational(2, 3), r[1].ThreatEconomic, "WC::woundall_no_wound_economy");
         Eq("card", r[0].Basis, "WC::woundall_label_card_rows");
 
+        // ------------------------------------------------ B2) PlayerFinale
+        // 15.11 (Thomas playtest, EMPIRE1 r9): the healthy-first slot LEADS
+        // the carrier keys. Replay: three wounded heroes, the last healthy
+        // one is an objective actor with an OLDER engagement round; the
+        // wounded newest carrier must never outrank the hero whose wound
+        // ENDS the mission (pre-fix the log picked the wounded Verena-
+        // analog forever, basis=objactor). Recency still orders WITHIN the
+        // wounded tier; the same rows under a null counter keep the
+        // Player-19 carrier canon bit-identical (Null-Law).
+        var finale = new List<FocusCandidate>
+        {
+            new FocusCandidate { HeroId = "Verena", SquadRow = 0, Profile = null,
+                                 Card = Card("R", 3), Wounded = true,
+                                 ObjectiveActor = true, EngagedRound = 9 },
+            new FocusCandidate { HeroId = "Loku", SquadRow = 1, Profile = null,
+                                 Card = Card("R", 4), Wounded = false,
+                                 ObjectiveActor = true, EngagedRound = 7 },
+            new FocusCandidate { HeroId = "MHD", SquadRow = 2, Profile = null,
+                                 Card = Card("R", 3), Wounded = true,
+                                 ObjectiveActor = true, EngagedRound = 8 },
+            new FocusCandidate { HeroId = "Jyn", SquadRow = 3, Profile = null,
+                                 Card = Card("G", 2), Wounded = true },
+        };
+        var fr = OverlordFocus.Rank(finale, "protect", "woundAll", null, 0, null, null);
+        Eq("Loku", fr[0].HeroId, "WC::finale26_healthy_leads_wounded_carriers");
+        Eq("Verena", fr[1].HeroId, "WC::finale26_recency_orders_the_wounded_tier");
+        Eq("MHD", fr[2].HeroId, "WC::finale26_recency_within_tier_2");
+        var fn = OverlordFocus.Rank(finale, "protect", null, null, 0, null, null);
+        Eq("Verena", fn[0].HeroId, "WC::finale26_nullcounter_recency_stands");
+
         // determinism: same input, same order, twice.
         var a = string.Join(";", Rank(bait, true, null, new Rational(5)).Select(x => x.HeroId));
         var b = string.Join(";", Rank(bait, true, null, new Rational(5)).Select(x => x.HeroId));

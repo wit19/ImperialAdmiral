@@ -204,14 +204,23 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    progress (activation-window attribution from the world feed, never a position
    read) OUTRANKS the entire counter/role doctrine below; two objective actors
    tie-break by most recent engagement (Player-19). The +1 threat bump is
-   per-tier and rides on top of the number.
+   per-tier and rides on top of the number. ONE exception since the PlayerFinale
+   playtest 15.11 (P42a): under a `woundAll` counter the healthy-first slot of
+   0d LEADS — the carrier keys are threat estimation and estimation never
+   outranks the win condition itself (see 0d).
 0d. **Wound-objective law** (`woundAll` counter class, wounded-focus fix 03.11,
-   final phrasing 06.11): when the mission's printed END demands wounded heroes
+   final phrasing 06.11, slot law corrected 15.11 P42a): when the mission's
+   printed END demands wounded heroes
    ("all heroes wounded"), a hit on an already-wounded hero earns ZERO counter
    progress — so healthy heroes rank first, the ×2 finisher economy is OFF, and
    within the healthy the printed chip vector orders: `[healer-kit 3, supporter
    2, plain 1, identity-healer role 0]` → mobility → damage-EV (lexicographic,
-   `HeroProfiles.ChipKey`). Without the counter none of this exists — the
+   `HeroProfiles.ChipKey`). The healthy-first comparison LEADS the whole
+   counter block — above the 0c carrier keys (the 03.11 header always said
+   FIRST counter slot, but the Player-19 carrier keys silently moved in front
+   of it the same day; EMPIRE1 finale r9 proved the cost: three wounded, the
+   last healthy hero untouched while the army beat a wounded carrier). Without
+   the counter none of this exists — the
    null-counter canon stays bit-identical.
 1. **Threat value per hero** — current law (M15–M25, Thomas rulings 05.–06.11): the
    hero's TRUE standard-weapon dice from `tactical_hero_cards.json` (never the
@@ -1901,3 +1910,63 @@ checks, kein Canon-Vektor gerührt. TacticalAiGate rc=0 `ALL PASS`,
 byte-identical (measured above). build.sh (APP/TESTS rc=0) is measured by
 the controller on the merged main tree per the chain rule. This hop ships
 docs only — no code, fixture, ui.json or concept-file lines.
+
+## The language lane and the resale law (2026-11-15, P42–P42b, PlayerFinale playtest)
+
+**The clobber mechanism (the root of all three fixes).**
+`DataStore.SetCardTranslations` replaces card fields from the shipped
+language overlay UNCONDITIONALLY (verified 15.11: `toCards[i].keywords =
+langcard.keywords;` with no empty-guard) — every law that reads a keyword
+token therefore reads the TRANSLATED lane in a non-English session. This
+is the same class as the 02.11 `ignored`-lane lesson, now proven on the
+`keywords` and `surges` lanes as well.
+
+**P42 — exact keyword lanes.** Three law-consumed keywords are printed as
+whole tokens: `Massive` (interior/danger laws), `Mobile`, `Reach`. The
+overlays translate them wholesale. Fix: `TacticalAIBridge.KeywordLaneForms`
+(measured union over every shipped overlay: Gewaltig/Massiva/Descomunal/
+Immense/Massiccio/Masywny/Огромный …) — the canonical token is APPENDED
+next to the displayed one (the print never changes), plus the DG-id belt
+(the 20 base-pool cards that print them). Gate: `RunKeywordLaneTranslation`
+— per language: union(overlay forms) == CardData set, both directions, plus
+bridge-table drift pins.
+
+**P42b — the "+N Accuracy" pattern lane.** `KwAcc`/`SurgeAcc`
+(`Core/Dice.cs`) read hit-probability bonuses from the token pattern, and
+the overlays translate the WORD: `+2 Zielsicherheit`, `+1 de Precisão`,
+`+2 к точности`, … Measured 15.11: 60 CardData cards print an accuracy
+keyword or surge; the DE threat math silently missed every one of them.
+Fix: `TacticalAIBridge.AccPhraseRx` (8 form words, case-insensitive,
+word-end lookahead — the Dutch short form `nauwkeurig` must not eat
+`nauwkeurigheid`) normalizes BOTH lanes (keyword + surge) by appending the
+canonical `+N Accuracy` next to the displayed token. The pattern lane needs
+no DG belt (the number rides in the token), but one card-level belt: the
+De/Es/Fr/It/Pl/Ru overlays ship **A026** (Echo Base Trooper (Elite)) with
+`keywords: []` — the clobber erases `+1 Accuracy` AND `Pierce 1` there, so
+ToRecord restores both from CardData for that id only. Gate:
+`RunAccuracyLaneTranslation` mirrors the runtime set semantics (each
+distinct fact counts once; belt applies to the overlay side only) and
+asserts facts(CardData) == facts(overlay+normalization) per card per
+language, both directions, plus a leak scan.
+
+**Reported dead lanes (measured, not fixed):** `HealContribution`'s
+heal/support substrings and `ActiveSpecialKeywords`'
+Overwatch/Multifire/"Push 1"/"Move 2" hit ZERO shipped cards in any lane
+(they exist for the Python sim's synthetic decks); a hand-authored DE
+custom card typing those keywords in German would still miss the law —
+there is no shipped token to normalize, so nothing was guessed. The
+`ImperialDecks` family regexes read the EN-only deck/agenda data files,
+not the card lane — language-neutral by construction.
+
+**P42b resale law (campaign UI, Tactical-AI-mode only).** Removing a
+purchased campaign item in the campaign screen refunds
+`ceil(cost/2)` while `TacticalAISettings.Enabled` (the AI economy plans
+against the same credit pool; the old full refund was a buy/remove churn
+loop), classic campaigns keep the full refund. `Screens/CampaignManager.cs`
+— a UI-layer law: no harness vector can see it; it is pinned by the code
+comment and build.sh (APP rc=0).
+
+**QA (main working tree, 15.11).** build.sh: APP rc=0 errors=0 files=295,
+TESTS rc=0. TacticalAiHarness (canon dir): `ALL PASS | checks=47123
+fails=0`. TacticalAiGate: `ALL PASS`, `MassiveInteriorGate: ALL PASS |
+checks=166 fails=0` (P42 keyword lanes + 12 new P42b accuracy-lane rows).

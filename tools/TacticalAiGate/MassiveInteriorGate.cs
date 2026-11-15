@@ -70,9 +70,298 @@ public static class MassiveInteriorGate
         RunSeamSourceContract();
         RunAnchorMaskContract();   // P41d (card t_59ba21ee): spec 9.3-2/9.3-3 seams + the two ui rails
         RunUsefulnessContract();   // P41e (card t_1f93d98d): spec 5-D3-C/C2 + 9.3-4 (predicate, one refund point, economy skip)
+        RunKeywordLaneTranslation(); // P42 (PlayerFinale 15.11): translated keyword lanes vs the live laws
+        RunAccuracyLaneTranslation(); // P42b (Thomas 15.11): the "+N Accuracy" pattern lane
         Console.WriteLine("MassiveInteriorGate: " + (fails == 0 ? "ALL PASS" : "FAILURES") +
                           " | checks=" + checks + " fails=" + fails);
         if (fails > 0) Environment.ExitCode = 1;
+    }
+
+    // ------------------------------------------------ keyword lane -------
+    // P42 (Thomas PlayerFinale 15.11, EMPIRE1 in DE): the FULL language
+    // overlays translate the printed keyword tokens ("Massive" -> DE
+    // "Gewaltig", Ru "Огромный") and SetCardTranslations replaces the WHOLE
+    // keywords list - so every live Keywords.Contains("Massive") law lost
+    // its cards in a DE session and the interior filter saw zero massive
+    // figures (the finale deployed AT-ST/AT-DP like small figures). The
+    // bridge restores the canonical token next to the translated one
+    // (TacticalAIBridge.ToRecord: KeywordLaneForms + the KeywordLaneDgIds
+    // DG-id belts). This gate is the live audit, three directions:
+    //   (1) CardData still prints EXACTLY the belt's id set per canonical
+    //       (data drift fails here and forces the bridge belt review);
+    //   (2) in every shipped overlay the union over {canonical + gate-side
+    //       translated forms} equals the CardData set in BOTH directions
+    //       (no leak onto other cards, no silent drop);
+    //   (3) every form string of the gate-side table still appears, quoted,
+    //       in the bridge source (each copy drifts, this names it).
+    // Gate-side table is an INDEPENDENT copy - the audit must not trust
+    // the implementation. Fr keeps the EN "Mobile" token (measured 15.11);
+    // PL prints the gendered pair Mobilny/Mobilna whose UNION is the set.
+    static readonly string[][] KeywordLaneAudit =
+    {
+        new[] { "Massive", "Gewaltig", "Massiva", "Descomunal", "Immense",
+                "Massiccio", "Masywny", "Огромный" },
+        new[] { "Mobile", "Beweglich", "Móvel", "Móvil", "Mobilità",
+                "Mobilny", "Mobilna", "Подвижность" },
+        new[] { "Reach", "Weitreichend", "Alcance", "Gran Alcance",
+                "Allonge", "Portata", "Dystans", "Выпад" },
+    };
+    static readonly string[][] KeywordLaneBelt =
+    {
+        new[] { "Massive", "DG014", "DG025", "DG045", "DG046", "DG065", "DG073" },
+        new[] { "Mobile", "DG011", "DG012", "DG013", "DG017", "DG018",
+                "DG036", "DG037", "DG038", "DG076" },
+        new[] { "Reach", "DG009", "DG010", "DG039", "DG040", "DG041", "DG045" },
+    };
+
+    // The Ru/allies.json overlay prints "\'" (measured 15.11: 2 occurrences)
+    // - invalid JSON that the RUNTIME engine (Unity Newtonsoft) accepts by
+    // dropping the backslash. Language-lane reads mirror THAT leniency (the
+    // audit reads what the game reads); the strict TcRule-only engine stays
+    // the mission-data/census law and is untouched.
+    static readonly Regex BadEscapeRule = new Regex("\\\\(?![\"\\\\/bfnrtu])");
+    static object ReadLenientJsonFile(string path)
+    {
+        var text = File.ReadAllText(path);
+        return Json.Parse(TcRule.Replace(BadEscapeRule.Replace(text, ""), "$1"));
+    }
+
+    static HashSet<string> CardIdsWithKeyword(string canonical)
+    {
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var lane in new[] { "enemies", "villains", "allies", "heroes" })
+        {
+            foreach (var cRaw in Json.AsList(ReadJsonFile(
+                App + "/Assets/Resources/CardData/" + lane + ".json")))
+            {
+                var c = Json.AsDict(cRaw);
+                var kw = Json.Get(Json.AsDict(c), "keywords", null);
+                if (kw == null) continue;
+                foreach (var kRaw in Json.AsList(kw))
+                    if ((string)kRaw == canonical)
+                    { ids.Add(Json.AsStr(Json.Get(c, "id", ""))); break; }
+            }
+        }
+        return ids;
+    }
+
+    static HashSet<string> OverlayIdsWithAnyForm(string langDir, string[] forms)
+    {
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var lane in new[] { "enemies", "villains", "allies", "heroes" })
+        {
+            var path = Path.Combine(langDir, "DeploymentGroups", lane + ".json");
+            if (!File.Exists(path)) continue;
+            foreach (var cRaw in Json.AsList(ReadLenientJsonFile(path)))
+            {
+                var c = Json.AsDict(cRaw);
+                var kw = Json.Get(c, "keywords", null);
+                if (kw == null) continue;
+                foreach (var kRaw in Json.AsList(kw))
+                {
+                    var k = kRaw as string;
+                    if (k == null) continue;
+                    foreach (var f in forms)
+                        if (k == f) { ids.Add(Json.AsStr(Json.Get(c, "id", ""))); break; }
+                }
+            }
+        }
+        return ids;
+    }
+
+    static void RunKeywordLaneTranslation()
+    {
+        var bridge = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/TacticalAIBridge.cs");
+        var langRoot = Path.Combine(InteriorDpProbe.DataRoot(), "ImperialCommander2",
+                                    "Assets", "Resources", "Languages");
+        var langs = Directory.GetDirectories(langRoot);
+        Array.Sort(langs, StringComparer.Ordinal);
+        foreach (var lane in KeywordLaneAudit)
+        {
+            string canonical = lane[0];
+            // (1) CardData set == belt
+            var want = CardIdsWithKeyword(canonical);
+            string[] beltIds = KeywordLaneBelt.First(r => r[0] == canonical).Skip(1).ToArray();
+            var belt = new HashSet<string>(beltIds, StringComparer.Ordinal);
+            if (!want.SetEquals(belt))
+                Fail("P42 keyword lane: CardData '" + canonical + "' set " +
+                     string.Join(",", want.OrderBy(x => x)) + " != bridge belt " +
+                     string.Join(",", belt.OrderBy(x => x)) +
+                     " - data drifted, review KeywordLaneDgIds in the bridge");
+            else Ok("P42 keyword lane: CardData '" + canonical + "' == belt (" + belt.Count + " ids)");
+            // (2) every overlay: union(canonical + forms) == CardData set
+            foreach (var dir in langs)
+            {
+                var leaf = Path.GetFileName(dir);
+                var got = OverlayIdsWithAnyForm(dir, lane);
+                if (!got.SetEquals(want))
+                {
+                    var extra = got.Except(want).OrderBy(x => x, StringComparer.Ordinal);
+                    var miss = want.Except(got).OrderBy(x => x, StringComparer.Ordinal);
+                    Fail("P42 keyword lane: " + leaf + "/" + canonical + " prints on " +
+                         string.Join(",", extra) + " it must not, misses " +
+                         string.Join(",", miss) + " (forms: " + string.Join("|", lane.Skip(1)) + ")");
+                }
+                else Ok("P42 keyword lane: " + leaf + "/" + canonical + " union == CardData set (" + want.Count + ")");
+            }
+            // (3) the bridge source still carries every form, quoted
+            for (int t = 1; t < lane.Length; t++)
+            {
+                if (bridge.IndexOf("\"" + lane[t] + "\"", StringComparison.Ordinal) < 0)
+                    Fail("P42 keyword lane: the bridge table lost the form '" + lane[t] +
+                         "' of '" + canonical + "' (gate table vs bridge drift)");
+                else Ok("P42 keyword lane: bridge carries '" + lane[t] + "'");
+            }
+            // belt ids in the bridge, quoted
+            foreach (var id in beltIds)
+                if (bridge.IndexOf("\"" + id + "\"", StringComparison.Ordinal) < 0)
+                    Fail("P42 keyword lane: the bridge belt lost " + id + " for " + canonical);
+        }
+    }
+
+    // ------------------------------------------------ accuracy lane ------
+    // P42b (Thomas 15.11): the "+N Accuracy" pattern lane. KwAcc/SurgeAcc
+    // (Core/Dice.cs) read hit-probability bonuses from tokens, and the
+    // overlays translate the WORD ("+2 Zielsicherheit", "+1 de Precisão",
+    // "+2 к точности", ...). The bridge normalizes (TacticalAIBridge
+    // AccPhraseRx + the A026 lane belt); this audit mirrors that runtime
+    // and asserts, per card and per language:
+    //   facts(CardData printed) == facts(overlay lane after bridge
+    //   normalization)  - both directions (missing AND stray facts),
+    //   plus a leak scan (an accuracy form printed on a card that has no
+    //   accuracy fact at all), plus the bridge still carries every form.
+    // kw lane = SUM (KwAcc sums per token), surge lane = sorted multiset
+    // (SurgeAcc maxes - multiset equality is the stronger statement).
+    static readonly Regex AccLaneFormRx = new Regex(
+        @"\+\s*(\d+)\s*(?:Zielsicherheit|de\ Precisão|Precisión|Précision|Precisione|Nauwkeurigheid|nauwkeurig|celności|к точности)(?!\p{L})",
+        RegexOptions.IgnoreCase);
+    static readonly Regex AccLaneLitRx = new Regex(@"\+(\d+)\s*Accuracy", RegexOptions.IgnoreCase);
+    // bridge belt mirror (keep in lockstep with TacticalAIBridge ToRecord):
+    // id -> canonical tokens restored when the language lane is clobbered.
+    static readonly string[][] AccuracyLaneBelt =
+    {
+        new[] { "A026", "+1 Accuracy", "Pierce 1" },
+    };
+
+    class AccFacts
+    {
+        public int KwSum;
+        public readonly List<int> Surge = new List<int>();
+        public bool Any { get { return KwSum != 0 || Surge.Count > 0; } }
+        public string Print()
+        {
+            var s = "kw=" + KwSum + " sg=[" + string.Join(",", Surge) + "]";
+            return s;
+        }
+    }
+
+    // one card's accuracy facts: literal-EN token OR translated form.
+    // Set semantics mirror the bridge runtime exactly: normalization
+    // appends a canonical "+N Accuracy" only while it is not already in
+    // the lane (literal OR earlier canonical), so every distinct printed
+    // accuracy fact is counted ONCE no matter which language prints it.
+    // The belt is a runtime correction of the LANGUAGE lane - it applies
+    // to the overlay side only; CardData is the untouched printed fact.
+    static AccFacts AccFactsOf(string id, List<object> kws, List<object> sgs, bool belt)
+    {
+        var f = new AccFacts();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var pending = new List<string>();
+        if (belt)
+            foreach (var beltRow in AccuracyLaneBelt)
+                if (beltRow[0] == id)
+                    for (int t = 1; t < beltRow.Length; t++) pending.Add(beltRow[t]);
+        if (kws != null) pending.AddRange(kws.OfType<string>());
+        foreach (var k in pending)
+        {
+            var m = AccLaneLitRx.Match(k);
+            if (!m.Success) m = AccLaneFormRx.Match(k);
+            if (!m.Success) continue;
+            if (seen.Add("+" + m.Groups[1].Value + " Accuracy")) f.KwSum += int.Parse(m.Groups[1].Value);
+        }
+        if (sgs != null)
+        {
+            var seenS = new HashSet<string>(StringComparer.Ordinal);
+            var pendingS = new List<string>(sgs.OfType<string>());
+            foreach (var s0 in pendingS)
+            {
+                // the canonical line the bridge appends for a translated
+                // surge (translated part -> "Accuracy"); literal lines
+                // enter the set as-is.
+                var m = AccLaneLitRx.Match(s0);
+                var canon = m.Success ? s0
+                    : (AccLaneFormRx.IsMatch(s0) ? AccLaneFormRx.Replace(s0, "+$1 Accuracy", 1) : null);
+                if (canon == null || !seenS.Add(canon)) continue;
+                var m2 = AccLaneLitRx.Match(canon);
+                if (m2.Success) f.Surge.Add(int.Parse(m2.Groups[1].Value));
+            }
+            f.Surge.Sort();
+        }
+        return f;
+    }
+
+    static Dictionary<string, AccFacts> AccLoad(string baseDir, bool overlay, string leaf)
+    {
+        var map = new Dictionary<string, AccFacts>(StringComparer.Ordinal);
+        foreach (var laneName in new[] { "enemies", "villains", "allies", "heroes" })
+        {
+            var path = overlay ? Path.Combine(baseDir, "DeploymentGroups", laneName + ".json")
+                               : Path.Combine(App + "/Assets/Resources/CardData", laneName + ".json");
+            if (!File.Exists(path)) continue;
+            var raw = overlay ? ReadLenientJsonFile(path) : ReadJsonFile(path);
+            foreach (var cRaw in Json.AsList(raw))
+            {
+                var c = Json.AsDict(cRaw);
+                string id = Json.AsStr(Json.Get(c, "id", ""));
+                if (id == "") continue;
+                map[id] = AccFactsOf(id,
+                    Json.Get(c, "keywords", null) as List<object>,
+                    Json.Get(c, "surges", null) as List<object>, overlay);
+            }
+        }
+        return map;
+    }
+
+    static void RunAccuracyLaneTranslation()
+    {
+        var bridge = ReadSrc("ImperialCommander2/Assets/Scripts/TacticalAI/TacticalAIBridge.cs");
+        // forms + belt must still live in the bridge (gate-vs-bridge drift)
+        foreach (var form in new[] { "Zielsicherheit", "Precisão", "Précision", "Precisione",
+                                     "Nauwkeurigheid", "nauwkeurig", "celności", "к точности" })
+            if (bridge.IndexOf(form, StringComparison.Ordinal) < 0)
+                Fail("P42b accuracy lane: the bridge AccPhraseRx lost the form '" + form + "'");
+        foreach (var belt in AccuracyLaneBelt)
+            for (int t = 1; t < belt.Length; t++)
+                if (bridge.IndexOf("\"" + belt[t] + "\"", StringComparison.Ordinal) < 0)
+                    Fail("P42b accuracy lane: the bridge belt lost '" + belt[t] + "' for " + belt[0]);
+        var cardData = AccLoad(null, false, null);
+        var want = cardData.Where(kv => kv.Value.Any).ToDictionary(kv => kv.Key, kv => kv.Value);
+        Ok("P42b accuracy lane: CardData prints accuracy facts on " + want.Count + " cards");
+        var langRoot = Path.Combine(InteriorDpProbe.DataRoot(), "ImperialCommander2",
+                                    "Assets", "Resources", "Languages");
+        var langs = Directory.GetDirectories(langRoot);
+        Array.Sort(langs, StringComparer.Ordinal);
+        foreach (var dir in langs)
+        {
+            var leaf = Path.GetFileName(dir);
+            var got = AccLoad(dir, true, leaf);
+            var problems = new List<string>();
+            foreach (var kv in want)
+            {
+                AccFacts g;
+                if (!got.TryGetValue(kv.Key, out g)) continue;   // partial overlay: runtime keeps EN
+                if (g.Print() != kv.Value.Print())
+                    problems.Add(kv.Key + " CardData " + kv.Value.Print() + " vs overlay " + g.Print());
+            }
+            foreach (var kv in got)
+                if (kv.Value.Any && !want.ContainsKey(kv.Key))
+                    problems.Add(kv.Key + " overlay prints " + kv.Value.Print() + " with no CardData fact");
+            if (problems.Count > 0)
+                Fail("P42b accuracy lane: " + leaf + ": " + string.Join(" | ", problems.Take(6)) +
+                     (problems.Count > 6 ? " (+" + (problems.Count - 6) + " more)" : "") +
+                     " - overlay accuracy facts drifted from CardData (belt/forms in TacticalAIBridge)");
+            else Ok("P42b accuracy lane: " + leaf + " == CardData (" + want.Count + " fact cards)");
+        }
     }
 
     // ------------------------------------------------ census vs file -------

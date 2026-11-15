@@ -5322,6 +5322,65 @@ namespace TacticalAI
             return plain && !exec;
         }
 
+        // PlayerFinale 15.11 (see ToRecord): [canonical, ...printed
+        // translated forms] - one row per law-consumed keyword whose token
+        // the full language overlays (Br/De/Es/Fr/It/Pl/Ru) translate.
+        // Measured 15.11 over every shipped overlay; the gate audits the
+        // union-vs-CardData equality live per language.
+        static readonly string[][] KeywordLaneForms =
+        {
+            new[] { "Massive", "Gewaltig", "Massiva", "Descomunal", "Immense",
+                    "Massiccio", "Masywny", "Огромный" },
+            new[] { "Mobile", "Beweglich", "Móvel", "Móvil", "Mobilità",
+                    "Mobilny", "Mobilna", "Подвижность" },
+            new[] { "Reach", "Weitreichend", "Alcance", "Gran Alcance",
+                    "Allonge", "Portata", "Dystans", "Выпад" },
+        };
+        // DG-id belt for the same lanes (CardData is the live source).
+        static readonly System.Collections.Generic.List<
+            System.Collections.Generic.KeyValuePair<string, string>> KeywordLaneDgIds =
+            new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, string>>
+            {
+                new System.Collections.Generic.KeyValuePair<string, string>("Massive", "DG014"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Massive", "DG025"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Massive", "DG045"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Massive", "DG046"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Massive", "DG065"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Massive", "DG073"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG011"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG012"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG013"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG017"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG018"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG036"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG037"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG038"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Mobile", "DG076"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG009"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG010"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG039"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG040"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG041"),
+                new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG045"),
+            };
+        // P42b (Thomas 15.11): the ACCURACY PATTERN lane. KwAcc and
+        // SurgeAcc (Core/Dice.cs) read hit-probability bonuses from the
+        // literal "+N Accuracy" in the keywords/surges lanes - and the
+        // language overlays translate the WORD: "+2 Zielsicherheit",
+        // "+1 de Precisão", "+2 к точности" ... Measured 15.11 over the
+        // 60 CardData cards that print an accuracy keyword or surge: 8
+        // form words across 8 overlays (En/Hu/No ship the English word,
+        // Es/Nl mix upper+lower case - IgnoreCase covers both). Unlike
+        // the exact lanes this token arrives WITH a number, so the
+        // normalization appends the canonical "+N Accuracy" next to the
+        // displayed form (never removes it). The word-end lookahead is
+        // load-bearing: the Dutch short form "nauwkeurig" must not eat
+        // the long form "nauwkeurigheid". Gate: MassiveInteriorGate
+        // RunAccuracyLaneTranslation (both-directions per language).
+        static readonly Regex AccPhraseRx = new Regex(
+            @"\+\s*(\d+)\s*(?:Zielsicherheit|de\ Precisão|Precisión|Précision|Precisione|Nauwkeurigheid|nauwkeurig|celności|к точности)(?!\p{L})",
+            RegexOptions.IgnoreCase);
+
         /// <summary>Only the PRINTED card values go through (fairness
         /// whitelist Core DeploymentCard.CardFieldWhitelist); no bonus data.</summary>
         static Dictionary<string, object> ToRecord(global::DeploymentCard cd)
@@ -5381,6 +5440,78 @@ namespace TacticalAI
             if (cd.id == "DG007" || cd.id == "DG008" ||
                 cd.id == "DG046" || cd.id == "DG071") assault = true;
             if (assault && !kws.Contains("Assault")) kws.Add("Assault");
+            // Thomas 15.11 (PlayerFinale, EMPIRE1 in DE): the KEYWORD lane
+            // is translated wholesale - SetCardTranslations overwrites
+            // cd.keywords with the language card's list, so a DE card
+            // prints "Gewaltig" where the EN lane prints "Massive", and
+            // every live law reading Keywords.Contains("Massive") (the
+            // P41 interior filter among them) silently lost its cards -
+            // the finale deployed AT-ST/AT-DP like small figures with the
+            // interior law running over zero massive cards. Same printed-
+            // fact class as the Tripod/Assault belts: RESTORE the canonical
+            // token next to the translated one (never remove the
+            // translated one - the lane is display too). Table measured
+            // 15.11 programmatically over all shipped assets (CardData =
+            // the live IsMassive source; the wiki gap in the census doc
+            // stays reported, not acted on): per canonical, the per-language
+            // UNION over translated forms equals the CardData set in BOTH
+            // directions - pinned live by MassiveInteriorGate. PL prints
+            // the gendered pair Mobilny/Mobilna; Fr keeps EN "Mobile".
+            //   Massive DG014 DG025 DG045 DG046 DG065 DG073
+            //   Mobile  DG011 DG012 DG013 DG017 DG018 DG036 DG037 DG038 DG076
+            //   Reach   DG009 DG010 DG039 DG040 DG041 DG045
+            foreach (var lane in KeywordLaneForms)
+            {
+                bool printed = false;
+                for (int t = 1; t < lane.Length && !printed; t++)
+                    if (kws.Contains(lane[t])) printed = true;
+                // DG-id belt (same class as the Tripod/officer belts): an
+                // unknown translation or renamed lane cannot silently drop
+                // the fact on a base-pool card.
+                if (!printed && !string.IsNullOrEmpty(cd.id))
+                    foreach (var beltId in KeywordLaneDgIds)
+                        if (beltId.Key == lane[0] && beltId.Value == cd.id)
+                        { printed = true; break; }
+                if (printed && !kws.Contains(lane[0])) kws.Add(lane[0]);
+            }
+            // P42b belt (measured 15.11): the De/Es/Fr/It/Pl/Ru overlays
+            // ship A026 with an EMPTY keywords list and DataStore
+            // .SetCardTranslations replaces the lane unconditionally - the
+            // live card loses its printed "+1 Accuracy" in those six
+            // languages (the "Pierce 1" sibling rides along; no AI law
+            // consumes Pierce, it is restored for lane completeness).
+            // CardData is the printed-fact source, like the Tripod belt.
+            if (cd.id == "A026")
+            {
+                if (!kws.Contains("+1 Accuracy")) kws.Add("+1 Accuracy");
+                if (!kws.Contains("Pierce 1")) kws.Add("Pierce 1");
+            }
+            // P42b: accuracy pattern normalization (see AccPhraseRx). The
+            // displayed token STAYS (it is the print), the canonical form
+            // is a coexisting token so KwAcc/SurgeAcc count the fact.
+            // En/Hu/No tokens already carry "Accuracy" - the Contains
+            // guard makes this a no-op there (and on any mixed token).
+            foreach (var tok in kws.ToArray())
+            {
+                if (tok == null || tok.IndexOf("Accuracy", StringComparison.OrdinalIgnoreCase) >= 0) continue;
+                var am = AccPhraseRx.Match(tok);
+                if (!am.Success) continue;
+                var canon = "+" + am.Groups[1].Value + " Accuracy";
+                if (!kws.Contains(canon)) kws.Add(canon);
+            }
+            // Same lane on the surges: "{B}: +2 Zielsicherheit,
+            // Durchschlagen 1" must feed SurgeAcc - replace just the
+            // accuracy phrase, keep the rest of the line (SurgeDmg's
+            // "+N {H}" half is language-neutral, measured).
+            var surgeLane = new List<string>(cd.surges ?? new string[0]);
+            if (cd.surges != null)
+                foreach (var s in cd.surges)
+                {
+                    if (s == null || s.IndexOf("Accuracy", StringComparison.OrdinalIgnoreCase) >= 0) continue;
+                    if (!AccPhraseRx.IsMatch(s)) continue;
+                    var canonS = AccPhraseRx.Replace(s, "+$1 Accuracy", 1);
+                    if (!surgeLane.Contains(canonS)) surgeLane.Add(canonS);
+                }
             // M6s-B8 (Player-19 Ivan Talos): the ROLE ANCHOR. A mission-
             // spawned custom card is not a pool card - its mission-GUID id
             // and DE display name match no pattern-weight row. The mission
@@ -5410,7 +5541,7 @@ namespace TacticalAI
                 { "keywords", kws.ToArray() },
                 { "isElite", cd.isElite },
                 { "defense", (cd.defense ?? new DiceColor[0]).Select(a => a.ToString()).ToArray() },
-                { "surges", cd.surges ?? new string[0] },
+                { "surges", surgeLane.ToArray() },
                 { "cost", cd.cost },
                 { "characterType", "Imperial" },
             };

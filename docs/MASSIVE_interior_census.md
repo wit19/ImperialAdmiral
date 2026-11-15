@@ -17,7 +17,7 @@ Live law: `Core/DeploymentCard.cs:49` `IsMassive => Keywords.Contains("Massive")
 | DG065 | Bantha Rider (Elite) | enemies | - |
 | DG073 | General Weiss | villains | - |
 
-wiki cross-check SKIPPED: `wiki_data/imperial_units.json` is git-excluded and absent from this tree. CardData is the live IsMassive source (9.0 anchor); the spec's wiki cross-check could not run here.
+wiki cross-check (`wiki_data/imperial_units.json`, git-excluded file): CardData Massive = AT-DP, AT-ST, Bantha Rider (Elite), General Weiss, Rancor, SC2-M Repulsor Tank ; wiki Massive-tagged = AT-DP, AT-ST, General Weiss, SC2-M Repulsor Tank ; missing in wiki: Bantha Rider (Elite), Rancor ; wiki-only: none. The live source is CardData (D5/9.0 anchor); the wiki gap is reported, not acted on.
 
 Runtime overlay law, for the record and NOT used here (measured at this commit): the shipped app has NO runtime keyword add/remove - grep 'Massive' across Assets/Scripts outside TacticalAI hits nothing; the M13t keyword injection happens at card-BUILD time from the printed card data. What is runtime is the deployLedger (M14e origins, filled FROM the same mission-file rows this census reads directly) and manual figure moves - live-session fields the census never reads.
 

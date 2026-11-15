@@ -356,7 +356,16 @@ namespace Saga
 			{
 				//add item cost back to credits
 				var sc = FindObjectOfType<CampaignManager>();
-				sc.UpdateCreditsUI( RunningCampaign.sagaCampaign.credits + item.cost );
+				// P42b (Thomas 15.11): ONLY in the Tactical AI campaign
+				// mode a removed purchase refunds its resale value
+				// ceil(cost/2), not the full price - the old full refund
+				// made the credit pool a buy/remove churn loop, and in
+				// this mode the AI economy plans against the same pool.
+				// Classic campaigns keep the full refund untouched.
+				int refund = TacticalAI.TacticalAISettings.Enabled
+					? ( item.cost + 1 ) / 2
+					: item.cost;
+				sc.UpdateCreditsUI( RunningCampaign.sagaCampaign.credits + refund );
 				sc.sound.PlaySound( 1 );
 
 				//remove item from hero items as well

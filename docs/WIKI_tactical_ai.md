@@ -457,8 +457,14 @@ what the objective text happens to word (the *mission axis*, November 2026; the 
 names this basis `achse` — see [the mission axis](#mission-axis));
 then the reaction keys (who shot the activating figure this round, the guard-zone
 and retaliation keys, the supporter's trust section); then the **objective actor**
-— a hero who is actually working the mission objective outranks every wound and
-role law; then the wound-objective law below (healthy before wounded, healer-kit
+— a hero who is actually working the mission objective outranks the role
+doctrine and the wound economy; ONE law stands above even him: when the
+mission's END demands wounded heroes, the wound-objective law below (healthy
+before wounded) leads the entire line — finishing the counter IS the win
+condition, and no threat estimate outranks it (learned from a real finale,
+November 15: three wounded heroes, the army beating a wounded carrier while
+the last healthy hero — one wound from ending the mission — stood untouched);
+then the rest of the wound-objective law (healer-kit
 carriers, supporters, movers, damage); then the threat number itself. Only when
 all of that ties does the published fallback chain decide (campaign investment,
 squad row, hero id) — deterministic down to the last tie, and nothing from
@@ -1031,6 +1037,12 @@ income from the difficulty setting, and uses that estimate for nothing
 except deciding whether saving is worth it; and a card the Imperium
 declines today is a card it may well buy tomorrow — watch for it.
 
+**Resale value (November 15).** In the Tactical AI campaign the Imperium
+plans against YOUR credit pool too — so removing a purchased campaign item
+on the campaign screen now refunds only half the price, rounded up
+(odd prices give the extra credit back to you), not the full purchase
+price. Classic campaigns are untouched: full refund there, as always.
+
 ---
 
 <a name="mission-axis"></a>
@@ -1270,3 +1282,23 @@ the app plans at section granularity and cannot see open-space regions,
 and it will keep its hands off that ruling. And an order, as ever, is a
 proposal: the Imperial player at the table executes, and the printed
 cards outrank any pop-up.
+
+---
+
+## It reads the cards, not the language (November 15)
+
+The AI's threat math reads the PRINTED text of the Imperial cards — and
+your game may print that text in German, Russian, Dutch… A finale
+playtest found where that was leaking: the planner looked for literal
+English tokens ("Massive", "Reach", "+2 Accuracy") while a German session
+prints "Gewaltig", "Weitreichend", "+2 Zielsicherheit" — so in translated
+sessions the army quietly undervalued exactly those figures. Fixed: the
+known translated forms are normalized back into the law at card-build
+time, your cards keep their printed language, and the shipped-card audit
+runs both directions per language in every QA gate (60 accuracy cards ×
+11 languages). One card needed a belt beyond the words: the Echo Base
+Trooper (Elite) overlay ships an EMPTY keyword list in six languages —
+the printed facts are now restored from the English card data. Honest
+remainder: a hand-authored custom mission card that prints a law keyword
+in German can still outsmart the normalization — there is no shipped
+token to learn its translation from, and we do not guess one.

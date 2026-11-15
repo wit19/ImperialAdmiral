@@ -46,7 +46,13 @@
 //                     counted), then the sim ChipKey verbatim (healer last)
 //                     - counter law outranks economics. The wound economy
 //                     x2 is OFF entirely under woundAll (finishing a hero
-//                     the counter already counts earns nothing).
+//                     the counter already counts earns nothing). The M10b/
+//                     Player-19 CARRIER keys (objective actor, then newest
+//                     engagement) sit BETWEEN the two slots - win condition
+//                     over threat estimation (PlayerFinale 15.11: healthy-
+//                     first had drifted below them and the empire kept
+//                     beating wounded heroes while a healthy hero who could
+//                     still END the mission stood untouched).
 //     3. economy    - posture-keyed threat x wound-economy multiplier. On
 //                     the M11b hero-card basis: expected damage of the real
 //                     printed dice pool (weapon + known loadout items)
@@ -801,11 +807,32 @@ namespace TacticalAI.Core
             //     the concept's "Feuer in die richtige Sektion statt
             //     Bedrohungs-Schaetzung". Null key => inert.
             if (a.Maskenvertrauen != b.Maskenvertrauen) return a.Maskenvertrauen ? -1 : 1;
-            // 2. counter law (woundAll): sim ChipKey verbatim, higher first.
-            //    M10b: an objective actor OUTRANKS the static role doctrine
-            //    below - a hero who just did real mission damage is the live
-            //    threat, ahead of any printed-role preference (only the
-            //    human's aim mark, key 1, still overrides him).
+            // 2a. WOUNDED-FOCUS FIX (Thomas 03.11, slot law corrected in the
+            //     PlayerFinale playtest 15.11, EMPIRE1 r9): under a woundAll
+            //     counter the sim's LEADING counter slot applies - "healthy
+            //     BEATS wounded, every hit counts and counter progress is
+            //     irreversible" (VictoryCounter.TargetValue woundAll law).
+            //     It LEADS the whole counter block: the 03.11 header comment
+            //     always documented it as the FIRST counter slot, but the
+            //     same-day Player-19 carrier keys below silently moved in
+            //     front of it. The finale proved the damage: three wounded
+            //     heroes, Loku Kanoloa the last healthy one - and the army
+            //     beat on the wounded carrier who had the newest engage-
+            //     ment round instead of taking the fourth wound that WINS
+            //     the mission. Counter progress is the win condition itself;
+            //     the carrier keys below are threat estimation - estimation
+            //     never outranks the win condition (same precedence the
+            //     slot has over the chip: "must never pull the army back
+            //     onto a wounded hero"). Without the woundAll counter this
+            //     slot does not exist - the null-counter canon (carrier
+            //     keys, finisher doctrine, key 4) stays bit-identical.
+            if (woundAll && a.C.Wounded != b.C.Wounded)
+                return a.C.Wounded ? 1 : -1;
+            // 2b. counter block, threat estimation. M10b: an objective actor
+            //     OUTRANKS the static role doctrine below - a hero who just
+            //     did real mission damage is the live threat, ahead of any
+            //     printed-role preference (only the human's aim mark, key 1,
+            //     and under woundAll the healthy-first slot, override him).
             if (a.C.ObjectiveActor != b.C.ObjectiveActor)
                 return a.C.ObjectiveActor ? -1 : 1;
             // Player-19 (Thomas 03.11): engaged-vs-engaged - the most recent
@@ -817,16 +844,6 @@ namespace TacticalAI.Core
                 int er = b.C.EngagedRound.CompareTo(a.C.EngagedRound);
                 if (er != 0) return er;
             }
-            // 2a. WOUNDED-FOCUS FIX (Thomas 03.11): under a woundAll counter
-            //     the sim's LEADING counter slot applies - "healthy BEATS
-            //     wounded, every hit counts and counter progress is
-            //     irreversible" (VictoryCounter.TargetValue woundAll law).
-            //     Before the chip: the chip orders ROLES for FRESH damage and
-            //     must never pull the army back onto a wounded hero. Without
-            //     the woundAll counter this slot does not exist - the null-
-            //     counter canon (finisher doctrine, key 4) stays bit-identical.
-            if (woundAll && a.C.Wounded != b.C.Wounded)
-                return a.C.Wounded ? 1 : -1;
             if (a.Chip != null || b.Chip != null)
             {
                 int ck = CompareChip(a.Chip, b.Chip);

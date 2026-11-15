@@ -2576,6 +2576,218 @@
       "wounded": false
      }
    ]
+  },
+  {
+   "name": "finale26_woundall_healthy_leads_wounded_carriers",
+   "posture": "protect",
+   "counter": "woundAll",
+   "comment": "PlayerFinale 15.11 EMPIRE1 r9 (Thomas playtest): Verena/MHD-19/Jyn wounded, Loku Kanoloa the LAST HEALTHY hero - all three top rows are objective actors and Verena carries the NEWEST engagement round. Pre-fix the Player-19 carrier-recency key ranked Verena first (log basis=objactor) and the empire beat wounded heroes forever instead of taking the fourth wound that ENDS the mission. The 03.11 header always documented healthy-first as the FIRST counter slot; the reorder restores exactly that - win condition over threat estimation.",
+   "heroes": [
+    {
+     "hero": "Verena Talos",
+     "row": 0,
+     "profile": "Verena Talos",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6,
+     "objective_actor": true,
+     "engaged_round": 9
+    },
+    {
+     "hero": "Loku Kanoloa",
+     "row": 1,
+     "profile": "Loku Kanoloa",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 5,
+     "objective_actor": true,
+     "engaged_round": 7
+    },
+    {
+     "hero": "MHD-19",
+     "row": 2,
+     "profile": "MHD-19",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 4,
+     "objective_actor": true,
+     "engaged_round": 8
+    },
+    {
+     "hero": "Jyn Odan",
+     "row": 3,
+     "profile": "Jyn Odan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 5,
+     "objective_actor": false
+    }
+   ],
+   "expect": [
+     {
+      "basis": "objactor",
+      "best_pool": "Blue+Green",
+      "hero": "Loku Kanoloa",
+      "marked": false,
+      "threat": "101",
+      "threat_band": "3",
+      "threat_bonus": "1/2",
+      "threat_damage": "8/3",
+      "threat_econ": "101",
+      "threat_range": "5",
+      "wounded": false
+     },
+     {
+      "basis": "objactor",
+      "best_pool": "Blue+Yellow",
+      "hero": "Verena Talos",
+      "marked": false,
+      "threat": "37",
+      "threat_band": "1",
+      "threat_damage": "1",
+      "threat_econ": "37",
+      "threat_range": "4",
+      "wounded": true
+     },
+     {
+      "basis": "objactor",
+      "best_pool": "Blue+Yellow",
+      "hero": "MHD-19",
+      "marked": false,
+      "threat": "37",
+      "threat_band": "1",
+      "threat_damage": "1",
+      "threat_econ": "37",
+      "threat_range": "4",
+      "wounded": true
+     },
+     {
+      "basis": "chip",
+      "best_pool": "Green+Green",
+      "hero": "Jyn Odan",
+      "marked": false,
+      "threat": "57",
+      "threat_band": "2",
+      "threat_damage": "4/3",
+      "threat_econ": "57",
+      "threat_range": "3",
+      "wounded": true
+     }
+   ]
+  },
+  {
+   "name": "finale26_nullcounter_carrier_recency_stands",
+   "posture": "protect",
+   "counter": null,
+   "comment": "Null-Law guard for the finale reorder: the SAME rows without the woundAll counter keep the Player-19 canon bit-identical - the wounded newest carrier (Verena, engaged_round 9) leads; the moved slot does not exist under a null counter (finisher doctrine untouched).",
+   "heroes": [
+    {
+     "hero": "Verena Talos",
+     "row": 0,
+     "profile": "Verena Talos",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 6,
+     "objective_actor": true,
+     "engaged_round": 9
+    },
+    {
+     "hero": "Loku Kanoloa",
+     "row": 1,
+     "profile": "Loku Kanoloa",
+     "wounded": false,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 4,
+     "health": 5,
+     "objective_actor": true,
+     "engaged_round": 7
+    },
+    {
+     "hero": "MHD-19",
+     "row": 2,
+     "profile": "MHD-19",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 3,
+     "health": 4,
+     "objective_actor": true,
+     "engaged_round": 8
+    },
+    {
+     "hero": "Jyn Odan",
+     "row": 3,
+     "profile": "Jyn Odan",
+     "wounded": true,
+     "marks": 0,
+     "marked_round": 0,
+     "attack_dice": 2,
+     "health": 5,
+     "objective_actor": false
+    }
+   ],
+   "expect": [
+     {
+      "basis": "objactor",
+      "best_pool": "Blue+Yellow",
+      "hero": "Verena Talos",
+      "marked": false,
+      "threat": "37",
+      "threat_band": "1",
+      "threat_damage": "1",
+      "threat_econ": "37",
+      "threat_range": "4",
+      "wounded": true
+     },
+     {
+      "basis": "objactor",
+      "best_pool": "Blue+Yellow",
+      "hero": "MHD-19",
+      "marked": false,
+      "threat": "37",
+      "threat_band": "1",
+      "threat_damage": "1",
+      "threat_econ": "37",
+      "threat_range": "4",
+      "wounded": true
+     },
+     {
+      "basis": "objactor",
+      "best_pool": "Blue+Green",
+      "hero": "Loku Kanoloa",
+      "marked": false,
+      "threat": "101",
+      "threat_band": "3",
+      "threat_bonus": "1/2",
+      "threat_damage": "8/3",
+      "threat_econ": "101",
+      "threat_range": "5",
+      "wounded": false
+     },
+     {
+      "basis": "card",
+      "best_pool": "Green+Green",
+      "hero": "Jyn Odan",
+      "marked": false,
+      "threat": "57",
+      "threat_band": "2",
+      "threat_damage": "4/3",
+      "threat_econ": "57",
+      "threat_range": "3",
+      "wounded": true
+     }
+   ]
   }
  ]
 }

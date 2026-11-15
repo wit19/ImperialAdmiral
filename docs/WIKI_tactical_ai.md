@@ -197,8 +197,11 @@ comes up". Tactical mode replaces both halves with planning
 > reads the table — events written *before* your flip belong to that hero.
 > That is how the AI knows: who opened which door (the door credit), who shot
 > the objective's troops (the strike credit — and that hero then becomes the
-> one the plan focuses on: the marker follows the fighting, not the errands),
-> who the suspected shooter of a retaliating unit is (the closer law), where
+> one the plan focuses on: the marker follows the fighting, not the errands —
+> and the credit is scoped to the *current* objective: when the mission's
+> objective changes, old strike credits are forgotten and the fighting for the
+> new objective starts from zero), who the suspected shooter of a retaliating
+> unit is (the closer law), where
 > the hero is likely to be (the section belief), and when a hero's activation
 > window closes.
 >
@@ -297,8 +300,12 @@ items, attribute-bound pools like the lightsaber's Einsicht pool) score
 their own coverage cells under the melee law (no distance accuracy spend)
 and take a cell only when strictly stronger. The operand is a mean over
 distances — never a sum over weapons.
-- **Plus exactly +1** for the *objective actor*: the hero who finished the
-  activation in which the mission objective moved (public event credit).
+- **Plus exactly +1** for the *objective actor*: the hero credited by public
+  events with working the *current* mission objective — the hero who finished
+  the activation in which the objective moved, or who struck the troops the
+  objective names. The credit is phase-scoped: when the objective changes,
+  strike credits from the old objective are forgotten (a hero who fought the
+  *previous* objective's troops does not stay marked under the new one).
 - **Mission posture decides the formula.** When the Imperium is ordered to
   *hold* (Guard/Block-style postures), threat is the percent law:
   `100 × (60% × score ÷ 8/3 + 40% × speed-band ÷ 3)` — damage first, then
@@ -458,7 +465,11 @@ names this basis `achse` — see [the mission axis](#mission-axis));
 then the reaction keys (who shot the activating figure this round, the guard-zone
 and retaliation keys, the supporter's trust section); then the **objective actor**
 — a hero who is actually working the mission objective outranks the role
-doctrine and the wound economy; ONE law stands above even him: when the
+doctrine and the wound economy; "actually working" reads the *current*
+objective only — when the mission's objective changes, the strike credits of
+the old phase reset to zero for every hero (November 2026), so yesterday's
+battle cannot keep a hero in focus while today's objective burns elsewhere;
+ONE law stands above even him: when the
 mission's END demands wounded heroes, the wound-objective law below (healthy
 before wounded) leads the entire line — finishing the counter IS the win
 condition, and no threat estimate outranks it (learned from a real finale,

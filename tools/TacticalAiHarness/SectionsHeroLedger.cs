@@ -147,6 +147,51 @@ namespace TacticalAiHarness
             Check("ledger.spawn_outside_window", "", SpawnedFields(vSpawn));
             Check("ledger.spawn_row_unchanged", false, vSpawn.Canon().Contains("|in_window"));
 
+            // P43 law 5 (Thomas 15.11): STRIKE CREDIT IS PHASE-SCOPED. The
+            // p19 window-strike events arm Jyn's counter FIRST (fail-closed
+            // belt - the reset checks below must never pass vacuously), the
+            // ObjectiveChange then resets EVERY hero's Strikes/StrikeRound,
+            // while the Player-19 terminal credit survives on its separate
+            // view-level channel (the bridge's engaged boolean keeps the
+            // change-carrier, never the stale phase-1 striker).
+            var f6 = new WorldEventFeed("law");
+            f6.Append("MissionStart", 1, new Dictionary<string, object> {
+                { "objective", "Defeat Ivan Talos." }, { "priorityTarget", "Rebel" },
+                { "roundLimit", 6L }, { "mission", "law" } });
+            f6.Append("Spawn", 1, new Dictionary<string, object> {
+                { "group", "GIVAN" }, { "size", 1L }, { "name", "Ivan Talos" } });
+            f6.Append("HeroActivationStart", 2, P("hero", "Jyn Odan"));
+            f6.Append("GroupDamage", 2, new Dictionary<string, object> {
+                { "group", "GIVAN" }, { "figure", 0L }, { "wheel", 2L }, { "health", 5L } });
+            f6.Append("HeroActivated", 2, P("hero", "Jyn Odan"));
+            var vPre = WorldEventVector.Project(f6.Events, "law", f6.Hash());
+            Check("p43.strike_armed_before_change", 1L, StrikeOf(vPre, "Jyn Odan"));
+            f6.Append("ObjectiveChange", 2, P("objective", "Secure the canteen."));
+            var vPost = WorldEventVector.Project(f6.Events, "law", f6.Hash());
+            Check("p43.strikes_reset_at_change", 0L, StrikeOf(vPost, "Jyn Odan"));
+            Check("p43.strike_round_reset", 0L, StrikeRoundOf(vPost, "Jyn Odan"));
+            Check("p43.terminal_credit_survives", "Jyn Odan", vPost.ObjectiveActor);
+
+            // P43 law 6: a PENDING closer for the old phase's named figure
+            // dies with the change (history != causation, the RoundEnd law
+            // applied to the phase boundary): the hero closing his turn
+            // AFTER the change gains no strike. The M10b retro PROGRESS
+            // credit is a different channel and stays honest - Han carries
+            // the objective credit, not the shot.
+            var f7 = new WorldEventFeed("law");
+            f7.Append("MissionStart", 1, new Dictionary<string, object> {
+                { "objective", "Defeat Ivan Talos." }, { "priorityTarget", "Rebel" },
+                { "roundLimit", 6L }, { "mission", "law" } });
+            f7.Append("Spawn", 1, new Dictionary<string, object> {
+                { "group", "GIVAN" }, { "size", 1L }, { "name", "Ivan Talos" } });
+            f7.Append("GroupDamage", 2, new Dictionary<string, object> {
+                { "group", "GIVAN" }, { "figure", 0L }, { "wheel", 2L }, { "health", 5L } });
+            f7.Append("ObjectiveChange", 2, P("objective", "Secure the canteen."));
+            f7.Append("HeroActivated", 2, P("hero", "Han"));
+            var vBur = WorldEventVector.Project(f7.Events, "law", f7.Hash());
+            Check("p43.pending_closer_no_strike", 0L, StrikeOf(vBur, "Han"));
+            Check("p43.retro_progress_credit", "Han", vBur.ObjectiveActor);
+
             if (Record)
             {
                 var path = Path.Combine(FIX, "hero_ledger_record.json");
@@ -183,6 +228,21 @@ namespace TacticalAiHarness
                 sb.Append(g.GroupId);
             }
             return sb.ToString();
+        }
+
+        // P43: per-hero strike-counter readout (-1 = hero row absent - a
+        // missing hero never silently reads as "reset").
+        static long StrikeOf(FeedWorldView view, string heroId)
+        {
+            foreach (var h in view.Heroes)
+                if (h.HeroId == heroId) return h.Strikes;
+            return -1;
+        }
+        static long StrikeRoundOf(FeedWorldView view, string heroId)
+        {
+            foreach (var h in view.Heroes)
+                if (h.HeroId == heroId) return h.StrikeRound;
+            return -1;
         }
     }
 }

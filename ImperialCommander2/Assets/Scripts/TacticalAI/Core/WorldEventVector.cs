@@ -290,7 +290,7 @@ namespace TacticalAI.Core
             // activation order is the attribution channel (M10b law, mirror
             // image): the hero whose turn encloses the damage did it. Never
             // a position read, never a guess from absence.
-            public int Strikes;                // cumulative strikes on the mission-named figure
+            public int Strikes;                // strikes on the CURRENT phase's mission-named figure (P43: reset at every ObjectiveChange - phase-scoped, never mission-lifetime)
             public int StrikeRound;            // round of the LAST strike, 0 = never
 
             // ---- R-B Last-Seen-Ledger (concept v1.2 §5 B) ----
@@ -620,6 +620,29 @@ namespace TacticalAI.Core
                             actor.LastSeenSeq = e.Seq;
                             actor.LastSeenRound = e.Round;
                         }
+                        // P43 (Thomas 15.11): STRIKE CREDIT IS PHASE-SCOPED.
+                        // Strikes count ONLY damage that engaged the CURRENT
+                        // objective text ("engages"), so the phase change ends
+                        // those credits too: every hero's Strikes/StrikeRound
+                        // resets here. Without the reset the bridge-side
+                        // engaged boolean (hv.Strikes > 0 in TacticalAIBridge)
+                        // pins a phase-1 striker as objective actor (focus key
+                        // 2b + the +1 Bedrohung) for the REST of the mission -
+                        // a target that belongs to the OLD objective. The
+                        // terminal credit above SURVIVES the reset: it rides
+                        // the view-level ObjectiveActor (a separate channel,
+                        // never read from Strikes), exactly like the Player-19
+                        // law wants it. strikePending is dropped with the
+                        // phase: it armed on damage against the OLD phase's
+                        // named figure, so its closer must not be credited
+                        // anymore (history != causation, same law as the
+                        // RoundEnd burial).
+                        foreach (var h in v.Heroes)
+                        {
+                            h.Strikes = 0;
+                            h.StrikeRound = 0;
+                        }
+                        strikePending = false;
                         break;
                     case "DoorOpen":
                     case "DoorClosed":

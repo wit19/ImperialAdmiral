@@ -1970,3 +1970,58 @@ comment and build.sh (APP rc=0).
 TESTS rc=0. TacticalAiHarness (canon dir): `ALL PASS | checks=47123
 fails=0`. TacticalAiGate: `ALL PASS`, `MassiveInteriorGate: ALL PASS |
 checks=166 fails=0` (P42 keyword lanes + 12 new P42b accuracy-lane rows).
+
+---
+
+## The phase-scoped strike credit (2026-11-15, P43)
+
+**The law (Thomas 15.11: "in dem Moment in dem sich die Missionsziele ändern
+sollte der Wert bei allen Helden resettet werden").** `HeroView.Strikes`
+counted strikes on the objective-named figure for the WHOLE mission — never
+reset — and the bridge-side engaged boolean reads `hv.Strikes > 0`
+(`TacticalAIBridge.cs`, focus key 2b + the exactly-+1 Bedrohung). A phase-1
+striker therefore stayed an objective actor under a LATER objective: pinned
+in the focus priority ahead of every never-engaged hero for the rest of the
+mission, for a target that belongs to the old objective. `engages` always
+counted ONLY the CURRENT objective (named-hero branch, two-factor garrison
+branch) — the counter accumulated phase-scoped work but never forgot it.
+P43 makes it forget at the one moment the old number becomes a lie: every
+`ObjectiveChange` resets `Strikes`/`StrikeRound` for ALL heroes.
+
+What the reset deliberately does NOT touch — the channels that were never
+Strikes:
+- **The Player-19 terminal credit**: at the change the view-level
+  `ObjectiveActor` (open window first, else lastActivator) rides its own
+  channel — the hero who CARRIED the change keeps the engaged tier honestly.
+- **The M10b retro progress credit**: the hero finishing his turn right
+  after the change carries the PROGRESS credit (different law, untouched).
+- **The round-scope retaliation rail** (`LastShotHero`/`LastShotRound`):
+  it self-resets every round anyway; the Vergeltung law is round-scoped by
+  construction.
+- **`strikePending` DIES with the phase** (part of the reset): a windowless
+  hit armed the pending closer for the OLD phase's named figure — the hero
+  closing his turn after the change must not be credited with that shot
+  (history != causation, the RoundEnd burial law applied to the phase
+  boundary).
+
+**Pinned.** `hero_ledger.json`: `p43_strike_credit_resets_at_change` (Jyn
+strikes Ivan Talos in-window — the p19 law arms her counter; the change ends
+the phase — her H-row loses the `|strikes|round` tail, the terminal credit
+moves on the view channel to Verena, who acted last before the change; the
+hypothesis anchor and the shot column stay, they are different laws) and
+`p43_pending_closer_dies_with_phase` (windowless hit + change + Han closes:
+no strike tail for Han — but the retro PROGRESS credit stays his, honestly).
+Expect blocks recorded once via `--record`, then reviewed line-by-line
+against the law; hand-pinned law checks in `SectionsHeroLedger.cs`: the
+strike is armed BEFORE the change (fail-closed belt — a reset check that
+cannot see an armed counter passes vacuously), `Strikes`/`StrikeRound` read
+0 after the change, the terminal credit survives, the pending closer is
+buried, the retro credit intact.
+
+**QA (working tree, 15.11).** build.sh: APP rc=0 errors=0 files=295,
+TESTS rc=0. TacticalAiHarness (canon dir): `ALL PASS | checks=47157
+fails=0` (47123 + 34: 2 new cases × 11 fields + 7 hand-pinned law checks);
+all pre-existing vectors byte-identical (the record files proved it — zero
+drift, no fixture's objective ever named its groups, so no pre-existing
+canon held strikes across a change). TacticalAiGate: `ALL PASS`,
+`MassiveInteriorGate: ALL PASS | checks=166 fails=0`. taboo_lint GREEN.

@@ -464,6 +464,57 @@
         "anchors": "Han|obj:Escape to the transports.|fact|7|3;Lokaku|at:STORM|hypothesis|4|2",
         "spawned_in_window": ""
       }
+    },
+    {
+      "name": "p43_strike_credit_resets_at_change",
+      "comment": "P43 (Thomas 15.11): STRIKE CREDIT IS PHASE-SCOPED. Jyn strikes the figure the objective names (window-strike law: H-row carries the strikes|round tail, objective_actor=Jyn until the next credit). The ObjectiveChange ends the phase: Jyn's Strikes counter resets (H-row loses the tail), while the Player-19 TERMINAL credit survives on the separate view-level channel - Verena acted last before the change, she carries the objective credit. A stale phase-1 striker must never stay an objective actor under the new objective.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Defeat Ivan Talos.", "priorityTarget": "Rebel", "roundLimit": 6, "mission": "p43", "missionType": "Story" } },
+        { "kind": "Spawn", "round": 1, "payload": { "group": "GIVAN", "size": 1, "name": "Ivan Talos" } },
+        { "kind": "HeroActivationStart", "round": 2, "payload": { "hero": "Jyn Odan" } },
+        { "kind": "GroupDamage", "round": 2, "payload": { "group": "GIVAN", "figure": 0, "wheel": 2, "health": 5 } },
+        { "kind": "HeroActivated", "round": 2, "payload": { "hero": "Jyn Odan" } },
+        { "kind": "HeroActivationStart", "round": 2, "payload": { "hero": "Verena" } },
+        { "kind": "HeroActivated", "round": 2, "payload": { "hero": "Verena" } },
+        { "kind": "ObjectiveChange", "round": 2, "payload": { "objective": "Secure the canteen." } }
+      ],
+      "expect": {
+        "posture": "stall",
+        "objective": "Secure the canteen.",
+        "objective_actor": "Verena",
+        "round": 2,
+        "threat": 0,
+        "seq": 8,
+        "hash": "3b9dd87a44408a617936ee63d3db309c53dca8c18da7a0cbf1c4912c9850b2c1",
+        "canon": "mission=vector|p43_strike_credit_resets_at_change\nround=2\nposture=stall\nobjective=Secure the canteen.\nobjective_actor=Verena\nthreat=0\nthreatseen=0\nseq=8\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos|shot=Jyn Odan|4|2\nH|Jyn Odan|Jyn Odan|0|0|1|2|0|0\nseen=Jyn Odan zone=at:GIVAN kind=hypothesis seq=4 round=2\nH|Verena|Verena|0|0|1|2|0|0\n",
+        "ledger_text": "ledger Jyn Odan war vermutlich in der Nahe von Gruppe GIVAN (Runde 2, seq 4, hypothesis)\n",
+        "anchors": "Jyn Odan|at:GIVAN|hypothesis|4|2",
+        "spawned_in_window": ""
+      }
+    },
+    {
+      "name": "p43_pending_closer_dies_with_phase",
+      "comment": "P43 belt: a windowless GroupDamage on the OLD phase's named figure arms the pending closer (strikePending). The ObjectiveChange buries that pending credit (history != causation - the same law as the RoundEnd burial), so Han's turn closing AFTER the change gains NO strike (no H-row tail). The M10b retro PROGRESS credit is a different channel and stays untouched: Han, the hero finishing his turn right after the change, carries the objective credit honestly.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Defeat Ivan Talos.", "priorityTarget": "Rebel", "roundLimit": 6, "mission": "p43", "missionType": "Story" } },
+        { "kind": "Spawn", "round": 1, "payload": { "group": "GIVAN", "size": 1, "name": "Ivan Talos" } },
+        { "kind": "GroupDamage", "round": 2, "payload": { "group": "GIVAN", "figure": 0, "wheel": 2, "health": 5 } },
+        { "kind": "ObjectiveChange", "round": 2, "payload": { "objective": "Secure the canteen." } },
+        { "kind": "HeroActivated", "round": 2, "payload": { "hero": "Han" } }
+      ],
+      "expect": {
+        "posture": "stall",
+        "objective": "Secure the canteen.",
+        "objective_actor": "Han",
+        "round": 2,
+        "threat": 0,
+        "seq": 5,
+        "hash": "7e88c4a2067ccf9d5c0d10352a4db1f4814d63fcf8fd985d667a16f1c743d1dd",
+        "canon": "mission=vector|p43_pending_closer_dies_with_phase\nround=2\nposture=stall\nobjective=Secure the canteen.\nobjective_actor=Han\nthreat=0\nthreatseen=0\nseq=5\nG|GIVAN|GIVAN|1|0|1|1|1|5|3/5|name=Ivan Talos|shot=Han|3|2\nH|Han|Han|0|0|1|2|0|0\n",
+        "ledger_text": "",
+        "anchors": "",
+        "spawned_in_window": ""
+      }
     }
   ]
 }

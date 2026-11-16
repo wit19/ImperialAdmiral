@@ -29,7 +29,7 @@ namespace Saga
 		public List<string> campaignRewards = new List<string>();
 		public List<string> campaignIgnored = new List<string>();
 
-		// TACTICAL AI (Personas, Thomas 02.11.): the campaign's imperial
+		// TACTICAL AI (Personas, T. 02.11.): the campaign's imperial
 		// persona (tactical_personas.json asset id); "" = follow the global
 		// settings default, "none" = explicit no persona (= exactly the
 		// pre-persona behaviour on every hook). ADDITIVE field only,

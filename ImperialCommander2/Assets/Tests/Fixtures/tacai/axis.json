@@ -222,7 +222,7 @@
    },
    {
     "name": "no_facts_no_blind_flip",
-    "_why": "Fallback ohne JEDE geparste Bedingung (Thomas: 'Fallback OHNE geparste Bedingungen: Defend bleibt Defend') - die alte blinde Glaube-Zeile ('Jagd spaetestens mit Limit') war genau der Fehler.",
+    "_why": "Fallback ohne JEDE geparste Bedingung (T.: 'Fallback OHNE geparste Bedingungen: Defend bleibt Defend') - die alte blinde Glaube-Zeile ('Jagd spaetestens mit Limit') war genau der Fehler.",
     "base": "defend",
     "round": 8,
     "limit": 8,

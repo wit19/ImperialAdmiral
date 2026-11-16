@@ -1,6 +1,6 @@
 {
  "_comment": [
-  "P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3, findings_Player-33 §3).",
+  "P33-H4 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3, findings_Player-33 §3).",
   "DP-Score stage ladder over (Karte, DP): anchor tier (mined live or dynamic",
   "section anchor with hasPosition=false) -> intra-section distance -> battle-",
   "zone SectionGraph hop distance (claim beats no claim; '-' = no recorded",

@@ -40,7 +40,7 @@
 //       threat-budget lever for attack counts exists in ThreatEconomy
 //       (it budgets focus bids). Attacks therefore STAY at 1 for these
 //       figures; the keyword is carried so a future fairness-law decision
-//       (Thomas lane) has the table + wiring point ready.
+//       (T. lane) has the table + wiring point ready.
 //
 //   FocusFire        <- "Focus Fire" / "Konzentrierter Beschuss" (DG025
 //       SC2-M Repulsor Tank): "Perform 2 attacks targeting the same
@@ -74,7 +74,7 @@ namespace TacticalAI.Core
         public const string FocusFire       = "focus_fire";
 
         // Skill levels at which the AI reads printed card abilities
-        // (Thomas decision 28.10: Faehigkeiten-Play ab S4).
+        // (T. decision 28.10: Faehigkeiten-Play ab S4).
         public static readonly string[] ActiveLevels = { "S4", "S5" };
 
         // printed card id -> rule ids it carries (curated; sorted by id).

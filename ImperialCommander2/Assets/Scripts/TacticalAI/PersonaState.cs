@@ -1,5 +1,5 @@
 // PersonaState - the single Unity-side access point for the imperial
-// PERSONAS (Thomas decisions 01.11./02.11., CONCEPT_personas.md). Every
+// PERSONAS (T. decisions 01.11./02.11., CONCEPT_personas.md). Every
 // other file (bridge, deploy popups, campaign overview, IMPERIUM panel)
 // asks HERE; nobody else parses the asset or resolves ranks.
 //
@@ -162,7 +162,7 @@ namespace TacticalAI
         /// <summary>Deploy/reinforce price of a printed card for the LIVE
         /// campaign. Fail-open: printed cost (a display or booking site
         /// must never be broken by the persona layer).
-        /// MODE GATE (Thomas 07.11 standing rule): tactical missions only -
+        /// MODE GATE (T. 07.11 standing rule): tactical missions only -
         /// the mission-frozen ActiveNow() seam, NOT the bare master toggle.
         /// A badge-off (legacy) mission must price exactly like the
         /// untouched app; personas live in the tactical AI only.</summary>
@@ -227,7 +227,7 @@ namespace TacticalAI
             try
             {
                 if (card == null || card.isElite) return card;
-                // same mode-frozen gate as CostFor (Thomas 07.11): a
+                // same mode-frozen gate as CostFor (T. 07.11): a
                 // badge-off legacy mission never sees a persona swap -
                 // the shared landing/onslaught/manual rails stay untouched.
                 if (!TacticalAIBridge.TacticalMissionActive()) return card;

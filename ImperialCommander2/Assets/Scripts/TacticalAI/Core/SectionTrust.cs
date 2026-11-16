@@ -3,7 +3,7 @@
 // threshold "der einzige neue Tuning-Parameter der ganzen Idee" - so it
 // lives in tactical_section_trust.json (schema tacai.section_trust/1) the
 // same way the doctrine dice live in tactical_pattern_weights.json: plain
-// reviewable text, rational integers, first-match row order (Thomas law
+// reviewable text, rational integers, first-match row order (T. law
 // 01.11. "Regeln als Tabelle, nicht als Code"), fail-closed.
 //
 // Semantics (concept 10 "MASKEN-VERTRAUEN"): a (group, figure) mask is

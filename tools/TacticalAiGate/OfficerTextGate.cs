@@ -1,8 +1,8 @@
-// M6h live gate (zero fixtures, SHIPPED ui.json): Thomas/Tillmann 02.11 officer
+// M6h live gate (zero fixtures, SHIPPED ui.json): T./Tillmann 02.11 officer
 // popup findings must not silently regress. Pins, for every language file:
 //   1. exactly ONE order branch per REGULAR officer tree ("Befehl/Order
 //      m\u00f6glich?/possible?" - movement order),
-//   1b. M6n / C1-SIGNATUR Thomas 02.11 (physical DG006 card): the elite tree
+//   1b. M6n / C1-SIGNATUR T. 02.11 (physical DG006 card): the elite tree
 //      asks ONE Vollstreckungsbefehl/Executive Order receiver question per
 //      activation offering Bewegung/movement OR Angriff/attack, plus exactly
 //      one answer branch each; the line must carry the exclusive "oder" and
@@ -170,7 +170,7 @@ public static class OfficerTextGate
         }
         else
         {
-            // M6n / C1-SIGNATUR (Thomas 02.11., physische DG006): eine
+            // M6n / C1-SIGNATUR (T. 02.11., physische DG006): eine
             // Empfaenger-Frage pro Aktivierung - Bewegung ODER Angriff,
             // eines pro Befehl, NIE beides; je genau ein Antwortzweig.
             int choices = 0, moves = 0, attacks = 0;

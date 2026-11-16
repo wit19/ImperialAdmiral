@@ -467,7 +467,7 @@
     },
     {
       "name": "p43_strike_credit_resets_at_change",
-      "comment": "P43 (Thomas 15.11): STRIKE CREDIT IS PHASE-SCOPED. Jyn strikes the figure the objective names (window-strike law: H-row carries the strikes|round tail, objective_actor=Jyn until the next credit). The ObjectiveChange ends the phase: Jyn's Strikes counter resets (H-row loses the tail), while the Player-19 TERMINAL credit survives on the separate view-level channel - Verena acted last before the change, she carries the objective credit. A stale phase-1 striker must never stay an objective actor under the new objective.",
+      "comment": "P43 (T. 15.11): STRIKE CREDIT IS PHASE-SCOPED. Jyn strikes the figure the objective names (window-strike law: H-row carries the strikes|round tail, objective_actor=Jyn until the next credit). The ObjectiveChange ends the phase: Jyn's Strikes counter resets (H-row loses the tail), while the Player-19 TERMINAL credit survives on the separate view-level channel - Verena acted last before the change, she carries the objective credit. A stale phase-1 striker must never stay an objective actor under the new objective.",
       "events": [
         { "kind": "MissionStart", "round": 1, "payload": { "objective": "Defeat Ivan Talos.", "priorityTarget": "Rebel", "roundLimit": 6, "mission": "p43", "missionType": "Story" } },
         { "kind": "Spawn", "round": 1, "payload": { "group": "GIVAN", "size": 1, "name": "Ivan Talos" } },

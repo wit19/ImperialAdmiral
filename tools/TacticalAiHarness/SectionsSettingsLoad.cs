@@ -47,7 +47,7 @@ namespace TacticalAiHarness
                     Check("settings[" + name + "].info", Json.AsBool(exp["info"]), TacticalAISettings.InfoText);
                     Check("settings[" + name + "].mode", Json.AsStr(exp["mode"]), TacticalAISettings.Mode);
                     Check("settings[" + name + "].mode_override", Json.AsBool(exp["mode_override"]), TacticalAISettings.HasModeOverride);
-                    // Personas (Thomas 02.11 request): the global default must
+                    // Personas (T. 02.11 request): the global default must
                     // survive the Load route byte-exact (absent -> "", stored
                     // value -> verbatim; the settings layer never validates,
                     // PersonaState does - so "any string round-trips" is the

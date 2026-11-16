@@ -858,7 +858,7 @@
   },
   {
    "name": "m11b_real_wound_runner",
-   "comment": "M29 (Thomas-Ruling 06.11., Zwei-Ökonomien-Bande): jede Distanz = EIN Angriff mit der einen Waffe, die dort kämpfen kann - nie zwei Waffen in einem Angriff, aber auch nicht eine Waffe für alle Distanzen, wenn eine andere dort stärker ist. Diala traegt das Antike Lichtschwert (item303, Einsicht-Pool): Zelle 1 = Schwertschwung (mit +3 Aufpreis), Zelle 2 = ihr gedruckter GY+Reach-Schlag. Verwundet (gedruckte Schwertwürfel tauschen auf Blue+Red+Green): Operand 55/12 -> Bedrohung 116; gesund (Blue+Green+Yellow): 47/12 -> 115. best_pool druckt den Gewinner der Zelle 1 (Schwert). alt M27 (94/12er-Welt): Ein-Waffen-Gesetz las ihre Fäuste auf Zelle 2 ganz weg - zu unehrlich; alt M26 (116/115, gleiche Zahlen!): dort mischten ZUSÄTZLICH die Gewehre pro Zelle - Waffentausch ist tot, die Zwei-Ökonomien-Zellen bleiben.",
+   "comment": "M29 (T.-Ruling 06.11., Zwei-Ökonomien-Bande): jede Distanz = EIN Angriff mit der einen Waffe, die dort kämpfen kann - nie zwei Waffen in einem Angriff, aber auch nicht eine Waffe für alle Distanzen, wenn eine andere dort stärker ist. Diala traegt das Antike Lichtschwert (item303, Einsicht-Pool): Zelle 1 = Schwertschwung (mit +3 Aufpreis), Zelle 2 = ihr gedruckter GY+Reach-Schlag. Verwundet (gedruckte Schwertwürfel tauschen auf Blue+Red+Green): Operand 55/12 -> Bedrohung 116; gesund (Blue+Green+Yellow): 47/12 -> 115. best_pool druckt den Gewinner der Zelle 1 (Schwert). alt M27 (94/12er-Welt): Ein-Waffen-Gesetz las ihre Fäuste auf Zelle 2 ganz weg - zu unehrlich; alt M26 (116/115, gleiche Zahlen!): dort mischten ZUSÄTZLICH die Gewehre pro Zelle - Waffentausch ist tot, die Zwei-Ökonomien-Zellen bleiben.",
    "posture": "protect",
    "counter": null,
    "heroes": [
@@ -1547,7 +1547,7 @@
   },
   {
    "name": "reaction_on",
-   "_comment": "R-D reaction_on (Konzept eventreaktionen v1.2 par.2.3, Thomas-Punkt 3a; alt->neu: alt lief Gaarkhan als verwundeter Economy-Dritter, neu fuehrt er - sein Schuss auf die aktivierte Gruppe fiel in DIESER Runde in ein offenes Heldenfenster (R-A Feed-Attribution LastShotHero/LastShotRound), also setzt der Kern den reaktion-Key genau fuer diese Aktivierung. Der Key reiht NACH mark (Designierung des Menschen am Thron bleibt Koenig - hier unmarkiert) und VOR der counter/Economy-Ebene. Basis-Token 'reaktion' + AsDict-Key 'reaktion' reiten NUR auf dieser Zeile (record discipline); alle andern Zeilen canon-idential. Skill rung 2 = S2 (Key laeuft ab S2 wie R1). expect via --record, reviewed.",
+   "_comment": "R-D reaction_on (Konzept eventreaktionen v1.2 par.2.3, T.-Punkt 3a; alt->neu: alt lief Gaarkhan als verwundeter Economy-Dritter, neu fuehrt er - sein Schuss auf die aktivierte Gruppe fiel in DIESER Runde in ein offenes Heldenfenster (R-A Feed-Attribution LastShotHero/LastShotRound), also setzt der Kern den reaktion-Key genau fuer diese Aktivierung. Der Key reiht NACH mark (Designierung des Menschen am Thron bleibt Koenig - hier unmarkiert) und VOR der counter/Economy-Ebene. Basis-Token 'reaktion' + AsDict-Key 'reaktion' reiten NUR auf dieser Zeile (record discipline); alle andern Zeilen canon-idential. Skill rung 2 = S2 (Key laeuft ab S2 wie R1). expect via --record, reviewed.",
    "posture": "eliminate",
    "counter": null,
    "reaction": {
@@ -1641,7 +1641,7 @@
   },
   {
    "name": "reaction_guard_exception",
-   "_comment": "R-D reaction_guard_exception (WACH-AUSNAHME, Thomas-Formulierung): gleiche Schuss-Lage wie reaction_on, aber die aktivierte Gruppe IST Wach-Ankergruppe am Missionsziel - Guardhold-Deskriptor: der Missionsziel-Text nennt die Figur ('Besiegt Ivan Talos.', Player-19-Gesetz, Wiederverwendung statt Parallelgesetz). Kein reaktion-Key; die Gruppe schaetzt stattdessen die groesste Bedrohung FUERS MISSIONSZIEL - der normale Rank-Kopf (Han Solo, Economy) fuehrt wie in eliminate_economy (expect zahlgleich zu dem Canon-Fall, Begruendung alt->neu: Null-Key == Altpfad).",
+   "_comment": "R-D reaction_guard_exception (WACH-AUSNAHME, T.-Formulierung): gleiche Schuss-Lage wie reaction_on, aber die aktivierte Gruppe IST Wach-Ankergruppe am Missionsziel - Guardhold-Deskriptor: der Missionsziel-Text nennt die Figur ('Besiegt Ivan Talos.', Player-19-Gesetz, Wiederverwendung statt Parallelgesetz). Kein reaktion-Key; die Gruppe schaetzt stattdessen die groesste Bedrohung FUERS MISSIONSZIEL - der normale Rank-Kopf (Han Solo, Economy) fuehrt wie in eliminate_economy (expect zahlgleich zu dem Canon-Fall, Begruendung alt->neu: Null-Key == Altpfad).",
    "posture": "eliminate",
    "counter": null,
    "reaction": {
@@ -1734,7 +1734,7 @@
   },
   {
    "name": "reaction_s1_blind",
-   "_comment": "R-D reaction_s1_blind (Skill-Gate analog R-C, Thomas-Begrundung 04.11.: Fokus ist KEIN Reihenfolge-Thema - der Key bekommt kein eigenes Gate, er reitet exakt R1s Boden: die ganze Reaktionsschicht startet ab S2, S1 bleibt blind = offengelegtes Handicap). Schuss-Lage wie reaction_on, rung 1 -> Key null -> canon Reihenfolge wie eliminate_economy (expect zahlgleich; Begruendung alt->neu: blinder Modus == Altpfad).",
+   "_comment": "R-D reaction_s1_blind (Skill-Gate analog R-C, T.-Begrundung 04.11.: Fokus ist KEIN Reihenfolge-Thema - der Key bekommt kein eigenes Gate, er reitet exakt R1s Boden: die ganze Reaktionsschicht startet ab S2, S1 bleibt blind = offengelegtes Handicap). Schuss-Lage wie reaction_on, rung 1 -> Key null -> canon Reihenfolge wie eliminate_economy (expect zahlgleich; Begruendung alt->neu: blinder Modus == Altpfad).",
    "posture": "eliminate",
    "counter": null,
    "reaction": {
@@ -1920,7 +1920,7 @@
   },
   {
    "name": "m19_band_switch_stall",
-   "comment": "M26/M27-REBASE 06.11. (Thomas-Ruling zu Player-29 'Jyn hat den DL-44'; M27: 'die Rechnung muss bestimmen was die beste Waffe ist'): der Argmax-Bandvergleich (jede Waffe als einzige im Holster gerechnet) waehlt fuer Jyn die DL-44 gegen Green+Green und lasst MHD bei der gedruckten Blue+Yellow - kein Dekret, kein 1:Green+Green-Schalter mehr; der Aufpreis laeuft als Energie-Operand der ausgewaehlten Waffe mit. Jyn Odan (DL-44 Blue+Yellow, Acc 4, Green-Bonus 1/2): Zellen d1..d4 = 2 + 2 + 1,5 + 0,5 -> Schnitt 3/2 (war 19/12) -> Bedrohung 74 (war 76). Loku (keine Gueter, Base Gate = Reiche 5): 13/6 Banden-Schnitt + 1/2 Gedruckter-Scout-Bonus (M25) = 8/3 -> Band 3 erfuellt -> 100. alt (M19/M24): Jyns bedruckte 4 liessen Zelle 5 sterben (76) und das 1:Green+Green winning-Team stellte 19/12.",
+   "comment": "M26/M27-REBASE 06.11. (T.-Ruling zu Player-29 'Jyn hat den DL-44'; M27: 'die Rechnung muss bestimmen was die beste Waffe ist'): der Argmax-Bandvergleich (jede Waffe als einzige im Holster gerechnet) waehlt fuer Jyn die DL-44 gegen Green+Green und lasst MHD bei der gedruckten Blue+Yellow - kein Dekret, kein 1:Green+Green-Schalter mehr; der Aufpreis laeuft als Energie-Operand der ausgewaehlten Waffe mit. Jyn Odan (DL-44 Blue+Yellow, Acc 4, Green-Bonus 1/2): Zellen d1..d4 = 2 + 2 + 1,5 + 0,5 -> Schnitt 3/2 (war 19/12) -> Bedrohung 74 (war 76). Loku (keine Gueter, Base Gate = Reiche 5): 13/6 Banden-Schnitt + 1/2 Gedruckter-Scout-Bonus (M25) = 8/3 -> Band 3 erfuellt -> 100. alt (M19/M24): Jyns bedruckte 4 liessen Zelle 5 sterben (76) und das 1:Green+Green winning-Team stellte 19/12.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2034,7 +2034,7 @@
   },
   {
    "name": "m29_band_melee_overlay",
-   "comment": "M29 (Thomas-Ruling 06.11.: 'die Panzerhandschuhe sind wirklich gut - Nahkampf und Fernkampf müssen verschieden gerechnet werden'): Verena Talos + item101 (Green+Yellow Nahkampf, Aufschlag +3/10). Zelle 1: Handschuhe 2 + 3/10 = 23/10 schlagen den Blaster (3/2) STRENG -> sie besetzen Zelle 1. Zellen 2-4: wie bisher das Blue+Yellow-Gewehr (3/2, 1, 0 - die Paarungsregel bezahlt Genauigkeit für Distanz). Operand 6/5 -> Bedrohung 54, Energie 3/40 (der Aufpreis reitet nur auf der einen Zelle, die ihn abfeuert). Der alte Fallname 'melee_inert' (M26/M27: Nahkampf gewinnt nie etwas) ist überholt: Nahkampf gewinnt genau die Zellen, in denen es nach SEINEM Gesetz (ohne Distanzabzug) streng stärker ist - und nur die. Kein zweiter Name: der Fall heißt jetzt m29_band_melee_overlay.",
+   "comment": "M29 (T.-Ruling 06.11.: 'die Panzerhandschuhe sind wirklich gut - Nahkampf und Fernkampf müssen verschieden gerechnet werden'): Verena Talos + item101 (Green+Yellow Nahkampf, Aufschlag +3/10). Zelle 1: Handschuhe 2 + 3/10 = 23/10 schlagen den Blaster (3/2) STRENG -> sie besetzen Zelle 1. Zellen 2-4: wie bisher das Blue+Yellow-Gewehr (3/2, 1, 0 - die Paarungsregel bezahlt Genauigkeit für Distanz). Operand 6/5 -> Bedrohung 54, Energie 3/40 (der Aufpreis reitet nur auf der einen Zelle, die ihn abfeuert). Der alte Fallname 'melee_inert' (M26/M27: Nahkampf gewinnt nie etwas) ist überholt: Nahkampf gewinnt genau die Zellen, in denen es nach SEINEM Gesetz (ohne Distanzabzug) streng stärker ist - und nur die. Kein zweiter Name: der Fall heißt jetzt m29_band_melee_overlay.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2072,7 +2072,7 @@
    ]
   },
   {   "name": "m29_saber_and_blaster",
-   "comment": "M29-Beweisfall (Thomas-Frage 06.11.: 'Ich habe ein Lichtschwert und einen Blaster - das Lichtschwert soll gewinnen und nicht der Blaster wegen der Distanz'): Diala traegt item303 (Antikes Lichtschwert, Einsicht-Pool) UND item110 (DL-44). Kein Entweder-oder: Zelle 1 fuehrt der Schwert-Schwung (Einsicht-Wuerfel + 3 Aufpreis, Nahkampf-Gesetz ohne Distanzabzug - streng hoeher als der Gewehrschuss), Zellen 2-4 fuehrt der DL-44 mit der Paarungsregel inklusive Distanzabzug. Der Blaster wird nicht bestraft, wo er kann, und das Schwert nicht entlaesst, wo es muss. best_pool = Gewinner Zelle 1 (Schwert-Pool). Ein reines Wuerfel-Item wie Verenas Panzerhandschuhe gewinnt dasselbe Gesetz fuer seine eine Zelle - 'die sind wirklich gut'.",
+   "comment": "M29-Beweisfall (T.-Frage 06.11.: 'Ich habe ein Lichtschwert und einen Blaster - das Lichtschwert soll gewinnen und nicht der Blaster wegen der Distanz'): Diala traegt item303 (Antikes Lichtschwert, Einsicht-Pool) UND item110 (DL-44). Kein Entweder-oder: Zelle 1 fuehrt der Schwert-Schwung (Einsicht-Wuerfel + 3 Aufpreis, Nahkampf-Gesetz ohne Distanzabzug - streng hoeher als der Gewehrschuss), Zellen 2-4 fuehrt der DL-44 mit der Paarungsregel inklusive Distanzabzug. Der Blaster wird nicht bestraft, wo er kann, und das Schwert nicht entlaesst, wo es muss. best_pool = Gewinner Zelle 1 (Schwert-Pool). Ein reines Wuerfel-Item wie Verenas Panzerhandschuhe gewinnt dasselbe Gesetz fuer seine eine Zelle - 'die sind wirklich gut'.",
    "posture": "stall",
    "counter": null,
    "heroes": [
@@ -2581,7 +2581,7 @@
    "name": "finale26_woundall_healthy_leads_wounded_carriers",
    "posture": "protect",
    "counter": "woundAll",
-   "comment": "PlayerFinale 15.11 EMPIRE1 r9 (Thomas playtest): Verena/MHD-19/Jyn wounded, Loku Kanoloa the LAST HEALTHY hero - all three top rows are objective actors and Verena carries the NEWEST engagement round. Pre-fix the Player-19 carrier-recency key ranked Verena first (log basis=objactor) and the empire beat wounded heroes forever instead of taking the fourth wound that ENDS the mission. The 03.11 header always documented healthy-first as the FIRST counter slot; the reorder restores exactly that - win condition over threat estimation.",
+   "comment": "PlayerFinale 15.11 EMPIRE1 r9 (T. playtest): Verena/MHD-19/Jyn wounded, Loku Kanoloa the LAST HEALTHY hero - all three top rows are objective actors and Verena carries the NEWEST engagement round. Pre-fix the Player-19 carrier-recency key ranked Verena first (log basis=objactor) and the empire beat wounded heroes forever instead of taking the fourth wound that ENDS the mission. The 03.11 header always documented healthy-first as the FIRST counter slot; the reorder restores exactly that - win condition over threat estimation.",
    "heroes": [
     {
      "hero": "Verena Talos",

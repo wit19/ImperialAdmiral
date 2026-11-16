@@ -1,5 +1,5 @@
 {
-  "comment": "M14e deploy-ledger vectors (CONCEPT_standort_ledger_v2, Thomas 07.11). reader_cases: hero-entry table law, hand-pinned. leash_cases: C4 friend leash pinned as law relations + recorded seed-chain pins (deploy_ledger_record.json). space_cases: HeroDeployed/Spawn-dp through the real feed path; dump/canon recorded for review, spatial claims hand-pinned.",
+  "comment": "M14e deploy-ledger vectors (CONCEPT_standort_ledger_v2, T. 07.11). reader_cases: hero-entry table law, hand-pinned. leash_cases: C4 friend leash pinned as law relations + recorded seed-chain pins (deploy_ledger_record.json). space_cases: HeroDeployed/Spawn-dp through the real feed path; dump/canon recorded for review, spatial claims hand-pinned.",
 
   "reader_cases": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "name": "m14e_multi_field_set_no_claim",
-      "comment": "Two blue fields (\"half/half\"): both section NODES exist for belief math, but NO single-section anchor while the set has two members (Thomas decision 3).",
+      "comment": "Two blue fields (\"half/half\"): both section NODES exist for belief math, but NO single-section anchor while the set has two members (T. decision 3).",
       "hero": "Jyn", "secA": "sec-hangar-1", "secB": "sec-hangar-2",
       "events": [
         { "kind": "MissionStart", "round": 1, "payload": { "objective": "Clear the hangar.", "priorityTarget": "", "roundLimit": -1, "mission": "m14e" } },

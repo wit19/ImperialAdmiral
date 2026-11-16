@@ -16,7 +16,7 @@ namespace Saga
 		/// <summary>
 		/// Creates default folders and sets up folder path properties
 		/// </summary>
-		// Option B (Thomas 06.11.): cut the umbilical cord - GlowPuff-era
+		// Option B (T. 06.11.): cut the umbilical cord - GlowPuff-era
 		// data trees are migrated ONCE into our own folders, then we always
 		// work in ours. A marker file inside the old tree guarantees the
 		// copy runs exactly once per machine; old files are never deleted,

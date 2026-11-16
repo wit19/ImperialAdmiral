@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# M21 second implementation (Thomas rulings 06.11., Fenn playtest),
-# carried to M25 canon (Thomas ruling 06.11., Karten-Audit 2.): printed
+# M21 second implementation (T. rulings 06.11., Fenn playtest),
+# carried to M25 canon (T. ruling 06.11., Karten-Audit 2.): printed
 # STATIC accuracy rides the pairing-law acc operand (weapon line both
 # states + healthy hero-card side + accuracy cards) and the printed
 # EXTRA-ATTACK/Verstaerkung cards ride the M21 flat addend seam
@@ -108,7 +108,7 @@ def threat21(hero, wounded, loadout, posture, defense, engage=None):
         if idx > 0:
             pool_gate.append(1 if pool_is_melee_item[idx] else (st.gate if st.gate >= 1 else 1))
     total = F(0)
-    # M29 (Thomas ruling 06.11., Zwei-Ökonomien-Bande): the GUN slot is one
+    # M29 (T. ruling 06.11., Zwei-Ökonomien-Bande): the GUN slot is one
     # ranged weapon (argmax over ranged candidates - multiple carried guns
     # compete, the best over the band wins once; no per-distance gun switch).
     wscore = []

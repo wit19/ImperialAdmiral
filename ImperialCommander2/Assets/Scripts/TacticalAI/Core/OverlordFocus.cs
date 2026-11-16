@@ -24,7 +24,7 @@
 //   key (lexicographic, all exact arithmetic, no floats, no RNG):
 //     1. aim mark   - the human's own public designation (FocusChange). All
 //                     groups converge on it: focus fire, table-visible.
-//     1b. reaktion  - R-D (concept eventreaktionen v1.2 §2.3, Thomas-Punkt
+//     1b. reaktion  - R-D (concept eventreaktionen v1.2 §2.3, T.-Punkt
 //                     3a): the hero who shot THIS activating figure inside an
 //                     open hero window THIS round (R-A feed attribution
 //                     LastShotHero/LastShotRound) leads right behind the aim
@@ -40,7 +40,7 @@
 //                     S1 blind (same disclosed handicap as the R-C order
 //                     layer): the key runs from S2 up, exactly like R1.
 //     2. counter    - "woundAll": two counter-law slots (wounded-focus fix,
-//                     Thomas 03.11): FIRST healthy-beats-wounded (the sim's
+//                     T. 03.11): FIRST healthy-beats-wounded (the sim's
 //                     leading TargetValue slot - every hit must move the
 //                     healthy->wounded counter, a wounded hero is already
 //                     counted), then the sim ChipKey verbatim (healer last)
@@ -106,7 +106,7 @@ namespace TacticalAI.Core
         public int MarkedRound;
         public int AttackDice;              // printed card values (reference parity)
         public int Health;
-        // M10b (Thomas revision 27.10): NO hero cell positions - the app
+        // M10b (T. revision 27.10): NO hero cell positions - the app
         // cannot see where a hero stands. The objective attribution is built
         // from public events only: objective progress happened, then a hero
         // finished his activation -> he gets the credit (feed vector).
@@ -143,7 +143,7 @@ namespace TacticalAI.Core
         // cardSurcharge (owned focus_surcharge rows); false default keeps
         // every pre-M12d fixture bit-identical.
         public bool Conditioned;
-        // Player-19 (Thomas 03.11): round of the ENGAGEMENT credit - either
+        // Player-19 (T. 03.11): round of the ENGAGEMENT credit - either
         // the terminal objective credit (feed ObjectiveActorRound) or the
         // LAST strike on the figure the objective names (feed StrikeRound).
         // 0 = not engaged (bit-identical pre-Player-19 canon). Where the
@@ -344,7 +344,7 @@ namespace TacticalAI.Core
         /// that the id-multiset is input-equal for every skill level).
         /// posture/counter come from the public feed derivation; counter
         /// "woundAll" applies the sim ChipKey (profile.py port, vector truth)
-        /// AND the healthy-first slot (wounded-focus fix, Thomas 03.11).
+        /// AND the healthy-first slot (wounded-focus fix, T. 03.11).
         /// M11b: defenderDefense = the defense dice of the IMPERIAL FIGURE
         /// choosing its target (its printed deployment-card defense - public
         /// card data, identical against every candidate in one call; null ->
@@ -419,7 +419,7 @@ namespace TacticalAI.Core
                     : null,
             }).ToList();
 
-            // R-D REAKTION key (concept v1.2 §2.3, Thomas-Punkt 3a): mark-style
+            // R-D REAKTION key (concept v1.2 §2.3, T.-Punkt 3a): mark-style
             // per-hero comparison signal (FocusCandidate stays untouched). The
             // caller resolves it from the R-A feed attribution via
             // ReactionHeroFor; null/empty keeps EVERY row Reaktion=false, the
@@ -462,7 +462,7 @@ namespace TacticalAI.Core
                     r.Econ = r.Econ.Value + Rational.One;
                 }
 
-            // M11d STRAIN PRESSURE (Thomas: "erhöht sich leicht" - light and
+            // M11d STRAIN PRESSURE (T.: "erhöht sich leicht" - light and
             // NEVER a primary signal): a hero whose strain markers reached
             // his printed reaction buffer cannot pay his costly reactions
             // (heal, block, power moves) for a short window. +Druck on the
@@ -592,7 +592,7 @@ namespace TacticalAI.Core
                         : (x.Vergeltung ? "vergeltung"
                         : (x.Maskenvertrauen ? "maskenvertrauen"
                         // M10b's boolean key (Compare key 2) rides ABOVE chip
-                        // and threat - Player-27 (Thomas 05.11): the label
+                        // and threat - Player-27 (T. 05.11): the label
                         // must name the key that actually carried the win,
                         // not the first non-null number below it.
                         : (x.C.ObjectiveActor ? "objactor"
@@ -604,7 +604,7 @@ namespace TacticalAI.Core
             }).ToList();
         }
 
-        /// <summary>R-D (concept eventreaktionen v1.2 §2.3, Thomas-Punkt 3a):
+        /// <summary>R-D (concept eventreaktionen v1.2 §2.3, T.-Punkt 3a):
         /// the reaktion key for ONE activation - the hero who shot the
         /// activating figure inside an open hero window THIS round (R-A feed
         /// attribution on the group row), or null when the key must not fire.
@@ -614,11 +614,11 @@ namespace TacticalAI.Core
         ///  - S1 blind: the whole reaction layer starts at S2, the key rides
         ///    R1's floor exactly (honest handicap, disclosed - same law the
         ///    R-C order layer documents). Focus is NOT an order topic, so it
-        ///    gets no extra gate of its own (Thomas ruling, card t_41d42c7b).
+        ///    gets no extra gate of its own (T. ruling, card t_41d42c7b).
         ///  - The shot must be from the LIVE round (LastShotRound == view.
         ///    Round): the key is consumed with this activation, no carry-over
         ///    effect into later rounds.
-        ///  - WACH exception (Thomas formulation): a guard anchor AT the
+        ///  - WACH exception (T. formulation): a guard anchor AT the
         ///    mission objective never takes revenge - the Guardhold descriptor
         ///    (the objective text names the figure, WorldEventVector.TextNames
         ///    - the Player-19 shipped law) or the rolled guard doctrine (the
@@ -699,7 +699,7 @@ namespace TacticalAI.Core
         {
             var t = ThreatOf(c, posture, defenderDefense, table, engage);
             if (!t.HasValue) return null;
-            // WOUNDED-FOCUS FIX (Thomas playtest reasoning 03.11), part 1 —
+            // WOUNDED-FOCUS FIX (T. playtest reasoning 03.11), part 1 —
             // counter law: a woundAll END (healthy == 0, VictoryCounter.
             // Progress counts wounded-or-worse) is ALREADY satisfied by every
             // wounded hero. Finishing him earns ZERO counter progress, so the
@@ -776,7 +776,7 @@ namespace TacticalAI.Core
             //     candidate -> both rows false, slot inert, every pre-H4b
             //     vector byte-identical (Null-Law).
             if (a.C.AxisHunt != b.C.AxisHunt) return a.C.AxisHunt ? -1 : 1;
-            // 1b. R-D REAKTION (concept v1.2 §2.3, Thomas-Punkt 3a): the hero
+            // 1b. R-D REAKTION (concept v1.2 §2.3, T.-Punkt 3a): the hero
             //     who shot THIS activating figure inside an open window THIS
             //     round leads right behind the aim mark (the human's
             //     designation at the throne stays king) and BEFORE the
@@ -807,7 +807,7 @@ namespace TacticalAI.Core
             //     the concept's "Feuer in die richtige Sektion statt
             //     Bedrohungs-Schaetzung". Null key => inert.
             if (a.Maskenvertrauen != b.Maskenvertrauen) return a.Maskenvertrauen ? -1 : 1;
-            // 2a. WOUNDED-FOCUS FIX (Thomas 03.11, slot law corrected in the
+            // 2a. WOUNDED-FOCUS FIX (T. 03.11, slot law corrected in the
             //     PlayerFinale playtest 15.11, EMPIRE1 r9): under a woundAll
             //     counter the sim's LEADING counter slot applies - "healthy
             //     BEATS wounded, every hit counts and counter progress is
@@ -835,7 +835,7 @@ namespace TacticalAI.Core
             //     and under woundAll the healthy-first slot, override him).
             if (a.C.ObjectiveActor != b.C.ObjectiveActor)
                 return a.C.ObjectiveActor ? -1 : 1;
-            // Player-19 (Thomas 03.11): engaged-vs-engaged - the most recent
+            // Player-19 (T. 03.11): engaged-vs-engaged - the most recent
             // engagement leads (the door-crusher from two rounds ago yields
             // to the hero who just struck the mission figure). 0/0 rows (all
             // pre-Player-19 canon) keep the old fall-through order verbatim.
@@ -860,7 +860,7 @@ namespace TacticalAI.Core
                 if (e != 0) return e;
             }
             // 4. reference parity (no curated profile): wounded first, then
-            //    M10a CAMPAIGN INVESTMENT (Thomas playtest 27.10): four
+            //    M10a CAMPAIGN INVESTMENT (T. playtest 27.10): four
             //    expansion heroes share the neutral prior 10, so keys 1-3
             //    tie and the old chain fell straight to squad row - a
             //    predictable top-to-bottom kill queue. Items+skills from the

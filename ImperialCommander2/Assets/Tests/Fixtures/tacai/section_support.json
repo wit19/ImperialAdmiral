@@ -670,7 +670,7 @@
     },
     {
       "name": "se_skill_kurve",
-      "_comment": "The exact strike stream probed across the whole skill ladder: S1/S2 (reference rungs) and the profile-free reference path stay NULL - consumer silent, today's popup bit-identical. S3/S4/S5 (the mask-Verfeinerung-Rung, SectionSkill data table, kein Schalter) strike. The channel exists ONLY where the table opens it (Thomas-Gesetz 04.11.: ist es drin, wird es benutzt - auf seiner Rung).",
+      "_comment": "The exact strike stream probed across the whole skill ladder: S1/S2 (reference rungs) and the profile-free reference path stay NULL - consumer silent, today's popup bit-identical. S3/S4/S5 (the mask-Verfeinerung-Rung, SectionSkill data table, kein Schalter) strike. The channel exists ONLY where the table opens it (T.-Gesetz 04.11.: ist es drin, wird es benutzt - auf seiner Rung).",
       "events": [
         {
           "kind": "MissionStart",

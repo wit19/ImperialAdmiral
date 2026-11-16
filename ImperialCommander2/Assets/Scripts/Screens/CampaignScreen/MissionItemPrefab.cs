@@ -250,7 +250,7 @@ namespace Saga
 			EventSystem.current.SetSelectedGameObject( null );
 			FindObjectOfType<Sound>().PlaySound( FX.Click );
 
-			// dev 21 (Thomas): the badge cycles the difficulty LADDER -
+			// dev 21 (T.): the badge cycles the difficulty LADDER -
 			// AUTO -> OFF -> Rekrut..Thrawn -> AUTO, same knob as the settings.
 			campaignStructure.aiMode = TacticalAI.TacticalAISettings.NextMissionToken( campaignStructure.aiMode );
 

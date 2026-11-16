@@ -1,4 +1,4 @@
-// Player-19 language gate (Thomas 03.11). RED law: the doctrine weights a
+// Player-19 language gate (T. 03.11). RED law: the doctrine weights a
 // shipped group rolls MUST be language-independent. The bug this gate kills:
 // tactical_pattern_weights.json matched roles by nameMatch regexes over
 // ENGLISH card names while the live catalog hands the LOCALIZED name to the

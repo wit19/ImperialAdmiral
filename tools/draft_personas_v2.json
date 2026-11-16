@@ -3,7 +3,7 @@
     "file": "draft_personas_v2.json",
     "schema": "tacai.personas_v2_draft/2",
     "status": "ENTWURF M6a v2.1 - kanonischer Entwurf fuer M6b; KEIN Runtime-Asset, tactical_personas.json wird erst in M6b aufgehoben.",
-    "purpose": "Datenbasis der sechs imperialen Personas gemaess CONCEPT_personas_v2.md v2.1 (Abschnitt 2 + Beschluesse 10-12, Thomas 02.11.); die Raenge folgen automatisch der Threat-Stufe 2/4/6/8.",
+    "purpose": "Datenbasis der sechs imperialen Personas gemaess CONCEPT_personas_v2.md v2.1 (Abschnitt 2 + Beschluesse 10-12, T. 02.11.); die Raenge folgen automatisch der Threat-Stufe 2/4/6/8.",
     "generated_by": "tools/gen_personas_v2.py (M6a v2.1)",
     "generated_from": {
       "enemies": "ImperialCommander2/Assets/Resources/CardData/enemies.json",

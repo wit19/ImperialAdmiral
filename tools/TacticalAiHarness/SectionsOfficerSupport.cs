@@ -1,5 +1,5 @@
 // O-B supporter-movement vectors: officer_support.json pins the two laws of
-// concept offizier_supporter §2 Schicht C (Thomas-Gesetz 04.11.: Offiziere
+// concept offizier_supporter §2 Schicht C (T.-Gesetz 04.11.: Offiziere
 // wuerfen keine Vorstoss-Doktrin mehr) on the REAL board graph:
 //
 //   narrow cases - Exhaust end states run through the composed narrowing

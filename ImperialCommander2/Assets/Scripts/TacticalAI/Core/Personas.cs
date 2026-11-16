@@ -1,4 +1,4 @@
-// Imperial PERSONAS (Thomas decision 01.11./02.11., CONCEPT_personas.md):
+// Imperial PERSONAS (T. decision 01.11./02.11., CONCEPT_personas.md):
 // the persona REPLACES the Imperial class-card and agenda-card system in
 // the tactical AI completely (Noldorion PR #194 direction reply: a 1:1 card
 // port would make the rebels play the Imperial side - so the cards go away
@@ -25,7 +25,7 @@
 //   signaturText     ui.json key shown on the instruction cards - pure
 //                    flavour, never a mechanic
 //
-// RANK LAW (Thomas decision 02.11.): the rank follows the threat value of
+// RANK LAW (T. decision 02.11.): the rank follows the threat value of
 // the NEXT mission automatically: rank = highest authored rank whose
 // minThreat <= threat. No XP, no purchase, no memory - a pure function of
 // (persona, threat), so the rank rises AND falls openly with the mission

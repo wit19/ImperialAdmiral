@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mission income editor (Option A, Thomas' decision 30.10.).
+"""Mission income editor (Option A, T.' decision 30.10.).
 
 Inserts the Imperial-side income actions CM6 (type 31, imperial XP) and
 CM7 (type 32, influence) into shipped saga missions, mirroring each CM1

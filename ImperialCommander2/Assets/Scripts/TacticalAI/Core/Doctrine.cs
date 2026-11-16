@@ -283,7 +283,7 @@ namespace TacticalAI.Core
             return false;
         }
 
-        /// <summary>P34-B DIRECTION law (findings_Player-34 §4b, Thomas
+        /// <summary>P34-B DIRECTION law (findings_Player-34 §4b, T.
         /// ruling 08.11 after the Player-34 EMPIRE3 log): the old blind
         /// "defend -> hunt at the final third of the round clock" flip was
         /// directionally WRONG there - EMPIRE3 runs the clock against the

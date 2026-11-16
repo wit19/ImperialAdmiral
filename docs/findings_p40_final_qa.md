@@ -12,7 +12,7 @@ Review-only; kein Produkt-Edit, kein Commit. Einziges Schreibrecht: diese Datei
 | MAJOR | — keine — | | |
 | MINOR-A | CJK-Fund im Gesamt-Diff: ein korruptes Wort („Re“ + U+8F93 U+5165 statt „Ein“→„eingabe“) steht im P37-QA-Befundtext selbst | docs/findings_p37_qa.md:25 | Python-Bereichsscan über alle 9399 Plus-Zeilen des Range-Diffs: 1 Treffer (U+8F93 U+5165; Bytes hier bewusst als Flucht geschrieben, damit dieses Protokoll den Scan selbst nicht mehr rot macht — die Lehre von MINOR-A in eigener Anwendung). Ironie: die Datei, deren PASS-9 „CJK-Scan 0 Treffer“ attestiert, brachte ihr eigenes CJK mit dem QA-Commit 963fa27 in den Baum (der Scan damals lief VOR dem Commit der Datei). Doku-only, kein Produkt-/Runtime-Touch; Ein-Wort-Fix im Doku-Hop. |
 | MINOR-B | P38-Handoff-Text beschreibt sein eigenes Bedrohungs-Gatter falsch (Klassenfehler, nicht Codefehler) | Handoff-Kommentar t_11ebb843 vs Core/PreyQuota.cs:124-152 | Handoff behauptet: „Bedrohung>=15 => vollen Würfel, <15 => kappt auf k=1; an EMPIRE3: threat 1..14 => k=1..5, >=15 => k=1..6“. Gemessen: das Schiff-Gesetz ist ein BOOLESCHES Sektions-Mitlocations-Gatter (PreyThreat.TreatSectionOf, Bridge:3226; Popup-Zeile apPreyThreatLine/Rel) — numerischer Klemmer existiert nirgends; k-Band am Twin gemessen [1..cap=ceil(n/2)]=[1..5] für n=9 (Twin 20/20 MATCH), **k=6 für die EMPIRE3-Kohorte unerreichbar**. Code + 7 benannte threat_vectors + Gate: PASS; nur das Persistat Handoff-Text ist irreführend (Klasse des P37-QA-MINOR-1-Mislabels). Massstab ist der Code — der ist gut. |
-| MINOR-C | Thomas-Entscheid aus P37c-Handoff (Offener Punkt 3: Duty-Ast gedruckt-VOR-Musterbaum statt Bewegungsbaum-ERSETZUNG im TreeFor-Schlüssel, „bitte auf Brett-QA entscheiden“) ist durch KEINE Folgekarte aufgegriffen worden | Handoff-Kommentar t_e80246ed, Punkt 3 | Nachgemessen: findings_p37_qa.md erwähnt ihn nicht; P38/P39-Handoffs erwähnen ihn nicht. shipped ist die gedruckte Form (G1-interpretiert, Popup-Pins duty_popup.json). Entscheide-Tracking-Lücke: bewusst offen ODER vergessen — hier als „in keiner QA-Liste aufgetaucht“ gemeldet. Kein Spielerschaden unter der aktuellen Form. |
+| MINOR-C | T.-Entscheid aus P37c-Handoff (Offener Punkt 3: Duty-Ast gedruckt-VOR-Musterbaum statt Bewegungsbaum-ERSETZUNG im TreeFor-Schlüssel, „bitte auf Brett-QA entscheiden“) ist durch KEINE Folgekarte aufgegriffen worden | Handoff-Kommentar t_e80246ed, Punkt 3 | Nachgemessen: findings_p37_qa.md erwähnt ihn nicht; P38/P39-Handoffs erwähnen ihn nicht. shipped ist die gedruckte Form (G1-interpretiert, Popup-Pins duty_popup.json). Entscheide-Tracking-Lücke: bewusst offen ODER vergessen — hier als „in keiner QA-Liste aufgetaucht“ gemeldet. Kein Spielerschaden unter der aktuellen Form. |
 | MINOR-D | Doku-Zwei-Zeiler (Build-Stempel P35 + ACHSE::-Zeile) nach Controller-Aufschiebung „nach Kettenende als Einzeiler“ weiterhin nicht geschrieben | Controller-Kommentar t_b3eaef5c; docs/ grep | grep über docs/*.md nach Build-Stempel-Doku: 0 Treffer (TacticalAiBuildStamp.cs undoku­mentiert). ACHSE:: hat immerhin einen WIKI-Absatz (docs/WIKI_tactical_ai.md:1083), der Build-Stempel keinen. Kette ist zu Ende (P39) — Zeilen sind jetzt fällig im nächsten Doku-Hop. |
 
 ## PASS-Liste (11 Prüfpunkte, je eigene Messung am HEAD 1c2e118)
@@ -102,16 +102,16 @@ Review-only; kein Produkt-Edit, kein Commit. Einziges Schreibrecht: diese Datei
    Data-Review-Tabelle (P25-DP-Konvention „authored review copy, readers ignore unknown
    columns“) — grep: DutyAnchors.cs liest kein Position-Feld.
 10. **Rückstände-Liste (Status je Zeile):**
-    - Unity-.meta-Bündel: **bewusst offen** (Thomas' Unity-Maschine). Gemessen: 45 getrackte
+    - Unity-.meta-Bündel: **bewusst offen** (T.' Unity-Maschine). Gemessen: 45 getrackte
       Assets-Dateien ohne .meta — Familie ab M14e inkl. Chain-Dateien DutyAnchors.cs,
       DutyQuota.cs, DutyScrub.cs, NeutralPrey.cs, PreyQuota.cs + 5 Fixture-JSONs
       (duty_core/loader/nameless/popup, prey_core). Repo-Präzedenz dokumentiert (P37b OP-3).
     - Doku-Zwei-Zeiler (Build-Stempel, ACHSE::): **offen, jetzt fällig** → MINOR-D.
-    - Thomas-Entscheid M14f-Jäger-Text: **behoben vor der Kette** (d629e61 „M14g: Thomas'
+    - T.-Entscheid M14f-Jäger-Text: **behoben vor der Kette** (d629e61 „M14g: T.'
       Entscheidung — Jaeger-Text bleibt M14d-Fassung“). Nicht offen.
-    - Thomas-Entscheid B5: **behoben vor der Kette** (4c60408 M6s-B5, Wachzone im Standard-
+    - T.-Entscheid B5: **behoben vor der Kette** (4c60408 M6s-B5, Wachzone im Standard-
       Wachschutz-Baum). Kein pending B5 in den Konzept-Dokumenten (grep 0).
-    - Thomas-Entscheid P37c-OP-3 (Duty-Ast-Form): **offen und spurlos** → MINOR-C.
+    - T.-Entscheid P37c-OP-3 (Duty-Ast-Form): **offen und spurlos** → MINOR-C.
     - P37a OP 1-5: Golden-28-Pin intentional (nachgemessen 28); CORE23 9× endEvents ehrliche
       Rohabbildung; dp_anchors nicht duty-erweitert (Abdeckung DutyMineGate, beabsichtigt);
       buttonText-Exportform ok; Repo-Root-Hartpfad-Trick beim Controller als Migrationsnotiz
@@ -150,7 +150,7 @@ Die Strecke ist Canon-additiv (minus-0 über die gesamte Strecke), fail-closed g
 fairness-sauber und sprachvollständig (11/11, DE echt, 9 EN-Kopien byte-exakt).
 Die 4 MINORs sind Text-/Tracking-Natur (Doku-CJK-Artefakt, Handoff-Prosa-Mislabel,
 zwei offene Doku-/Entscheide-Punkte) — keiner blockiert ein Release. Vor dem nächsten
-Doku-Hop: MINOR-A beheben, MINOR-D nachziehen, MINOR-C auf Thomas' Liste setzen.
+Doku-Hop: MINOR-A beheben, MINOR-D nachziehen, MINOR-C auf T.' Liste setzen.
 
 ## Nachbau-Rezept (exakte Befehle)
 

@@ -30,7 +30,7 @@ namespace TacticalAiHarness
             // (inheritance is keyword-driven, never name-driven).
             foreach (var id in new[] { "DG004", "DG005", "DG006", "CUSTOM_FAN", "CUSTOM_FAN_MEL" })
                 Check("cards.supporter." + id, true, cards[id].Supporter);
-            // Field-commander exceptions (Thomas-Gesetz 04.11.) + plain troops:
+            // Field-commander exceptions (T.-Gesetz 04.11.) + plain troops:
             // DG075 = Kayn Somos, DG078 = General Sorin (shipped-name truth;
             // the concept text has the pair swapped - ids exclude, names never).
             foreach (var id in new[] { "DG075", "DG078", "DG021", "DG009", "DG046" })

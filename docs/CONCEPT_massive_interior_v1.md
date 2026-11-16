@@ -1,6 +1,6 @@
 # CONCEPT: Interior law for Massive figures, live (v1.3, 2026-11-09)
 
-Status: CONCEPT — nothing in this document is implemented yet. Thomas asked for a
+Status: CONCEPT — nothing in this document is implemented yet. T. asked for a
 feasibility concept (08.11: "Erstelle mal ein Konzept wie das realisierbar wäre"),
 with two binding application demands from him:
 
@@ -8,12 +8,12 @@ with two binding application demands from him:
 2. it must hold at **buy/deploy** time — the AI must not spend threat on a Massive
    that can never operate **in the area where the rebels are currently acting**.
 
-v1.1 (same day, Thomas: "lese kritisch gegen; finde eine Logik für Missionen mit
+v1.1 (same day, T.: "lese kritisch gegen; finde eine Logik für Missionen mit
 erlaubten Massive-Figuren"): adds **D6 (mission override law)**, corrects D1
 (section coarseness — the any-tile-bans-section rule was rejected), rewords the
 seal-the-approach and inverse-error claims to what the data can actually back.
 
-v1.2 (same day, Thomas: "gehe nochmal kritisch durch, prüfe Umsetzbarkeit gegen
+v1.2 (same day, T.: "gehe nochmal kritisch durch, prüfe Umsetzbarkeit gegen
 die aktuelle Code-Struktur, erweitere um die Umsetzung"): **§9 implementation
 blueprint** — every seam opened and read on today's tree (file:line anchors);
 feasibility verdict recorded (yes: no scene edits, no new player input, one Core
@@ -21,7 +21,7 @@ file + one builder + four rider-seams + gate + census); §7's biomeA/B unknown
 resolved at code level (`MapTile.GetBiomeType()`/`textureName` pin the A/B = RR
 tile-sides reading).
 
-v1.3 (09.11, Thomas: "korrigiere die 4 echten Funde; prüfe: DP draußen, aber
+v1.3 (09.11, T.: "korrigiere die 4 echten Funde; prüfe: DP draußen, aber
 Missionsfortschritt nur noch drin — dürfte kein AT-ST/AT-DP kaufen/deployen; erst
 DP wählen, dann gucken was deploybar ist"): review against release HEAD `13c022b`
 (v1.0.1). (1) all drifted file:line anchors re-pinned + anchor law (§9 intro);
@@ -34,7 +34,7 @@ row); (5) D3-C rewritten **DP-first** (new D3-C2): outdoor DP + indoor-only
 mission progress must buy nothing and must not deploy an already-held Massive to
 idleness — the USEFUL-DP set is computed first, buy asks it non-empty, the DP
 scorer consumes the SAME set. (6) first D3-C2 decisions recorded same day
-(Thomas clarify): blockade predicate = reach OR adjacency-blockade (seal order,
+(T. clarify): blockade predicate = reach OR adjacency-blockade (seal order,
 explain line); held-Massive empty set = REFUND the attack-point spend + re-rank
 (no holds, no zombie purchases); endgame veto = union-reach (veto only when the
 whole contested+critical union is beyond reach-and-adjacency). (7) remaining
@@ -162,7 +162,7 @@ Two candidate policies were on the table:
 * **fail-closed** (never wrongly-allow; Massive treats ambiguous like interior) —
   strict to the printed ban but can silently neuter Massives in whole campaigns.
 
-**Thomas ruled 09.11: fail-open.** Only RR-enumerated core tiles (19–36) are
+**T. ruled 09.11: fail-open.** Only RR-enumerated core tiles (19–36) are
 BANNED; everything unresolved reads OPEN **with its `[interior] ambigious-tile`
 forensic line** — open by policy, never silently, and the §7 fail-open clause
 still exempts fully-interior missions. The distinction that stays fail-CLOSED is
@@ -170,11 +170,11 @@ the MAPPING verification: RR-enumerated core ids must all resolve through the
 verified table or the build gate fails (§9.4), and expansion-biome rows are
 pinned per row by the H1 census — a machine guess is never a BANNED row.
 The 07.11 census tool pattern (`tools/section_census.py`, fail-closed output) is
-repeated: **H1 measures, Thomas rules row by row, then the table is frozen in
+repeated: **H1 measures, T. rules row by row, then the table is frozen in
 code.** The census still quantifies how many sections/DPs per campaign land in
 AMBIGUOUS — that number now feeds the per-row pinning, not a policy question.
 
-### D3 — application points (Thomas' two demands + the two the design forces)
+### D3 — application points (T.' two demands + the two the design forces)
 
 **A. Steering / movement (demand 1).**
 * Goal candidates for a Massive group are filtered to OPEN **and MIXED** sections
@@ -258,7 +258,7 @@ gate just removes dead candidates before scoring). Unknown operation zone AND
 unknown reachability → treat as useful, log (fail-open at the economy layer:
 buying nothing at all is also a rules-visible decision the Empire would not make).
 
-**C2. DP first, then load (v1.3 — Thomas 09.11).** Demand in Thomas' words:
+**C2. DP first, then load (v1.3 — T. 09.11).** Demand in T.' words:
 *erst den Deploypunkt auswählen und dann gucken, was kann ich da deployen.* The
 scenario he named: all DPs outdoor and legal, but the mission's progress from some
 point on happens ONLY indoors (heroes duck into rooms, the mission-critical
@@ -284,7 +284,7 @@ mission's endgame. The inversion closes both by construction:
    later move the op zone exclusively beyond reach, its USEFUL-DP set empties
    and the deploy trigger does NOT fire: no interior spawn (D3-B unchanged),
    no outdoor standstill deploy — the attack-point spend is **refunded to the
-   axis budget and the buy ranking re-runs** (Thomas 09.11: refund, not hold;
+   axis budget and the buy ranking re-runs** (T. 09.11: refund, not hold;
    no zombie purchases), forensic `[dp-massive] refund card=<c> ap=<n>
    reason=no_useful_dp_after=<fact>`. The refunded budget may buy a Massive
    again if the facts later move back outdoors.
@@ -293,7 +293,7 @@ mission's endgame. The inversion closes both by construction:
    "fight moves indoors later" case is priced in at buy time; belief fail-open
    stays for missions without that data (C unchanged).
 
-Blockade predicate — **DECIDED (Thomas 09.11): reach OR adjacency-blockade =
+Blockade predicate — **DECIDED (T. 09.11): reach OR adjacency-blockade =
 USEFUL.** When the WHOLE op zone is BANNED but its sections ADJOIN the DP's open
 component (the D1/D3-A blockade doctrine — patrol the room exits), the Massive
 IS useful and the buy is allowed; the order then carries the seal explain line
@@ -303,7 +303,7 @@ adjoins any op-zone element. Union-reach semantics also **decided 09.11**: the
 predicate checks TODAY's contested elements UNION the MissionCritical endgame
 sections — the endgame never vetoes alone while any element (today OR endgame)
 is still reachable; the veto bites only when the ENTIRE union is beyond
-reach-and-adjacency (Thomas: „ab diesem Zeitpunkt").
+reach-and-adjacency (T.: „ab diesem Zeitpunkt").
 
 **D. Two Massives one space.**
 RR defines it at "space" granularity; the app plans at section granularity and
@@ -325,7 +325,7 @@ Full table enforcement stays human, and the docs must say so (it already says
   (standing law), legacy bit-identical, Null-Law: no biome data for a mission →
   bit-identical to today's canon (pinned by fixture like `nahe_plan.null_eq_*`).
 
-### D6 — mission-permitted Massives (the "erlaubte Massive" law, Thomas 08.11)
+### D6 — mission-permitted Massives (the "erlaubte Massive" law, T. 08.11)
 
 RR Golden Rules: *"Mission rules can override both card abilities and rules from
 this guide"* — the interior ban is a guide rule, so a mission may lift it. (The
@@ -362,7 +362,7 @@ for a registered (mission, card):
   (BANNED sections are treated OPEN by goal choice, DP filter and USEFULNESS)
 ```
 
-Semantics decisions (v1.3: all three RULED — Thomas 08.11 pattern, re-confirmed
+Semantics decisions (v1.3: all three RULED — T. 08.11 pattern, re-confirmed
 09.11 for scope/lift; persistence follows the derived-not-stored law):
 
 * **Scope: card × mission.** The narrowest defensible scope is the single group;
@@ -468,7 +468,7 @@ Forensic lines carry the derived statuses, so a save can be audited after the fa
   already uses for art and sound. H1's job shrinks to verifying the id range and
   classifying expansion biomes.
 * Whether `Halls`/`Jabba`/`Imperial` biomes are interiors in their campaigns —
-  Thomas rules after H1.
+  T. rules after H1.
 * Section-level coarseness (revised by the D1 self-correction): MIXED sections
   stay traversable — so the app CAN place a Massive goal in a section that also
   contains interior tiles. That is a deliberate, disclosed trade: the ORDER names
@@ -494,7 +494,7 @@ showing a Massive sealing instead of chasing when a hero ducks indoors; zero
 `massive into BANNED` orders across all missions of the session. That, not a
 green gate alone, closes the chain.
 
-**Named scenario (Thomas 09.11, D3-C2):** a mission whose DPs are all outdoor and
+**Named scenario (T. 09.11, D3-C2):** a mission whose DPs are all outdoor and
 whose progress (hero ingress + MissionCritical sections) is indoor from some point
 on. Decided semantics (09.11): the app buys NO AT-ST/AT-DP once the indoor op-zone
 sections are beyond reach AND adjacency (`usefulness=skip`); if they merely adjoin
@@ -548,7 +548,7 @@ enum SectionStatusT { Open, Banned, Mixed, Ambiguous }   // section level (D1 v1
 static class InteriorLaw {
   // RR enumeration by (expansion, tileID, tileSide) - CORE only:
   //   19..36 (both sides) -> Banned;  38/39 -> Open (RR names them explicitly).
-  // Expansion tiles: crosswalk row by per-side BiomeType (data table, Thomas-
+  // Expansion tiles: crosswalk row by per-side BiomeType (data table, T.-
   //   gated after H1; missing row -> Ambiguous).
   static TileStatus StatusForTile(string expansion, string tileId,
                                   string side, string biome);
@@ -564,7 +564,7 @@ static class InteriorLaw {
 ```
 
 The crosswalk is a shipped data table in the file (H1 generates candidate rows,
-Thomas gates, the table freezes) — same governance pattern as the persona JSON
+T. gates, the table freezes) — same governance pattern as the persona JSON
 law: rules change rows, not code.
 
 ### 9.2 New Unity-side file — `TacticalAI/InteriorUnity.cs` (builder)
@@ -688,6 +688,6 @@ log attribute the snapshot behaviour to a commit.
   max 22), tiles of hidden sections still exist as entities (`ToggleSection-
   EntitiesVisibility` only flips visibility) — H1 verifies "entity exists even
   while hidden" on the 22-section outlier missions before H3 trusts the scan.
-* Popup clutter law (Thomas 04.11 "zu überladen"): the stay-out reminder rides
+* Popup clutter law (T. 04.11 "zu überladen"): the stay-out reminder rides
   the existing INFO-TEXT switch; the seal explain line rides the EXPLAIN switch.
   No new always-on block.

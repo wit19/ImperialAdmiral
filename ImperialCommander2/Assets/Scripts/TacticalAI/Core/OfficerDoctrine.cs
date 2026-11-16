@@ -1,4 +1,4 @@
-// O-A (concept offizier_supporter v1 §2, Thomas-Gesetz 04.11., card
+// O-A (concept offizier_supporter v1 §2, T.-Gesetz 04.11., card
 // t_4acaa220): officers (printed Order/Executive Order token, id exclusion
 // DG075/DG078) are SUPPORTERS - they keep commanding per doctrine, but their
 // SELF-COMBAT runs only while an emergency is active. This file is the pure
@@ -26,7 +26,7 @@
 //       ONLY - life + printed ranged capability (DeploymentCard.AttackType),
 //       NEVER a position. Unknown prints (cards without a catalog entry) and
 //       a missing catalog count as "could attack" -> no E3 (fail-closed,
-//       unsicher => KEIN E3, Thomas' Nie-raten-Gesetz).
+//       unsicher => KEIN E3, T.' Nie-raten-Gesetz).
 //   E4 "letzte lebende       - the roster holds no other living imperial
 //        Gruppe"              group (NAlive > 0) besides the supporter.
 //
@@ -67,7 +67,7 @@ namespace TacticalAI.Core
             new OfficerEmergencyResult(OfficerEmergency.None, "");
     }
 
-    /// O-C (card t_a2d88c50, Thomas-Gesetz 04.11.): which activation-tree
+    /// O-C (card t_a2d88c50, T.-Gesetz 04.11.): which activation-tree
     /// variant an OFFICER popup shows. Only consulted when the bridge already
     /// detected a printed command ability (the Officer flag) - the ui.json
     /// key mapping is the bridge's job, the DECISION is pinned here.
@@ -93,7 +93,7 @@ namespace TacticalAI.Core
 
     public static class OfficerDoctrine
     {
-        /// Codex skill floor (Thomas 04.11.): ab S2. S1 keeps the old path
+        /// Codex skill floor (T. 04.11.): ab S2. S1 keeps the old path
         /// bit-identical on purpose ("der Spieler sieht den Fehler").
         public const int MinSkill = 2;
 

@@ -53,7 +53,7 @@ namespace Saga
 			//is never refunded: full deploy proceeds.
 
 		//M13c/M13g: tactical optional deployment -> the chosen DP marker is
-		//revealed (Thomas 28.10: the marker IS the placement instruction for
+		//revealed (T. 28.10: the marker IS the placement instruction for
 		//the human Imperator at the open screen; deployments are ALWAYS OPEN
 		//- exactly like the printed rules, which never hide a deployment).
 		bool tacticalOptionalReveal = false;
@@ -219,7 +219,7 @@ namespace Saga
 					};
 				}
 
-				//TAC threat economy (Thomas 06.11): FINAL-ROUND DUMP. Threat
+				//TAC threat economy (T. 06.11): FINAL-ROUND DUMP. Threat
 				//that survives the last round of the mission is dead value -
 				//Player-32 showed the empire saving instead of buying while
 				//the rebels ran out the clock. In the mission's last
@@ -251,7 +251,7 @@ namespace Saga
 				//indoors) does NOT deploy to idleness: the trigger does not
 				//fire for it (no spawn anywhere), the attack-point spend is
 				//refunded to the axis budget and the card returns to the hand
-				//(Thomas 09.11: refund, not hold - no zombie purchases), all
+				//(T. 09.11: refund, not hold - no zombie purchases), all
 				//inside the bridge helper (forensic [dp-massive] refund line,
 				//the ONE ModifyThreat(+) of the law). Human picks (manual
 				//window) and legacy missions are excluded - the table's call
@@ -325,7 +325,7 @@ namespace Saga
 		}
 
 		/// <summary>
-		/// TAC threat economy (Thomas 06.11): true when this is the LAST
+		/// TAC threat economy (T. 06.11): true when this is the LAST
 		/// deployment round of a round-limited mission AND the strict budget
 		/// still affords a group from hand. A last round only exists when
 		/// the user enforces the limit (roundLimitToggle on/dangerous - the
@@ -335,7 +335,7 @@ namespace Saga
 		/// </summary>
 		bool FinalRoundThreatDump()
 		{
-			//MODE GATE (Thomas 06.11 standing rule): the dump is TAC threat
+			//MODE GATE (T. 06.11 standing rule): the dump is TAC threat
 			//economy - Legacy never chained extra Landings, so with the mode
 			//off this must always answer false.
 			if ( !TacticalAI.TacticalAIBridge.TacticalMissionActive() ) return false;
@@ -382,7 +382,7 @@ namespace Saga
 			DataStore.sagaSessionData.ModifyThreat( threatGain );
 			DataStore.sagaSessionData.UpdateDeploymentModifier( depMod );
 
-			// P33-H5 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2):
+			// P33-H5 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2):
 			// the Beschaffungs-Ranking replaces the strict reinforce-then-buy
 			// sequence ONLY while battle-zone facts exist. Without facts (or
 			// mode off, or any error inside the head) the sequence below runs
@@ -427,7 +427,7 @@ namespace Saga
 
 			if ( r1 == null && r2 == null && TacticalAI.TacticalAIBridge.TacticalMissionActive() )
 			{
-				//TAC threat economy (Thomas 06.11): FAIL-OPEN rule. The
+				//TAC threat economy (T. 06.11): FAIL-OPEN rule. The
 				//Reinforcements mode used to END with a "nothing to
 				//reinforce" warning while affordable groups sat unbought in
 				//the hand and the threat rotted on the account. Now the mode
@@ -435,7 +435,7 @@ namespace Saga
 				//NEW groups instead (max 2, the same strict landing budget
 				//and the same override cost law as HandleLanding). Only if
 				//that also finds nothing does the warning show.
-				//MODE GATE (Thomas 06.11 standing rule): fails open ONLY in
+				//MODE GATE (T. 06.11 standing rule): fails open ONLY in
 				//Tactical missions - Legacy ends with the warning as before.
 				DeploymentCard f1 = DataStore.GetFuzzyDeployable( DataStore.sagaSessionData.gameVars.currentThreat );
 				if ( f1 != null )
@@ -524,7 +524,7 @@ namespace Saga
 		// ------------------------------------------------------------ P33-H5
 
 		/// <summary>
-		/// P33-H5 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2): execute
+		/// P33-H5 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2): execute
 		/// the ranked round-end actions of the Reinforcements popup. The TABLE
 		/// laws stay untouched: max 2 actions per round; every action is
 		/// re-checked against the SAME legality the strict sequence reads, at
@@ -924,7 +924,7 @@ namespace Saga
 					//remove it from dep hand (regular + consumed elite)
 					DataStore.deploymentHand.Remove( dep );
 					DataStore.deploymentHand.Remove( depDeploy );
-					//TAC threat economy (Thomas 06.11): the bill reads the
+					//TAC threat economy (T. 06.11): the bill reads the
 					//SAME law the affordability check used -
 					//DataStore.DeployCost (persona discount first, printed
 					//onslaught reductions second, floored at 0). Check and
@@ -961,7 +961,7 @@ namespace Saga
 		/// sequentially, one TextBox at a time. Since M13g EVERY deployment -
 		/// optional or not - shows its DP highlight: the ovrd==null branch in
 		/// DeploymentManager runs the legacy reveal (highlight + camera)
-		/// VERBATIM; deployments are always open (Thomas 28.10).
+		/// VERBATIM; deployments are always open (T. 28.10).
 		/// </summary>
 		void AnnounceTacticalLandings()
 		{
@@ -1007,7 +1007,7 @@ namespace Saga
 
 		/// <summary>
 		/// M13c Scope C: the revived manual placement window for legacy-mode
-		/// campaigns (Thomas 28.10). Compact strip (the map must stay visible
+		/// campaigns (T. 28.10). Compact strip (the map must stay visible
 		/// and clickable - no dark fader): pick a group, the valid DPs of the
 		/// card light up via the existing highlight mechanism, click one, pay
 		/// the printed cost on confirm. Built at runtime exactly like the

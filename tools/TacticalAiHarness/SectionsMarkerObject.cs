@@ -1,4 +1,4 @@
-// SectionsMarkerObject.cs - P33-H4c (Thomas 08.11, CONCEPT_missionsachse
+// SectionsMarkerObject.cs - P33-H4c (T. 08.11, CONCEPT_missionsachse
 // 2.4, card t_2ff1ba37): the MARKER/OBJECT axis vectors. Feed law (the
 // MissionObject projection: keyed by entity GUID, last-event-wins, printed
 // text numbers only), the CORE polaritaet ladder P1-P4 (P2 wins over P1 by

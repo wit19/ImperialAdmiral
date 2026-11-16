@@ -33,7 +33,7 @@ namespace Saga
 		public HashSet<string> AnyHeroWithdrawnEventDone;
 
 		/// <summary>
-		/// M14e (CONCEPT_standort_ledger_v2, Thomas 07.11): the ENTRY-POINT LEDGER -
+		/// M14e (CONCEPT_standort_ledger_v2, T. 07.11): the ENTRY-POINT LEDGER -
 		/// per card id, the DP(s) a group or hero entered through, with origin.
 		/// Populated from THREE honest sources, last write wins (the current entry
 		/// is the physical truth):
@@ -73,7 +73,7 @@ namespace Saga
 				if ( deployLedger == null )
 					deployLedger = new Dictionary<string, DeployLedgerRow>();
 				deployLedger[cardId] = new DeployLedgerRow { dps = new List<string>( dps ), origin = origin };
-				// Playtest forensics (Thomas 07.11, M14f Kontrollentwurf): greppable
+				// Playtest forensics (T. 07.11, M14f Kontrollentwurf): greppable
 				// audit trail of every ledger write. Log-only.
 				UnityEngine.Debug.Log( "DeployLedger::" + cardId + " <- " + string.Join( ",", dps.ToArray() )
 					+ " (" + origin + ")" );

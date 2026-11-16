@@ -1,5 +1,5 @@
 // O-B supporter movement codex (concept offizier_supporter §2 Schicht C,
-// Thomas-Gesetz 04.11.: "Offiziere werfen keine Vorstoss-Doktrin mehr").
+// T.-Gesetz 04.11.: "Offiziere werfen keine Vorstoss-Doktrin mehr").
 // Two pure candidate-set laws for groups carrying the O-A Supporter flag:
 //
 // 1) VORSTOSS-SPERRE (AdvanceRemoval): Move end states that CLOSE the

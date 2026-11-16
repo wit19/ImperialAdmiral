@@ -28,7 +28,7 @@ namespace TacticalAI.Core
     ///              (mission start groups and Hard-Mode upgrade products
     ///              included); this class reads it and changes nothing -
     ///              the legacy elite rails stay untouched (Sec.1.2-2,
-    ///              Thomas 02.11: their upstream rule bends are deliberate,
+    ///              T. 02.11: their upstream rule bends are deliberate,
     ///              their own double-elite possibility is a separate
     ///              investigation, never fixed inside a persona hop).
     ///   BUDGET   - at most Sum(amount) swaps per mission over the active

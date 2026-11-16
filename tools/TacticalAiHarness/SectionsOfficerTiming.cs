@@ -1,4 +1,4 @@
-// Player-24 BEFEHLSZEITPUNKT vectors (Thomas 04.11 Go): officer_timing.json
+// Player-24 BEFEHLSZEITPUNKT vectors (T. 04.11 Go): officer_timing.json
 // pins CommandTiming.ForRound on the REAL feed path (WorldEventFeed.Append +
 // WorldEventVector.Project + SectionSpace.Project, same fail-loud discipline
 // as officer_doctrine), then pins the PLAN CONSUMPTION in OrderPlanner:

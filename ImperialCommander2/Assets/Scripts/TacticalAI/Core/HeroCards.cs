@@ -51,7 +51,7 @@ namespace TacticalAI.Core
         public string BasisAngriffswuerfel;    // e.g. "BR", "GY+Reach"
         public int Reichweite;                 // acc-gate convention (asset doc)
         public List<HeroAbility> Faehigkeiten = new List<HeroAbility>();
-        // M21 (Thomas ruling 06.11., playtest-Nachlese): printed ability
+        // M21 (T. ruling 06.11., playtest-Nachlese): printed ability
         // EFFECTS curated per hero - language-independent SKILL-ID pins
         // (never card names). Curation is the single source (the app's own
         // skill runtime is not read, same law as the item dice proxies).
@@ -60,11 +60,11 @@ namespace TacticalAI.Core
         // Blast 1H" - RR keyword Blast/Explosion: figures adjacent to the
         // target suffer the blast value, no defense dice), and his skill
         // card fenn01 ("Taktisches Vorrücken"/"Tactical Movement") raises
-        // his speed by one (Thomas ruling: +1 healthy AND wounded).
+        // his speed by one (T. ruling: +1 healthy AND wounded).
         public int ExplosionsWert;                                    // printed blast H
         public List<HeroSkillPin> ExplosionsUpgrades = new List<HeroSkillPin>(); // skill -> new WERT (absorbs)
         public List<HeroSkillPin> TempoPins = new List<HeroSkillPin>();          // skill -> tempo DELTA
-        // M22 (Thomas ruling 06.11.): the printed SUPPORTER role. Identity
+        // M22 (T. ruling 06.11.): the printed SUPPORTER role. Identity
         // pins: Davith Elso (the commander) and MHD-19 always; Diala Passil
         // only while she carries diala02 "Machtadept" (friendly reroll) or
         // diala03 "Kampfmeditation" (friendly Focused). Consumer is the
@@ -72,7 +72,7 @@ namespace TacticalAI.Core
         // a threat number: eliminate stays pure dice (findings 06.11. §1).
         public bool SupporterImmer;
         public List<string> SupporterSkills = new List<string>();
-        // M24 (Thomas ruling 06.11., Karten-Audit): the printed HEALER kit.
+        // M24 (T. ruling 06.11., Karten-Audit): the printed HEALER kit.
         // Card pins ONLY - no identity healer exists in the live roster, and
         // SELF-heal (gaarkhan01) deliberately does NOT pin (heals others =
         // healer; self-heal = the separate selfHealPossible data field).
@@ -96,7 +96,7 @@ namespace TacticalAI.Core
         }
 
         public List<string> HeilerSkills = new List<string>();
-        // M25 (Thomas ruling 06.11., Karten-Audit 2. Prüfung): printed
+        // M25 (T. ruling 06.11., Karten-Audit 2. Prüfung): printed
         // STATIC attack modifiers of the hero row and his cards.
         // waffenGenauigkeit   - the base weapon's printed '+N Accuracy'
         //                       line (CT-1701 +2, Loku +1, Saska +1) - the
@@ -108,7 +108,7 @@ namespace TacticalAI.Core
         //                       whenever YOU OR A FRIEND attack a recon-
         //                       marked figure' - the source sits with him,
         //                       discounted HALF (ExplosionShare precedent,
-        //                       Thomas: "je ½"), healthy side only (the
+        //                       T.: "je ½"), healthy side only (the
         //                       back page prints no abilities - Print!).
         // genauigkeit_pins    - chosen cards printing static '+N Accuracy'
         //                       (loku08, vinto04, drokkata03) while equipped.
@@ -147,7 +147,7 @@ namespace TacticalAI.Core
 
         /// <summary>M25: the printed extra-attack flat addend with the
         /// chosen cards (each card = its fraction of one neutral attack
-        /// EV; exhaustion-cycle share, Thomas ruling "je ½").</summary>
+        /// EV; exhaustion-cycle share, T. ruling "je ½").</summary>
         public Rational AngriffsBonusEffektiv(IList<string> skills)
         {
             var s = Rational.Zero;
@@ -170,7 +170,7 @@ namespace TacticalAI.Core
         }
 
         /// <summary>M21: sum of the tempo deltas the chosen skill cards
-        /// print (applied to the healthy AND the wounded tempo - Thomas
+        /// print (applied to the healthy AND the wounded tempo - T.
         /// ruling 06.11.: "verwundet ebenfalls +1").</summary>
         public int TempoDelta(IList<string> skills)
         {
@@ -498,8 +498,8 @@ namespace TacticalAI.Core
             EmptyBonus = new System.Collections.Generic.Dictionary<string, Rational>();
 
 
-        // M16 (Thomas design ruling 05.11): PERCENT-WEIGHTED THREAT LAW for
-        // protect/stall. M20 (Thomas ruling 05.11, melee debate): the 10%
+        // M16 (T. design ruling 05.11): PERCENT-WEIGHTED THREAT LAW for
+        // protect/stall. M20 (T. ruling 05.11, melee debate): the 10%
         // RANGE cell is STRICKEN - threat = 100 x (60% normalized weapon
         // DAMAGE + 40% normalized SPEED band). Range was double-counted:
         // the M19 band average already reads every weapon across its whole
@@ -510,7 +510,7 @@ namespace TacticalAI.Core
         // 4/3 each), BandAnchor stays 3 (fastest mobility band): the 60/40
         // split keeps the law's maximum at 100. Fixed anchors: threat values
         // never wander mid-mission (dynamic anchors would jump whenever the
-        // strongest hero falls or a weapon is bought - Thomas: explanation must stay
+        // strongest hero falls or a weapon is bought - T.: explanation must stay
         // re-computable from the log). The wound effect is the PRINTED
         // tempoVerwundet only (band drop) - NO extra percent malus (ruling).
         // eliminate/attrition stay PURE damage: in a kill mission speed does
@@ -525,7 +525,7 @@ namespace TacticalAI.Core
         // and the range operand stay printed in the EXPLAIN row - the M19
         // band average still RUNS over 1..range, it just earns no own points.
         public static readonly Rational RangeShare   = Rational.Zero;         // 0 %
-        // M21 (Thomas ruling 06.11.): the printed blast value rides the
+        // M21 (T. ruling 06.11.): the printed blast value rides the
         // damage operand at HALF its value (trigger + endurance discount,
         // see the EliminateEv law text). Exact rational, curation-pinned.
         public static readonly Rational ExplosionShare = new Rational(1, 2);
@@ -543,7 +543,7 @@ namespace TacticalAI.Core
             return new Rational((v.Num * 2 + v.Den) / (2 * v.Den));   // floor(x + 1/2)
         }
 
-        /// M16 law, uniform for card rows AND curation rows (Thomas ruling:
+        /// M16 law, uniform for card rows AND curation rows (T. ruling:
         /// the percent law is a protect/stall law - never applied to the
         /// damage races here, callers route eliminate/attrition to the EV).
         public static Rational RunnerThreat(Rational damageEv, int band, int range)
@@ -556,7 +556,7 @@ namespace TacticalAI.Core
 
         /// <summary>M16: the threat broken into its printable operands.
         /// The EXPLAIN text and the threat-accounting log must show the REAL
-        /// arithmetic with these values (Thomas: "die Rechnung mit Kommentar,
+        /// arithmetic with these values (T.: "die Rechnung mit Kommentar,
         /// welcher Wert wofuer steht" - never prose about how it works).</summary>
         public struct ThreatParts
         {
@@ -672,7 +672,7 @@ namespace TacticalAI.Core
         {
             explosion = ExplosionShare * card.ExplosionsWertEffektiv(
                 profile != null ? profile.LoadoutSkills : null);
-            // M25 (Thomas ruling 06.11.): the printed EXTRA-ATTACK cards and
+            // M25 (T. ruling 06.11.): the printed EXTRA-ATTACK cards and
             // Loku's printed recon-token synergy ('Set Your Sights' + recon
             // bonus) ride the SAME flat
             // addend seam as the blast - real damage, never percentage-bent
@@ -688,7 +688,7 @@ namespace TacticalAI.Core
                 ? profile.LoadoutItems : NoItems;
             int pierce = 0;
             var keywords = new List<string>();
-            // M17 (Thomas 05.11): each candidate pool carries its weapon's
+            // M17 (T. 05.11): each candidate pool carries its weapon's
             // PRICE-ENERGY surcharge (curated ev_model: weapon_ev_per_1000_cost
             // x tier x cost, fed per item through HeroThreatProfile.
             // WeaponEvBonus). The printed dice understate bought weapons -
@@ -701,7 +701,7 @@ namespace TacticalAI.Core
             {
                 Tuple.Create(card.BasisWuerfel, !card.Nahkaempfer, Rational.Zero),
             };
-            // M26/M27 (Thomas rulings 06.11., Player-29 log): a hero's
+            // M26/M27 (T. rulings 06.11., Player-29 log): a hero's
             // attack is the weapon SHE CARRIES (rule text: for a hero the
             // attack value "is found on his weapon Item card") - but WHICH
             // weapon that is must be COMPUTED, not decreed (M27: "Die
@@ -756,7 +756,7 @@ namespace TacticalAI.Core
             // investment tie-break)
             int engagePierce = engage == null ? 0 : engage.Pierce;
             int engageAcc = engage == null ? 0 : engage.AccDelta;
-            // M19 (Thomas ruling 05.11., Player-28 DL-44 fund): BAND-
+            // M19 (T. ruling 05.11., Player-28 DL-44 fund): BAND-
             // AVERAGED EXCHANGE. The pre-M19 law scored EVERY weapon at
             // distance 1 - but the pairing law spends accuracy for
             // distance, so that reading systematically over-valued green
@@ -768,7 +768,7 @@ namespace TacticalAI.Core
             // d = 1..reach. Melee pools are distance-inert inside the
             // pairing law by design (no distance spend).
             //
-            // M27 (Thomas ruling 06.11., after M26): WHICH weapon the hero
+            // M27 (T. ruling 06.11., after M26): WHICH weapon the hero
             // fights with is a RESULT of the arithmetic, never a decree
             // ("Die Waffenrechnung muss bestimmen was die beste Waffe ist"
             // / "was ist, wenn der Held 2 Waffen gekauft hat?"). Each
@@ -782,7 +782,7 @@ namespace TacticalAI.Core
             // per-distance switch (a strictly weaker printed pistol won
             // single cells: Player-29 log "1:Green+Green") and the M26
             // hard replace-rule (a shortcut, not a computation). The
-            // arithmetic now SHOWS what Thomas demands: Jyn's DL-44 band
+            // arithmetic now SHOWS what T. demands: Jyn's DL-44 band
             // score beats her printed GG pistol score, so the standard
             // never rides; a second bought weapon simply competes; and a
             // reach-1 blaster that only duplicates a longer carried gun's
@@ -838,7 +838,7 @@ namespace TacticalAI.Core
                              + pools[i].Item3;
                 weaponScore[i] = s;
             }
-            // M29 (Thomas ruling 06.11., "Zwei-Ökonomien-Bande"): the gun
+            // M29 (T. ruling 06.11., "Zwei-Ökonomien-Bande"): the gun
             // slot is ONE ranged weapon - the argmax over the RANGED
             // candidates (printed standard of an O hero, every carried gun).
             // Multiple carried guns compete and the best over the whole band
@@ -903,21 +903,21 @@ namespace TacticalAI.Core
             // weapon that cannot cover the whole band shows only the share
             // it really adds - the operand never lies.
             energy = energySum / reach;
-            // M21 (Thomas ruling 06.11., Fenn playtest): the printed blast
+            // M21 (T. ruling 06.11., Fenn playtest): the printed blast
             // ability (Fenn's Havoc Shot: "1C: ... this attack gains Blast
             // 1H"; RR keyword Blast / DE rules "Explosion": everything
             // ADJACENT to the hero's target suffers the blast value, no
             // defense dice) rides as a FLAT increment on the damage operand.
             // Ruling: "pauschal" - unconditional, NOT gated on where the
-            // imperial figures stand (Thomas chose the simple reading over
+            // imperial figures stand (T. chose the simple reading over
             // the adjacency-gated one). The printed value is discounted to
             // HALF (ExplosionShare): Havoc Shot costs 1 endurance per
             // attack (Fenn has 4), triggers only when the primary attack
             // lands damage, and the app campaign drops the friendly fire -
-            // the increment models Thomas' "erhöht immer ein wenig seinen
+            // the increment models T.' "erhöht immer ein wenig seinen
             // Schaden", never the full dice value. fenn07 (Rebel Elite)
             // ABSORBS the value to 2H through the curation pin (community-
-            // sourced print upgrade, Thomas ruling 06.11. to encode it).
+            // sourced print upgrade, T. ruling 06.11. to encode it).
             // Being wounded DOUBLES the whole operand downstream through
             // the wound economy (OverlordFocus.ThreatEconomic) - the blast
             // rides along consistently. Heroes WITHOUT the printed blast
@@ -930,11 +930,11 @@ namespace TacticalAI.Core
         // (M16: the mobility FACTORS - band and reach are separate percent
         // terms of the weighted law now; the reach still extends with
         // printed ranged items exactly as before, wound band from the
-        // PRINTED wound tempo - Thomas ruling: no hidden extra malus)
+        // PRINTED wound tempo - T. ruling: no hidden extra malus)
         static int RunnerBand(HeroCard card, bool wounded,
                               HeroThreatProfile profile = null)
         {
-            // M21 (Thomas ruling 06.11.): printed skill pins raise the band
+            // M21 (T. ruling 06.11.): printed skill pins raise the band
             // tempo in the HEALTHY AND the wounded state (fenn01 "Taktisches
             // Vorrücken": speed +1 also at 3 -> band 2 while wounded).
             int delta = card.TempoDelta(profile != null ? profile.LoadoutSkills : null);

@@ -247,10 +247,10 @@ namespace Saga
 		/// Einsatzkarte - "Sturmtruppen-Captain — Rang 2" at THIS mission's
 		/// threat budget (the rank law is a pure threat function, so the
 		/// rank is honest before the mission starts). Replaces the M12e
-		/// deck line 1:1 in place and look (Thomas 02.11.: "bei dem Text,
+		/// deck line 1:1 in place and look (T. 02.11.: "bei dem Text,
 		/// wo jetzt die imperialen Karten angezeigt werden"). Invisible
 		/// without a persona: a classic mission shows no empty chrome.
-		/// M13i (Thomas screenshot 28.10): placed to the RIGHT of the
+		/// M13i (T. screenshot 28.10): placed to the RIGHT of the
 		/// difficulty row in the info column (see geometry block), no
 		/// longer trailing the badge into the bottom buttons.</summary>
 		void EnsurePersonaLine()
@@ -294,13 +294,13 @@ namespace Saga
 			setupPersonaLineGo.SetActive( true );
 
 			var rt = setupPersonaLineGo.GetComponent<RectTransform>();
-			// M13i/M13o (Thomas screenshots 28./29.10.): the line sits to the
+			// M13i/M13o (T. screenshots 28./29.10.): the line sits to the
 			// RIGHT of the tactical-AI display (the AI badge, which owns the
 			// difficulty slot in tactical mode; legacy difficulty label when
 			// the badge is off). Player-10.log showed the old in-place
 			// measurement ran BEFORE the first layout pass (rects still 0)
 			// and silently fell back to the position BELOW the badge - which
-			// is exactly what Thomas kept seeing. The geometry now works in
+			// is exactly what T. kept seeing. The geometry now works in
 			// WORLD space (any anchor setup, no point-anchor assumption) and
 			// retries through a coroutine until the anchor is actually laid
 			// out, so the fallback can no longer stick.
@@ -412,7 +412,7 @@ namespace Saga
 			if ( setupOptions == null ) return;
 			// AUTO("") -> reference -> overlord -> legacy -> AUTO (same cycle
 			// as the campaign-list badge and SagaSetupOptions.ToggleAiMode)
-			// dev 21 (Thomas): ladder cycle, shared with the campaign badge
+			// dev 21 (T.): ladder cycle, shared with the campaign badge
 			setupOptions.aiMode = TacticalAI.TacticalAISettings.NextMissionToken( setupOptions.aiMode );
 			// M11f: cycling back to OFF must bring the legacy toggles back and
 			// move the badge out of their slot again - one refresh covers all.

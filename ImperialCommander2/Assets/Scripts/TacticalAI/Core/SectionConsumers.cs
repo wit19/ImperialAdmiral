@@ -16,7 +16,7 @@
 // inert pair (same stream, space=null -> today's pick; space on -> the
 // exception fires in the SAME round).
 //
-// THE EXCEPTIONS FIRE AT EVERY RUNG (Thomas-Gesetz 04.11., PLAN head):
+// THE EXCEPTIONS FIRE AT EVERY RUNG (T.-Gesetz 04.11., PLAN head):
 // "Die EREIGNISGETRIEBENEN AUSNAHMEN (Wachzone, Vergeltung, 3c) greifen auf
 // ALLEN Skill-Stufen - Fakt-Reaktion ist Fairness, kein Intelligenz-Bonus."
 // Baustein 1-5 consult no SectionSkill. The three skill-gated
@@ -75,7 +75,7 @@ namespace TacticalAI.Core
         public readonly List<string> RingZones = new List<string>();
         public string ContestZone;          // null = nothing contested
 
-        // M14f Stage B - Naehesuch (Thomas 07.11 R2=b: "der GM zieht
+        // M14f Stage B - Naehesuch (T. 07.11 R2=b: "der GM zieht
         // benachbarte Truppen in die Schlacht"): the reaction zone the
         // plan looks toward, plus the lower-bound distance from each
         // group's OWN trusted zone to it. -1 = no knowledge (neutral in
@@ -447,7 +447,7 @@ namespace TacticalAI.Core
             return zb;
         }
 
-        // M14f Stage B - the Naehesuch ladder (Thomas 07.11 R2=b). The
+        // M14f Stage B - the Naehesuch ladder (T. 07.11 R2=b). The
         // reaction zone is the CONTESTED section (the object worked NOW),
         // else exactly one fresh ring zone; several rings without a
         // contest = no single reaction goal -> null (neutral, never a
@@ -631,7 +631,7 @@ namespace TacticalAI.Core
             return false;
         }
 
-        // M14f R3 text law (Thomas 07.11, concept §8.4): an authored
+        // M14f R3 text law (T. 07.11, concept §8.4): an authored
         // section name may ride a popup ONLY when it informs. The editor
         // boilerplate prefix "Section <n> - " is stripped; junk is refused
         // (bare "Start Section"/"Section"/"Section <n>", grid labels like
@@ -695,7 +695,7 @@ namespace TacticalAI.Core
             return null;
         }
 
-        // ---- Baustein 7: FOKUSZONE (Player-20-B, Thomas 04.11) -------------
+        // ---- Baustein 7: FOKUSZONE (Player-20-B, T. 04.11) -------------
         // The hunter brand (concept hunt-richtlinie B, "Go" 04.11): a hunter
         // goes after the hero WORKING INSIDE THE FOCUS ZONE - the focus zone
         // being the section(s) of the mission-critical object, the SAME fact

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# M23 Zweit-Engine (Thomas-Ruling "A", 06.11.): unabhaengige Nachrechnung
+# M23 Zweit-Engine (T.-Ruling "A", 06.11.): unabhaengige Nachrechnung
 # aller world_feed-Kanon-Posturen inkl. der sechs neuen M23-Anker.
 # Rechnet DerivePosture aus dem Gesetzestext NEU (Schutz vor dem
 # Wort-Suffix-Anker, Uhr, Stall-Vokabeln, Eliminate-Fallback) und vergleicht

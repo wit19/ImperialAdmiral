@@ -61,7 +61,7 @@ VILLAINS = CARDATA / "villains.json"
 DECKS = LANG_EN / "tactical_imperial_decks.json"
 AGENDAS = LANG_EN / "tactical_agenda_cards.json"
 
-CONCEPT = "CONCEPT_personas_v2.md v2.1 (Abschnitt 2 + Beschluesse 10-12, Thomas 02.11.)"
+CONCEPT = "CONCEPT_personas_v2.md v2.1 (Abschnitt 2 + Beschluesse 10-12, T. 02.11.)"
 
 # ---------------------------------------------------------------- loading
 

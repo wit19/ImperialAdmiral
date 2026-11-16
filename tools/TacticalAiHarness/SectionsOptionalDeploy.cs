@@ -1,6 +1,6 @@
 // M13c optional-deployment revival section: the pure fork/law behind the
 // revived flow (tactical = AI places + DP marked + announced; legacy = the
-// manual DM placement window - Thomas 28.10). OptionalDeploy is
+// manual DM placement window - T. 28.10). OptionalDeploy is
 // presentation/branching-only (planning behaviour untouched, Canon vectors
 // unmoved) and has no Python sim twin, so the expect blocks are hand-pinned
 // ground truth - the same documented route as action_tree.json, not --record.

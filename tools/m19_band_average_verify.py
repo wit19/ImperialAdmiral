@@ -104,7 +104,7 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
             ap = attr_pool(card, e['attribut'], wounded)
             if ap:
                 pools.append((ap, ranged, b)); pool_is_melee_item.append(not ranged)
-    # M27 (Thomas ruling 06.11.): which weapon the hero fights with is a
+    # M27 (T. ruling 06.11.): which weapon the hero fights with is a
     # RESULT of the arithmetic - every option is scored over the whole band
     # as if it were the ONLY weapon (argmax), no replace decree, no
     # per-distance switch. HeroCards.cs band loop, verbatim direction.
@@ -158,7 +158,7 @@ def threat(hero, wounded, loadout, posture, defense, engage=None):
     if posture in ('eliminate','attrition'): return bav
     band_t = card['tempoVerwundet'] if wounded else card['tempo']
     band = 1 if band_t <= 3 else 2 if band_t == 4 else 3
-    # M20 law (Thomas ruling 05.11): range cell stricken, 60/40 weights
+    # M20 law (T. ruling 05.11): range cell stricken, 60/40 weights
     th = 100 * (F(3,5)*bav/F(8,3) + F(2,5)*band/3)
     return int(th + F(1,2))   # round-half-up
 

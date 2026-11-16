@@ -1,4 +1,4 @@
-// S-C (Thomas-Gesetz 04.11., PLAN_sektionsraum Revision IV.1 Kopf): the
+// S-C (T.-Gesetz 04.11., PLAN_sektionsraum Revision IV.1 Kopf): the
 // SKILL CURVE for the section space. There are NO feature switches - skill
 // is the dial. The law, verbatim from the plan:
 //

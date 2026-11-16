@@ -1,4 +1,4 @@
-// O-A supporter belt gate (concept offizier_supporter v1 par.2, Thomas-
+// O-A supporter belt gate (concept offizier_supporter v1 par.2, T.-
 // Gesetz 04.11., card t_4acaa220). RED law: the supporter identity of the
 // tactical AI is driven by the PRINTED command token, and the token belt
 // (TacticalAIBridge.ToRecord + PrintedOfficerSupporter: DG004/DG005 plain,
@@ -157,7 +157,7 @@ public static class OfficerSupporterGate
            "field-commander exception set is exactly the two named-villain ids");
 
         // 4. O-B Vorstoss-Sperre on the SHIPPED pattern-weight table (card
-        //    t_59289f80, Thomas-Gesetz 04.11.: "Offiziere wuerfen keine
+        //    t_59289f80, T.-Gesetz 04.11.: "Offiziere wuerfen keine
         //    Vorstoss-Doktrin mehr"). A supporter id must NEVER reach
         //    aggressive under ANY shipped posture, and must always keep the
         //    support-led row (support >= 55 raw). The field commanders keep

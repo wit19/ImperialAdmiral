@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M13c language edit for the tactical activation texts (Thomas 30.10.):
+"""M13c language edit for the tactical activation texts (T. 30.10.):
 
 - moveFocus / moveFocusNoTarget: '... im Auge behalten / keep it in view'
   -> '... bis die Figur in Angriffsreichweite ist / until the figure is

@@ -167,7 +167,7 @@ namespace TacticalAI
             return mp != null && mp.roundLimit >= 0 ? mp.roundLimit : -1;
         }
 
-        /// <summary>M23 (Thomas ruling "A", 06.11): does the CURRENT campaign
+        /// <summary>M23 (T. ruling "A", 06.11): does the CURRENT campaign
         /// author its objective line as the IMPERIAL task list? Only the
         /// Empire expansion's campaign is played from the imperial side (its
         /// hero roster - Drokkatta, Kelvin, Feralo - fights as the Empire);
@@ -236,7 +236,7 @@ namespace TacticalAI
         ///    tactical_mission_critical table for THIS mission (missionID =
         ///    the SessionKey tail); runtimeSwapped rows are skipped by the
         ///    miner. Missing rows keep pairs unknown-PERMEABLE (Grundgesetz).
-        ///  * refinement: the Thomas-Gesetz 04.11. skill curve - low rungs
+        ///  * refinement: the T.-Gesetz 04.11. skill curve - low rungs
         ///    (S1/S2/reference/no profile) read the coarse chain-entry
         ///    belief; the event-driven exceptions are ungated in Core.
         /// RESYNC LAW: full replay with prior=null EVERY pull, never a
@@ -546,7 +546,7 @@ namespace TacticalAI
                 { "roundLimit", _lastRoundLimit },
                 { "mission", mission },
                 { "missionType", mp != null ? mp.missionType.ToString() : "Story" },
-                // M23 (Thomas ruling "A"): the Empire campaign authored its
+                // M23 (T. ruling "A"): the Empire campaign authored its
                 // objective line as the IMPERIAL task list - a fact the
                 // table itself states (chosen campaign), not a hidden read.
                 { "objectiveForEmpire", _objectiveForEmpire ? 1L : 0L },
@@ -665,7 +665,7 @@ namespace TacticalAI
         }
 
         // ------------------------------------------------------- group wheels
-        // Player-22 (Thomas 04.11, objective-panel screenshot): is this
+        // Player-22 (T. 04.11, objective-panel screenshot): is this
         // group's DEFEAT wired into the scenario? Read at emit time from the
         // deployment override registry (SagaGameVars.dgOverrides) - the
         // game's OWN ledger: ParseMission seeds it for every initial group
@@ -688,7 +688,7 @@ namespace TacticalAI
 
         void PollGroups(int round)
         {
-            // Player-25 M14e (Thomas 07.11): the Spawn payload DOES carry
+            // Player-25 M14e (T. 07.11): the Spawn payload DOES carry
             // the entry point now ("dp" + "section", ledger-backed) - the
             // old Player-22 verdict ("there is NO group->DP ledger to read,
             // so the dp key stays out until one exists") is SUPERSEDED:
@@ -720,7 +720,7 @@ namespace TacticalAI
                 if (cd == null || cd.isDummy) continue;
                 if (!_seenGroups.Contains(cd.id))
                 {
-                    // Player-22 (Thomas 04.11 EMPIRE2 log): APPEND FIRST,
+                    // Player-22 (T. 04.11 EMPIRE2 log): APPEND FIRST,
                     // mark seen ONLY on success. The vocabulary law throws
                     // on an unregistered payload key; the old order marked
                     // the group seen BEFORE Append, so one throw swallowed
@@ -744,7 +744,7 @@ namespace TacticalAI
                             // DeploymentCritical) - fact, always explicit.
                             { "critical", DeploymentCritical(cd.id) },
                         };
-                        // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2):
+                        // M14e (T. 07.11, CONCEPT_standort_ledger_v2):
                         // the entry DP this group came through, read from
                         // the durable deploy ledger. The Player-22 verdict
                         // below ("no group->DP ledger exists") is RETIRED:
@@ -1001,7 +1001,7 @@ namespace TacticalAI
             { "execut", "execution", "erschosse", "erschossen", "killed",
               "getötet", "getotet", "defeated", "besiegt", "erlegen",
               "ausgeschaltet" };
-        /// P34-A2 (Thomas, card t_1787135b): a CLAIM sentence is NOT a lose
+        /// P34-A2 (T., card t_1787135b): a CLAIM sentence is NOT a lose
         /// sentence - "If a protester is defeated, the Empire claims it" /
         /// "beansprucht das Imperium ihn" names the ATTACKER side, and the
         /// other side is the one that loses the object. Consulted LAST in
@@ -1017,7 +1017,7 @@ namespace TacticalAI
         static readonly string[] DefenseNoneWords = { "none", "keine" };
 
         // -------------------------------------------------- canonical reading
-        // LANGUAGE-BRIDGE (card t_1787135b P34-A1, Thomas 08.11): the game is
+        // LANGUAGE-BRIDGE (card t_1787135b P34-A1, T. 08.11): the game is
         // selectable in ELEVEN languages and TranslationController rewrites the
         // mission texts IN PLACE at load. It preserves the authored ORIGINAL in
         // sourceText/sourceEventText (capture-once, its chokepoint); EVERY
@@ -1090,7 +1090,7 @@ namespace TacticalAI
         }
 
         // ============================================ P33-H4c MissionObject
-        // CONCEPT_missionsachse §2.4 (Thomas, hart): objects carrying the
+        // CONCEPT_missionsachse §2.4 (T., hart): objects carrying the
         // printed board rule "can attack X (Health: N, Defense: ...)" in
         // their OWN canonical EN theText become facts. The producer READS
         // FIELDS (attack text numbers, own section, printed setup position,
@@ -1673,7 +1673,7 @@ namespace TacticalAI
         {
             foreach (var cd in DataStore.deployedHeroes)
             {
-                // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2): the hero
+                // M14e (T. 07.11, CONCEPT_standort_ledger_v2): the hero
                 // ENTRY - one HeroDeployed per blue entry field the ledger
                 // carries (multi-field mission => one event per field: the
                 // SET is the honest claim, SectionSpace decides single =>
@@ -1726,7 +1726,7 @@ namespace TacticalAI
                         // HUD flag only fills in sessions whose log predates
                         // the activation-line change (old saves).
                         if (_heroLoggedActivated.Contains(name + "#" + round)) continue;
-                        // M15 F4 (Player-26 ghost activation, Thomas 05.11):
+                        // M15 F4 (Player-26 ghost activation, T. 05.11):
                         // since M6s-B7 EVERY session's hero writes its own
                         // activation line (the end-of-turn checkbox flip), so
                         // within a logger session the flag path is redundant

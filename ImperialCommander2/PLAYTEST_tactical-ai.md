@@ -78,7 +78,7 @@ RiskPosture „Ansonsten" (v3.9 §3.5.1), Doktrinen-Axiome (v3.9.1 §4.5).
    mehr (er wird beim Missionsstart einmal eingelesen).
 4. Normal spielen. Die KI-Entscheidungen laufen über die bestehenden App-Dialoge
    (Aktivierungsfenster, Zielauswahl-Popup) — nichts Neues zu lernen.
-   **So liest du eine Anweisung (Schema nach Thomas' Playtest-Runde 6):**
+   **So liest du eine Anweisung (Schema nach T.' Playtest-Runde 6):**
    Jede Aktion ist eine Wenn-Dann-Entscheidung, nummeriert wie die zwei Aktionen
    einer Aktivierung. Beispiel Angriffs-Karte:
    **Regel-Festhalt: pro Aktivierung darf eine Imperiale Figur genau EINEN Angriff
@@ -118,7 +118,7 @@ RiskPosture „Ansonsten" (v3.9 §3.5.1), Doktrinen-Axiome (v3.9.1 §4.5).
    2. **Der Blocker-Fall ist eingebaut:** verbaut eine andere Heldenfigur die
       Sichtlinie auf X, ist sie das Ziel — nicht X, und auch kein unnützes
       Further-Running an ihr vorbei.
-   3. **Bewegungskarten (Hit&Run, Thomas' Runde 7):** Steht schon ein Held in
+   3. **Bewegungskarten (Hit&Run, T.' Runde 7):** Steht schon ein Held in
       eurer eigenen Angriffreichweite: **stehen bleiben, Feuer vorbereiten**
       (Sonst könnte ein einziger schneller Meuchler unser Fernkampf-Korps per
       Spazierenfahren durch die halbe Karte pinnten). Kein Held in Reichweite:
@@ -285,7 +285,7 @@ Fähigkeiten (Kampfpräsenz + Kampfdisziplin), keine Doppelung.
 
 ## 4d. dev 37 — RR-Deck-Gesetz: jede Aktivierung zeigt beide Aktionen
 
-Thomas-Entscheidung 31.10.2026: „Wir spielen nach Referenz Regeln!" Die
+T.-Entscheidung 31.10.2026: „Wir spielen nach Referenz Regeln!" Die
 Referenz-Regeln geben jeder imperialen Figur pro Aktivierung Angriff UND
 Bewegung. Die kalibrierten Mischdecks (2-3 reine Angriffskarten =
 „Feuerstellung") erzeugten in 25-38 % der Aktivierungen Popups mit nur einer
@@ -311,7 +311,7 @@ Bewegungsanteil herum). Deshalb:
 
 ## 4e. dev 38 — Order-Decks entfernt (M11): das Popup kommt jetzt direkt von der Figur
 
-Thomas-Frage 31.10.2026: „Jede Figur hat 2 Aktionen, definiert über die
+T.-Frage 31.10.2026: „Jede Figur hat 2 Aktionen, definiert über die
 Aktionstexte — wir brauchen gar kein Deck. Das ist eine Konzeptleiche."
 Korrekt: nach dem RR-Deck-Gesetz (4d) mischten alle 89 Gruppen nur noch
 identische Karten, keine Karte verweigerte mehr eine Aktivierung, und die
@@ -353,7 +353,7 @@ Fixture-Zahlen bleiben bitgleich:
   bekommen keine Doppelung. Reiner Textblock: kein neuer Zustand, keine
   Plannerwirkung. Das `ignored`-Feld bleibt wie entschieden leer — unsere
   eigene abilities-JSON zeigt die gedruckten Kartentexte unverändert.
-- **Doktrin: Verteidigungs-Aufteilung + Phasen-Kipp** (Punkt 2, Thomas
+- **Doktrin: Verteidigungs-Aufteilung + Phasen-Kipp** (Punkt 2, T.
   01.11.): (1) In Missionen mit Verteidigungshaltung hält jetzt die HÄLFTE
   der aufgestellten Fernkampf-Schützen (hintere Hälfte der öffentlichen
   Aufstellungsreihenfolge) das Objekt als Wache, die vordere Hälfte rückt
@@ -391,7 +391,7 @@ Prüfpunkte in 4g).
 
 ## 4g. dev 41 — Personas ersetzen das Class-/Agenda-Karten-System (M1-M4)
 
-Das gedruckte Class-Deck + Agenda-Markt ist **komplett raus** (Thomas-
+Das gedruckte Class-Deck + Agenda-Markt ist **komplett raus** (T.-
 Beschluss 01./02.11.): kein XP-Konto, kein KI-Kauf, kein IMPERIUM-Panel,
 keine Lese-Proben mehr. Stattdessen drei Personas
 (`tactical_personas.json`): **Sturmtruppen-Captain** (Truppen verbilligt,

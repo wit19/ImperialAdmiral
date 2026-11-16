@@ -1,4 +1,4 @@
-// WOUNDED-FOCUS FIX live gate (Thomas 03.11, Lockvogel-Analyse): the three
+// WOUNDED-FOCUS FIX live gate (T. 03.11, Lockvogel-Analyse): the three
 // laws that stop the army from magnetising onto one wounded decoy hero:
 //   A) DeriveCounter - the mission's own text decides the end-condition law.
 //   B) woundAll counter -> healthy-first slot + NO wound economy x2.
@@ -115,7 +115,7 @@ public static class WoundFocusGate
         Eq("card", r[0].Basis, "WC::woundall_label_card_rows");
 
         // ------------------------------------------------ B2) PlayerFinale
-        // 15.11 (Thomas playtest, EMPIRE1 r9): the healthy-first slot LEADS
+        // 15.11 (T. playtest, EMPIRE1 r9): the healthy-first slot LEADS
         // the carrier keys. Replay: three wounded heroes, the last healthy
         // one is an objective actor with an OLDER engagement round; the
         // wounded newest carrier must never outrank the hero whose wound

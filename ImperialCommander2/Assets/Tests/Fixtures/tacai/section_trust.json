@@ -374,7 +374,7 @@
   },
   {
    "name": "st_coarse_reading",
-   "_comment": "The same carrier stream read refined (dump/explain) and coarse (coarse): a hit re-ground and a wounded group disjunctive are mask VERFEINERUNG - Refine=false keeps the seed-and-dilation chain-entry reading (Thomas-Gesetz 04.11.). The ring (fact reaction) still computes on the coarse reading.",
+   "_comment": "The same carrier stream read refined (dump/explain) and coarse (coarse): a hit re-ground and a wounded group disjunctive are mask VERFEINERUNG - Refine=false keeps the seed-and-dilation chain-entry reading (T.-Gesetz 04.11.). The ring (fact reaction) still computes on the coarse reading.",
    "events": [
     {
      "kind": "MissionStart",

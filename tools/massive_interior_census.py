@@ -22,7 +22,7 @@
 # expansion index outside the Expansion enum; duplicate card ids.
 #
 # THE PINNED RR ENUMERATION (D1 - the tile enumeration is the LAW, the biome
-# field is only evidence; "RR ist die Mutter aller Interior-Regeln", Thomas
+# field is only evidence; "RR ist die Mutter aller Interior-Regeln", T.
 # 09.11). The rulebook's Core-tile interior list, quoted into the tool as the
 # only authority for the core ban:
 #   RR interior (BANNED):  19A-36A and 19B-36B  -> 18 tiles x 2 sides = 36
@@ -35,7 +35,7 @@
 # of that gate.
 #
 # BIOME CANDIDATE ROWS (D2, spec 5-D2): the expansion crosswalk rows are
-# candidates ONLY, pending Thomas signature per row. Candidate reading of
+# candidates ONLY, pending T. signature per row. Candidate reading of
 # the BiomeType evidence (Interfaces-Enums.cs:86 order
 # Desert, Forest, Halls, Ice, Imperial, Interior, Jabba, Plains, Snow,
 # Streets, None, Menu):
@@ -234,7 +234,7 @@ def tile_status(expansion, tid, biome):
     # rows only. Every OTHER id - core 1..18/37 included - has NO law row:
     # pinned stays UNKNOWN and the candidate reading is the biome evidence
     # below (runtime: fail-OPEN + forensic log, D2). The census does not
-    # widen the enumeration beyond what the RR/Thomas text names.
+    # widen the enumeration beyond what the RR/T. text names.
     if biome == "Interior":
         return ("UNKNOWN", "BANNED_CANDIDATE")
     if biome in OPEN_BIOMES:
@@ -800,7 +800,7 @@ def main():
                 "pinned_status": pinned if rr or exp == "Core" else "UNPINNED",
                 "rr_enumerated": rr,
                 "side": side,
-                "thomas_ruling": None,
+                "t_ruling": None,
                 "tileID": tid,
             })
     rows.sort(key=lambda r: (r["expansion"], r["tileID"], r["side"]))
@@ -827,8 +827,8 @@ def main():
                                "never hand-edit",
                "law": ("rows are CROSSWALK CANDIDATES only (spec D1/D2): the "
                        "runtime crosswalk may hold RR core enumerations plus "
-                       "Thomas-SIGNED rows alone; candidate_status is the "
-                       "census reading, thomas_ruling is the signature slot "
+                       "T.-SIGNED rows alone; candidate_status is the "
+                       "census reading, t_ruling is the signature slot "
                        "(null until signed). An unverified expansion row "
                        "reads fail-OPEN at runtime with a forensic log line "
                        "(D2). Unmatched expansion ids must not enter the "
@@ -872,7 +872,7 @@ def build_doc(campaigns, per_mission, identity_evidence, dp_identity_kind,
     add("Scope: spec `docs/CONCEPT_massive_interior_v1.md` v1.3 section 5-H1 "
         "(census only - no law ships from this document; every status below "
         "is the RR enumeration or an UNSIGNED candidate row pending a "
-        "Thomas signature per row, D2).")
+        "T. signature per row, D2).")
     add("")
     add("## 1. Massive identity (shipped card data)")
     add("")
@@ -930,7 +930,7 @@ def build_doc(campaigns, per_mission, identity_evidence, dp_identity_kind,
     add("- **BANNED** - core expansion, tileID 19..36, both sides (RR "
         "interior list 19A-36A and 19B-36B; 36 tile sides).")
     add("- **OPEN**  - core expansion, tileID 38 and 39, both sides (RR "
-        "outdoor text, Thomas 08.11 - the only outdoor text the law names).")
+        "outdoor text, T. 08.11 - the only outdoor text the law names).")
     add("- **UNKNOWN** - every other id (core 1..18 and 37 included): the "
         "enumeration ships no law row for them, so the pinned reading stays "
         "UNKNOWN; the candidate reading is the biome evidence (core 1..18 "
@@ -955,14 +955,14 @@ def build_doc(campaigns, per_mission, identity_evidence, dp_identity_kind,
         "(core rows); `candidate` = census reading of the biome field "
         "(unsigned).")
     add("")
-    add("| expansion | tileID | side | biome | placed | DP anchors | pinned | candidate | thomas_ruling |")
+    add("| expansion | tileID | side | biome | placed | DP anchors | pinned | candidate | t_ruling |")
     add("|---|---|---|---|---|---|---|---|---|")
     for (exp, tid, side) in sorted(identity_evidence.keys()):
         ev = identity_evidence[(exp, tid, side)]
         pinned, cand = tile_status(exp, tid, ev["biome"])
         rr = exp == "Core" and (tid in RR_INTERIOR_IDS or tid in RR_EXTERIOR_IDS)
         sig = ("RR law (no signature needed)" if rr
-               else "unsigned - census decision is Thomas' signature line")
+               else "unsigned - census decision is T.' signature line")
         add("| %s | %d | %s | %s | %d | %d | %s | %s | %s |"
             % (exp, tid, side, ev["biome"], ev["placements"],
                ev["dp_anchor"], pinned, cand, sig))
@@ -1205,8 +1205,8 @@ def build_doc(campaigns, per_mission, identity_evidence, dp_identity_kind,
         "the RR 'Hallen' class the rulebook would need its own interior "
         "rules for; `Imperial` appears as the A-side of the core interior "
         "tiles themselves; `None` appears on core 38/39 which the RR pins "
-        "outdoor. Every such row stays AMBIGUOUS until a Thomas signature "
-        "(the signature slot is `thomas_ruling` in "
+        "outdoor. Every such row stays AMBIGUOUS until a T. signature "
+        "(the signature slot is `t_ruling` in "
         "`tools/massive_interior_crosswalk_candidates.json`, mirrored per "
         "row in the doc's census table). Runtime consequence until signed: "
         "D2 fail-OPEN + one forensic log line per activation.")

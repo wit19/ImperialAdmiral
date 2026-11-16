@@ -1,5 +1,5 @@
 {
-  "_comment": "O-C supporter-branch vectors (card t_a2d88c50, Thomas-Gesetz 04.11.): OfficerDoctrine.TreeKindFor selects the popup tree variant behind the EmergencyFor cascade the bridge runs on the REAL feed path. EVERY expect block is HAND-PINNED (the law IS the expectation - Legacy for non-supporters/DG075 id wall/S1 gate, Keep for supporter+S2+proven-none, Emergency for supporter+proven E1/E4; the why strings are byte-identical to the O-A pins od_e1_under_fire/od_e4_last_group so the popup why-line wraps exactly the O-A-pinned reasons). No --record twin exists for this file. Card records are the shipped printed stats copied from officer_doctrine.json. The pure skill x supporter x emergency MATRIX is hand-pinned as a law loop in SectionsOfficerTree.cs. Tree TEXT byte-identity of the old ten trees is gate-verified (OfficerTextGate over shipped ui.json, 11 languages); this fixture pins the SELECTION, the gate pins the SHIPPED TEXT.",
+  "_comment": "O-C supporter-branch vectors (card t_a2d88c50, T.-Gesetz 04.11.): OfficerDoctrine.TreeKindFor selects the popup tree variant behind the EmergencyFor cascade the bridge runs on the REAL feed path. EVERY expect block is HAND-PINNED (the law IS the expectation - Legacy for non-supporters/DG075 id wall/S1 gate, Keep for supporter+S2+proven-none, Emergency for supporter+proven E1/E4; the why strings are byte-identical to the O-A pins od_e1_under_fire/od_e4_last_group so the popup why-line wraps exactly the O-A-pinned reasons). No --record twin exists for this file. Card records are the shipped printed stats copied from officer_doctrine.json. The pure skill x supporter x emergency MATRIX is hand-pinned as a law loop in SectionsOfficerTree.cs. Tree TEXT byte-identity of the old ten trees is gate-verified (OfficerTextGate over shipped ui.json, 11 languages); this fixture pins the SELECTION, the gate pins the SHIPPED TEXT.",
   "cards": [
     {
       "id": "DG004",
@@ -255,7 +255,7 @@
     },
     {
       "name": "otc_s1_gate_quiet",
-      "comment": "Skill gate (Thomas 04.11.): the codex branch only speaks from S2. S1 + supporter + quiet -> Legacy: S1 keeps the OLD tree line, the beginner mistake stays honestly disclosed like the other S1 handicaps.",
+      "comment": "Skill gate (T. 04.11.): the codex branch only speaks from S2. S1 + supporter + quiet -> Legacy: S1 keeps the OLD tree line, the beginner mistake stays honestly disclosed like the other S1 handicaps.",
       "skill": 1,
       "self": "OFF",
       "events": [

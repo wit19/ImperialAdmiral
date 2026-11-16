@@ -1,6 +1,6 @@
 // M11d: the hero's printed STRAIN BUFFER and the focus ranking's light
 // pressure signal when the table has piled markers onto it (concept
-// CONCEPT_tactical_ai.md M11d; Thomas: the ranking considers it "lightly",
+// CONCEPT_tactical_ai.md M11d; T.: the ranking considers it "lightly",
 // never as a primary signal).
 //
 // What the tables actually hold (M11d research over the shipped data,

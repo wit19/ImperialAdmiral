@@ -54,7 +54,7 @@ namespace Saga
 			cd.heroState = new HeroState();
 			cd.heroState.Init();// DataStore.sagaSessionData.MissionHeroes.Count );
 
-			// M14e (CONCEPT_standort_ledger_v2, Thomas 07.11): the hero
+			// M14e (CONCEPT_standort_ledger_v2, T. 07.11): the hero
 			// ENTRY - the blue "Deploy the heroes here" field(s) of the
 			// mission (mined taktische_hero_entries table, file-name match).
 			// Only entries the LIVE map carries are kept (data-exists).
@@ -62,7 +62,7 @@ namespace Saga
 			// EMPIRE13, OTHER11) record nothing - no entry, no claim.
 			// A multi-field mission ("Deploy HALF of the heroes here" x2)
 			// stores the SET: a hypothesis of possible sections, never a
-			// point claim (Thomas 07.11).
+			// point claim (T. 07.11).
 			TryRecordHeroEntry( cd );
 			var go = Instantiate( hgPrefab, heroContainer );
 			go.GetComponent<SagaHGPrefab>().Init( cd );
@@ -482,7 +482,7 @@ namespace Saga
 				var adp = FindObjectOfType<MapEntityManager>().GetActiveDeploymentPoint( enemyToAdd );
 				if ( adp != Guid.Empty )
 				{
-					//M14d-R (Thomas 06.11): record the DP this deploy ACTUALLY
+					//M14d-R (T. 06.11): record the DP this deploy ACTUALLY
 					//used - same law as the ovrd.Active branch above. This is
 					//the path of every round popup, every Aufstellungs-
 					//Ereignis and every reinforcement landing (ovrd==null), so
@@ -494,7 +494,7 @@ namespace Saga
 						enemyToAdd.id, new List<string> { adp.ToString() }, "active" );
 					FindObjectOfType<SagaEventManager>().toggleVisButton.SetActive( true );
 					//M13g: the deployment-mode row was removed entirely
-					//(Thomas 28.10: the app is only a companion to the board
+					//(T. 28.10: the app is only a companion to the board
 					//game and the printed rules never hide a deployment -
 					//deployments are ALWAYS OPEN). This branch runs VERBATIM
 					//like the legacy original: highlight ON + camera move,

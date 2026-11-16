@@ -41,7 +41,7 @@ namespace TacticalAI.Core
         public string AppHeroId = null;
         public string Knowledge = "kuratiert";   // kuratiert | bestaetigt
         public Rational EquipmentIndex = Rational.Zero;  // tier x cost typ-gewichtet
-        // M17 (Thomas 05.11): per WEAPON item the curated ev_model bonus
+        // M17 (T. 05.11): per WEAPON item the curated ev_model bonus
         // (weapon_ev_per_1000_cost x tier x cost) - the printed price is the
         // public signal for the value the dice table cannot see (energy
         // abilities, keywords). Card-model candidates add this to their dice
@@ -62,12 +62,12 @@ namespace TacticalAI.Core
         /// evDamagePerRound.
         /// [int (3 heal-kit | 2 support | 1 normal | 0 identity-healer),
         ///  int runner, Rational ev]
-        /// M22 (Thomas-Ruling 06.11.): supporterPin = gedruckter Supporter
+        /// M22 (T.-Ruling 06.11.): supporterPin = gedruckter Supporter
         /// ueber Identitaets-/Skill-ID-Pin (HeroCard.SupporterEffektiv, z.B.
         /// Davith, MHD-19, Diala mit diala02/diala03). Er zaehlt wie die
         /// kuratierte "support"-Spalte - gelesen wird je HELD nur in der
         /// woundAll-Chip-Reihenfolge, nie in einer Bedrohungszahl.
-        /// M24 (Thomas-Ruling 06.11.): healerPin = gedruckte Wunden-
+        /// M24 (T.-Ruling 06.11.): healerPin = gedruckte Wunden-
         /// Heilung auf ausgeruesteten Karten (HeroCard.HeilerEffektiv,
         /// MHD-Kit mhd01/03/05/06/07). Solch ein Held REPARIERT
         /// Zaehler-Fortschritt - er wird VOR dem Support gechippt (Klasse 3,
@@ -321,7 +321,7 @@ namespace TacticalAI.Core
         ///   { "hero": name?, "hero_id": H-Id?, "items": [ids], "skills": [ids] }
         /// refs: ORIGINAL app tables — refs["items"]/["skills"] id->row,
         /// optional refs["heroes"] (CardData/heroes.json, id->row).
-        /// Scoring per Thomas' proxies (apply_loadout verbatim): equipment
+        /// Scoring per T.' proxies (apply_loadout verbatim): equipment
         /// tier x cost typ-gewichtet (P/S/O-R table in the asset), abilities
         /// xp-cost sum, EV = basis + weapon contribution + xp contribution;
         /// flags teure-faehigkeit (xpCost >= special_xp_cost) and

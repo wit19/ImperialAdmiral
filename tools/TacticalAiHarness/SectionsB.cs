@@ -418,7 +418,7 @@ namespace TacticalAiHarness
                 Check("order_plan.trace[" + i + "].plan", t["plan"], plan.AsDict());
             }
 
-            // Player-20 law (Thomas 04.11, playtest Player-20.log): the PRINTED
+            // Player-20 law (T. 04.11, playtest Player-20.log): the PRINTED
             // plain +2-movement order never earns the head of the activation
             // order — the buff chain must not tag it. The executive command
             // (elite) and plain non-officer support keep the chain slot.
@@ -446,7 +446,7 @@ namespace TacticalAiHarness
                 Check("order_plan.player20.plain_support_chained", true,
                       tagOf["S"].Contains("buff_before_receiver"));
 
-                // Player-21 head-slot law (Thomas 05.11 log r1): the plain
+                // Player-21 head-slot law (T. 05.11 log r1): the plain
                 // officer won PlanPos 0 on RAW guard-fit score (the chain
                 // exemption had already fired) — so the head slot itself is
                 // guarded, not just the chain. Rebuilds the r1 shape:

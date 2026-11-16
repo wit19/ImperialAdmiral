@@ -1,7 +1,7 @@
 // Port of sim/skill.py — Skill-Skala S1-S5: Schwierigkeit = Spielstaerke
 // (Konzept §6, v3.7-Umbau).
 //
-// Grundsatz (Thomas 2026-10-26): Aufstellungskontingente und Threat-Budget
+// Grundsatz (T. 2026-10-26): Aufstellungskontingente und Threat-Budget
 // sind Missionsdesign, KEINE KI-Stellschraube. Alle Skill-Profile operieren
 // auf der IDENTISCHEN legalen Optionsmenge; der Skill veraendert
 // ausschliesslich die AUSWAHL innerhalb legaler Optionen (Rangwahl-Band,

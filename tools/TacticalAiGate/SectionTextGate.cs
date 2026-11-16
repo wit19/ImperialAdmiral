@@ -1,5 +1,5 @@
 // S-D live gate (card t_c52dd34b, zero fixtures, SHIPPED ui.json only): the
-// section-space decision lines. Thomas' language law: every new player-facing
+// section-space decision lines. T.' language law: every new player-facing
 // decision line lives in ui.json in ALL 11 shipped languages; Core carries
 // only machine markers and identifiers. This gate pins
 //   1) the exact 8-key contract in section uiTacticalAI for all 11 languages

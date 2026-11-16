@@ -1,4 +1,4 @@
-// M5 (concept 3.3.1b, v4.0 Thomas-Entscheid 27.10): PASSIVE world feed.
+// M5 (concept 3.3.1b, v4.0 T.-Entscheid 27.10): PASSIVE world feed.
 // An append-only, per-mission event history built ONLY from signals the App
 // produces anyway while playing - canon rule: no feature may ever require
 // the human to report positions or states to the App (zero new input).
@@ -43,7 +43,7 @@ namespace TacticalAI.Core
             object v;
             return Payload.TryGetValue(key, out v) ? Json.AsLong(v) : dflt;
         }
-        // Player-22 (Thomas 04.11): boolean payload reader, same pattern.
+        // Player-22 (T. 04.11): boolean payload reader, same pattern.
         // Paired with Has() so a MISSING key stays distinguishable from a
         // present false (data-existence law - absence never reads as fact).
         public bool Bool(string key, bool dflt = false)
@@ -89,7 +89,7 @@ namespace TacticalAI.Core
             "MissionStart", "Spawn", "Move", "Death", "Removal",
             "ObjectiveChange", "TileChange", "FocusChange", "ThreatSpend",
             "ActivationStart", "ActivationEnd",
-            // Player-19 (Thomas 03.11): the hero-turn OPEN marker (the App's
+            // Player-19 (T. 03.11): the hero-turn OPEN marker (the App's
             // own mission-log GroupActivation line names the hero - public
             // activation order, the same channel M10b attribution already
             // uses). It lets the feed tell an objective change that happened
@@ -130,7 +130,7 @@ namespace TacticalAI.Core
             // clicked X right as the entity flag moved"). App-authored
             // button text is a legal anchor name (Loch-Gesetz: no coords).
             "PlayerSelection",
-            // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2): HeroDeployed
+            // M14e (T. 07.11, CONCEPT_standort_ledger_v2): HeroDeployed
             // - a hero/ally entered the mission through its blue ENTRY
             // field. The entry field is PRINTED mission data (the mined
             // taktische_hero_entries table), the placement itself is the
@@ -145,14 +145,14 @@ namespace TacticalAI.Core
             // or the roundLimitToggle flip) - public table info, the feed
             // gate re-derives posture from it.
             "RoundLimitChanged",
-            // P33-H4b (Thomas 08.11, CONCEPT_missionsachse): VictoryConditions
+            // P33-H4b (T. 08.11, CONCEPT_missionsachse): VictoryConditions
             // - the mission's PUBLIC win wiring, derived from the mission file's
             // own fields (fixedAlly/specificAlly, useAllyDefeated+endMission
             // wiring, escape-vocabulary entities whose button ends the mission).
             // Reading fields, never guessing; nothing parseable => no event
             // (Null-Law: today's behaviour bit-identical).
             "VictoryConditions",
-            // P33-H4c (Thomas 08.11, CONCEPT_missionsachse §2.4): MissionObject
+            // P33-H4c (T. 08.11, CONCEPT_missionsachse §2.4): MissionObject
             // - a mission-file object whose OWN theText carries the printed
             // board rule "can attack X (Health: N[, Defense: ...])". The
             // attackable fact plus its public wiring evidence (button texts,
@@ -169,7 +169,7 @@ namespace TacticalAI.Core
             "group", "figure", "wheel", "health", "hero", "zone", "tile",
             "objective", "focus", "balance", "roundLimit", "priorityTarget",
             "mission", "missionType", "resync", "size",
-            // M23 (Thomas 06.11): the Empire campaign authored its objective
+            // M23 (T. 06.11): the Empire campaign authored its objective
             // text as the IMPERIAL task list ("Find and destroy the control
             // terminals") - every other campaign writes it as the rebel task.
             // The producer states the perspective (0/1) as a public fact
@@ -182,7 +182,7 @@ namespace TacticalAI.Core
             // Talos): a mission text naming an imperial figure must never
             // mark the rebel hero who merely shares the surname.
             "name",
-            // Player-22 (Thomas 04.11): the scenario-critical defeat wiring
+            // Player-22 (T. 04.11): the scenario-critical defeat wiring
             // on Spawn (deployment-override setTrigger/setEvent, read at
             // emit time). LESSON PLAYER-22 (EMPIRE2 log, "poll error
             // (ignored): payload key not public-vocabulary: critical"): a

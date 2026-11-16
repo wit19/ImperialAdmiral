@@ -486,7 +486,7 @@ namespace Saga
 		/// highlight mechanism (pulsing sprite). The manual window uses this
 		/// while the DM picks a spot: the valid DPs are exactly what the DM
 		/// may click, and they are visible exactly as long as the picking
-		/// phase lasts (Thomas 28.10 marker rule).
+		/// phase lasts (T. 28.10 marker rule).
 		/// </summary>
 		public void ShowDeploymentPoints( IEnumerable<Guid> guids, bool visible )
 		{

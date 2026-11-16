@@ -8,22 +8,22 @@ using UnityEngine;
 
 public static class DataStore
 {
-	// FORK VERSION LAW (Thomas 03.11, counter rhythm updated 04.11):
+	// FORK VERSION LAW (T. 03.11, counter rhythm updated 04.11):
 	// TitleController.CheckVersion compares the LATEST RELEASE TAG of our fork
 	// (wit19) against THIS string. NEW PROJECT (06.11.): the fork flies under
 	// its own name "Imperial Admiral" now (Tilman/GlowPuff asked for distance
 	// from "Imperial Commander", upstream stays untouched as the origin) -
 	// versioning restarts at v1.0.0, plain semver, no build counter.
-	// TAG LAW (Thomas 07.11, replaces the tag-per-push law): strict
-	// v<maj>.<min>.<pat> tags are cut ONLY at a release act, by Thomas, on
+	// TAG LAW (T. 07.11, replaces the tag-per-push law): strict
+	// v<maj>.<min>.<pat> tags are cut ONLY at a release act, by T., on
 	// the chosen commit; dev pushes tag v<next>-dev.N instead - the update
 	// parser accepts exactly-three-integers only, so dev tags never move
 	// the check. THIS string carries that same -dev.N between releases,
 	// which makes a dev build honestly orange on the title icon (it IS not
 	// the release); a release build resets it to the plain tag and turns
-	// green again. A GitHub RELEASE is only ever created when Thomas says
+	// green again. A GitHub RELEASE is only ever created when T. says
 	// so (04.11, after an auto-created #1007 release was deleted).
-	public static readonly string appVersion = "v1.0.2";	// dev tree between releases; the 07.11 versioning law bakes the next-planned version with a -dev.N push counter here (release act resets it to the plain vX.Y.Z tag Thomas cuts; the update check only honours strict v<maj>.<min>.<pat> tags, so a -dev build honestly shows orange). P35 lockstep law (07.11): every dev tag commit bumps THIS constant and TacticalAiBuildStamp.Value in the same commit - the title badge must tell the same truth as the build stamp. RELEASE ACT 15.11: the plain v1.0.2 tag; the next dev hop on main resets this line to v1.0.3-dev.1.
+	public static readonly string appVersion = "v1.0.2";	// dev tree between releases; the 07.11 versioning law bakes the next-planned version with a -dev.N push counter here (release act resets it to the plain vX.Y.Z tag T. cuts; the update check only honours strict v<maj>.<min>.<pat> tags, so a -dev build honestly shows orange). P35 lockstep law (07.11): every dev tag commit bumps THIS constant and TacticalAiBuildStamp.Value in the same commit - the title badge must tell the same truth as the build stamp. RELEASE ACT 15.11: the plain v1.0.2 tag; the next dev hop on main resets this line to v1.0.3-dev.1.
 	public static readonly string[] languageCodeList = { "En", "De", "Es", "Fr", "Pl", "It", "Hu", "No", "Ru", "Nl", "Br" };
 
 	public static Mission mission;
@@ -962,7 +962,7 @@ public static class DataStore
 
 		if ( valid.Count > 0 )
 		{
-			// TAC M14d-R (Thomas 06.11, CONCEPT_reinforce.md): which wounded
+			// TAC M14d-R (T. 06.11, CONCEPT_reinforce.md): which wounded
 			// group gets the returning figure is a TACTICAL decision - the
 			// bridge ranks the legal candidates deterministically (anchor
 			// proximity, then printed strength). Tactical mode off, single
@@ -981,7 +981,7 @@ public static class DataStore
 	/// <summary>
 	/// Calculate and return a deployable group from the hand, DOES NOT remove
 	/// it from the deployment hand.
-	/// MODE GATE (Thomas 06.11, standing rule: our changes may only touch the
+	/// MODE GATE (T. 06.11, standing rule: our changes may only touch the
 	/// Tactical AI - Legacy must stay exactly as it was when the mode is off):
 	/// Tactical AI active on this mission => the strict deterministic economy
 	/// (GetStrictDeployable). Mode off => the legacy "fuzzy deployment" below
@@ -1084,7 +1084,7 @@ public static class DataStore
 	}
 
 	/// <summary>
-	/// TAC threat-economy law (Thomas 06.11): wir cheaten nicht - gekauft wird
+	/// TAC threat-economy law (T. 06.11): wir cheaten nicht - gekauft wird
 	/// exakt das, wofür die Bedrohung reicht, und dann aber alles davon.
 	/// Runs ONLY while the Tactical AI is active on this mission (see the mode
 	/// gate in GetFuzzyDeployable); Legacy keeps its fuzzy deployment untouched.
@@ -1137,7 +1137,7 @@ public static class DataStore
 	}
 
 	/// <summary>
-	/// Single truth for deployable purchases (Thomas 06.11): the affordability
+	/// Single truth for deployable purchases (T. 06.11): the affordability
 	/// check AND every ModifyThreat deduction call THIS - they can never
 	/// diverge again. Persona discount on the printed cost first (public
 	/// value, see PersonaState.CostFor), then the printed onslaught

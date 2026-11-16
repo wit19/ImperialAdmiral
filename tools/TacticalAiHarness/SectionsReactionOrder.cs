@@ -1,5 +1,5 @@
 // R-C ReactionOrder vectors: reaction_order.json pins the per-click re-
-// scoring of concept v1.2 par.2.2 (Thomas decision 04.11.: at EVERY press
+// scoring of concept v1.2 par.2.2 (T. decision 04.11.: at EVERY press
 // the order is recomputed from the REMAINING figures - no switch, always).
 // Same discipline as hero_ledger: cases run on the REAL WorldEventFeed.Append
 // path (fail-loud vocabulary check), expect blocks were recorded once via
@@ -201,7 +201,7 @@ namespace TacticalAiHarness
             // ================= hand-pinned laws (ground truth) ================
             var cat = Catalog();
 
-            // LAW 1 - class dominance (Thomas 04.11. #4): Schutzpflicht (R2)
+            // LAW 1 - class dominance (T. 04.11. #4): Schutzpflicht (R2)
             // beats Vergeltung (R1) EVEN WHEN the R1 event is newer - the
             // Punktklassen order never dissolves into seq comparison.
             var f1 = ReactionLawVector();

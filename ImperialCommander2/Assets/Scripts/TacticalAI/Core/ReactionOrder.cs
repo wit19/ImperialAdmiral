@@ -1,4 +1,4 @@
-// R-C (concept eventreaktionen v1.2 par.2.2/par.4/par.5; Thomas decision
+// R-C (concept eventreaktionen v1.2 par.2.2/par.4/par.5; T. decision
 // 04.11., "so und nicht anders"): at EVERY press of "Imperiale aktivieren"
 // the activation order is re-scored from the REMAINING figures - no switch,
 // no interruption feature, ALWAYS. The App hands exactly the pending groups
@@ -28,7 +28,7 @@
 //            window THIS round (R-A LastShot* attribution).
 //   R3 Eindringling (skill >= S2): this figure arrived THIS round and its
 //            Spawn fell inside an open hero window (R-B marker).
-// Punktklassen (Thomas 04.11. #4 - collision order, NEVER sums): class
+// Punktklassen (T. 04.11. #4 - collision order, NEVER sums): class
 //         descending R2 > R1 > R3, within a class the event seq descends,
 //         the PlanRound position is the tertiary key. A push ALWAYS
 //         outclasses the bare basis (class*1000 dominates any basis rank),
@@ -60,7 +60,7 @@ namespace TacticalAI.Core
         public static ulong RoundSeed(ulong sessionSeed, int roundNo)
             => sessionSeed ^ (ulong)roundNo * 0x9E3779B97F4A7C15UL;
 
-        // Punktklassen (collision order Thomas 04.11. #4: Schutzpflicht >
+        // Punktklassen (collision order T. 04.11. #4: Schutzpflicht >
         // Vergeltung > Eindringling; class descending).
         public const int ClassProtect = 3;    // R2
         public const int ClassRetaliate = 2;  // R1
@@ -116,7 +116,7 @@ namespace TacticalAI.Core
         /// <param name="skill">skill rung 1..5 (S1 reads basis only)</param>
         /// <param name="view">fresh FeedWorldView of THIS mission's public
         /// feed (null: no feed yet - pure basis order, no reaction points)</param>
-        /// <param name="why">debug account line (Thomas reads logs as the
+        /// <param name="why">debug account line (T. reads logs as the
         /// explanation UI): only publicly visible facts, no internal jargon.</param>
         public static string SelectNext(int roundNo, IList<string> pendingIds,
                                         List<GroupFacts> factsPending,
@@ -168,7 +168,7 @@ namespace TacticalAI.Core
             // -- S-D section space: exception maps + proximity feed (card
             //    t_c52dd34b). NULL LAW: no space handed => all three stay
             //    null and every pre-S-D path runs bit-identical. Wachzone
-            //    and 3c carry NO skill floor (Thomas-Gesetz 04.11.: the
+            //    and 3c carry NO skill floor (T.-Gesetz 04.11.: the
             //    event-driven exceptions fire on ALL rungs - fact reaction
             //    is fairness, not an intelligence bonus); the zones inside
             //    PlanZones are trust-gated (fail-closed without a row).
@@ -324,8 +324,8 @@ namespace TacticalAI.Core
                 }
                 // S-D section-space exceptions (card t_c52dd34b, concept
                 // positionierung v1 10+13.3). NO skill floor - IMMER
-                // (Thomas-Gesetz 04.11.). They ride the classes of their
-                // fact family INSTEAD of renumbering Thomas' pinned
+                // (T.-Gesetz 04.11.). They ride the classes of their
+                // fact family INSTEAD of renumbering T.' pinned
                 // collision order (Schutzpflicht > Vergeltung > Eindringling
                 // stays 3>2>1, the class CONSTANTS are untouched law):
                 //  * WZ rides ClassProtect - it is the section-space
@@ -340,7 +340,7 @@ namespace TacticalAI.Core
                 //    stronger Eindringling fact); ties with R3 fall to the
                 //    basis position, exactly R3's honest no-seq law.
                 // Only where no R push fired (c.Cls == 0): highest push
-                // shown, no stacking (Thomas 04.11. #4 untouched).
+                // shown, no stacking (T. 04.11. #4 untouched).
                 if (c.Cls == 0 && sectionSpace != null)
                 {
                     WachzoneDecision wz;

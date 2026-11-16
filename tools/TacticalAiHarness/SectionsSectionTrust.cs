@@ -94,7 +94,7 @@ namespace TacticalAiHarness
 
             // ================= hand-pinned laws (ground truth) ==============
 
-            // ---- 1) SKILL CURVE (Thomas-Gesetz 04.11.): the three gated
+            // ---- 1) SKILL CURVE (T.-Gesetz 04.11.): the three gated
             // channels open exactly at the middle rung S3 and never below;
             // profile absence (reference path) reads FALSE. No switches:
             // these functions are the whole mechanism.
@@ -494,7 +494,7 @@ namespace TacticalAiHarness
             return lines;
         }
 
-        // The low-rung reading of the same case (Thomas-Gesetz curve):
+        // The low-rung reading of the same case (T.-Gesetz curve):
         // Refine=false, the door-owner table still supplied (it is DATA -
         // the low rung simply does not spin hypotheses from it).
         static string CoarseDump(WorldEventFeed feed, Dictionary<string, string[]> seeds,

@@ -1,9 +1,9 @@
 {
-  "_comment": "R-C ReactionOrder golden vectors (concept eventreaktionen v1.2 par.2.2, Thomas decision 04.11.: per-click re-score of the REMAINING figures, IMMER, no switch). Expect blocks were cast once with --record and reviewed case by case (reaction_order_record.json is the raw record twin); the hand-pinned LAWS live at the bottom of SectionsReactionOrder.cs (class dominance, skill gates S1/S2/S3, unknown block + priority==1, fail-loud, finisher_last stays in the BASIS while the overlay overrules it, no-feed pure basis, R3 needs window AND round, multi-push shows the top class). ALT->NEU Begruendung: before R-C the pick was the first still-present slot of the cached round plan (order frozen at round start); these vectors pin the NEW law - events of the current round re-order the pick while the per-round dice (pattern roll, seeded missers via the round seed formula) stay bit-identical to the EnsureRound plan.",
+  "_comment": "R-C ReactionOrder golden vectors (concept eventreaktionen v1.2 par.2.2, T. decision 04.11.: per-click re-score of the REMAINING figures, IMMER, no switch). Expect blocks were cast once with --record and reviewed case by case (reaction_order_record.json is the raw record twin); the hand-pinned LAWS live at the bottom of SectionsReactionOrder.cs (class dominance, skill gates S1/S2/S3, unknown block + priority==1, fail-loud, finisher_last stays in the BASIS while the overlay overrules it, no-feed pure basis, R3 needs window AND round, multi-push shows the top class). ALT->NEU Begruendung: before R-C the pick was the first still-present slot of the cached round plan (order frozen at round start); these vectors pin the NEW law - events of the current round re-order the pick while the per-round dice (pattern roll, seeded missers via the round seed formula) stay bit-identical to the EnsureRound plan.",
   "cases": [
     {
       "name": "rc_palpatine_case",
-      "comment": "Thomas playtest case 1: the mission names Palpatine, rebels engage HIM in an open hero window this round, he is the S4 finisher parked LAST by finisher_last - the R2 overlay overrules the pick immediately, while the recorded basis still shows him last (finisher_last stays PlanRound law). Storm units are blocker/support pattern so he is the ONLY R2 qualifier (guards around him would share the obligation and precede him on the shared event seq by basis - pinned separately in rc_tie_break).",
+      "comment": "T. playtest case 1: the mission names Palpatine, rebels engage HIM in an open hero window this round, he is the S4 finisher parked LAST by finisher_last - the R2 overlay overrules the pick immediately, while the recorded basis still shows him last (finisher_last stays PlanRound law). Storm units are blocker/support pattern so he is the ONLY R2 qualifier (guards around him would share the obligation and precede him on the shared event seq by basis - pinned separately in rc_tie_break).",
       "round": 3,
       "skill": 4,
       "seed": 4711,
@@ -351,7 +351,7 @@
     },
     {
       "name": "rc_skill_gate_s1",
-      "comment": "Skill-Gate exakt (Thomas 04.11. #3): S1 liest NUR die Punkte-Basis - ehrliches Handicap. Vektor identisch zu s2/s3 (Objekt-Interaktion im Fenster + spaeterer Schuss): kein einziger Schub, der Basis-Kopf ist dran.",
+      "comment": "Skill-Gate exakt (T. 04.11. #3): S1 liest NUR die Punkte-Basis - ehrliches Handicap. Vektor identisch zu s2/s3 (Objekt-Interaktion im Fenster + spaeterer Schuss): kein einziger Schub, der Basis-Kopf ist dran.",
       "round": 2,
       "skill": 1,
       "seed": 4711,
@@ -631,7 +631,7 @@
     },
     {
       "name": "rc_skill_gate_s3",
-      "comment": "S3+ = alle Schuebe: Schutzpflicht hebt die Wache ueber die frische Vergeltung (Klasse > Ereignis-Seq, Thomas #4).",
+      "comment": "S3+ = alle Schuebe: Schutzpflicht hebt die Wache ueber die frische Vergeltung (Klasse > Ereignis-Seq, T. #4).",
       "round": 2,
       "skill": 3,
       "seed": 4711,

@@ -478,7 +478,7 @@ namespace TacticalAiHarness
             return string.Join(",", l.ToArray());
         }
 
-        // Player-20-B FOKUSZONE (Thomas 04.11 "Go", concept hunt-richtlinie B):
+        // Player-20-B FOKUSZONE (T. 04.11 "Go", concept hunt-richtlinie B):
         // hand-pinned laws over the REAL section machinery - no new fixture
         // file, the sd_wachzone_held case data (hero LU factually anchored in
         // the critical section s-a) is rebuilt through the same feed path.

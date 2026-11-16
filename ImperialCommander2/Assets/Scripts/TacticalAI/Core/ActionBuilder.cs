@@ -208,7 +208,7 @@ namespace TacticalAI.Core
                 world, fig.Card.Id, CardKeywords.NoMoveAndAttack);
 
             // O-B supporter codex (concept offizier_supporter 2 Schicht C,
-            // Thomas-Gesetz 04.11.): a supporter-flagged group never pushes
+            // T.-Gesetz 04.11.): a supporter-flagged group never pushes
             // toward a hero while it can hold or withdraw; the group leash
             // keeps it near its nearest ally while on the support pattern.
             // Both laws are pure candidate REMOVALS (fairness law) and stay
@@ -272,7 +272,7 @@ namespace TacticalAI.Core
                 plan.Why = "move-then-attack. focus: " + focus.Why + note2;
                 // O-B order exception: the move stands because the receiver of
                 // this officer's own order needs the range - his job, not a
-                // push (public-safe why-line, Thomas-Gesetz 04.11.).
+                // push (public-safe why-line, T.-Gesetz 04.11.).
                 if (orderRangeNeeded && fig.Card != null && fig.Card.Supporter)
                     plan.Why += " || order codex: the move serves the order receiver's " +
                                 "command range - his job, not a push";

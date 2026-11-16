@@ -22,7 +22,7 @@ namespace TacticalAI
             _booted = true;
             TacticalAISettings.SetSaveHook(PlayerPrefsHook);
             TacticalAISettings.Load();
-            // Dev 20 (option A, Thomas): the mode is derived from the
+            // Dev 20 (option A, T.): the mode is derived from the
             // difficulty ladder (S1-S3 reference, S4-S5 overlord) - a stored
             // legacy/reference/overlord "mode" from old saves is ignored by
             // the loader, so no migration is needed any more.
@@ -57,7 +57,7 @@ namespace TacticalAI
             return TacticalAISettings.EffectiveMode(missionAiMode);
         }
     
-        /// <summary>Badge text for the per-mission cycle (dev 21, Thomas):
+        /// <summary>Badge text for the per-mission cycle (dev 21, T.):
         /// AUTO / OFF / the ladder names from the language files. Deprecated
         /// mission tokens (legacy/reference/overlord from old saves) still
         /// render, so old campaigns never show raw internals.</summary>
@@ -103,7 +103,7 @@ namespace TacticalAI
         }
 
         /// <summary>Personas (M1): Einsatzkarte line "Name — Rang n" that
-        /// replaced the M12e deck badge line on the mission card (Thomas
+        /// replaced the M12e deck badge line on the mission card (T.
         /// 02.11.: "einfach bei dem Text, wo jetzt die imperialen Karten
         /// angezeigt werden"). No persona / no rank -> null = hidden row,
         /// never an empty line.</summary>

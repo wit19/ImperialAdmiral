@@ -18,7 +18,7 @@
 #                                      co-occurrence law, mechanical), OR
 #       reason "objective-variable"  - same sourceGUID law, but the event
 #                                      carries a ModifyVariable action
-#                                      (Thomas 06.11 DP-anchor coverage gap:
+#                                      (T. 06.11 DP-anchor coverage gap:
 #                                      interaction objectives like saga
 #                                      clue tokens are CLAIMED via
 #                                      ModifyMapEntity(isActive:false) +
@@ -691,7 +691,7 @@ def main():
                      "5.3, mechanical; reason objective-variable = ModifyMapEntity "
                      "target inside an event body that also carries ModifyVariable - "
                      "interaction objectives whose claim mutates the mission variable "
-                     "economy (saga clue tokens), Thomas 06.11 coverage fix for the "
+                     "economy (saga clue tokens), T. 06.11 coverage fix for the "
                      "DP-anchor mining) plus sectionHypotheses: entity<->section "
                      "hypothesis edges mined from event bodies whose MapManagement "
                      "activates a section (app precedent MissionEventHandler "

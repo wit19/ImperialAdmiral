@@ -6,7 +6,7 @@
 // HARD RULE: every Tactical-AI behaviour in the game checks
 //   if (TacticalAI.TacticalAISettings.Enabled)
 // and keeps the original legacy path verbatim as the else/default branch.
-// M6p (Thomas 02.11): the FRESH default is ON at S5/Thrawn - a new install
+// M6p (T. 02.11): the FRESH default is ON at S5/Thrawn - a new install
 // plays the tactical mode out of the box. This changed the DEFAULT ONLY:
 // any stored player setting always wins (Load reads the saved fields), and
 // OFF stays the bit-compatible legacy path exactly as before.
@@ -27,33 +27,33 @@ namespace TacticalAI
     {
         public static readonly string[] ModeValues = { "legacy", "reference", "overlord" };
         public static readonly string[] SkillValues = { "S1", "S2", "S3", "S4", "S5" };
-        // Thomas 02.11: plain AN/AUS toggle. "none" = AUS, "full" = AN (the
+        // T. 02.11: plain AN/AUS toggle. "none" = AUS, "full" = AN (the
         // old VOLL per-activation explain block). The "post_hoc" ("NACHHER")
         // round-summary mode is removed; old saves carrying it are coerced
         // to the default (AUS) by Validate on load - no throw, no crash.
         public static readonly string[] ExplainLevelValues = { "none", "full" };
 
-        // ---- defaults (M6p, Thomas 02.11): ON at S5/Thrawn ----------------
+        // ---- defaults (M6p, T. 02.11): ON at S5/Thrawn ----------------
         // Fresh installs start tactical; a stored PlayerPrefs value always
         // wins (Load), so existing setups stay bittreu. OFF remains the exact
         // legacy path - nothing on that rail changed.
         public const bool DefaultEnabled = true;
         // dev 20: no stored mode dial; kept as legacy token for missions/tests.
         public const string DefaultMode = "legacy";
-        // M6p: difficulty default is S5 ("Thrawn") - Thomas wants the shipped
+        // M6p: difficulty default is S5 ("Thrawn") - T. wants the shipped
         // best public-information play out of the box; S1..S4 stay selectable.
         public const string DefaultSkillLevel = "S5";
-        // M13h (Thomas 28.10): default is 'none' - explanations must be asked
+        // M13h (T. 28.10): default is 'none' - explanations must be asked
         // for, not served unprompted. Post-hoc/full stay selectable per row.
         public const string DefaultExplainLevel = "none";
-        // M13c (Thomas 30.10): the general RR info block (attack/door/basic-
+        // M13c (T. 30.10): the general RR info block (attack/door/basic-
         // attack rule) under the action blocks gets its own switch, like the
-        // explanation. DEFAULT ON: Thomas explicitly wants it visible by
+        // explanation. DEFAULT ON: T. explicitly wants it visible by
         // default; OFF renders the activation without the info block.
         public const bool DefaultInfoText = true;
 
         static bool _enabled = DefaultEnabled;
-        // Dev 20 (option A, Thomas): the procedural mode is DERIVED from the
+        // Dev 20 (option A, T.): the procedural mode is DERIVED from the
         // difficulty ladder - two switches for one screw was the flaw he
         // named. S1-S3 = reference (book execution, growing discretion
         // quality), S4-S5 = overlord (score optimisation on top). The Mode
@@ -127,7 +127,7 @@ namespace TacticalAI
             set { _infoText = value; Save(); }
         }
 
-        /// <summary>Personas (Thomas 02.11.): global DEFAULT persona for
+        /// <summary>Personas (T. 02.11.): global DEFAULT persona for
         /// campaigns that carry no explicit choice. "" = none (the exact
         /// pre-persona behaviour); "none" is accepted as a synonym so the
         /// settings row and the campaign field speak the same language.
@@ -168,7 +168,7 @@ namespace TacticalAI
                 // an explicit override round-trips, and only when valid.
                 _modeOverride = Validate(Core.Json.AsStr(Core.Json.Get(d, "modeOverride", "")), ModeValues, null);
                 _skillLevel = Validate(Core.Json.AsStr(Core.Json.Get(d, "skill", DefaultSkillLevel)), SkillValues, DefaultSkillLevel);
-                // M13g (Thomas 28.10): the deployment-mode switch is GONE -
+                // M13g (T. 28.10): the deployment-mode switch is GONE -
                 // the app is a companion to the board game and deployments
                 // are ALWAYS OPEN. Old save files may still carry a
                 // "deployment" field: Load reads ONLY the named fields below
@@ -216,7 +216,7 @@ namespace TacticalAI
 
         // ------------------------------------------------- mission badges (dev 21)
         // The per-mission badge cycles the difficulty LADDER: "" (AUTO:
-        // follow the global settings) -> "off" -> S1..S5 -> AUTO (Thomas:
+        // follow the global settings) -> "off" -> S1..S5 -> AUTO (T.:
         // after the dev 20 merge the badge must offer the same knob the
         // settings do). "off" (not "legacy") is the deliberate-OFF token,
         // because untouched old campaigns carry "legacy" as a field default

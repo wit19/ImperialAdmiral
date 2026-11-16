@@ -1,5 +1,5 @@
 {
-  "_comment": "O-A supporter-codex vectors (concept offizier_supporter v1 par.2, Thomas-Gesetz 04.11., card t_4acaa220): OfficerDoctrine.EmergencyFor pins the emergency cascade E1..E4 for officers (printed Order/Executive Order token; field-commander id exclusion DG075/DG078 - shipped names: DG075 = Kayn Somos, DG078 = General Sorin, the concept text has the pair swapped, ids exclude so behaviour is identical). Card stats are the shipped printed values (CardData pools 04.11.), the token rides the bridge keyword lane (OfficerOrder/OfficerExecOrder) exactly as TacticalAIBridge.ToRecord injects it. Expect blocks were cast once with `dotnet run -- <fixtures> --record` and reviewed case by case (officer_doctrine_record.json is the raw record twin); the hand-pinned LAWS live in SectionsOfficerDoctrine.cs (card identity flags, S1 silence on EVERY case, legacy-ctor neutrality on EVERY case, determinism stage+why on EVERY case). No popup/ActionBuilder consumes the codex yet (O-B/O-C hops).",
+  "_comment": "O-A supporter-codex vectors (concept offizier_supporter v1 par.2, T.-Gesetz 04.11., card t_4acaa220): OfficerDoctrine.EmergencyFor pins the emergency cascade E1..E4 for officers (printed Order/Executive Order token; field-commander id exclusion DG075/DG078 - shipped names: DG075 = Kayn Somos, DG078 = General Sorin, the concept text has the pair swapped, ids exclude so behaviour is identical). Card stats are the shipped printed values (CardData pools 04.11.), the token rides the bridge keyword lane (OfficerOrder/OfficerExecOrder) exactly as TacticalAIBridge.ToRecord injects it. Expect blocks were cast once with `dotnet run -- <fixtures> --record` and reviewed case by case (officer_doctrine_record.json is the raw record twin); the hand-pinned LAWS live in SectionsOfficerDoctrine.cs (card identity flags, S1 silence on EVERY case, legacy-ctor neutrality on EVERY case, determinism stage+why on EVERY case). No popup/ActionBuilder consumes the codex yet (O-B/O-C hops).",
   "cards": [
     {
       "id": "DG004",
@@ -1341,7 +1341,7 @@
     },
     {
       "name": "od_sorin_full_commander",
-      "comment": "Thomas-Ausnahme 04.11. id wall: the record carries the plain Order token but the id is the field-commander exception (shipped name: Kayn Somos) -> Supporter=false -> the codex NEVER speaks, not even under direct fire.",
+      "comment": "T.-Ausnahme 04.11. id wall: the record carries the plain Order token but the id is the field-commander exception (shipped name: Kayn Somos) -> Supporter=false -> the codex NEVER speaks, not even under direct fire.",
       "skill": 2,
       "self": "SON",
       "events": [
@@ -1413,7 +1413,7 @@
     },
     {
       "name": "od_somos_full_commander",
-      "comment": "Thomas-Ausnahme 04.11. second id (shipped name: General Sorin; the concept text swaps the pair, both ids exclude): full E3 fact set -> still None, field commanders fight on always.",
+      "comment": "T.-Ausnahme 04.11. second id (shipped name: General Sorin; the concept text swaps the pair, both ids exclude): full E3 fact set -> still None, field commanders fight on always.",
       "skill": 2,
       "self": "SOR",
       "events": [

@@ -4,7 +4,7 @@
 // present and non-empty in EVERY language, the announce template carries
 // both {0} group and {1} DP placeholders in every language, and the pure
 // substitution law of Core.OptionalDeploy reproduces the German playtest
-// sentence exactly (Thomas: De is the shipped reference translation).
+// sentence exactly (T.: De is the shipped reference translation).
 using System;
 using System.Collections.Generic;
 using System.IO;

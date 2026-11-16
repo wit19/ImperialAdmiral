@@ -39,7 +39,7 @@ namespace TacticalAI.Core
         public double X;
         public double Y;
 
-        /// <summary>P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 1,
+        /// <summary>P33-H4 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 1,
         /// the DYNAMIC ANKER-LAW): a section-activated anchor (feed fact
         /// "MapManagement activated this section, and it is STILL live")
         /// claims its WHOLE section - it has no entity and therefore NO
@@ -81,7 +81,7 @@ namespace TacticalAI.Core
         public DpRow Score;
     }
 
-    /// <summary>P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3):
+    /// <summary>P33-H4 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3):
     /// one scored DP candidate - every public fact the ranked choice reads,
     /// kept SEPARATE so the explain line can name the Score-Bestandteile and
     /// the vectors can pin each stage without exposing the seed chain.
@@ -377,10 +377,10 @@ namespace TacticalAI.Core
         /// anchor sections never compare distances) makes the pairwise
         /// relation non-transitive; the caller passes the app's DP list,
         /// whose order is the map-entity order.
-        /// M14e FRIEND LEASH (Thomas 07.11, CONCEPT_standort_ledger_v2 C4):
+        /// M14e FRIEND LEASH (T. 07.11, CONCEPT_standort_ledger_v2 C4):
         /// ownSections = the sections carrying the group's OWN located
         /// friendly figures (entry-DP sections from the deploy ledger).
-        /// P33-H4 EVOLUTION (Thomas 08.11): the leash is now a VOLLRECHT -
+        /// P33-H4 EVOLUTION (T. 08.11): the leash is now a VOLLRECHT -
         /// it decides after ALL spatial stages (tier, intra-section distance,
         /// battle-zone graph distance) and before the DP-diversity tie and
         /// the seed chain, so it can pull a candidate across sections when
@@ -400,7 +400,7 @@ namespace TacticalAI.Core
                                 sessionSeed, round, ownSections, null, out ignored);
         }
 
-        /// <summary>P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3):
+        /// <summary>P33-H4 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3):
         /// the DP-Score over the (Karte, DP)-Paar - the full stage ladder,
         /// each stage a total pre-order over the still-tied candidates,
         /// decided SEQUENTIALLY (first differing stage wins):
@@ -523,7 +523,7 @@ namespace TacticalAI.Core
                                   StringComparison.Ordinal);
         }
 
-        /// <summary>P34-C diagnosis (Thomas, card t_1787135b): the stage
+        /// <summary>P34-C diagnosis (T., card t_1787135b): the stage
         /// ladder as a PAIRWISE read-back over already-materialized rows, so
         /// the log can print WHY the winner beat the strongest alternative
         /// instead of leaving the fresh/leash transitions to interpretation.

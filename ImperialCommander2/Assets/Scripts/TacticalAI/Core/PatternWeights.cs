@@ -1,4 +1,4 @@
-// M13u (Thomas 01.11., Variante c): the per-group doctrine dice. One rule
+// M13u (T. 01.11., Variante c): the per-group doctrine dice. One rule
 // engine for EVERY mission: each deployment group carries a printed-flavour
 // weight distribution (tactical_pattern_weights.json, PUBLIC reviewable
 // data - fairness rule, concept section 2), and the mission structure
@@ -25,7 +25,7 @@ namespace TacticalAI.Core
         /// ordered catch-all. Illegal regex never throws (it simply never
         /// matches).
         public string IdMatch;        // exact card id (optional; then the row is id-only)
-        // Player-19 law (Thomas 03.11): nameMatch regexes carry ENGLISH
+        // Player-19 law (T. 03.11): nameMatch regexes carry ENGLISH
         // card names, but the live catalog hands the LOCALIZED name to the
         // matcher ("Rote Garde" never hits "Royal Guard"). The ids list
         // pins the shipped roster members of this role row language-safe:
@@ -87,7 +87,7 @@ namespace TacticalAI.Core
             return null;
         }
 
-        /// M6s-B8 (Player-19 Ivan Talos, Thomas Go 03.11.): ROLE ANCHOR.
+        /// M6s-B8 (Player-19 Ivan Talos, T. Go 03.11.): ROLE ANCHOR.
         /// A mission-authored custom figure (spawned by a CustomDeployment
         /// event, id = mission GUID) is not a pool card: its id and DE name
         /// match no row. The mission file itself says which printed card it
@@ -98,7 +98,7 @@ namespace TacticalAI.Core
         /// a role that hits no row is not a verdict: the card's own
         /// id/name lookup still runs (exact old behavior). The role is the
         /// ROLE only - values, texts and state always stay the mission
-        /// card's own printed data (Thomas' Repraesentation-is-nicht-
+        /// card's own printed data (T.' Repraesentation-is-nicht-
         /// Identitaets rule: a real DG006 group can sit on the same board).
         public Dictionary<string, int> WeightsFor(string cardId, string name, string role)
         {

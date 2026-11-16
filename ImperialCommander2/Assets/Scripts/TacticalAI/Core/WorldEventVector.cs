@@ -22,7 +22,7 @@ namespace TacticalAI.Core
         public string MissionKey = "solo";
         public int Round;
         public string Posture = "eliminate";
-        // M23 (Thomas 06.11): feed-stated perspective of the objective text
+        // M23 (T. 06.11): feed-stated perspective of the objective text
         // (Empire campaign: the authored task line belongs to the IMPERIAL
         // side). Derived-only, never planner-direct; NOT in Canon() (the
         // derivation is a pure function of the events, existing vectors
@@ -33,12 +33,12 @@ namespace TacticalAI.Core
         // activation-order attribution, "" = unknown/none). Event-derived,
         // never a position read - the app cannot see hero cells.
         public string ObjectiveActor = "";
-        // Player-19 (Thomas 03.11): round of that credit (0 = none). The
+        // Player-19 (T. 03.11): round of that credit (0 = none). The
         // engaged tier (focus key 2) can hold the credited mover AND a hero
         // who struck the mission-named figure; the credit ROUND breaks the
         // tie - the most recent engagement leads.
         public int ObjectiveActorRound;
-        // Player-21-b (Thomas 04.11, "Da stimmt dann etwas nicht"): when a
+        // Player-21-b (T. 04.11, "Da stimmt dann etwas nicht"): when a
         // mission's CURRENT phase is fought through freshly spawned troops
         // (Garrison: officer (Elite) + Ordnungssoldaten), engaging THEM is
         // objective work - even though the objective text ("Sucht im Diner
@@ -219,7 +219,7 @@ namespace TacticalAI.Core
             // input; the spawn ROUND already rides DeployedRound.
             public bool SpawnedInHeroWindow;
 
-            // Player-22 (Thomas 04.11, objective-panel screenshot): the
+            // Player-22 (T. 04.11, objective-panel screenshot): the
             // Spawn payload's "critical" flag - a FACT read at emit time
             // from the group's deployment override: setTrigger/setEvent
             // non-empty means THIS group's defeat moves the scenario
@@ -235,7 +235,7 @@ namespace TacticalAI.Core
 
             /// <summary>Remaining group vitality as exact Rational (M9-F6/A0,
             /// closes M7-F4): the wound dials show ERLITTENER Schaden per
-            /// figure — a fresh group reads 0 (Thomas board fact 2026-10-27;
+            /// figure — a fresh group reads 0 (T. board fact 2026-10-27;
             /// DeploymentCard.cs:55 fresh {0,0,0}, HPTracker.cs:43-48
             /// double-click reset to 0, label groupWoundNumber). Remaining
             /// HP per figure is therefore health - min(health, dial); the
@@ -435,7 +435,7 @@ namespace TacticalAI.Core
                 // line, so every vector without ledger facts keeps its
                 // exact pre-R-B canon; hashes ride the EVENTS only and are
                 // untouched by any of this). The KIND is printed always -
-                // a hypothesis must never read like a fact (Thomas:
+                // a hypothesis must never read like a fact (T.:
                 // Konsumenten duerfen hypothesis nie wie fact behandeln).
                 if (!string.IsNullOrEmpty(h.LastSeenZone))
                     sb.Append("seen=").Append(h.HeroId)
@@ -449,7 +449,7 @@ namespace TacticalAI.Core
         }
 
         /// <summary>R-B: the Last-Seen-Ledger as HUMAN-READABLE debug text -
-        /// Thomas reads the Player.log as explanation UI, so the ledger's
+        /// T. reads the Player.log as explanation UI, so the ledger's
         /// kind distinction must survive into the log, not only into the
         /// machine Canon. One line per hero WITH an anchor (absence prints
         /// nothing); zones are read out by their anchor kind, hypotheses are
@@ -509,11 +509,11 @@ namespace TacticalAI.Core
                 HistoryHash = historyHash ?? WorldEventFeed.HashOf(events),
             };
 
-            // M10b objective attribution (Thomas revision 27.10): the feed
+            // M10b objective attribution (T. revision 27.10): the feed
             // knows objective PROGRESS (ObjectiveChange) and WHO ACTIVATED
             // (HeroActivated) - never cell positions. Pure replay state -
             // same events, same attribution, resync-safe.
-            // Player-19 revision (Thomas 03.11): the credit is TERMINAL at
+            // Player-19 revision (T. 03.11): the credit is TERMINAL at
             // the moment of the change. The captor is the hero whose
             // activation WINDOW is open (HeroActivationStart ... 
             // HeroActivated); when the change arrives between turns (mission
@@ -534,7 +534,7 @@ namespace TacticalAI.Core
             // Player-25-B (card t_4fd126ad, fixplan_Player-25_v2 B): the
             // CLOSER channel for shot attribution - ALL groups, no window
             // event required. group -> {hit seq, hit round}. The runtime
-            // NEVER emits HeroActivationStart (Thomas 04.11, explicit), so
+            // NEVER emits HeroActivationStart (T. 04.11, explicit), so
             // the window path stays dead in play and LastShotHero never
             // sets: the whole Vergeltung rail (R1 push, S2 rule, officer
             // E1) sleeps (Player-25 log, Dreistrom). This is the strike
@@ -555,7 +555,7 @@ namespace TacticalAI.Core
             // does damage on THIS group count as working the CURRENT
             // objective? Canon branch: the objective text NAMES the figure
             // (Player-19 law, e.g. "Besiegt Ivan Talos."). Garrison branch
-            // TWO-factor (Thomas 04.11 screenshot law): the group must be
+            // TWO-factor (T. 04.11 screenshot law): the group must be
             // SCENARIO-CRITICAL (Spawn "critical" fact: its defeat drives a
             // wired trigger/event) AND it must be the CURRENT phase's own
             // spawn (deployed during/after the last change). One without the
@@ -620,7 +620,7 @@ namespace TacticalAI.Core
                             actor.LastSeenSeq = e.Seq;
                             actor.LastSeenRound = e.Round;
                         }
-                        // P43 (Thomas 15.11): STRIKE CREDIT IS PHASE-SCOPED.
+                        // P43 (T. 15.11): STRIKE CREDIT IS PHASE-SCOPED.
                         // Strikes count ONLY damage that engaged the CURRENT
                         // objective text ("engages"), so the phase change ends
                         // those credits too: every hero's Strikes/StrikeRound
@@ -853,7 +853,7 @@ namespace TacticalAI.Core
                                 // Player-21-b: a landed strike MOVED the
                                 // marker - the hero fighting the phase's
                                 // troops works the objective, so the marker
-                                // follows the work (Thomas: "Wieso war Davith
+                                // follows the work (T.: "Wieso war Davith
                                 // durch sein Türöffnen noch der
                                 // Missionszielmarker?").
                                 v.ObjectiveActor = heroWindow;
@@ -875,7 +875,7 @@ namespace TacticalAI.Core
                                 shotPending[g.GroupId] = new[] { (long)e.Seq, (long)e.Round };
                             break;
                         }
-                    // P33-H2 (findings_Player-33 §1, Thomas 08.11): the hero
+                    // P33-H2 (findings_Player-33 §1, T. 08.11): the hero
                     // ENTERS the view at its printed blue deploy field, not
                     // only when it first acts or bleeds. Round 1 the Imperials
                     // activate BEFORE any hero has closed a turn, so without
@@ -1046,7 +1046,7 @@ namespace TacticalAI.Core
         static readonly string[] StallKeywords =
             { "escape", "flee", "survive", "reach", "activate", "recover",
               "steal", "deliver", "evacuate" };
-        // M23 (Thomas ruling "A", 06.11, Nebenauftrag-Belagerung): the clock
+        // M23 (T. ruling "A", 06.11, Nebenauftrag-Belagerung): the clock
         // law below silently treated EVERY round-limited mission as "the
         // enemy races the clock, we hold" - true only when the authored
         // objective belongs to the REBEL side (every campaign except Empire).
@@ -1064,7 +1064,7 @@ namespace TacticalAI.Core
                                            bool objectiveForEmpire = false,
                                            string imperialWinBy = "", string rebelWinBy = "")
         {
-            // P33-H4b ACHSEN-GESETZ FIRST (CONCEPT_missionsachse 2.2, Thomas
+            // P33-H4b ACHSEN-GESETZ FIRST (CONCEPT_missionsachse 2.2, T.
             // 08.11: posture=stall R1-R5 despite ModifyRndLimit-DISABLE was
             // the misread; the win wiring is public mission data and OUTRANKS
             // the text vocabulary and the clock):
@@ -1108,7 +1108,7 @@ namespace TacticalAI.Core
         }
 
         // ---------------------------------------------------------- counter
-        // Mission-END derivation (wounded-focus-magnet fix, Thomas 03.11).
+        // Mission-END derivation (wounded-focus-magnet fix, T. 03.11).
         // The victory counter decides WHICH target law is right: a woundAll
         // end (healthy == 0) makes every hit on an already-wounded hero
         // worth ZERO progress -> healthy-first; an incapacitateAll end makes
@@ -1209,7 +1209,7 @@ namespace TacticalAI.Core
         /// this hero as a whole word / whole name (same deterministic
         /// word-splitting law as DerivePosture: 'smuggler' must NOT hit
         /// 'smuggle', 'Han' must not hit 'Hans').
-        /// Player-19 collision law (Thomas 03.11): a LONE name token
+        /// Player-19 collision law (T. 03.11): a LONE name token
         /// designates only while it is UNIQUE in the public name space -
         /// every hero plus every deployed group's display name, all of it
         /// table-visible. "Besiegt Ivan Talos." must NOT mark Verena Talos:
@@ -1358,7 +1358,7 @@ namespace TacticalAI.Core
         }
 
         // ================================================ P33-H4c polaritaet
-        // CONCEPT_missionsachse §2.4 POLARITÄTS-LEITER (Thomas 3, hart):
+        // CONCEPT_missionsachse §2.4 POLARITÄTS-LEITER (T. 3, hart):
         // an object becomes an attack target ONLY when its polarity is
         // DERIVED; without a rung it is NEUTRAL - nobody attacks it, nobody
         // defends it. The ladder reads ONLY public mission-file data that
@@ -1375,7 +1375,7 @@ namespace TacticalAI.Core
         //   P3 Outcome text at the destroy/claim event: the side that LOSES
         //      when the object falls, defends it.
         //   P4 nothing derivable => NEUTRAL.
-        // Mehrdeutig P1 vs P2 => P2 gewinnt (explicit Thomas ruling);
+        // Mehrdeutig P1 vs P2 => P2 gewinnt (explicit T. ruling);
         // otherwise the rung order decides (P1 rides above P3). failImperial/
         // failRebel are DEAD flags (measured 0x true in the whole collection)
         // and are NEVER read anywhere. Deterministic: no RNG, ordinal ties.

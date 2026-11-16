@@ -433,7 +433,7 @@
     },
     {
       "name": "sd_wachzone_rung1",
-      "_comment": "Thomas-Gesetz 04.11.: the exception is fairness, not an intelligence bonus -> rung 1 (S1) still runs the WZ push. Without the rail the S1 index law stands (HUNTER is roster-first); the Wachzone guard overrules it on EVERY rung (1 and 4 pinned; at rung 4 the efficiency basis alone would also put HUNTER first). NULL LAW: the identical stream without the belief rail runs the pre-S-D order bit-identical.",
+      "_comment": "T.-Gesetz 04.11.: the exception is fairness, not an intelligence bonus -> rung 1 (S1) still runs the WZ push. Without the rail the S1 index law stands (HUNTER is roster-first); the Wachzone guard overrules it on EVERY rung (1 and 4 pinned; at rung 4 the efficiency basis alone would also put HUNTER first). NULL LAW: the identical stream without the belief rail runs the pre-S-D order bit-identical.",
       "events": [
         {
           "kind": "MissionStart",

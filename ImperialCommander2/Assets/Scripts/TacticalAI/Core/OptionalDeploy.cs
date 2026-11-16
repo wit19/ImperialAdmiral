@@ -5,7 +5,7 @@ namespace TacticalAI.Core
 {
     /// <summary>
     /// M13c: the PURE decisions behind the revived optional-deployment flow
-    /// (Thomas 28.10: full revival - tactical mode = the AI places and the
+    /// (T. 28.10: full revival - tactical mode = the AI places and the
     /// spot is MARKED on the map + announced; legacy mode = the old manual
     /// DM placement window). Presentation/branching logic only - the DP
     /// choice itself stays in the existing deterministic hook

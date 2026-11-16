@@ -133,9 +133,9 @@ namespace TacticalAI.Tests
             Assert.AreEqual("reference", TacticalAISettings.Mode,
                 "dev 20: mode is DERIVED from the ladder (default S1 -> reference)");
             // M13g: the deployment-mode switch is gone (deployments are
-            // always open, Thomas 28.10); ResetDefaults must also
+            // always open, T. 28.10); ResetDefaults must also
             // neutralise stale save state cleanly.
-            // Thomas 02.11: explain is AN/AUS now ({none, full}); the removed
+            // T. 02.11: explain is AN/AUS now ({none, full}); the removed
             // "post_hoc" value coerces to the default (none) on old saves.
             Assert.AreEqual("none", TacticalAISettings.ExplainLevel);
             Assert.IsFalse(TacticalAISettings.IsTactical("reference"),
@@ -149,7 +149,7 @@ namespace TacticalAI.Tests
         {
             TacticalAISettings.ResetDefaults();
             TacticalAISettings.Enabled = true;
-            // dev 20 (option A, Thomas): single difficulty dial. The ladder
+            // dev 20 (option A, T.): single difficulty dial. The ladder
             // derives the procedural mode; only tests/console may override.
             TacticalAISettings.SkillLevel = "S3";
             Assert.AreEqual("reference", TacticalAISettings.Mode, "Veteran = book execution");

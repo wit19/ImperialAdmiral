@@ -47,7 +47,7 @@ public class Tooltip : MonoBehaviour
 				tt = DataStore.uiLanguage.uiMainApp.tooltipDashboardUC;
 				break;
 			case "HeroChipFlip":
-				// Thomas 07.11: hover hint on the hero card's activation
+				// T. 07.11: hover hint on the hero card's activation
 				// checkbox - the chip must flip at the END of the hero's turn.
 				// Wired at runtime by SagaHGPrefab.Init (tactical missions
 				// only), so legacy missions never grow this component.

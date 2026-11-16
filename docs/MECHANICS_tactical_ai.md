@@ -222,7 +222,7 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    last healthy hero untouched while the army beat a wounded carrier). Without
    the counter none of this exists — the
    null-counter canon stays bit-identical.
-1. **Threat value per hero** — current law (M15–M25, Thomas rulings 05.–06.11): the
+1. **Threat value per hero** — current law (M15–M25, T. rulings 05.–06.11): the
    hero's TRUE standard-weapon dice from `tactical_hero_cards.json` (never the
    printed attribute pool — "auf der Heldenkarte stehen nur Attribute") plus the
    weapon's price-energy (`weapon_ev_per_1000_cost × tier × cost / 1000`, M17:
@@ -230,7 +230,7 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    (M19, Player-28 DL-44 finding; two-economy law since M27→M29, see those
    sections): every distance 1..reach is paired once, and each distance is
    ONE attack with the ONE strongest weapon that can physically fight there
-   (M29, Thomas ruling "Zwei-Ökonomien-Bande"). Ranged candidates compete
+   (M29, T. ruling "Zwei-Ökonomien-Bande"). Ranged candidates compete
    for the gun slot ONCE — `score(gun) = Σ_d≤gate ev(d)+price` over the whole
    band, argmax wins, no per-distance gun switching (the M19 free switch let
    a strictly weaker printed pistol win single cells; the M26 replace decree
@@ -241,9 +241,9 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    with a STRICTLY greater own-economy value (dice + price); a tie keeps the
    gun, reach wins ties. Distances no option can fight at count as 0. The
    operand is a mean over distances, never a sum over weapons: no cell ever
-   combines two weapons, one attack = one weapon (Thomas, 06.11.). In hold
+   combines two weapons, one attack = one weapon (T., 06.11.). In hold
    postures
-   (protect/stall) that average is percent-weighted — and since M20 (Thomas
+   (protect/stall) that average is percent-weighted — and since M20 (T.
    melee ruling, 05.11) WITHOUT a range cell:
    `threat = 100 × (60% × score/(8/3) + 40% × band/3)`
    with fixed anchors (max exchange EV 8/3 = RR item weapon, band 3). Range
@@ -252,7 +252,7 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    only taxed printed melee heroes. In kill/wound postures the band average
    stands raw. Wound rides purely
    through the printed `tempoVerwundet` (no percent malus — proven redundant).
-   Since M21 (Thomas ruling, 06.11) the printed ability effects count too, as
+   Since M21 (T. ruling, 06.11) the printed ability effects count too, as
    language-independent SKILL-ID pins in the hero's `effekte` asset block (schema
    `tacai.hero_cards/5`): a hero whose ability prints a Blast/Explosion adds a flat
    hold-posture increment of half the printed value in damage-EV terms
@@ -262,7 +262,7 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    M22 also `diala05` "Kunst der Bewegung" for Diala Passil). Unknown skill ids
    never match — an absent `effekte` block is the null law, every pre-M21 hero
    parses bit-identical. Both summands print as their own EXPLAIN clause.
-   Since M22 (Thomas ruling, 06.11.) the same block can print a SUPPORTER
+   Since M22 (T. ruling, 06.11.) the same block can print a SUPPORTER
    role: `supporter.always` pins identity (Davith Elso the commander, MHD-19),
    `supporter.skills` pins chosen cards — Diala Passil is a supporter while she
    carries `diala02` "Machtadept" (friendly reroll) or `diala03`
@@ -271,7 +271,7 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    The supporter flag is read ONLY by the woundAll chip law (supporters are
    chipped first — `HeroCard.SupporterEffektiv` into `ChipKey`); it never
    moves a threat number: eliminate stays pure dice (findings 06.11. §1).
-   M24 (Thomas ruling, 06.11.) added the HEALER pin (`healer.skills` — printed
+   M24 (T. ruling, 06.11.) added the HEALER pin (`healer.skills` — printed
    repair kits like the MHD-19 sets): a hero who can repair wounds is chipped
    BEFORE the supporter class ("Heiler mit Priorität ausschalten"). M25
    (same day) extended the block with `angriffs_bonus` (printed extra attacks —
@@ -432,7 +432,7 @@ language-neutral, no names (the M14b trait-filter law holds for the whole DP pat
 At decision time `TacticalAIBridge.MissionDpAnchors()` resolves each row by GUID
 against the LIVE map entities — live position and live section owner are the truth,
 a row the live map does not carry drops (data-exists, never an invented anchor).
-**P33-H4 (Thomas 08.11) extends the anchor set with the DYNAMIC ANKER-LAW**: every
+**P33-H4 (T. 08.11) extends the anchor set with the DYNAMIC ANKER-LAW**: every
 map section the mission activated per MapManagement event (the feed's
 `SectionActivated` fact without the resync baseline) anchors its WHOLE section
 while it is still live (`TileManager.IsMapSectionActive`, the same phase law as the
@@ -515,8 +515,8 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   the shooter is resolved against the open hero-activation window
   (lastActivator closes it; `strikePending` at RoundEnd) in
   `WorldEventsUnity.cs`. Doors enter as GUID events.
-- **Strike = objective work (Player-21-b + -22, Thomas 04.11).** Two laws in
-  `WorldEventVector`. VOCABULARY LAW first (Player-22 incident, Thomas'
+- **Strike = objective work (Player-21-b + -22, T. 04.11).** Two laws in
+  `WorldEventVector`. VOCABULARY LAW first (Player-22 incident, T.'
   #1002 EMPIRE2 log): the feed's `Validate` throws on ANY payload key not
   in `WorldEventFeed.PayloadKeys`, and the old seen-ledger marked a group
   consumed BEFORE the Append — so the freshly added `critical` key silently
@@ -527,7 +527,7 @@ Every place the app was touched, all guarded so OFF = legacy verbatim:
   pre-validates every fixture payload through the now-public
   `WorldEventFeed.Validate` — the Core-only harness had shipped past exactly
   this class of bug, so fixtures now trip the SAME law the poll loop enforces.
-  GARRISON, TWO-FACTOR (Player-22, Thomas' objective-
+  GARRISON, TWO-FACTOR (Player-22, T.' objective-
   panel screenshot law: "Truppen, die NICHT Missionskritisch sind, würden
   den Missionsmarker auf sich ziehen - dicker Bug"): (1) the Spawn carries
   a `critical` FACT - the emitter reads the group's deployment override
@@ -619,7 +619,7 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   0/3 tight) and the F3 zone order-flips decision-side (S2 and S4). 4 new
   player keys x 11 languages. F2 resolved as wording fix: calibration
   runs audit-channel against fixture reality, no live-rail promise.
-- **Player-20-B (Thomas 04.11, "Go").** Focus-zone lock
+- **Player-20-B (T. 04.11, "Go").** Focus-zone lock
   `SectionConsumers.FokuszoneHeadFor` (Baustein 7): the hunter brand — S3+
   gate INSIDE the entry point; zone = the critical sections the Wachzone key
   already consumes (never a guess); the first canon-rank hero factually
@@ -635,7 +635,7 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   the same playtest: `buff_before_receiver` EXEMPTS support groups whose
   printed command is the plain +2-movement order
   (`GroupFacts.MovementBuffOnly`, bridge fills it from the printed ability
-  law). Player-21 closed the loophole from the other side (Thomas log r1:
+  law). Player-21 closed the loophole from the other side (T. log r1:
   the plain officer reached PlanPos 0 on RAW guard-fit score): the
   HEAD-SLOT law now also guards the base order — a plain-buff group never
   activates first; it swaps with the first non-plain group (an all-plain
@@ -647,7 +647,7 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   the chain slot (`order_plan.player20.*`, `order_plan.player21.*`).
   Canon: 45266 → 45282 checks, additions only, no existing fixture
   touched.
-- **Befehlszeitpunkt law (Player-24, Thomas 04.11 „Go").** The blind
+- **Befehlszeitpunkt law (Player-24, T. 04.11 „Go").** The blind
   `buff_before_receiver` treated commands like stat buffs — the printed
   cards (De enemies.json, DG004/DG005/DG006, verified 04.11) say otherwise:
   the plain Befehl is a campaign RE-ORDER (the receiver interrupts for A
@@ -671,13 +671,13 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   decision vectors on the real feed path (recorded + reviewed line by line,
   silence laws hand-pinned) + 4 plan-consumption cases (before-relation,
   adjacency after the finisher pull, engaged-weaker adjacency, blind canon
-  intact). **Player-24.log review follow-up (Thomas 04.11):** the raw-EV
+  intact). **Player-24.log review follow-up (T. 04.11):** the raw-EV
   receiver pick had sent the plan across the map (Diner garrison engaged,
   receiver = far stormtroopers) — receiver choice is now TIERED: groups
   whose zone carries a fresh same-round hero anchor compete first
   (`engaged_first_over_global_ev`), the global strongest is the
   no-contact fallback (all pre-review vectors untouched — record diff
-  verified additions-only). **Review 2 (same day, Thomas):** a command is
+  verified additions-only). **Review 2 (same day, T.):** a command is
   given to ONE named figure, never to a group — the ordered stormtrooper
   attacks with ITS dice. Receiver ranking therefore switched from
   WithEv.PrintedEvTotal (GROUP sum, overrates crowds) to the card's
@@ -704,7 +704,7 @@ L1/L2, Z1–Z6, law audit and language gates all green, canon proof
   **Closer attribution (Closer-Zuschreibung, M14a, `WorldEventVector.cs`).**
   The window path was dead in the live game: `HeroActivationStart` never
   fires there and `LastShotHero` was never set, so the whole Vergeltung
-  lane slept (Thomas 04.11; the strike channel has proven the same closing
+  lane slept (T. 04.11; the strike channel has proven the same closing
   law live since M6s-B7). New key `shotPending` (group -> {hit seq, hit
   round}): a `GroupDamage` WITHOUT an open window arms the pending credit
   for THAT group — hit-gain: the first hit of the round counts, groups are
@@ -867,7 +867,7 @@ one rng stream — no separate luck pot.
 
 ### Liveness: the order is re-planned every click
 
-R-C (Thomas' 04.11 decision, ReactionOrder.cs): at EVERY press of
+R-C (T.' 04.11 decision, ReactionOrder.cs): at EVERY press of
 "activate Imperials" the order is re-scored from the REMAINING figures —
 basis = `PlanRound` over exactly the pending list (App:
 `GetNonExhaustedGroups()` per click), plus a reaction-push overlay from the
@@ -915,7 +915,7 @@ What the 06.11. card audit changed under the hood, beyond §5:
   card abilities when wounded. Loku's recon-token marker AND "Clear-Minded" +2
   end with the wound; only his weapon's static "+1 Accuracy" rides on. A missing
   b-print means "ends" — never assume a default.
-- **Naming discipline (Thomas rulings, same evening).** No invented in-game
+- **Naming discipline (T. rulings, same evening).** No invented in-game
   words in player-facing texts: the woundAll counter class is presented with the
   mission's own words — **"Missionsziel 'alle Helden verwunden'"** — in DE and EN
   ui texts, the asset conventions and the code comments ("Wundzähler",
@@ -944,11 +944,11 @@ What the 06.11. card audit changed under the hood, beyond §5:
   0 drift, m22 ALL PASS, m24 anchors OK, m19 drift check empty, compile_check
   APP rc=0 errors=0 (285 files) / TESTS rc=0 (10 files).
 
-## The carried weapon replaces the standard — M26 (Thomas ruling 06.11., Player-29 log)
+## The carried weapon replaces the standard — M26 (T. ruling 06.11., Player-29 log)
 
 **Trigger.** In the Player-29 session log the planner scored Jyn Odan with her
 printed Green+Green pistol because the M19 per-distance switch let the strongest
-pool at d=1 win that cell ("1:Green+Green"). Thomas' ruling: "Jyn hat den DL-44 …
+pool at d=1 win that cell ("1:Green+Green"). T.' ruling: "Jyn hat den DL-44 …
 Ein Blaster mit Reichweite 1 ist totaler Quatsch. Jyn ist kein Nahkämpfer." The
 rule text backs it: for a hero the attack value *is found on his weapon item
 card* — the hero attacks with what she CARRIES.
@@ -987,9 +987,9 @@ m24 anchors OK; fixture `overlord_focus.json` rebased via
 `tools/m26_merge_drift.py` (style-proven surgical expect merge, 10 cases) with
 fresh M26 explain-comments per case; compile_check APP rc=0 (285 files).
 
-## The best weapon is a result, not a decree — M27 (Thomas ruling 06.11.)
+## The best weapon is a result, not a decree — M27 (T. ruling 06.11.)
 
-**Trigger.** Thomas on the M26 law: "Hart auf die getragene Waffe zu gehen ist
+**Trigger.** T. on the M26 law: "Hart auf die getragene Waffe zu gehen ist
 nicht logisch, sondern einfach. Was ist, wenn der Held 2 Waffen gekauft hat?
 Die Waffenrechnung muss bestimmen, was die beste Waffe ist. Und der
 Standard-Blaster von Jyn ist schlechter als der DL-44 — das muss unsere
@@ -1047,14 +1047,14 @@ patches (fixture M25 rows, m19 position-key rank branch + layers) died to
 `git checkout` the same day — the drift-oracle delegation exists so such a
 loss can never masquerade as a passing check again.
 
-## Two economies, one attack per distance — M29 (Thomas ruling 06.11.)
+## Two economies, one attack per distance — M29 (T. ruling 06.11.)
 
 **Trigger.** M27's single-weapon law answered "which weapon is best" but
-broke Thomas' lightsaber question ("Ich habe ein Lichtschwert und einen
+broke T.' lightsaber question ("Ich habe ein Lichtschwert und einen
 Blaster — das Lichtschwert sollte gewinnen und nicht der Blaster wegen der
 Distanz"): the band average punished melee options with cells they can
 never fight at. The M28 "dominance override" patch that grew from it died
-the same day — Thomas asked for the CONCEPT instead: "es muss unterschieden
+the same day — T. asked for the CONCEPT instead: "es muss unterschieden
 werden, ob eine Nahkampf- oder eine Fernkampfwaffe bewertet wird … die
 Panzerhandschuhe sind wirklich gut."
 
@@ -1075,7 +1075,7 @@ Panzerhandschuhe sind wirklich gut."
    greater own-economy value — a tie keeps the gun ("Gleichstand +
    Distanz = die Waffe mit Coverage"). Distances nothing can fight at: 0.
 
-**What it is NOT (Thomas, same ruling):** never two weapons in one
+**What it is NOT (T., same ruling):** never two weapons in one
 attack — each cell is one hypothetical attack with one weapon. The
 operand is a MEAN OVER DISTANCES, the empire's "expected damage per
 attack if we land somewhere in her band" — never a sum over weapons.
@@ -1089,7 +1089,7 @@ Verena Talos + Panzerhandschuhe: cell 1 = gloves 2 + 3/10 (strictly
 above the blaster's 3/2), cells 2–4 stay blaster → operand 6/5, threat
 54, energy 3/40 (case renamed m19_band_melee_inert →
 **m29_band_melee_overlay** — "melee never wins anything" was overruled
-by Thomas' "die sind wirklich gut"). Diala + Lichtschwert: saber cell 1,
+by T.' "die sind wirklich gut"). Diala + Lichtschwert: saber cell 1,
 printed fists cell 2 → 55/12 wounded (116) / 47/12 healthy (115).
 m29_saber_and_blaster (new case): item303 + item110 → saber head (d1,
 operand 59/24, threat 82, energy 9/8, headline Blue+Green+Yellow) AND
@@ -1101,7 +1101,7 @@ in them). The M28 dominance-override (defender-invariant strip test) is
 removed from all three implementations — under M29 the saber wins with
 dice, no decree needed.
 
-## Where does the distance come from? (Thomas question 06.11.)
+## Where does the distance come from? (T. question 06.11.)
 
 The model never sees the board. The distance axis is 100 % printed data:
 the hero's `reichweite` from the card table, extended only by verified
@@ -1128,7 +1128,7 @@ first — M29 was argued and accepted on engine output, not on prose.
 
 The location question got its data foundation this day. Three layers, each
 mission-frozen Tactical-only (the Legacy rail is bit-for-bit untouched —
-standing rule, Thomas 06.11/07.11):
+standing rule, T. 06.11/07.11):
 
 **M14d — deployment decision.** Reinforcement priority is a deterministic
 law now, not a random pick (priority ranking over legal DPs, `bf15225`);
@@ -1199,7 +1199,7 @@ thing that says where the HEROES have BEEN.
 ## The P33 chain H1–H4c — Player-33 remediation (2026-11-07/08)
 
 Findings source: `~/work/ia-ai/playtests/findings_Player-33.md` (HOTH12
-"An der Schwelle", persona Feldherr, Thomas + Sohn). Laws:
+"An der Schwelle", persona Feldherr, T. + Sohn). Laws:
 `CONCEPT_drohungsbudget.md` (procurement) and `CONCEPT_missionsachse.md`
 (§1–2.4, mission/object axis). The H4 DP-scoring law itself lives in §11
 (dynamic anchor law + DP-Score), the posture rename in "Activation planning,
@@ -1318,7 +1318,7 @@ before (all pre-existing fixtures zahlgleich — the Null-Law pin).
 blockzonen=… schnittstelle=…`: what the Empire's own win-condition law sees;
 with an actor named, the block zones and their resolved Schnittstelle (or
 "unbekannt" — no knowledge, Loch-Gesetz). ACHSE stays raw inside the German
-Debug row: it is Thomas's debug channel, not popup prose. Vectors: `axis.json`
+Debug row: it is T.'s debug channel, not popup prose. Vectors: `axis.json`
 106 hand-pinned checks (two pins sighted by independent recomputation);
 harness 45879 → 45985.
 
@@ -1340,7 +1340,7 @@ objective: **P2** objective channel (startingObjective/ObjectiveChange text +
 `objectiveForEmpire` phase) > **P1** buttons/wired event names ("Claim for
 Empire" ⇒ the Empire attacks) > **P3** outcome text at the wired end-event
 (the side that LOSES a claim event needs the object kept) > **P4** nothing
-derivable ⇒ NEUTRAL. P2-over-P1 on conflict is an explicit Thomas ruling;
+derivable ⇒ NEUTRAL. P2-over-P1 on conflict is an explicit T. ruling;
 otherwise the rung order decides. `failImperial`/`failRebel` are read ZERO
 times — measured dead (0 true rows in all 138 missions). Polarität values:
 `jagt` | `schuetzt` | `neutral`; the deciding rung surfaces as `basis=P1..P4`.
@@ -1499,7 +1499,7 @@ quirk; Onslaught and the printed law reset per returning figure).
 **Diagnostics (log-only, no ui.json keys — Overlord debug rail).** One
 `TacticalAIBridge::BUDGET r<n>: posture= dump= threat= gain= axis=[..]
 zones=[..] | <row dump>... -> picks=[..]` line per procurement decision
-(the explain=full budget trace Thomas reads in Player-N.log, M6s-B9
+(the explain=full budget trace T. reads in Player-N.log, M6s-B9
 channel), one `-> strict sequence (Null-Law)` line when the head stays
 silent. Row dump carries kind/id/cost/axis/zone/leash/spare/score.
 
@@ -1584,7 +1584,7 @@ the shipped path today). Immobile tripods are never candidates
 TacticalAIBridge.cs:1959–1962). G1 purity: the rolled pattern is an INPUT,
 echoed never re-rolled; no board read, no attack-slot touch — DutyCoreGate
 runs the Purity + Fairness scans over the source.
-DESIGN DECISION (Thomas, 08.11., closing the P37c open point 3): the Duty
+DESIGN DECISION (T., 08.11., closing the P37c open point 3): the Duty
 branch is deliberately PRINTED before the pattern tree — movement authority
 stays with the pattern tree (TreeFor untouched), the escort branch is the
 printed order with its own threat fallback. Replacing TreeFor with the duty
@@ -1738,7 +1738,7 @@ cannot enter interior spaces. Interior is TILE PROPERTY keyed
 the one error class the design must not commit). The shipped table is the
 276-row `InteriorLaw.CrosswalkRows` (schema `wa.massive_crosswalk/1`,
 generated by `tools/massive_interior_census.py`, byte-mirrored by
-`MassiveInteriorGate`). Law sources are ONLY the RR pins and Thomas-signed
+`MassiveInteriorGate`). Law sources are ONLY the RR pins and T.-signed
 rows — an unsigned census reading is evidence, never a BANNED row (D2
 fail-open: unresolved reads OPEN, and the ambiguity surfaces at the
 decision seams — `[interior-anchor] fact=ambiguous` and
@@ -1871,7 +1871,7 @@ D2 fail-open, surfaced as `fact=ambiguous` (the spec's per-tile line:
 disclosed delta below). Non-Massive cards and covered cards
 read their anchor untouched (bit-identity vectors). Forensic
 `[interior-anchor] card=… fact=… anchor=… masked=…`. The player words ship
-×11 languages on the existing switches (clutter law, Thomas 04.11):
+×11 languages on the existing switches (clutter law, T. 04.11):
 `ordExplainMassiveSeal` rides EXPLAIN, `ordInfoMassiveInterior` rides INFO
 and states the ban "unless the mission says otherwise" — De genuine with
 umlauts, ten byte-exact EN copies. Mid-round, a tracked anchor hero moving
@@ -1975,7 +1975,7 @@ checks=166 fails=0` (P42 keyword lanes + 12 new P42b accuracy-lane rows).
 
 ## The phase-scoped strike credit (2026-11-15, P43)
 
-**The law (Thomas 15.11: "in dem Moment in dem sich die Missionsziele ändern
+**The law (T. 15.11: "in dem Moment in dem sich die Missionsziele ändern
 sollte der Wert bei allen Helden resettet werden").** `HeroView.Strikes`
 counted strikes on the objective-named figure for the WHOLE mission — never
 reset — and the bridge-side engaged boolean reads `hv.Strikes > 0`

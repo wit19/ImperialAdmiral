@@ -4,7 +4,7 @@
 //      sane rationals (1 <= num <= den), ids unique, exactly ONE default
 //      row, and the default is the concept-10 Zielwert 2/3 (moving it is a
 //      concept+gate+data decision in one commit - this line goes red first).
-//   2. The skill curve (Thomas-Gesetz 04.11.): refinement/clamp/mask-trust open at
+//   2. The skill curve (T.-Gesetz 04.11.): refinement/clamp/mask-trust open at
 //      S3+ only; the exception classes fire on a COARSE projection too
 //      (Fakt-Reaktion ist Fairness) - run live, not read from a table.
 //   3. tactical_mission_critical mining: DoorOwnersOf and MissionDoorEdges

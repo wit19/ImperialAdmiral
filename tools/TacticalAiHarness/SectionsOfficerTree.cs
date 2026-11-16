@@ -82,7 +82,7 @@ namespace TacticalAiHarness
 
             // ---- hand-pinned LAW matrix: skill x supporter x emergency ----
             // S1 (skill < MinSkill == 2) is Legacy on EVERY row: the codex
-            // branch only speaks from S2 up (Thomas 04.11.). Non-supporters
+            // branch only speaks from S2 up (T. 04.11.). Non-supporters
             // (troops, DG075/DG078 id wall) are Legacy on EVERY row. A
             // supporter splits on the PROVEN emergency: None -> Keep,
             // E1..E4 -> Emergency (old tree + why-line).

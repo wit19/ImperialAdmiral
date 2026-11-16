@@ -1,4 +1,4 @@
-// P33-H5 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2, card
+// P33-H5 (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2, card
 // t_94d361bb): the Beschaffungs-Ranking. Instead of the strict sequence
 // (reinforce-then-buy, always the most expensive card, never any saving)
 // the tactical round-end popup ranks ALL legal actions in ONE list and

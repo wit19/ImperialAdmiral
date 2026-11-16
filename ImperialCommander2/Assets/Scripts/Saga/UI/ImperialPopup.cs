@@ -81,7 +81,7 @@ namespace Saga
 
 			Close();
 			Debug.Log( "ImperialPopup::OptionalDeployment()::PROCESSING OptionalDeployment" );
-			//M13c (Thomas 28.10): tactical campaign missions -> the AI places
+			//M13c (T. 28.10): tactical campaign missions -> the AI places
 			//(existing deterministic DP law) and the spot is MARKED + announced;
 			//legacy missions -> the manual placement window for the DM. The
 			//fork is the Core decision (OptionalDeploy.Path, pinned by the

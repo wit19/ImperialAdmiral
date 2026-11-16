@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M14f geometry census (Thomas R1 07.11: "pruefe sauber, ob du die richtige
+"""M14f geometry census (T. R1 07.11: "pruefe sauber, ob du die richtige
 Geometrie kennst, um mit Baendern zu arbeiten").
 
 Question answered with numbers, over ALL shipped missions:

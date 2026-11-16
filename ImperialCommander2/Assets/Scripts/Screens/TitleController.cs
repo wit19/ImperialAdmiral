@@ -391,7 +391,7 @@ public class TitleController : MonoBehaviour
 
 	public void OnDownloadLatest()
 	{
-		// FORK UPDATE LAW (Thomas 03.11): updates come from OUR fork - never
+		// FORK UPDATE LAW (T. 03.11): updates come from OUR fork - never
 		// from the upstream repo, whose releases would replace the tactical
 		// AI tree. The donate link above still honours the original author.
 		Application.OpenURL( "https://github.com/wit19/ImperialCommander2/releases" );
@@ -659,7 +659,7 @@ public class TitleController : MonoBehaviour
 		// THIS tree", upstream releases are irrelevant to us.
 		// Renamed project (06.11.): the check reads TAGS, not releases -
 		// every push tags v1.0.x while GitHub releases stay a manual act
-		// (Thomas), so releases/latest would freeze on the retired
+		// (T.), so releases/latest would freeze on the retired
 		// old-name builds and nag forever.
 		var web = UnityWebRequest.Get( "https://api.github.com/repos/wit19/ImperialAdmiral/git/matching-refs/tags/v?per_page=100" );
 		yield return web.SendWebRequest();

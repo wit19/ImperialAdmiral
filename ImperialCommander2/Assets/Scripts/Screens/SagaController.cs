@@ -369,7 +369,7 @@ namespace Saga
 					ovrd.SetEnemyDeploymentOverride( g );
 					if ( card != null )
 						DataStore.sagaSessionData.MissionStarting.Add( card );
-					// M14e (CONCEPT_standort_ledger_v2, Thomas 07.11): the
+					// M14e (CONCEPT_standort_ledger_v2, T. 07.11): the
 					// ENTRY LEDGER starts at round 0. The mission file's own
 					// pointList says exactly where the Imperator places this
 					// group (293 of 297 shipped start groups carry authored
@@ -378,7 +378,7 @@ namespace Saga
 					// filters: all-Empty pointList = the Active DP (entry is
 					// written by the runtime recorder at deploy) and
 					// GUIDOne = DeploymentSpot.None (Imperator places freely
-					// - NO row, no proximity claim, ever: Thomas 07.11).
+					// - NO row, no proximity claim, ever: T. 07.11).
 					if ( card != null && g.pointList != null )
 					{
 						var authored = new List<string>();
@@ -465,7 +465,7 @@ namespace Saga
 			UpdateRoundNumberUI();
 
 			//TACTICAL REF/ORD: apply the HUD layout policy from the very first
-			//frame (Thomas playtest 29.10.: previously it only ran on the
+			//frame (T. playtest 29.10.: previously it only ran on the
 			//restore path, so a fresh tactical mission still showed the
 			//MedPac icon and the "?" sat in its legacy spot).
 			ApplyTacticalMedPacPolicy();
@@ -1077,7 +1077,7 @@ namespace Saga
 			// slot the tactical HUD badges measure their right edge from,
 			// and GameObject.Find would stop seeing an inactive base.
 			if ( medBtn != null ) medBtn.gameObject.SetActive( false );
-			// M13r (Thomas screenshot: "ein roter Kreis. Warum?"): the BASE
+			// M13r (T. screenshot: "ein roter Kreis. Warum?"): the BASE
 			// object itself carries the red medpac disc graphic - it was
 			// simply hidden behind the moved "i" until M13q put the "i" back.
 			// Kill ALL graphics in the subtree (base included), so whatever
@@ -1097,7 +1097,7 @@ namespace Saga
 					s.interactable = false;
 			}
 
-			// M13q (Thomas screenshot): the "i" (tip[Dashboard]) belongs
+			// M13q (T. screenshot): the "i" (tip[Dashboard]) belongs
 			// INSIDE the blue mission panel = 'bottom button grid'
 			// [settings | dashboard(i) | fame | debug | rules]. M13p evicted
 			// it into the medpac slot - wrong object, wrong idea. Restore it

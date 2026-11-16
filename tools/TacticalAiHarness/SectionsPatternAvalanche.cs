@@ -1,4 +1,4 @@
-// M6t section (Thomas Go 03.11., Player-18 playtest bug): avalanche test for
+// M6t section (T. Go 03.11., Player-18 playtest bug): avalanche test for
 // the per-round doctrine dice. FNV-1a alone does not spread a change of the
 // LAST key character (the round!) into the upper bits, and Roll draws the
 // top 53 bits - so the pre-fix round salt was inert: every figure kept one

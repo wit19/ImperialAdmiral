@@ -1,4 +1,4 @@
-// SectionsAxis.cs - P33-H4b (Thomas 08.11, CONCEPT_missionsachse): the
+// SectionsAxis.cs - P33-H4b (T. 08.11, CONCEPT_missionsachse): the
 // mission-axis vectors. Feed law (VictoryConditions projection: scalars
 // last-wins, escape zones additive-sorted, axis-aware posture DERIVED
 // FIRST), the block Schnittstelle (observed graph, Loch-Gesetz), the

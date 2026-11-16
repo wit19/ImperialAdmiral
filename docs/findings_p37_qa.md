@@ -41,5 +41,5 @@ Keine Produkt-Edits; einziges Schreibrecht: diese Datei (lokal via .git/info/exc
 ist redlich dokumentiert und player-seitig nichts-versprechend; als Folgehop klinken
 (Anker-Namen in die Officer-Refs einspeisen, Popup-Canon-Vektoren gegenchecken).
 MINOR-2/3 sind bewusste Test-/Evidenz-APIs; MINOR-4 wäre ein Harness-Härtungs-
-Follow-Up (Summen-Delta-Alarm). TODOs Thomas' Unity-Maschine bleiben wie in den
+Follow-Up (Summen-Delta-Alarm). TODOs T.' Unity-Maschine bleiben wie in den
 Handoffs benannt: .meta-Dateien für DutyAnchors.cs / DutyQuota.cs / DutyScrub.cs.

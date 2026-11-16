@@ -6,7 +6,7 @@
 // En/ui.json must exist and be non-empty in EVERY shipped language ui.json
 // (missing count must be 0 for all 11), the 20 playtest keys are additionally
 // listed explicitly, and the German reference lines from the ticket are
-// pinned verbatim (Thomas: De is the shipped reference translation).
+// pinned verbatim (T.: De is the shipped reference translation).
 using System;
 using System.Collections.Generic;
 using System.IO;

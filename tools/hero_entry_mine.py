@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# M14e (CONCEPT_standort_ledger_v2.md, Thomas 07.11): the HERO-ENTRY table.
+# M14e (CONCEPT_standort_ledger_v2.md, T. 07.11): the HERO-ENTRY table.
 #
 # The blue hero-deploy fields are shipped mission data: entityType 5
 # (Highlight) + entityColor "Blue" + theText matching /deploy/i AND
@@ -65,7 +65,7 @@ def main():
                 continue
             txt = (ep.get("theText") or "").strip()
             name = (e.get("name") or "").strip()
-            # Law v2 (Thomas 07.11 'schau genau'): a deployment VERB and a
+            # Law v2 (T. 07.11 'schau genau'): a deployment VERB and a
             # hero word in the field text (word order free - CORE29 says
             # "This is the heroes' cell. Deploy them here."), OR a field
             # with NO text named just "Entrance" (CORE2: the shipped data

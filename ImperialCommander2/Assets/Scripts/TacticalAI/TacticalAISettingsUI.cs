@@ -1,6 +1,6 @@
 // M1 settings UI for the settings dialog (concept 4.2 "Settings").
 //
-// Dev 23 REBUILD (Thomas: "Layout ist eine Katastrophe... alles muss da sein,
+// Dev 23 REBUILD (T.: "Layout ist eine Katastrophe... alles muss da sein,
 // korrekt, klickbar"). The template-clone approach (dev 18-22) is GONE - it
 // depended on prefab internals that differ between the two settings dialogs
 // and kept failing in the field. The root causes cloning could never fix:
@@ -16,13 +16,13 @@
 //  * total height is pushed into LayoutElement AND sizeDelta AND a
 //    ContentSizeFitter, so it renders fully in scrolling hosts, VLG hosts
 //    and unmanaged hosts alike.
-//  * yellow-bold TMP approximates the dialog look; per Thomas (27.10) the
+//  * yellow-bold TMP approximates the dialog look; per T. (27.10) the
 //    cosmetic polish ranks BELOW function now.
 //
 // Behaviour (unchanged): master gates the sub-menu; click cycles values;
 // 'legacy' is not offered globally (dev 15); the ladder is the single
 // difficulty dial (dev 20); values render localized + caps (dev 22).
-// M13g (Thomas 28.10): the old deployment-mode row is GONE - the app is a
+// M13g (T. 28.10): the old deployment-mode row is GONE - the app is a
 // companion to the board game and the printed rules never hide a
 // deployment: Aufstellungen sind IMMER SICHTBAR (DP highlight + camera
 // move + TextBox, exactly like the legacy original).
@@ -133,7 +133,7 @@ namespace TacticalAI
                 TacticalAISettings.ExplainLevel = Next(TacticalAISettings.ExplainLevel, TacticalAISettings.ExplainLevelValues);
                 Refresh();
             });
-            // M13c (Thomas 30.10): show/hide the general RR info block under
+            // M13c (T. 30.10): show/hide the general RR info block under
             // the action texts - same row style as EXPLAIN, default ON.
             // Personas (M1): global default persona (the campaign picker
             // follows it while its own field is empty). Same row style.
@@ -148,7 +148,7 @@ namespace TacticalAI
                 Refresh();
             });
             // M13h: the old non-clickable note line under the rows ("From S4 on
-            // the AI plays the printed card abilities ...") is REMOVED by Thomas'
+            // the AI plays the printed card abilities ...") is REMOVED by T.'
             // decision 28.10: it referenced internal 'S4' labels no player ever
             // sees (difficulty rows show renamed names) and added nothing that a
             // row does not already say. Do not reintroduce a note line here.
@@ -298,7 +298,7 @@ namespace TacticalAI
                 case "mode": value = TacticalAISettings.Mode.ToUpperInvariant(); break;
                 case "skill": value = SkillDisplay(TacticalAISettings.SkillLevel, tl); break;
                 case "explain":
-                    // Thomas 02.11: AN/AUS toggle (AN == the old VOLL block;
+                    // T. 02.11: AN/AUS toggle (AN == the old VOLL block;
                     // NACHHER removed) - same wording as master/info rows.
                     value = TacticalAISettings.ExplainLevel == "none"
                         ? Pick(tl != null ? tl.setOff : null, "OFF")

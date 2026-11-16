@@ -77,7 +77,7 @@ namespace TacticalAI.Core
         // card / printed lane). Default false keeps EVERY pre-O-A vector and
         // caller bit-identical; only OfficerDoctrine reads it.
         public bool Supporter;
-        // Playtest Player-20 (Thomas 04.11): the PRINTED plain command token
+        // Playtest Player-20 (T. 04.11): the PRINTED plain command token
         // (OfficerOrder WITHOUT OfficerExecOrder) grants only +2 movement —
         // real value, but too thin to earn the head of the activation order
         // ("von einem Angriff einer Truppe hat man viel mehr"). The elite
@@ -298,7 +298,7 @@ namespace TacticalAI.Core
             }
             if (!string.IsNullOrEmpty(contestZone) && f.Zone == contestZone)
                 eff = eff * new Rational(23, 20);
-            // M14f Naehesuch (Thomas 07.11 R2=b: "der GM zieht benachbarte
+            // M14f Naehesuch (T. 07.11 R2=b: "der GM zieht benachbarte
             // Truppen in die Schlacht und ueberbrueckt nur bewusst
             // Distanz"): a group whose trusted own section sits ONE lower-
             // bound step from the reaction zone activates ahead - it is
@@ -344,7 +344,7 @@ namespace TacticalAI.Core
                                           string contestZone = null,
                                           string counter = null,
                                           CardEffects cardEffects = null,
-                                          // Player-24 (Thomas 04.11 Go): the
+                                          // Player-24 (T. 04.11 Go): the
                                           // Befehlszeitpunkt table (CommandTiming);
                                           // null/absent = today's blind chain,
                                           // bit-identical canon (every pinned
@@ -440,7 +440,7 @@ namespace TacticalAI.Core
             if (prof != null && (level == "S4" || level == "S5"))
                 ApplySlotFinisher(order, tags, why, counter);
 
-            // Player-24 after-slot follow law (Thomas 04.11 Go): the finisher
+            // Player-24 after-slot follow law (T. 04.11 Go): the finisher
             // step can PULL the receiver out from under an after-decision
             // (receiver = strongest attacker = classic finisher candidate).
             // The Befehlszeitpunkt decision then re-anchors the supporter
@@ -486,7 +486,7 @@ namespace TacticalAI.Core
                 }
             }
 
-            // Player-21 head-slot law (Thomas 05.11 playtest, extends the
+            // Player-21 head-slot law (T. 05.11 playtest, extends the
             // Player-20 buff exemption): the plain +2-movement order NEVER
             // earns the head slot — not through the buff chain (ApplySlotBuff
             // exempts it) and not through base efficiency either. Player-21
@@ -624,11 +624,11 @@ namespace TacticalAI.Core
 
         /// buff_before_receiver: every support group acts before the attack
         /// groups it would buff (receiver = first aggressive/hunter in order).
-        /// Playtest Player-20 (Thomas 04.11): a group whose PRINTED command is
+        /// Playtest Player-20 (T. 04.11): a group whose PRINTED command is
         /// the plain +2-movement order (MovementBuffOnly) is EXEMPT — that
         /// buff never earns the head of the order. Elite command and every
         /// non-officer support pattern keep the chain untouched.
-        /// Player-24 (Thomas 04.11 Go): when the bridge feeds a CommandTiming
+        /// Player-24 (T. 04.11 Go): when the bridge feeds a CommandTiming
         /// decision for an elite supporter, the blind "first receiver" anchor
         /// is REPLACED by the named receiver and the slot follows the
         /// payload: before = movement leg extends the receiver's reach, after

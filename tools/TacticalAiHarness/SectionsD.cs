@@ -32,7 +32,7 @@ namespace TacticalAiHarness
                 var name = Json.AsStr(c["name"]);
                 var events = BuildEvents(Json.AsList(c["events"]));
 
-                // Player-22 vocabulary pre-check (Thomas' EMPIRE2 log: the
+                // Player-22 vocabulary pre-check (T.' EMPIRE2 log: the
                 // in-game feed THROWS on an unregistered payload key and the
                 // poll swallowed the spawn): fixtures must trip the SAME law
                 // in the harness BEFORE a build ships, not in the poll loop.

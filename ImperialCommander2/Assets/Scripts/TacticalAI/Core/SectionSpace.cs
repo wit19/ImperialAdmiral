@@ -68,7 +68,7 @@ namespace TacticalAI.Core
     /// S-C projection options. Defaults reproduce the S-B law exactly
     /// (Refine = true, no door-owner knowledge), so every pre-S-C call
     /// site - the whole section_space.json canon - stays bit-identical.
-    ///  * Refine=false (low skill rungs, Thomas-Gesetz 04.11.): the belief
+    ///  * Refine=false (low skill rungs, T.-Gesetz 04.11.): the belief
     ///    carries ONLY feed facts - deploy seed, dilation, observed speed,
     ///    graph edges, alive bookkeeping. No hit re-grounding, no wounded
     ///    group disjunctive, no transit hypotheses. The exception probes
@@ -107,7 +107,7 @@ namespace TacticalAI.Core
         private readonly Dictionary<string, List<string>> _heroEntrySet =
             new Dictionary<string, List<string>>(StringComparer.Ordinal);
 
-        // P33-H2 (findings_Player-33 §1, Thomas 08.11): WHICH law anchored the
+        // P33-H2 (findings_Player-33 §1, T. 08.11): WHICH law anchored the
         // hero - "deploy-fakt" (the printed blue start/entry field) vs
         // "fenster-fakt" (an observed interaction inside the window). Last
         // write wins, mirroring the anchor itself; the explain trail and the
@@ -236,7 +236,7 @@ namespace TacticalAI.Core
 
         // S-D Vergeltung trigger bookkeeping: the LAST round a GroupDamage
         // fact landed on this group. RECORDED UNGATED (before the Refine
-        // gate) on purpose: being shot at is a public fact, and the Thomas
+        // gate) on purpose: being shot at is a public fact, and the T.
         // law says exception keys fire on facts at EVERY skill level - the
         // Refine gate governs the mask REFINEMENT, never the raw fact.
         // (0 = no hit ever observed in this projection.)
@@ -293,7 +293,7 @@ namespace TacticalAI.Core
 
                 case "HeroDeployed":
                 {
-                    // M14e (Thomas 07.11, CONCEPT_standort_ledger_v2): the
+                    // M14e (T. 07.11, CONCEPT_standort_ledger_v2): the
                     // hero entered through the mission's printed blue ENTRY
                     // field - table knowledge, not a position report.
                     // SINGLE-entry mission: the entry section becomes the
@@ -303,7 +303,7 @@ namespace TacticalAI.Core
                     // so the first real observation later CONFIRMS graph
                     // edges that were only hypotheses before).
                     // MULTI-entry mission ("Deploy HALF of the heroes
-                    // here" x2, Thomas decision 3): the events form a SET
+                    // here" x2, T. decision 3): the events form a SET
                     // of possible sections - nodes exist for belief math,
                     // but NO single-section claim is made while the set
                     // has more than one member; a set that collapses to
@@ -546,7 +546,7 @@ namespace TacticalAI.Core
                         _lastHitRound[group] = e.Round;
                     // S-C skill curve: the Eichung re-grounding is mask
                     // VERFEINERUNG - low rungs keep the seed-and-dilation
-                    // entry reading (Thomas-Gesetz 04.11., no switch).
+                    // entry reading (T.-Gesetz 04.11., no switch).
                     if (!_opts.Refine) break;
                     int figure = (int)e.Long("figure");
                     b.NoteHit(Graph, figure, e.Round, SectionsPerWindow);
@@ -693,7 +693,7 @@ namespace TacticalAI.Core
         //    group was not shot at - the feed cannot produce that anyway);
         //    PoolSize states the surviving-figure pool honestly.
         // NOT skill-gated, NOT trust-gated: a hit is a FACT, reaction to facts
-        // is fairness (Thomas-Gesetz 04.11.).
+        // is fairness (T.-Gesetz 04.11.).
         public sealed class VictimRing
         {
             public string Group;

@@ -8,7 +8,7 @@ namespace TacticalAI.Core
 {
     public sealed class DeploymentCard
     {
-        // O-A field-commander exceptions (Thomas-Gesetz 04.11.): these named
+        // O-A field-commander exceptions (T.-Gesetz 04.11.): these named
         // villains keep FULL self-combat even if a card ever prints a command
         // token - they are commanders, not supporters. Id-keyed, never names
         // (see FromRecord). OfficerDoctrine references the same law.
@@ -30,7 +30,7 @@ namespace TacticalAI.Core
         public HashSet<string> Keywords = new HashSet<string>();
         public bool IsEliteCard;
         public string Subname = "";
-        // O-A supporter identity (concept offizier_supporter §2, Thomas-Gesetz
+        // O-A supporter identity (concept offizier_supporter §2, T.-Gesetz
         // 04.11.): officers print a command token (Order/Executive Order) -
         // they keep commanding per doctrine, but their SELF-COMBAT runs only
         // in an emergency (OfficerDoctrine.EmergencyFor, O-B/O-C consume).
@@ -47,7 +47,7 @@ namespace TacticalAI.Core
         public int Cost = 1;                // printed deck-build point cost
 
         public bool IsMassive => Keywords.Contains("Massive");
-        // M13t (EMPIRE6 playtest, Thomas 30.10.): printed Stativ/Tripod rule
+        // M13t (EMPIRE6 playtest, T. 30.10.): printed Stativ/Tripod rule
         // - leaving your space and attacking are mutually exclusive within
         // one activation. The app layer injects this keyword from the
         // card's PRINTED ability (En "Tripod" / De "Stativ"); it is public
@@ -63,7 +63,7 @@ namespace TacticalAI.Core
         public bool IsMobile => Keywords.Contains("Mobile");
         public bool HasReach => Keywords.Contains("Reach");
         public bool IsLargeBase => Geometry.IsLarge(MiniSize);
-        // M4 (Thomas 29.10.): doctrine pattern assigned by the APP layer at
+        // M4 (T. 29.10.): doctrine pattern assigned by the APP layer at
         // catalog build (MissionPosture x printed traits, bridge-side). Core
         // data class default keeps every pre-M4 caller aggressive - the sim
         // harness sets Pattern per roster itself, vectors stay untouched.
@@ -105,7 +105,7 @@ namespace TacticalAI.Core
             // O-A (concept offizier_supporter §2): supporter = the PRINTED
             // command token (bridge keyword lane OfficerOrder/OfficerExecOrder,
             // see field comment above). The id exclusion is HART eingebaut per
-            // Thomas-Gesetz 04.11.: the named villains DG075/DG078 stay field
+            // T.-Gesetz 04.11.: the named villains DG075/DG078 stay field
             // commanders with full self-combat. Shipped-name truth 04.11.:
             // DG075 = Kayn Somos, DG078 = General Sorin (the concept text has
             // the pair swapped; both ids are excluded, so behaviour is

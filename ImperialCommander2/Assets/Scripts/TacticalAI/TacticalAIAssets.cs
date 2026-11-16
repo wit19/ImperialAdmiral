@@ -1,5 +1,5 @@
 // M4 public data assets, loaded on the Unity side (concept 4.2 "DataStore":
-// "GetHeroLethality()" + hero lethality priors). M11 (Thomas 31.10.): the
+// "GetHeroLethality()" + hero lethality priors). M11 (T. 31.10.): the
 // order_decks.json asset retired together with the decks (concept corpse) -
 // activation blocks come from printed figure facts now.
 // Both are PLAIN TEXT assets shipped in the build - public, reviewable data,
@@ -117,7 +117,7 @@ namespace TacticalAI
             }
         }
 
-        /// <summary>Personas (Thomas 02.11., CONCEPT_personas.md): the ONE
+        /// <summary>Personas (T. 02.11., CONCEPT_personas.md): the ONE
         /// loader seam for the persona asset. Loads AND primes the Core doc
         /// cache (same doctrine as HeroCardsRoot: app and harness agree on
         /// the doc whoever touches it first).</summary>
@@ -144,7 +144,7 @@ namespace TacticalAI
             return Tac.HeroCards.For(heroName);
         }
 
-        /// <summary>M13u (variant c, Thomas 01.11.): the public per-group
+        /// <summary>M13u (variant c, T. 01.11.): the public per-group
         /// doctrine weight table. Loads AND primes the Core cache (same
         /// seam as PersonasRoot: app and harness agree on the doc whoever
         /// touches it first). Null table -> the doctrine dice stay dark and
@@ -212,7 +212,7 @@ namespace TacticalAI
             }
         }
 
-        /// <summary>M14e (Thomas 07.11): tacai.hero_entry/1 - the hero-entry
+        /// <summary>M14e (T. 07.11): tacai.hero_entry/1 - the hero-entry
         /// table (blue deploy fields mined by tools/hero_entry_mine.py).
         /// Raw doc on purpose - DeploymentAnchors.HeroEntriesForMission is
         /// the ONLY reader; missing/unparsable => null => no hero entries =>

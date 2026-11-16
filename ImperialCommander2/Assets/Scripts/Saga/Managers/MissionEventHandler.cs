@@ -23,7 +23,7 @@ namespace Saga
 			Debug.Log( "SagaEventManager()::PROCESSING ShowTextBox" );
 			// REF/ORD law: the MedPac reward is mechanically skipped in
 			// tactical missions, so its promise must not be shown either
-			// (Thomas playtest 29.10., crate pickup text).
+			// (T. playtest 29.10., crate pickup text).
 			// P37d (card t_ffc705af, concept 9.3): the same law for the
 			// briefing's legacy duty sentences in tactical DUTY missions -
 			// the Duty-Ast decides the escort, the text may not pre-name it.

@@ -229,7 +229,7 @@ namespace TacticalAI.Tests
             }
         }
 
-        // dev 30 playtest regression guard (Thomas, EMPIRE6 crash): the Unity
+        // dev 30 playtest regression guard (T., EMPIRE6 crash): the Unity
         // player has NO other loader for the Core doc cache - if the app-side
         // asset loader stops priming, EVERY campaign activation throws
         // 'HeroProfiles.ApplyCampaignLoadouts: no doc loaded' in the live game

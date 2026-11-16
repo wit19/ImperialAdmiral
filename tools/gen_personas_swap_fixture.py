@@ -180,7 +180,7 @@ doc = {
    'grossmoff at T8). swap_personas mirrors the M6a2 draft rank ladders so '
    'the flat loader schema (elite_card) is exercised end-to-end; the LEGACY '
    'elite rails are read-only inputs (elite_on_board), never modified '
-   '(Sec.1.2-2, Thomas 02.11).'),
+   '(Sec.1.2-2, T. 02.11).'),
  'swap_personas': personas,
  'budgets': budgets,
  'missions': {k: {'draft': m['draft'], 'board': m['board'], 'hand': m['hand']}

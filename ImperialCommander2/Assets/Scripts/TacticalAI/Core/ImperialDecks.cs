@@ -10,7 +10,7 @@
 // (schema tacai.imperial_decks/1; 1:1 projection of
 // wiki_data/imperial_class_cards.json by wiki_data/tools/import_imperial_decks.py;
 // deck texts verbatim per wiki_data/LICENSE_DATA.md Punkt 5 - printed card
-// text is board-game content and stays a build asset, Thomas-Doktrin M11g).
+// text is board-game content and stays a build asset, T.-Doktrin M11g).
 //
 // SCORE MODEL (all features are countable facts from the campaign save, all
 // weights are fixed integers - the same table in the M12b canon fixture):

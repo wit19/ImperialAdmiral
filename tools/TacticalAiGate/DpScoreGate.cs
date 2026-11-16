@@ -1,4 +1,4 @@
-// P33-H4 live gate (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3 +
+// P33-H4 live gate (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 3 +
 // Sec.3; card t_31d8b805): the DP-Score law proven LIVE, zero fixtures -
 // the fixture vectors (dp_score.json) pin VALUES, this gate pins the LAW
 // against any future drift of the Core implementation:

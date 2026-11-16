@@ -152,17 +152,17 @@ public class EnemyActivationPopup : MonoBehaviour
 			//GetModifiedRepositioning rewrite. Mission event instruction overrides
 			//still apply (they are scenario rules, not hidden enemy knowledge).
 			Debug.Log( $"ShowSaga()::TACTICAL activation {tacPlan.CardId} ({tacPlan.Blocks.Length} blocks)" );
-			// Thomas 29.10: reading order = FOCUS TARGET first, then the
+			// T. 29.10: reading order = FOCUS TARGET first, then the
 			// action blocks, then (only when the ERKLÄRUNG setting is on) the
 			// explanation last. '\n' splits every decision-tree branch onto
 			// its own popup row (ParseInstructions keeps a fixed row height).
 			List<string> tacInstructions = new List<string>();
-			// Thomas 02.11 (popup declutter): the persona line left the top
+			// T. 02.11 (popup declutter): the persona line left the top
 			// of the card - you KNOW who you play against; ExplainFor now
 			// carries it as an EXPLAIN section (tacPlan.PersonaLine).
 			if ( tacPlan.HasTarget && !string.IsNullOrEmpty( tacPlan.TargetWhy ) )
 				tacInstructions.Add( tacPlan.TargetWhy );
-			// M6p (Thomas 02.11): the doctrine row left the EXPLAIN block and
+			// M6p (T. 02.11): the doctrine row left the EXPLAIN block and
 			// rides here permanently - directly after the focus-target line,
 			// independent of the EXPLAIN level (same visibility law as the
 			// focus target itself).
@@ -341,7 +341,7 @@ public class EnemyActivationPopup : MonoBehaviour
 			//replace glyphs
 			item = ReplaceGlyphs( item );
 
-			// M13s (Thomas): bold the leading LABEL of each instruction line
+			// M13s (T.): bold the leading LABEL of each instruction line
 			// for readability - "Fokus-Ziel:", "Doktrin:", "Grundregel:",
 			// "Aktion 1"/"Aktion 2" ... Purely a render effect: the stored
 			// instruction strings and all game logic stay tag-free. A label
@@ -375,7 +375,7 @@ public class EnemyActivationPopup : MonoBehaviour
 	/// <summary>M13s: bolds the leading label (<=14 chars directly before a
 	/// ':' or the '–' en-dash block separator) of an instruction row.
 	/// TMP rich text; everything after the label is returned untouched.
-	/// M13y (Thomas screenshot: '"Stattdessen:" ist hervorgehoben - gehört
+	/// M13y (T. screenshot: '"Stattdessen:" ist hervorgehoben - gehört
 	/// zu Aktion 2'): the plain colon rule also caught ordinary BODY lines,
 	/// because "Stattdessen:" looks exactly like a label to it. Real headers
 	/// are mechanically distinguishable: numbered headers come from
@@ -712,7 +712,7 @@ public class EnemyActivationPopup : MonoBehaviour
 		return linesOut;
 	}
 
-	/// <summary>M13w (Thomas 30.10., EMPIRE13: AT-DP showed the OLD action
+	/// <summary>M13w (T. 30.10., EMPIRE13: AT-DP showed the OLD action
 	/// text): a mission Replace-override used to wipe the tactical doctrine
 	/// tree entirely. Those overrides are MIXED blocks: scenario rules
 	/// printed as '{-}' rule bullets (EMPIRE13's "CHARGE GENERATORS: ..."

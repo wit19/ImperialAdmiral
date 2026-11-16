@@ -69,7 +69,7 @@ namespace Saga
 						if ( missionEntity != null )
 						{
 							//main text
-							// LANGUAGE-BRIDGE law (card t_1787135b P34-A1, Thomas 08.11):
+							// LANGUAGE-BRIDGE law (card t_1787135b P34-A1, T. 08.11):
 							// the authored ORIGINAL survives the injection in sourceText,
 							// captured EXACTLY HERE, capture-once (the first overwrite wins;
 							// later re-injections keep the original). The TacticalAI

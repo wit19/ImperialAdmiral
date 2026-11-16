@@ -92,7 +92,7 @@ namespace TacticalAiHarness
             // ---- hand-pinned ledger laws (ground truth, not recorded) ----
             // R-B law 1: a hit inside an open window is a HYPOTHESIS anchor
             // and the kind MUST show in the debug projection - a consumer
-            // (and Thomas' log) can never misread it as a placed fact.
+            // (and T.' log) can never misread it as a placed fact.
             var f3 = new WorldEventFeed("law");
             f3.Append("MissionStart", 1, new Dictionary<string, object> {
                 { "objective", "o" }, { "priorityTarget", "" }, { "roundLimit", -1L },
@@ -147,7 +147,7 @@ namespace TacticalAiHarness
             Check("ledger.spawn_outside_window", "", SpawnedFields(vSpawn));
             Check("ledger.spawn_row_unchanged", false, vSpawn.Canon().Contains("|in_window"));
 
-            // P43 law 5 (Thomas 15.11): STRIKE CREDIT IS PHASE-SCOPED. The
+            // P43 law 5 (T. 15.11): STRIKE CREDIT IS PHASE-SCOPED. The
             // p19 window-strike events arm Jyn's counter FIRST (fail-closed
             // belt - the reset checks below must never pass vacuously), the
             // ObjectiveChange then resets EVERY hero's Strikes/StrikeRound,

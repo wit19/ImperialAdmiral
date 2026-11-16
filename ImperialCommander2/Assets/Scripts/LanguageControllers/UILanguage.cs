@@ -24,7 +24,7 @@ public class UILanguage
 public class UITacticalAI
 {
 	public string doctrineHeader, docAggressive, docGuard, docBlocker, docHunter, docSupport, docAmbusher;
-	// Aufgabe 4 (Thomas 02.11): the fixed "Aktion 1/2" pair and ALL per-block
+	// Aufgabe 4 (T. 02.11): the fixed "Aktion 1/2" pair and ALL per-block
 	// move/attack trees (actionFormat, actionSoloFormat, moveFocus*, moveGuard,
 	// moveBlocker, moveSupport, moveAmbusher, attackFocus/NoTarget, attack
 	// Guard*, attackAmbush*, attackSupport*, attack2Move*, attackSecondIntro/
@@ -63,15 +63,15 @@ public class UITacticalAI
 	// (no {0} — never an id). Values ship in the 11 Languages/<L>/ui.json;
 	// missing key => no row (fail-closed, popup byte-identical).
 	public string apPreyQuotaLine, apPreyThreatLine, apPreyThreatRel;
-	// Thomas 02.11: command trees for cards that PRINT a command ability on
-	// the ignored lane - PER DOCTRINE (Thomas' correction: an officer who
+	// T. 02.11: command trees for cards that PRINT a command ability on
+	// the ignored lane - PER DOCTRINE (T.' correction: an officer who
 	// rolled "guard" still commands, so every pattern keeps its own action
 	// wording AND the Order branch). Plain "Order" -> apTreeOfficer<Pattern>,
 	// elite "Executive Order" -> apTreeOfficerElite<Pattern>; a missing elite
 	// row falls back to the plain officer row, then to the pattern tree.
 	public string apTreeOfficerAggressive, apTreeOfficerGuard, apTreeOfficerBlocker, apTreeOfficerHunter, apTreeOfficerSupport, apTreeOfficerAmbush;
 	public string apTreeOfficerEliteAggressive, apTreeOfficerEliteGuard, apTreeOfficerEliteBlocker, apTreeOfficerEliteHunter, apTreeOfficerEliteSupport, apTreeOfficerEliteAmbush;
-	// O-C (Thomas 04.11., card t_a2d88c50): supporter-codex ersatzzweig - shown
+	// O-C (T. 04.11., card t_a2d88c50): supporter-codex ersatzzweig - shown
 	// ONLY for printed-order cards WITHOUT a proven emergency (skill >= S2;
 	// decision in Core OfficerDoctrine.TreeKindFor). Keep = give the Order,
 	// group leash, no self-initiated attack. apTreeOfficerNotfall wraps the
@@ -83,11 +83,11 @@ public class UITacticalAI
 	public string apTreeOfficerKeepAggressive, apTreeOfficerKeepGuard, apTreeOfficerKeepBlocker, apTreeOfficerKeepHunter, apTreeOfficerKeepSupport, apTreeOfficerKeepAmbush;
 	public string apTreeOfficerEliteKeepAggressive, apTreeOfficerEliteKeepGuard, apTreeOfficerEliteKeepBlocker, apTreeOfficerEliteKeepHunter, apTreeOfficerEliteKeepSupport, apTreeOfficerEliteKeepAmbush;
 	public string overlordFallback;
-	// M13c (Thomas 30.10): shuffleNote DELETED ("(afterwards: shuffle this
+	// M13c (T. 30.10): shuffleNote DELETED ("(afterwards: shuffle this
 	// group's deck)" does not exist in this app's flow - honest removal).
 	public string specialAsPrinted, restLine, interactLine;
 	public string focusPrefix, focusWounded, focusFirepower;
-	// R-D (Konzept eventreaktionen v1.2 §2.3, Thomas-Punkt 3a): clause on
+	// R-D (Konzept eventreaktionen v1.2 §2.3, T.-Punkt 3a): clause on
 	// the focus line when the reaktion key decided the pick; {0} = the
 	// activated figure's name. Pronoun-free wording is deliberate (the
 	// 21-hero roster carries female heroes).
@@ -104,7 +104,7 @@ public class UITacticalAI
 	public string ordFocusMaskenvertrauen, ordFocusBasisMaskenvertrauen,
 		ordExplainSupportMaske, ordExplainSupportHalten;
 	// M6 overlord explain parts (public threat economy + aim marks + risk).
-	// M13c (Thomas 30.10): ordRoundFocus + focusNoChance REMOVED from the
+	// M13c (T. 30.10): ordRoundFocus + focusNoChance REMOVED from the
 	// focus-target WHY line (the "all groups converge...; no chance" tail).
 	public string ordThreat, ordMarked;
 	// M15 F2: the EXPLAIN threat CALCULATION (operands in the message:
@@ -122,20 +122,20 @@ public class UITacticalAI
 	public string ordStrainFuzzy;
 	// M11e: heading line for the printed {A} option block in the activation popup
 	public string ordOptionPrinted;
-	// M13n (Thomas 29.10): general RR reminder block printed under the action
+	// M13n (T. 29.10): general RR reminder block printed under the action
 	// blocks, BEFORE the gated explanation: attack = weapon/ability use, and
 	// the door law (RR DOORS: opening a door is an INTERACT - one of the five
 	// action types - so it costs an action; locked doors only per mission).
 	// M13n + M13c: the general RR info block under the action blocks - ONE
 	// merged paragraph: basic attack rule, attack line, door law.
 	public string ordInfoRule, ordInfoAttack, ordInfoDoor;
-	// M6s (Thomas 03.11., B1): guard-zone definition line in the same INFO
+	// M6s (T. 03.11., B1): guard-zone definition line in the same INFO
 	// block - the bridge adds it ONLY when plan.Pattern == "guard" (the
 	// Wachschutz popup); the zone extent itself is board knowledge the
 	// player reads off the mission (wiki Kalt-Lesetest: the popup knows
 	// no zone tiles), which is exactly what this line says.
 	public string ordInfoGuardZone;
-	// Thomas 07.11: the activation-chip golden rule - the END-of-turn hero chip
+	// T. 07.11: the activation-chip golden rule - the END-of-turn hero chip
 	// flip is the ONLY carrier of HeroActivated (M6s-B7), so the popup INFO
 	// block states its timing (after damage/kills/interactions announced) on
 	// EVERY tactical activation popup, and the hero card's own checkbox
@@ -144,10 +144,10 @@ public class UITacticalAI
 	public string ordRiskLabel, ordRiskPress, ordRiskHold, ordRiskGuardHold, ordRiskDisengage;
 	public string whyPrefix, whyRank;
 	public string setHeading, setMode, setSkill, setExplain, setInfo, setOn, setOff, setRowFormat;
-	// M13h (Thomas 28.10): the setCardSkills note field is REMOVED - the note
+	// M13h (T. 28.10): the setCardSkills note field is REMOVED - the note
 	// line it fed is gone from the settings screen (stale 'S4' wording).
 
-	// skill ladder DISPLAY names (dev 18: recruit..5-star general, Thomas).
+	// skill ladder DISPLAY names (dev 18: recruit..5-star general, T.).
 	// Stored/logged token stays s1..s5 - these are labels only (PR rule:
 	// display via language files).
 	public string skillS1, skillS2, skillS3, skillS4, skillS5;
@@ -157,7 +157,7 @@ public class UITacticalAI
 	// rung number, {1} = skillS name. The (auto) variant marks ""/AUTO tokens
 	// that resolve to the global ladder rung.
 	public string badgeMissionFormat, badgeMissionAutoFormat, badgeMissionOff;
-	// Personas (M1/M3, Thomas 02.11.): the persona REPLACED the class-deck
+	// Personas (M1/M3, T. 02.11.): the persona REPLACED the class-deck
 	// and agenda-card system - its ui.json keys (impBuyLog/agendaBuy*/imp*)
 	// are removed with it, 11-language parity re-checked. Vocabulary:
 	// picker words, rank chips (activation-card line), QM announcements,
@@ -219,11 +219,11 @@ public class UITacticalAI
 	// S-D (card t_c52dd34b): the two section-space basis labels (EXPLAIN
 	// "Grundlage:" disclosure), same vocabulary slot as reaktion.
 	public string ordFocusBasisWachzone, ordFocusBasisVergeltung;
-	// Punkt 2 (Thomas 01.11.): doctrine phase disclosure - one-shot QM at
+	// Punkt 2 (T. 01.11.): doctrine phase disclosure - one-shot QM at
 	// the defend->hunt flip and the EXPLAIN line naming both phases.
 	public string ordPhaseShiftQM, ordPhaseExplain, ordPhaseDefend, ordPhaseHunt;
 	public string ordPatternRoll;
-	// Thomas 02.11 (popup declutter): EXPLAIN section header + the focus
+	// T. 02.11 (popup declutter): EXPLAIN section header + the focus
 	// target reasoning line that moved out of the action area.
 	public string ordExplainHead, ordExplainFocusWhy;
 	// S-D (card t_c52dd34b): the section-space EXPLAIN chain lines
@@ -257,7 +257,7 @@ public class UITacticalAI
 	// key skips the line (no-blank-row law); UiCompletenessGate pins all 11
 	// languages against En.
 	public string ordExplainMassiveSeal, ordInfoMassiveInterior;
-	// expNone/expPostHoc/expFull REMOVED (Thomas 02.11): the explain switch
+	// expNone/expPostHoc/expFull REMOVED (T. 02.11): the explain switch
 	// is a plain AN/AUS toggle reusing setOn/setOff; NACHHER entfällt.
 }
 

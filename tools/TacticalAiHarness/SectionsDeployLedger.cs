@@ -1,4 +1,4 @@
-// M14e section (CONCEPT_standort_ledger_v2, Thomas 07.11): the deploy-ledger
+// M14e section (CONCEPT_standort_ledger_v2, T. 07.11): the deploy-ledger
 // vectors. Three families:
 //   1) the hero-entry TABLE reader (synthetic tables, hand-pinned - pure
 //      data law, no seed anywhere),

@@ -1,6 +1,6 @@
 # CONCEPT Missionsdienstplicht — Missionsobjekt-Interaktion im taktischen Modus
 
-*Thomas-Auftrag 08.11.2026: Hoth-Nebenmission „Immer wachsam" (HOTH10, Loku) —
+*T.-Auftrag 08.11.2026: Hoth-Nebenmission „Immer wachsam" (HOTH10, Loku) —
 der taktische Modus ignoriert die Gefangenen. Gefragt: allgemeines,
 missionsübergreifendes Konzept, das ohne Bruch der bestehenden Logik passt.
 Reiner Konzept-Stand — kein Code, kein GO.*
@@ -80,7 +80,7 @@ Missionsbefehle sind **kein Text-Fund** — sie sind eine eigene Event-Action:
 
 **Korrektes Fazit:** Auf der Anzeige-Ebene ist der HOTH10-Befehl sichtbar
 (Top), auf der Entscheidungs-Ebene wird er von Fokus, Doktrin, Baum und
-Counter ignoriert; bei Replace-Missionen fehlt er auch sichtbar. Thomas'
+Counter ignoriert; bei Replace-Missionen fehlt er auch sichtbar. T.'
 Eindruck „ignoriert die Gefangenen komplett" ist entscheiderisch richtig.
 
 ---
@@ -103,7 +103,7 @@ dieselbe GUID-Verdrahtung, 26 Missionen, eine Klassifikation.
 
 ---
 
-## 1a. REV 2 — Duty-Ableitung aus dem Missionsziel (Thomas-Korrektur 08.11., maßgeblich für Ableitung/Scope; Parameter-Form seit Rev 3: §1b)
+## 1a. REV 2 — Duty-Ableitung aus dem Missionsziel (T.-Korrektur 08.11., maßgeblich für Ableitung/Scope; Parameter-Form seit Rev 3: §1b)
 
 **Befund:** Der Duty-Kanal aus §1/§2 („Change Group Instructions") ist die
 Überschreibung der **Legacy-Anweisungskarten** — gruppen-selektiv, mit
@@ -125,7 +125,7 @@ Referenzregel widerspricht, darf REF/ORD ihn nicht ungeprüft weiterreichen.
   nennen Ausnahmen. DG-Listen sind Anweisungskarten-Artefakte.
 * Duty-OBJEKT: Marker = per ModifyMapEntity spawnende Token-Entities;
   Zielfeld = Ziel-Entity. **Die Interaktions-OBERFLÄCHE ist
-  missionsindividuell und KEIN Bestandteil der Anweisung** (Thomas 08.11.
+  missionsindividuell und KEIN Bestandteil der Anweisung** (T. 08.11.
   III, Fresh-Beweis 08.11. auf richtiger JSON-Ebene
   `entityProperties.buttonActions`): HOTH10 hat Buttons — aber am
   **Zielfeld**: „Cell → Prisoner transferred"; die MARKER selbst haben
@@ -137,7 +137,7 @@ Referenzregel widerspricht, darf REF/ORD ihn nicht ungeprüft weiterreichen.
   Duty-Fakt steht allein auf Zähler + Gewinn-Seite; Setter am Button, an
   DG-Aktivierung oder extern (CORE27 Flucht-Feld) ist gleichwertig.
 * Duty-PARAMETER (Distanz/Aktionstyp): **KEINE Kuratur, keine Tabelle, kein
-  Pflegen pro Mission** (Thomas 08.11. II: „Ich möchte KEINE spezielle
+  Pflegen pro Mission** (T. 08.11. II: „Ich möchte KEINE spezielle
   Lösung für HOTH10"). Die Duty-Zeile verweist generisch auf die
   **gedruckte Missionsregel** — die Zahl/den Aktionstyp liest der
   Imperiumsspieler von seiner Missionskarte (HOTH10-REF als EXAMPLE, nie als
@@ -158,7 +158,7 @@ CORE28-Cache, OTHER9-Bind, CORE27-Courier — dieselbe Bauart wie HOTH10:
 Duty aus Ziel-Struktur, Parameter aus der gedruckten Missionsregel. Eine
 Speziallösung pro Mission existiert nicht und ist verboten.
 
-## 1b. REV 3 — Mischungsgesetz (Thomas-Korrektur 08.11. II, maßgeblich)
+## 1b. REV 3 — Mischungsgesetz (T.-Korrektur 08.11. II, maßgeblich)
 
 **Befund zur Rev-2-Form:** „Duty geht dem Bewegungsast vor" wäre
 spielzerstörend: die imperialen Figuren tun dann nichts als Marker
@@ -225,7 +225,7 @@ Ranking). Wer die Marker anfasst, zieht Gefechts-Gruppen an; die Escort
 selbst wehrt sich (Gesetz 1+3).
 
 **Gesetz 5 — Abgrenzung gegen die MissionObjekt-Mechanik (EMPIRE3-
-Demonstranten; Thomas 08.11. III).** Die beiden Mechaniken sind
+Demonstranten; T. 08.11. III).** Die beiden Mechaniken sind
 klassen-, schicht- und datenmäßig getrennt, Beweise aus den echten Dateien
 (08.11. gelaufen):
 
@@ -308,14 +308,14 @@ MISSIONSDIENSTANWEISUNG — gedruckt, geht dem Bewegungsast des Baums vor:
   ihn bereits in allen Sprachen („BEWEGUNG, GEFANGENER: Stoße den
   nächstgelegenen Gefangenen …" / „MOVE, PRISONER: …"). **Deshalb braucht
   es KEINEN 11-fach zu übersetzenden neuen Inhalts-Befehl, sondern nur die
-  Wrapper-Keys.** Das beantwortet Thomas' Befehl-in-allen-Sprachdateien-
+  Wrapper-Keys.** Das beantwortet T.' Befehl-in-allen-Sprachdateien-
   Punkt: nötig ja (2 Wrapper-Keys), Übersetzungsarbeit nein.
 * **Replace+Glyphen**: `TacticalMerge` behält DUTY-Klassen-Glyphenzeilen
   künftig (sie rendern im Duty-Block); Law/Effect-Replace bleiben
   unverändert → der EMPIRE13-Fix (Regel-Bullets bleiben, Würfelbaum bleibt)
   bleibt bit-identisch erhalten.
 * **Top-Ordnung**: Duty-Zeilen schweben nicht mehr über der Fokus-Zeile —
-  sie landen im Duty-Block. Leseordnung (Fokus zuerst, Thomas-Gesetz
+  sie landen im Duty-Block. Leseordnung (Fokus zuerst, T.-Gesetz
   29.10.) bleibt heil. Law-Zeilen bleiben, wo sie sind (minimale
   Änderungsbreite).
 * `interactLine` (dormant, 11/11) wird **bewusst nicht umgenutzt**: es
@@ -326,7 +326,7 @@ MISSIONSDIENSTANWEISUNG — gedruckt, geht dem Bewegungsast des Baums vor:
 
 ## 3. Die Abstands-Frage (das Kernargument)
 
-Thomas' Sorge: „wie willst du den Abstand zu den verschiedenen, parallel im
+T.' Sorge: „wie willst du den Abstand zu den verschiedenen, parallel im
 Spiel befindlichen Objekten bestimmen?" — oder: Befehl vage halten und
 Bewegung clever ausrichten.
 
@@ -346,7 +346,7 @@ Bewegung clever ausrichten.
    wörtlich. Die Runden-Dynamik (jede Runde ein neuer Marker, max 3 auf der
    Karte, 4 nötig) wird vom gedruckten Selektor **automatisch absorbiert**
    — die AI-Schicht muss über Marker-Anzahl nichts wissen und nichts pro
-   Runde neu berechnen. Genau das war Thomas' Vermutung — sie stimmt.
+   Runde neu berechnen. Genau das war T.' Vermutung — sie stimmt.
 3. **Gleichstände lösen nach gedrucktem Recht**: Die GH-Kaskade
    (S. 39-40: wenigste Bewegungspunkte → kürzeste Distanz nach
    Geländeregeln → Missionsrollen-Gewicht → Aktivierungsreihenfolge →
@@ -429,10 +429,10 @@ P3 Bridge-Einbau + Merge-Weiche + 11×3 Keys · P4 Popup-Vektoren
 (HOTH10/HOTH9/CORE27) + Bit-Identitäts-Regression. Grobe Ordnung: ein
 Arbeits-Sitzungs-Block; Details im GO-Gespräch.
 
-## 6. Entscheidungen — ENT SCHIEDEN (Thomas, 08.11.2026 via Rückfrage-Runde)
+## 6. Entscheidungen — ENT SCHIEDEN (T., 08.11.2026 via Rückfrage-Runde)
 
 1. ~~**Prioritäts-Wortlaut:** „geht dem Bewegungsast des Baums vor"~~
-   **AUßER KRAFT durch §1b (Thomas 08.11. II): kein absoluter Vorrang —
+   **AUßER KRAFT durch §1b (T. 08.11. II): kein absoluter Vorrang —
    Mischungsgesetz.** Die Entscheidungen 2 (Wachzone `apDutyGuardDef`) und
    3 (Wrapper-Keys) gelten weiter, angepasst an Baum-Ast statt Vorrang-
    Block; Key-Zahl wird bei GO final geschnürt (Wrapper + Ast-Zeilen).
@@ -502,7 +502,7 @@ sichtbare Missions-/Briefing-Oberfläche **REF-sauber** sein, sonst
 verweist die Anweisung auf einen Legacy-Widerspruch (HOTH10-Briefing
 says Offiziere+Sturmtruppen, REF says jede Figur 6). Das ist exakt der
 MedPac-Präzedenz (Bridge ~343: Satz-Ebene-Scrubbing in REF/ORD,
-Sprachdatei-übergreifend, von Thomas dev15). Pflicht bei Umsetzung:
+Sprachdatei-übergreifend, von T. dev15). Pflicht bei Umsetzung:
 JEDE Duty-Mission durch die bestehende Scrub-Mechanik prüfen; ist der
 Legacy-Satz nicht scrubbar, ist die Mission QA-blockiert, nicht der
 Duty-Block weglassbar.
@@ -541,7 +541,7 @@ AI-Ziel); `TacticalShippedIds` (M11) bleibt, Duty gilt nur für ausgelieferte
 taktische Missionen; `PatternWeights`-Loader ist freier Key-Value-Raum
 (dutyModifiers ist Daten-Zeile, kein Code pro Mission).
 
-## 9. Entscheidungen Runde II — ENT SCHIEDEN (Thomas, 08.11.2026 via Rückfrage-Runde II)
+## 9. Entscheidungen Runde II — ENT SCHIEDEN (T., 08.11.2026 via Rückfrage-Runde II)
 
 1. **W1 Zählertyp:** ein neuer generischer Typ **`objectiveCounter`** für
    alle Duty-Missionen — kein Mapping auf `capture` (würfe die

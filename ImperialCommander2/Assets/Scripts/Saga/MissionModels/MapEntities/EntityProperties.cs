@@ -10,7 +10,7 @@ namespace Saga
 		public string entityColor;
 		public List<ButtonAction> buttonActions { get; set; } = new List<ButtonAction>();
 
-		// LANGUAGE-BRIDGE (card t_1787135b P34-A1, Thomas 08.11): the authored
+		// LANGUAGE-BRIDGE (card t_1787135b P34-A1, T. 08.11): the authored
 		// ORIGINAL of theText, preserved by the TranslationController chokepoint
 		// BEFORE injection overwrites theText. Producers (TacticalAI feed) read
 		// ONLY this field (fallback theText when never injected = EN, i.e. the

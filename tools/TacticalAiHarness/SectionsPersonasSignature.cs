@@ -1,7 +1,7 @@
 // M6l SecPersonasSignature: the v2.1 signature-text canon (QA-FUND RR-B +
 // C2, CONCEPT_personas_v2 Sec.2 R4 rows, Delta-0 Beschluss 11). Hand-pinned
 // fixture (personas_signature.json, route like action_tree.json - NO
-// --record; fragments authored from the Thomas-signed signaturText anchors
+// --record; fragments authored from the T.-signed signaturText anchors
 // and the card law). Zero new Core semantics: this section reads the SHIPPED
 // ui.json of all 11 languages and pins the display contract:
 //   1 presence    - all 7 keys (6 signatures + personaDelta0Hint) exist and

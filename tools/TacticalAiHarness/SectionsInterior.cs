@@ -66,7 +66,7 @@ namespace TacticalAiHarness
                 Check("interior[" + name + "].reason", Json.AsStr(exp["reason"]), reason);
             }
 
-            // ---- the Thomas-signature path (synthetic rows: no shipped row
+            // ---- the T.-signature path (synthetic rows: no shipped row
             //      is signed yet) ----------------------------------------------
             foreach (var raw in Json.AsList(v["rows"]))
             {
@@ -377,7 +377,7 @@ namespace TacticalAiHarness
             // law), the CORE4 vocabulary carried over from the anchor
             // vectors; every DP carries its D3-B tile status. The buy/refund
             // rows pin the DP-first economy outcome (skip + rerank + refund,
-            // Thomas 09.11); the bridge-side literals are pinned by the
+            // T. 09.11); the bridge-side literals are pinned by the
             // gate's RunUsefulnessContract (the bridge is Unity-side, not
             // compile-visible here).
             // The block is OPTIONAL per file (additive-block law): a tree

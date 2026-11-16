@@ -38,7 +38,7 @@
 			if ( !TacticalAI.TacticalAISettings.Enabled )
 				return "AUTO";
 
-			// dev 21 (Thomas): ladder cycle shared with both other badges
+			// dev 21 (T.): ladder cycle shared with both other badges
 			aiMode = TacticalAI.TacticalAISettings.NextMissionToken( aiMode );
 
 			return TacticalAI.TacticalAISettingsUnity.MissionBadgeLabel( aiMode );

@@ -946,7 +946,7 @@
   },
   {
    "name": "p19_window_terminal_credit",
-   "comment": "Player-19 law (Thomas 03.11): the door opens while Lokaku is in turn -> LOKAKU is the designator, not the previous activator. Jyn's activation closed long before; no HeroActivated for Lokaku yet - the window is what credits him.",
+   "comment": "Player-19 law (T. 03.11): the door opens while Lokaku is in turn -> LOKAKU is the designator, not the previous activator. Jyn's activation closed long before; no HeroActivated for Lokaku yet - the window is what credits him.",
    "events": [
     {
      "kind": "MissionStart",
@@ -1123,7 +1123,7 @@
   },
   {
    "name": "p19_causal_strike_closer",
-   "comment": "M6s-B7 real-game strike law (Player-19 table discipline): the checkbox flip is the END of a turn and now a causal mission-log line. Damage on the objective-named figure arms a pending strike; the hero whose turn closes next is the shooter. MHD-19 can no longer steal it by flipping its (first-ever) box first. Player-21-b (Thomas 04.11): a landed strike now MOVES the objective marker onto the striker/closer - fighting the phase's troops IS objective work; this case's actor flips from empty to Jyn Odan by law.",
+   "comment": "M6s-B7 real-game strike law (Player-19 table discipline): the checkbox flip is the END of a turn and now a causal mission-log line. Damage on the objective-named figure arms a pending strike; the hero whose turn closes next is the shooter. MHD-19 can no longer steal it by flipping its (first-ever) box first. Player-21-b (T. 04.11): a landed strike now MOVES the objective marker onto the striker/closer - fighting the phase's troops IS objective work; this case's actor flips from empty to Jyn Odan by law.",
    "events": [
     {
      "kind": "MissionStart",
@@ -1457,7 +1457,7 @@
   },
   {
    "name": "p21_garrison_strike_window",
-   "comment": "Player-21-b (Thomas 04.11, EMPIRE2 log): the objective text ('Sucht im Diner nach dem Duros.') never names the garrison, but the troops the mission Spawned DURING this objective are its phase troops - damage inside a hero's window moves the objective marker. Facts only: spawn round vs change round vs window. Player-22 (Thomas screenshot 04.11): the spawn carries critical=true - the two-factor law (scenario-critical fact AND current-phase spawn).",
+   "comment": "Player-21-b (T. 04.11, EMPIRE2 log): the objective text ('Sucht im Diner nach dem Duros.') never names the garrison, but the troops the mission Spawned DURING this objective are its phase troops - damage inside a hero's window moves the objective marker. Facts only: spawn round vs change round vs window. Player-22 (T. screenshot 04.11): the spawn carries critical=true - the two-factor law (scenario-critical fact AND current-phase spawn).",
    "events": [
     {
      "kind": "MissionStart",
@@ -1592,7 +1592,7 @@
   },
   {
    "name": "p22_ambient_spawn_inert",
-   "comment": "Player-22 (Thomas 04.11, 'Es kann sein, dass auch so mal Truppen gespawnt werden, die NICHT Missionskritisch sind'): an ambient wave spawns DURING the diner objective but its defeat drives NO trigger/event (critical=false - the EMPIRE2 mid-war Stormtrooper DG002 / probe droid DG012 reality). Shooting it must NOT move the objective marker: the round window alone was the bug, only critical AND current-phase arms the garrison channel.",
+   "comment": "Player-22 (T. 04.11, 'Es kann sein, dass auch so mal Truppen gespawnt werden, die NICHT Missionskritisch sind'): an ambient wave spawns DURING the diner objective but its defeat drives NO trigger/event (critical=false - the EMPIRE2 mid-war Stormtrooper DG002 / probe droid DG012 reality). Shooting it must NOT move the objective marker: the round window alone was the bug, only critical AND current-phase arms the garrison channel.",
    "events": [
     {
      "kind": "MissionStart",

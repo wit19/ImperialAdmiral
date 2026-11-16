@@ -71,14 +71,14 @@ public static class MassiveInteriorGate
         RunAnchorMaskContract();   // P41d (card t_59ba21ee): spec 9.3-2/9.3-3 seams + the two ui rails
         RunUsefulnessContract();   // P41e (card t_1f93d98d): spec 5-D3-C/C2 + 9.3-4 (predicate, one refund point, economy skip)
         RunKeywordLaneTranslation(); // P42 (PlayerFinale 15.11): translated keyword lanes vs the live laws
-        RunAccuracyLaneTranslation(); // P42b (Thomas 15.11): the "+N Accuracy" pattern lane
+        RunAccuracyLaneTranslation(); // P42b (T. 15.11): the "+N Accuracy" pattern lane
         Console.WriteLine("MassiveInteriorGate: " + (fails == 0 ? "ALL PASS" : "FAILURES") +
                           " | checks=" + checks + " fails=" + fails);
         if (fails > 0) Environment.ExitCode = 1;
     }
 
     // ------------------------------------------------ keyword lane -------
-    // P42 (Thomas PlayerFinale 15.11, EMPIRE1 in DE): the FULL language
+    // P42 (T. PlayerFinale 15.11, EMPIRE1 in DE): the FULL language
     // overlays translate the printed keyword tokens ("Massive" -> DE
     // "Gewaltig", Ru "Огромный") and SetCardTranslations replaces the WHOLE
     // keywords list - so every live Keywords.Contains("Massive") law lost
@@ -220,7 +220,7 @@ public static class MassiveInteriorGate
     }
 
     // ------------------------------------------------ accuracy lane ------
-    // P42b (Thomas 15.11): the "+N Accuracy" pattern lane. KwAcc/SurgeAcc
+    // P42b (T. 15.11): the "+N Accuracy" pattern lane. KwAcc/SurgeAcc
     // (Core/Dice.cs) read hit-probability bonuses from tokens, and the
     // overlays translate the WORD ("+2 Zielsicherheit", "+1 de Precisão",
     // "+2 к точности", ...). The bridge normalizes (TacticalAIBridge
@@ -449,7 +449,7 @@ public static class MassiveInteriorGate
             string cBiome = Json.AsStr(c["biome"]);
             string cCand = Json.AsStr(c["candidate_status"]);
             bool cRr = Json.AsBool(c["rr_enumerated"]);
-            object cRulingRaw = Json.Get(c, "thomas_ruling", null);
+            object cRulingRaw = Json.Get(c, "t_ruling", null);
             string cRuling = cRulingRaw == null ? "" : Json.AsStr(cRulingRaw);
             string where = cExp + cId + cSide;
             if (r.Expansion != cExp || r.TileId != cId || r.Side != cSide ||
@@ -491,7 +491,7 @@ public static class MassiveInteriorGate
                 signed++;
                 if (cRuling != "BANNED" && cRuling != "OPEN" && cRuling != "AMBIGUOUS")
                 {
-                    Fail(where + ": thomas_ruling '" + cRuling + "' is not a status word");
+                    Fail(where + ": t_ruling '" + cRuling + "' is not a status word");
                 }
             }
         }

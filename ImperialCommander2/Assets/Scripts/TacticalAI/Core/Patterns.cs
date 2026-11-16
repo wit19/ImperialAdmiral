@@ -156,7 +156,7 @@ namespace TacticalAI.Core
 
             if (pattern == "guard")
             {
-                // M13t (Thomas 30.10.): a printed Stativ/Tripod figure loses
+                // M13t (T. 30.10.): a printed Stativ/Tripod figure loses
                 // its attack the moment it leaves its space - even a shuffle
                 // inside the guard zone is an attack spent. Pin it to the
                 // space it holds (same hold-logic the unarmed ambusher uses);

@@ -2,7 +2,7 @@
 // TrackerBindLaw functions HPTrackerContainer calls in the Unity app
 // (ResolveBoard for the bind, TryBeginCommit for every close rail) over an
 // op-scripted container simulator. Ground truth is HAND-PINNED in
-// tracker_bind.json (Thomas' route for law-pins without a Python sim twin,
+// tracker_bind.json (T.' route for law-pins without a Python sim twin,
 // same as settings_load.json) - this section mirrors the container's op
 // semantics, never re-implements the law. The two Player-33 oscillation
 // replays (p33_z745, p33_z799) pin that no commit can land as [0,0,0] after

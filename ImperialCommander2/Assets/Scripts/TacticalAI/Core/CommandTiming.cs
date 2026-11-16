@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace TacticalAI.Core
 {
     // ==================================================================
-    //  Player-24 BEFEHLSZEITPTUNKT-Gesetz (Thomas 04.11 Go) — "Nutzlast
+    //  Player-24 BEFEHLSZEITPTUNKT-Gesetz (T. 04.11 Go) — "Nutzlast
     //  vor Ort" replaces the blind "buff_before_receiver".
     //
     //  The printed facts (De/DeploymentGroups/enemies.json, DG004/DG005/
@@ -23,13 +23,13 @@ namespace TacticalAI.Core
     //  The law, per living elite supporter, on ZONE facts only (the app
     //  never sees board cells - Nie-raten-Gesetz; the exact 2-field
     //  command ring is TABLE knowledge and the why-line says so):
-    //    receiver = ENGAGED FIRST (Player-24 log review, Thomas 04.11):
+    //    receiver = ENGAGED FIRST (Player-24 log review, T. 04.11):
     //      attack-pattern groups whose zone carries a fresh same-round
     //      hero anchor compete first - the table commander orders the
     //      troop in contact, where the interrupt pays. Nobody engaged ->
     //      the strongest of the known cards wins (lower Index breaks
     //      ties; unknown EV = never chosen). SINGLE-FIGURE PAYLOAD (law
-    //      review 2, Thomas 04.11): a command is given to ONE named
+    //      review 2, T. 04.11): a command is given to ONE named
     //      figure - the ordered stormtrooper attacks with ITS dice, not
     //      with the whole group's pool - so the ranking key is the card's
     //      PRINTED PER-FIGURE attack EV x VitalityFrac, never the group
@@ -104,7 +104,7 @@ namespace TacticalAI.Core
                     Before = !engaged,
                     RingShared = shared,
                 };
-                // Public-safe German (Thomas-Gesetz: what, not how). The
+                // Public-safe German (T.-Gesetz: what, not how). The
                 // receiver is named - friendly table knowledge, zero
                 // guessing. The command's printed reach fact rides along.
                 string line = engaged
@@ -135,7 +135,7 @@ namespace TacticalAI.Core
         /// law header for the ENGAGED-FIRST tiers. Ties keep the LOWER
         /// Index (Python max keeps first).
         ///
-        /// Player-24 log review (Thomas 04.11, Player-24.log R2): ENGAGED
+        /// Player-24 log review (T. 04.11, Player-24.log R2): ENGAGED
         /// FIRST. A raw-EV pick sent the Vollstreckungsbefehl's plan to the
         /// strongest troop ACROSS the map while the heroes stood right next
         /// to the garrison - the table commander orders the troop HE SEES IN
@@ -189,7 +189,7 @@ namespace TacticalAI.Core
             return true;
         }
 
-        /// The payload yardstick (Player-24 review 2, Thomas 04.11): a
+        /// The payload yardstick (Player-24 review 2, T. 04.11): a
         /// command is given to ONE named figure, never to a group or type -
         /// the ordered stormtrooper attacks with ITS dice, not with the
         /// four-figure group's pool. So the receiver key is the PRINTED

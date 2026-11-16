@@ -81,13 +81,13 @@ namespace Saga
 			float pixelHeightOfCurrentScreen = Screen.height;//.currentResolution.height;
 			float pixelWidthOfCurrentScreen = Screen.width;//.currentResolution.width;
 			aspect = pixelWidthOfCurrentScreen / pixelHeightOfCurrentScreen;
-			// M13c2 (Thomas 30.10.): the base game's small-screen single-view
+			// M13c2 (T. 30.10.): the base game's small-screen single-view
 			// mode (mission list hidden, 'switch view button' shown whenever
 			// aspect < 1.7) is RETIRED for this screen: the mission list and
 			// the hero information are ALWAYS shown together, the switch
 			// button never appears. Campaign-manager dual layout exactly as
 			// the game showed it on wide screens before; the IMP bar button
-			// (Thomas: keep as is) is untouched.
+			// (T.: keep as is) is untouched.
 			if ( switchButton != null ) switchButton.SetActive( false );
 			leftPanel.SetActive( true );
 			campaignHelpMockup.SetActive( true );
@@ -238,7 +238,7 @@ namespace Saga
 				AddItemToUI( sagaCampaign.GetItemFromID( item.Key ) );
 			//M13k: Imperial class-deck info behind a bar button + scrollable
 			//popup (the old inline section crowded the overview and overlapped
-			//the rebel items list - Thomas playtest 29.10.)
+			//the rebel items list - T. playtest 29.10.)
 			AddPersonaButtonToBar();
 			//allies
 			foreach ( var ally in sagaCampaign.campaignAllies.OrderBy( x => x.name ) )
@@ -356,7 +356,7 @@ namespace Saga
 			{
 				//add item cost back to credits
 				var sc = FindObjectOfType<CampaignManager>();
-				// P42b (Thomas 15.11): ONLY in the Tactical AI campaign
+				// P42b (T. 15.11): ONLY in the Tactical AI campaign
 				// mode a removed purchase refunds its resale value
 				// ceil(cost/2), not the full price - the old full refund
 				// made the credit pool a buy/remove churn loop, and in
@@ -390,7 +390,7 @@ namespace Saga
 		}
 
 		/// <summary>
-		/// M13k (Thomas playtest 29.10.): the Imperial class-deck/agenda info
+		/// M13k (T. playtest 29.10.): the Imperial class-deck/agenda info
 		/// moves off the crowded overview into a scrollable popup behind a new
 		/// button inserted in the top-right bar, LEFT of the yellow "?" help
 		/// button (clone of that button: same visual language, zero prefab/
@@ -409,7 +409,7 @@ namespace Saga
 				// Visible whenever the tactical AI plays (also at 'none':
 				// the button is HOW you pick one).
 				if ( !TacticalAI.TacticalAISettings.Enabled ) return;
-				// M13o (Thomas Player-10.log): at this call the bar may not
+				// M13o (T. Player-10.log): at this call the bar may not
 				// be ACTIVE yet (GameObject.Find only sees activeInHierarchy)
 				// - the run failed with "help button not found" and the
 				// button never appeared. Locate + clone through a retry
@@ -502,7 +502,7 @@ namespace Saga
 			label.fontStyle = TMPro.FontStyles.Bold;
 			label.alignment = TMPro.TextAlignmentOptions.Center;
 			label.color = new Color( 0.02f, 0.10f, 0.09f, 1f );
-			// Thomas playtest 02.11.: long persona names overflowed the
+			// T. playtest 02.11.: long persona names overflowed the
 			// 20pt unwrapped label - wrap inside the button, 10pt.
 			label.enableWordWrapping = true;
 			// (TMP 3.0.9 has no enableHyphenation yet - Ellipsis below is
@@ -554,7 +554,7 @@ namespace Saga
 			Debug.Log( "PersonaButton::cycle -> " + next );
 		}
 
-		/// <summary>Short live label: the persona NAME only (Thomas playtest
+		/// <summary>Short live label: the persona NAME only (T. playtest
 		/// 02.11.: the "PERSONA: " head pushed long names over the button
 		/// edge - the teal colour plus the popup header identify the
 		/// control, the label carries just the selection).</summary>

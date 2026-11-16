@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# M24 Zweitimplementierung (Thomas-Ruling 06.11.: Heiler-Kartenpin wird
+# M24 Zweitimplementierung (T.-Ruling 06.11.: Heiler-Kartenpin wird
 # ZUERST gechippt - Class 3 ueber dem Support). Die C#-Kette HeroCard.
 # HeilerEffektiv -> HeroProfiles.ChipKey -> OverlordFocus.CompareChip wird
 # hier auf eigenen Beinen nachgerechnet (nur stdlib + Fixture-Daten); die

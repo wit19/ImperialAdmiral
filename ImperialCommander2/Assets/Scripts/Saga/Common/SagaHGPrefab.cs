@@ -67,7 +67,7 @@ namespace Saga
 		}
 
 		/// <summary>
-		/// Thomas 07.11: the activation-chip golden rule on its OWN widget - the
+		/// T. 07.11: the activation-chip golden rule on its OWN widget - the
 		/// hero's activation checkbox must be flipped at the END of the hero's
 		/// turn (after damage, kills and interactions are announced), because the
 		/// flip is the ONLY carrier of HeroActivated (M6s-B7) and every tactical

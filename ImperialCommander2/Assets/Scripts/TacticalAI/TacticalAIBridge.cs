@@ -8,7 +8,7 @@
 // What is faithful TODAY, inside this repo's runtime model:
 //  * round activation ORDER  -> Core OrderPlanner (initiative/elite/deterministic
 //    tiebreak, seeded DeterministicRandom, why-strings; never GlowEngine RNG),
-//  * per-round activation blocks -> synthesized since M11 (Thomas 31.10.:
+//  * per-round activation blocks -> synthesized since M11 (T. 31.10.:
 //    the order DECKS were a concept corpse - RR gives every activation its
 //    printed actions (move + attack, one attack cap); the printed Stativ/
 //    Tripod exclusion lives on the figure (catalog IsTripod), not on a card),
@@ -18,7 +18,7 @@
 // Documented deviations (see docs/PR_draft.md): the IC2 Saga map is a
 // tilemap of deployment points, NOT a hex grid with figure positions - there
 // is no hex world model in the Unity code to snapshot. Per concept v4.0
-// (3.3.1b, Thomas 27.10) the planned "hex adapter" is REPLACED by a PASSIVE
+// (3.3.1b, T. 27.10) the planned "hex adapter" is REPLACED by a PASSIVE
 // world feed: tile graph + token-to-region reading + event stream + mission
 // properties, all read-only, zero manual position entry (canon rule: a
 // feature may never make a human report positions/state to the app). The
@@ -45,20 +45,20 @@ namespace TacticalAI
         public string[] Blocks;         // action tokens pre-render (public text)
         public string TargetName;       // deterministic focus target
         public string TargetWhy;
-        // Thomas 02.11 (popup declutter, request 1): the focus-target WHY
+        // T. 02.11 (popup declutter, request 1): the focus-target WHY
         // lives here now - the popup line stays short ("Fokus-Ziel: Name")
         // and the reason renders inside the gated EXPLAIN section only.
         public string FocusReason;
         public string ExplainLine;      // printed why-string (ExplainLevel)
         public bool HasTarget;
         public string Pattern;          // doctrine pattern (dev 11); null = aggressive
-        // M6p (Thomas 02.11): the doctrine line renders PERMANENTLY right after
+        // M6p (T. 02.11): the doctrine line renders PERMANENTLY right after
         // the focus-target line - independent of the EXPLAIN level, exactly
         // like the focus line itself. Built from the existing uiTacticalAI keys
         // (doctrineHeader + doc* name); ExplainFor does not carry the doctrine
         // anymore (no double display).
         public string DoctrineLine;
-        // M13t (Thomas 30.10.): the activation's card prints Stativ/Tripod.
+        // M13t (T. 30.10.): the activation's card prints Stativ/Tripod.
         // The renderer swaps in the emplacement action trees: every move
         // forfeits the attack, so the tree must never suggest one while a
         // post is held or a target is in range.
@@ -68,7 +68,7 @@ namespace TacticalAI
         // The activation then runs TWO attack blocks; the second one is the
         // printed second attack, not a conditional move-check.
         public bool Assault;
-        // Thomas 02.11 (Offizier-Baeume): printed command ability, surfaced as
+        // T. 02.11 (Offizier-Baeume): printed command ability, surfaced as
         // catalog keywords in ToRecord (ability lane + DG-id belt; the
         // ignored-lane route is dead at runtime - SetCardTranslations()
         // blanks it):
@@ -76,7 +76,7 @@ namespace TacticalAI
         //   "OfficerExecOrder" -> apTreeOfficerElite<Pattern>  (DG006)
         public bool Officer;
         public bool OfficerElite;
-        // O-C (Thomas 04.11., card t_a2d88c50): supporter-codex tree variant,
+        // O-C (T. 04.11., card t_a2d88c50): supporter-codex tree variant,
         // decided by OfficerDoctrine.TreeKindFor. OfficerKeep = show the
         // apTreeOfficerKeep<Pattern> ersatzzweig (supporter, S2+, no PROVEN
         // emergency). EmergencyWhy = pre-rendered apTreeOfficerNotfall line
@@ -133,7 +133,7 @@ namespace TacticalAI
         static WorldEventsUnity _feedAdapter;
         static bool _feedTried;
 
-        // M11 (Thomas 31.10.): order decks retired (concept corpse). The set
+        // M11 (T. 31.10.): order decks retired (concept corpse). The set
         // below replaces the old deck-membership check as the tactical-support
         // whitelist: it is the EXACT key set of the retired public
         // order_decks.json artifact (89 shipped cards DG001-DG069 + the 20
@@ -206,7 +206,7 @@ namespace TacticalAI
         // never a decision themselves (ExplainFor only RENDERS them).
         static Dictionary<string, Tac.WachzoneDecision> _sdWatchByGroup;
         static Dictionary<string, Tac.ThreeCFact> _sdThreeCByGroup;
-        // Player-24 Befehlszeitpunkt (Thomas 04.11 Go): this round's timing
+        // Player-24 Befehlszeitpunkt (T. 04.11 Go): this round's timing
         // table for ELITE supporters (Vollstreckungsbefehl only - the plain
         // command moves a turn, it never creates one, so the Player-21
         // head-slot demotion stays its whole story). Null off the
@@ -248,7 +248,7 @@ namespace TacticalAI
         // the Debug channel; rewritten by ClassifyPattern every round.
         static readonly Dictionary<string, string> _patternRoll =
             new Dictionary<string, string>();
-        // Punkt-2 block (Thomas + Noldorion 2.11): doctrine phase state.
+        // Punkt-2 block (T. + Noldorion 2.11): doctrine phase state.
         // _doctrineEffective is the per-round posture the classification
         // consumes (base defend -> hunt phase flip); the guard band holds
         // the back-half troopers of a defend deployment (S4/S5, see
@@ -256,12 +256,12 @@ namespace TacticalAI
         static string _doctrineBase;
         static string _doctrineEffective;
         static bool _phaseShiftAnnounced;
-        // _splitAnnounced REMOVED (Thomas 02.11, Unity CS0414): the Personas
+        // _splitAnnounced REMOVED (T. 02.11, Unity CS0414): the Personas
         // commit fa8597f added it with its session reset but no consumer ever
         // existed - dead state, deleted rather than silenced.
         static int _guardBandCount;
         static HashSet<string> _guardIds;   // back-half defend troopers (this round)
-        // Personas (M2, Thomas 02.11.): the live round's resolved persona
+        // Personas (M2, T. 02.11.): the live round's resolved persona
         // (rank + effects). EMPTY view = no persona = the exact pre-persona
         // behaviour on every hook below. Announcements are once-per-mission
         // (ResetSession clears); the rank itself is a pure (persona, threat)
@@ -397,7 +397,7 @@ namespace TacticalAI
         }
 
         /// <summary>Public gate for game-side features that the Reference
-        /// Rules replace outright (dev 15, Thomas): MedPacs are the app's
+        /// Rules replace outright (dev 15, T.): MedPacs are the app's
         /// healing shortcut - printed rules keep a hero wounded until the
         /// mission ends, so Saga hides the whole MedPac mechanic in REF/ORD
         /// missions. Same mission-frozen semantics as ActiveNow().</summary>
@@ -421,7 +421,7 @@ namespace TacticalAI
             @"[^.!?\n\r]*(?:\bmarker|\btoken|jelz|жетон|żeton)[^.!?]*[.!?]?",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        /// <summary>REF/ORD text law (Thomas playtest 29.10.): crates still
+        /// <summary>REF/ORD text law (T. playtest 29.10.): crates still
         /// exist, but the MedPac reward is mechanically SKIPPED in tactical
         /// missions (dev 15) - so no mission text may promise one either.
         /// Strips every MedPac sentence from mission prose, plus the
@@ -673,7 +673,7 @@ namespace TacticalAI
                             Tac.SkillProfile.For(TacticalAISettings.EffectiveSkill(
                                 CurrentMissionAiMode())),
                             LastCriticalSections);
-                        // Playtest forensics (Thomas 07.11, M14f Kontrollentwurf):
+                        // Playtest forensics (T. 07.11, M14f Kontrollentwurf):
                         // one greppable snapshot per pull ("SD-ZONES::") so a
                         // playtest session records WHAT the proximity feed saw -
                         // trust-gated own zones, fresh hero rings, contested
@@ -724,7 +724,7 @@ namespace TacticalAI
             try
             {
             EnsureSessionFresh();
-            // Thomas 02.11: the post_hoc ("NACHHER") explain mode is GONE -
+            // T. 02.11: the post_hoc ("NACHHER") explain mode is GONE -
             // the explain switch is a plain AN/AUS toggle now (AN == the old
             // VOLL per-activation block). The round-end quick message that
             // carried the post_hoc summary is removed with the mode.
@@ -800,8 +800,8 @@ namespace TacticalAI
             EnsurePersona();
             // M5: fresh feed state BEFORE building this round's plan
             var feedView = PullFeedView();
-            // Noldorion direction reply 2.11 + Thomas 01.11. (Punkt 2) +
-            // P34-B DIRECTION law (Thomas 08.11, card t_1787135b): doctrine
+            // Noldorion direction reply 2.11 + T. 01.11. (Punkt 2) +
+            // P34-B DIRECTION law (T. 08.11, card t_1787135b): doctrine
             // phase. Base = MissionPosture() (structured mission data). The
             // final-third flip defend -> hunt is legitimate ONLY when the
             // parsed victory wiring proves the EMPIRE is under the clock
@@ -863,7 +863,7 @@ namespace TacticalAI
             if (feedView != null && _postureLogRound != roundNo)
             {
                 _postureLogRound = roundNo;
-                // P33-H4 (B2, Thomas 08.11, CONCEPT_drohungsbudget Sec.3): the
+                // P33-H4 (B2, T. 08.11, CONCEPT_drohungsbudget Sec.3): the
                 // log carried TWO meanings under one word "posture=" - this
                 // FEED-derived posture and the DOCTRINE posture the plan runs
                 // (Player-33: feed stall vs doctrine hunt read as a
@@ -885,7 +885,7 @@ namespace TacticalAI
             // the same stream re-pulled yields the same answer, quiet rounds
             // flip zero times). SKILL-GATED here at the consumer: the clamp
             // refines the posture READING, one of the three refinement
-            // channels SectionSkill owns (S3+; Thomas-Gesetz 04.11. - the
+            // channels SectionSkill owns (S3+; T.-Gesetz 04.11. - the
             // event-driven exceptions themselves stay IMMER).
             posture = ClampPosture(posture, skill);
             // NOTE(overlord): the ORD optimization goal runs on the PASSIVE
@@ -893,7 +893,7 @@ namespace TacticalAI
             // posture + wheel vitality, NEVER manual position entry. With a
             // registered feed the S4/S5 plan is honest ORD and NO notice is
             // shown. Only without any feed does overlord fall back to the
-            // reference ruleset - visibly, not silently (Thomas playtest 27.10).
+            // reference ruleset - visibly, not silently (T. playtest 27.10).
             // M6 A.7: the condition is on the PROJECTED VIEW, not the Feed
             // object - a registered-but-unusable feed (stale mission key,
             // failed pull) warns exactly like a missing one; with an active
@@ -902,7 +902,7 @@ namespace TacticalAI
             {
                 Debug.Log("TacticalAIBridge::overlord without world feed - planning at reference ruleset");
                 // ...and once per mission ALSO visibly, not just in the log
-                // (Thomas playtest 27.10: he selected OVERLORD and correctly
+                // (T. playtest 27.10: he selected OVERLORD and correctly
                 // observed reference behaviour - the degradation must not be
                 // silent in the player's face).
                 if (!_overlordNoticeShown)
@@ -946,7 +946,7 @@ namespace TacticalAI
                               " feedSeq=" + feedView.Seq +
                               " risk=" + (_riskByGroup != null ? _riskByGroup.Count : 0) + " groups");
                 // M6s-B9: the per-hero accounting behind that threat= line
-                // (Thomas 03.11: show WHAT was computed, not how it works).
+                // (T. 03.11: show WHAT was computed, not how it works).
                 LogThreatAccounting(roundNo);
             }
 
@@ -988,7 +988,7 @@ namespace TacticalAI
                     Debug.LogWarning("TacticalAIBridge::section decisions cache failed: " + e.Message);
                 }
             }
-            // Player-24 Befehlszeitpunkt (Thomas 04.11 Go): replace the
+            // Player-24 Befehlszeitpunkt (T. 04.11 Go): replace the
             // blind "buff first" anchor with the printed interrupt
             // semantics. Zone facts only (the app never sees cells): fresh
             // hero anchor in the receiver's zone -> the troop activates
@@ -1042,7 +1042,7 @@ namespace TacticalAI
             // midround detector above watches ONLY events after this seq.
             _planSeqAtBuild = feedView != null ? feedView.Seq : -1;
 
-            // M11 (Thomas 31.10.): the per-round order-card deal is GONE with
+            // M11 (T. 31.10.): the per-round order-card deal is GONE with
             // the decks (concept corpse). Nothing to reap, nothing to deal -
             // the round plan above is the only round-start state.
         }
@@ -1050,7 +1050,7 @@ namespace TacticalAI
         // ------------------------------------------------------ activation hook
 
         /// <summary>OnActivateImperial hook: R-C (concept v1.2 par.2.2,
-        /// Thomas decision 04.11., IMMER) - the order is re-scored from the
+        /// T. decision 04.11., IMMER) - the order is re-scored from the
         /// REMAINING figures at EVERY press: ReactionOrder.SelectNext over
         /// exactly the candidates handed here (the App's GetNonExhaustedGroups
         /// IS the pending set; ExhaustGroup per activation keeps the
@@ -1149,14 +1149,14 @@ namespace TacticalAI
                                      "' not among the candidates -> legacy draw (fail-open)");
                     return false;
                 }
-                // Thomas reads the log as the explanation UI: the public
+                // T. reads the log as the explanation UI: the public
                 // points account behind this pick (concept 2.4 why-line).
                 Debug.Log("TacticalAIBridge::" + why);
                 return true;
             }
             catch (Exception e)
             {
-                // Playtest hotfix 27.10 (Thomas): ANY planning exception must
+                // Playtest hotfix 27.10 (T.): ANY planning exception must
                 // never swallow the activation click - fail-open to the legacy
                 // dice draw, loudly. Root cause stays in the log for diagnosis.
                 Debug.LogWarning("TacticalAIBridge::peek failed -> legacy draw: " + e);
@@ -1172,7 +1172,7 @@ namespace TacticalAI
         /// False => popup keeps its legacy blocks verbatim.</summary>
         public static bool TryBuildActivationPlan(global::DeploymentCard cd, out ActivationPlanData plan)
         {
-            // Playtest hotfix 27.10 (Thomas): the activation popup must NEVER
+            // Playtest hotfix 27.10 (T.): the activation popup must NEVER
             // die on a planning exception - fail-open to the legacy blocks,
             // loudly. Root cause stays in the log for diagnosis.
             try
@@ -1196,7 +1196,7 @@ namespace TacticalAI
             EnsureRound(CurrentRound());
             EnsureCatalog();
             Tac.DeploymentCard catCard;
-            // M11 (Thomas 31.10.): the order decks are retired as a concept
+            // M11 (T. 31.10.): the order decks are retired as a concept
             // corpse - no assets to load, no cards to draw or finish. The
             // catalog membership (printed-card whitelist, see
             // TacticalShippedIds) alone decides tactical vs. legacy popup;
@@ -1210,14 +1210,14 @@ namespace TacticalAI
             // instead of its printed second shot. Tripod without Assault:
             // the emplacement either holds and shoots or leaves (never
             // both). Everything else: the printed move + attack pair.
-            // Thomas playtest 02.11 (Player-16): the persona line MUST be
+            // T. playtest 02.11 (Player-16): the persona line MUST be
             // assigned AFTER the object exists - the M3 insert sat above the
             // ctor, NRE'd on every activation and failed the whole popup
             // open to the legacy blocks.
             plan = new ActivationPlanData { CardId = cd.id, Tripod = catCard.IsTripod,
                                             Assault = catCard.HasAssault };
             plan.PersonaLine = PersonaLine(cd.id);
-            // Offizier detection (Thomas 02.11, Player-17 fix): keyword view
+            // Offizier detection (T. 02.11, Player-17 fix): keyword view
             // of the CATALOG card - injected from the printed ability lane +
             // DG-id belt in ToRecord. The first draft read cd.ignored, which
             // the app's SetCardTranslations() overwrites with the language
@@ -1227,7 +1227,7 @@ namespace TacticalAI
             if (plan.Officer)
                 Debug.Log("TacticalAIBridge::officer " + cd.id +
                           " order=1 elite=" + (plan.OfficerElite ? 1 : 0));
-            // Player-24 log review (Thomas 04.11 Go): the timing decision was
+            // Player-24 log review (T. 04.11 Go): the timing decision was
             // REAL but invisible in the Player log - it lived only on the
             // round-plan card. Playtests must SEE which receiver and which
             // branch the law chose, so the supporter's activation prints its
@@ -1300,7 +1300,7 @@ namespace TacticalAI
                 {
                     plan.HasTarget = true;
                     plan.TargetName = targetName;
-                    // Thomas 02.11 (request 1): the action screen shows ONLY the
+                    // T. 02.11 (request 1): the action screen shows ONLY the
                     // target name; TrySelectTarget hands back the bare reason,
                     // which ExplainFor renders in the EXPLAIN section.
                     // R-D: when the reaktion key decided the pick, the focus line
@@ -1309,13 +1309,13 @@ namespace TacticalAI
                     plan.FocusReason = why;
                 }
             }
-            // Thomas 29.10: the focus line is NOT part of the explanation
+            // T. 29.10: the focus line is NOT part of the explanation
             // anymore - the popup prints it ABOVE the action blocks (focus
             // first, then actions, then the gated explanation); the
             // ExplainLevel gate now really hides only the explanation.
             // Doctrine pattern from the card's Core catalog record (dev 11),
             // classified by MissionPosture() x printed traits at catalog
-            // build (M4, Thomas 29.10.): defend-missions put guards and
+            // build (M4, T. 29.10.): defend-missions put guards and
             // blockers on the objective, hunt-missions run zero guards.
             // The renderer carries full action-tree text for all six
             // patterns, so no doctrine ever ships as bare tokens.
@@ -1362,7 +1362,7 @@ namespace TacticalAI
             // resolved ABOVE (before the target choice, so the S-E supporter
             // mask-trust channel sees the emergency fact). plan.OfficerKeep /
             // plan.EmergencyWhy are already set by that hoisted block.
-            // M6p (Thomas 02.11): the doctrine moved OUT of the gated explain
+            // M6p (T. 02.11): the doctrine moved OUT of the gated explain
             // block into this permanent line - the popup prints it directly
             // after the focus-target line, always visible (EXPLAIN level is
             // irrelevant, same law as the focus line). Reuses the existing
@@ -1371,11 +1371,11 @@ namespace TacticalAI
             if (UIx != null && !string.IsNullOrEmpty(UIx.doctrineHeader))
                 plan.DoctrineLine = TF(UIx.doctrineHeader,
                                        DoctrineName(plan.Pattern ?? "aggressive", UIx));
-            // Thomas 02.11: explain is built AFTER the pattern exists (M6p: it
+            // T. 02.11: explain is built AFTER the pattern exists (M6p: it
             // no longer reads it - the doctrine left the explain block) and
             // before the blocks render.
             plan.ExplainLine = ExplainFor(cd.id, plan);
-            // Playtest 27.10 (Thomas): raw deck tokens ('move', 'attack') are
+            // Playtest 27.10 (T.): raw deck tokens ('move', 'attack') are
             // not an instruction a human Imperial player can execute. Render
             // every block as a concrete, localized order naming the focus
             // target (which names are PUBLIC once dealt - fairness unaffected).
@@ -1402,7 +1402,7 @@ namespace TacticalAI
             // says exactly that, in the group's own popup (the villain-option
             // block above already names its ability -> no duplicate advice).
             plan.Blocks = WithAbilitiesLaneNote(plan, cd);
-            // M13n (Thomas 29.10): general RR info block under the actions,
+            // M13n (T. 29.10): general RR info block under the actions,
             // BEFORE the gated explanation (popup appends ExplainLine after
             // Blocks, so appending here lands exactly between them). Door law
             // verified against RR DOORS: "A figure can interact with a door to
@@ -1410,7 +1410,7 @@ namespace TacticalAI
             // costs an action; it is never a free side-effect of movement.
             // Missing keys skip their line (never a blank row).
             var Li = UIx;
-            // M13c (Thomas 30.10): ONE merged info paragraph at the door-law
+            // M13c (T. 30.10): ONE merged info paragraph at the door-law
             // position - basic attack rule + attack line + door law - under
             // the actions, BEFORE the gated explanation; hideable via the new
             // settings row "Info-Text" (default ON). Missing keys skip their
@@ -1418,7 +1418,7 @@ namespace TacticalAI
             if (TacticalAISettings.InfoText && Li != null)
             {
                 var infoLines = new List<string>();
-                // Thomas 08.11: the activation-chip golden rule leads the
+                // T. 08.11: the activation-chip golden rule leads the
                 // block now (his wording: 'zu Beginn des Info Blocks') -
                 // "unbedingt ... das muss ein Spieler wissen": the hero chip
                 // flips at the END of the hero's turn, after damage, kills
@@ -1429,7 +1429,7 @@ namespace TacticalAI
                 if (!string.IsNullOrEmpty(Li.ordInfoRule)) infoLines.Add(Li.ordInfoRule);
                 if (!string.IsNullOrEmpty(Li.ordInfoAttack)) infoLines.Add(Li.ordInfoAttack);
                 if (!string.IsNullOrEmpty(Li.ordInfoDoor)) infoLines.Add(Li.ordInfoDoor);
-                // M6s (Thomas 03.11., B1): the guard-zone definition rides the
+                // M6s (T. 03.11., B1): the guard-zone definition rides the
                 // Wachschutz popup ONLY (plan.Pattern == "guard" - the same
                 // pattern the tree/renderer already resolved above); every
                 // other doctrine popup stays zone-free (OfficerTextGate bug3
@@ -1533,15 +1533,15 @@ namespace TacticalAI
         }
 
         // --------------------------------------------------------------------
-        // Aufgabe 4 (Thomas 02.11): the universal action block. The fixed
+        // Aufgabe 4 (T. 02.11): the universal action block. The fixed
         // "Aktion 1 / Aktion 2" pair is RETIRED: ONE action-point pool runs a
         // per-doctrine decision tree once per point, framed by the accent
         // head, the italic reading rule and the red loop-trap end marker
-        // (" Noch Punkte uebrig? -> Baum von oben." - Thomas' corrected
+        // (" Noch Punkte uebrig? -> Baum von oben." - T.' corrected
         // semantics: the marker loops the tree, it does NOT skip to the next
         // figure; dice/effects belong to the actions themselves and are
         // deliberately NOT mentioned in the frame).
-        // Frame A (Thomas' formatting choice 02.11): TMP tags and the {0}
+        // Frame A (T.' formatting choice 02.11): TMP tags and the {0}
         // speed slot live in the ui.json values - the language owns the
         // text, the code only assembles (ui.json law). Every tree line
         // becomes its own popup row (fixed-height TMP rows cannot carry
@@ -1656,7 +1656,7 @@ namespace TacticalAI
                 if (!string.IsNullOrEmpty(line.Trim()))
                     outp.Add(line.Replace("{0}", speed));
             if (!string.IsNullOrEmpty(L.apEnd)) outp.Add(L.apEnd);
-            // M6s-B11 (Thomas 03.11, 'zeige die missionseigenen Textzeilen
+            // M6s-B11 (T. 03.11, 'zeige die missionseigenen Textzeilen
             // mit an'): a MISSION-AUTHORED custom figure carries its own
             // printed rule lines - the mission's bonus sentences and its
             // ability texts. These are public scenario card text (the human
@@ -1702,7 +1702,7 @@ namespace TacticalAI
         // units always take their printed emplacement tree (M13t: movement
         // and shot exclude each other), independent of the pattern - the
         // E-Web saw pattern-dependent trees before, the printed rule wins.
-        // Officers (Thomas 02.11, corrected): command ability + PER-DOCTRINE
+        // Officers (T. 02.11, corrected): command ability + PER-DOCTRINE
         // officer tree - the doctrine's own action wording (Wachzone,
         // Blockierfeld, cover, ambush) stays, the Order branches ride on top.
         // Elite ("Executive Order", C1 sign-off 02.11.) asks one receiver
@@ -1713,7 +1713,7 @@ namespace TacticalAI
         {
             if (!plan.HasTarget)
                 return FirstNonEmpty(L.apTreeNoTarget, L.apTreeAggressive);
-            // Player-20-B FOKUSZONE gate (Thomas 04.11): the hunter plays its
+            // Player-20-B FOKUSZONE gate (T. 04.11): the hunter plays its
             // own tree ONLY from S3 up - below that the Vorstoß rows stay
             // verbatim (mirrors the Core FokuszoneHeadFor rung gate, so the
             // popup never promises what the planner does not do).
@@ -1802,7 +1802,7 @@ namespace TacticalAI
         }
 
         // ------------------------------------------------------- language files
-        // PR convention (Thomas' review 27.10): every player-facing string of
+        // PR convention (T.' review 27.10): every player-facing string of
         // this layer lives in Resources/Languages/<Lang>/ui.json under
         // uiTacticalAI; code only holds format keys and calls TF().
         // NOTE: slot.Why (activation ranking) is Core text - Core is the
@@ -2032,7 +2032,7 @@ namespace TacticalAI
         // deploy-side can never disagree about which DPs are on the table.
         // A held Massive whose set empties when the facts move indoors:
         // the deploy trigger does NOT fire, the attack-point spend is
-        // REFUNDED to the axis budget and the buy ranking re-runs (Thomas
+        // REFUNDED to the axis budget and the buy ranking re-runs (T.
         // 09.11: refund, not hold, no zombie purchases). Everything here
         // rides the ActiveNow()/TacticalMissionActive() gate - a legacy
         // mission never sees a line of it.
@@ -2233,7 +2233,7 @@ namespace TacticalAI
             // Player-25 M14c-C2 (card t_15ea0fba, fixplan_Player-25_v2 C2):
             // ranked choice when the mission carries objective anchors - the
             // mined anchor table re-resolved against the LIVE map (see
-            // MissionDpAnchors). P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget
+            // MissionDpAnchors). P33-H4 (T. 08.11, CONCEPT_drohungsbudget
             // Sec.2 Stufe 3 + Player-33 DP law): the anchor set now ALSO
             // includes the DYNAMIC section anchors (feed fact "MapManagement
             // activated this section, and it is still live"), and the choice
@@ -2369,7 +2369,7 @@ namespace TacticalAI
                     // breadcrumb law) and language-neutral: GUIDs, tiers,
                     // measured hops - the human at the board needs no
                     // internals, the playtest forensics reader needs no
-                    // guesswork. Thomas reads Player.log as his explain UI.
+                    // guesswork. T. reads Player.log as his explain UI.
                     var ci = System.Globalization.CultureInfo.InvariantCulture;
                     var allRows = new System.Text.StringBuilder();
                     if (scoreRows != null)
@@ -2389,7 +2389,7 @@ namespace TacticalAI
                               $"zone={(pick.Score.ZoneKnown ? pick.Score.ZoneDist.ToString(ci) : "-")} " +
                               $"leash={(pick.Score.Own ? 1 : 0)} fresh={(pick.Score.Fresh ? 1 : 0)} " +
                               $"all={allRows}]");
-                    // P34-C Vergleichszeile (Thomas 08.11): winnerScore vs
+                    // P34-C Vergleichszeile (T. 08.11): winnerScore vs
                     // the BEST alternative plus the stage that separated
                     // them - "why did fresh not bite" is answered by the log
                     // itself, not by re-reading the ladder. BETTER-ALT marks
@@ -2546,7 +2546,7 @@ namespace TacticalAI
         /// after the table was mined, so the live IMapEntity is truth and no
         /// cache would stay fresh across it; a row the live map does not
         /// carry drops out entirely (data-exists: no live object, no
-        /// anchor). M14d (Thomas 06.11): a row whose LIVE objective the
+        /// anchor). M14d (T. 06.11): a row whose LIVE objective the
         /// mission events switched off (entityProperties.isActive==false -
         /// claimed clue, removed protester) drops out too - anchors move
         /// WITH the mission phase; pure data filtering, never a penalty, so
@@ -2554,7 +2554,7 @@ namespace TacticalAI
         /// Any failure => empty list => the legacy DP line. No
         /// entity NAME is read anywhere in this path - the anchor choice is
         /// language-neutral by construction.
-        /// P33-H4 DYNAMIC ANKER-LAW (Thomas 08.11, CONCEPT_drohungsbudget
+        /// P33-H4 DYNAMIC ANKER-LAW (T. 08.11, CONCEPT_drohungsbudget
         /// Sec.2 Stufe 1; Player-33 §3: the mined anchor died by the M14d
         /// phase law and the flight zone - a section the mission ACTIVATED
         /// per MapManagement event - was no anchor at all): every section
@@ -2587,7 +2587,7 @@ namespace TacticalAI
                     AddDynamicSectionAnchors(list);
                     return list;
                 }
-                //M14d (Thomas 06.11): live phase truth through the app's own
+                //M14d (T. 06.11): live phase truth through the app's own
                 //entity resolver - MapEntityManager holds the objects the
                 //map prefabs mutate (fresh load AND restore), so authored
                 //rows are only a review copy. No manager (odd scene) =>
@@ -2628,7 +2628,7 @@ namespace TacticalAI
             catch { return new List<Tac.DeployAnchor>(); }   // never break a deploy
         }
 
-        /// <summary>P33-H4 (Thomas 08.11): append the DYNAMIC section anchors
+        /// <summary>P33-H4 (T. 08.11): append the DYNAMIC section anchors
         /// (see MissionDpAnchors doc). Section-only claim: HasPosition=false,
         /// EntityGuid = the section guid itself (it is the fact's carrier).
         /// A section that already carries a live mined anchor is NOT
@@ -2749,7 +2749,7 @@ namespace TacticalAI
             if (!string.IsNullOrEmpty(guid)) _dpChosenThisMission.Add(guid);
         }
 
-        /// <summary>TAC M14d-R (Thomas 06.11): deterministic reinforcement
+        /// <summary>TAC M14d-R (T. 06.11): deterministic reinforcement
         /// priority instead of the legacy random pick - CONCEPT_reinforce.md.
         /// Which wounded group gets the returning figure is a tactical
         /// decision; a coin flip is not one. Public-data law, no RNG, no
@@ -2797,7 +2797,7 @@ namespace TacticalAI
                     string origin = "none";
                     if (anchors.Count > 0)
                     {
-                        // M14e (CONCEPT_standort_ledger_v2, Thomas 07.11):
+                        // M14e (CONCEPT_standort_ledger_v2, T. 07.11):
                         // the durable deploy ledger replaces the in-memory
                         // recorder read - start groups are locatable FROM
                         // ROUND 1 (293/297 authored entries + runtime Active
@@ -2806,7 +2806,7 @@ namespace TacticalAI
                         // authored DPs (pointList sets): MIN distance over
                         // the whole set - the group could have entered
                         // through any of them, the closest one is the
-                        // strongest honest claim (Thomas 07.11 decision 1).
+                        // strongest honest claim (T. 07.11 decision 1).
                         // No row at all (None deployments, restored pre-
                         // M14e saves) => tier 2: no data, no proximity claim.
                         Saga.DeployLedgerRow row;
@@ -2877,7 +2877,7 @@ namespace TacticalAI
         }
 
         // ============================================ P33-H5 Beschaffung
-        // (Thomas 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2, Player-33
+        // (T. 08.11, CONCEPT_drohungsbudget Sec.2 Stufe 2, Player-33
         // deficits 1-3: "Kein Zielbezug / Kein Horizont / Kein Modus-Tausch"
         // - Player-33 R3 bought the Trandoshan for 10/12 out of a rigid
         // sequence that never compared reinforcement against purchase).
@@ -3257,7 +3257,7 @@ namespace TacticalAI
         /// Imperial always does; (2) printed firepower proxy: attack dice, then
         /// health (exact loadout EV via HeroThreatProfile/campaignItems is the
         /// M5 upgrade, the plumbing exists); (3) squad row left-to-right.
-        /// NO printed preferred-target rule (Thomas round 6: real Imperial
+        /// NO printed preferred-target rule (T. round 6: real Imperial
         /// cards print no target preference - the internal preferredTargets
         /// field is legacy engine data and must never surface to players).
         /// No chance, no hidden state. Proximity stays only as order-level
@@ -3292,12 +3292,12 @@ namespace TacticalAI
                 {
                     // Personas (M4): the card hook channels are gone - the
                     // rank law runs canon (null/0), personas never touch it.
-                    // WOUNDED-FOCUS FIX (Thomas 03.11): the mission's own end
+                    // WOUNDED-FOCUS FIX (T. 03.11): the mission's own end
                     // condition drives the counter law (woundAll -> healthy-
                     // first, no wound economy) and this figure's printed
                     // attack EV gates the wound x2 by the ERLEDBAR law - only
                     // finishers see the wounded hero doubled.
-                    // R-D (Konzept v1.2 §2.3, Thomas-Punkt 3a): the reaktion
+                    // R-D (Konzept v1.2 §2.3, T.-Punkt 3a): the reaktion
                     // key for THIS activation, resolved in Core over the R-A
                     // feed attribution (OverlordFocus.ReactionHeroFor: live-
                     // round shot, S2 floor, WACH exception). The S2 floor is
@@ -3431,7 +3431,7 @@ namespace TacticalAI
                     if (L0 != null)     // broken language asset -> reference path (legacy popup)
                     {
                         heroName = dec.HeroId;
-                        // R-D popup visibility (Thomas-Punkt 3a): when the
+                        // R-D popup visibility (T.-Punkt 3a): when the
                         // reaktion key WAS the deciding basis, the focus line
                         // names the retaliation. Publicly visible facts only
                         // (the shot at this figure is a board fact every
@@ -3484,7 +3484,7 @@ namespace TacticalAI
                                       " round=" + sdSupport.Round);
                             return true;
                         }
-                        // Player-20-B law FOKUSZONE (Thomas 04.11, concept
+                        // Player-20-B law FOKUSZONE (T. 04.11, concept
                         // hunt-richtlinie B): the hunter brand. Only while NO
                         // fact key speaks (reaktion/wachzone/vergeltung all
                         // silent - FAKT SCHLAEGT MARKE, the retaliation shot
@@ -3585,8 +3585,8 @@ namespace TacticalAI
             var parts = new List<string>();
             if (Wounded(pick)) parts.Add(TF(L.focusWounded));
             parts.Add(TF(L.focusFirepower));
-            // M13c (Thomas 30.10): the "kein Zufall / no chance" tail removed.
-            // Thomas 02.11 (request 1): bare reason only - the caller builds
+            // M13c (T. 30.10): the "kein Zufall / no chance" tail removed.
+            // T. 02.11 (request 1): bare reason only - the caller builds
             // the short "Fokus-Ziel: {name}" line and the EXPLAIN section.
             heroName = pick.name;
             why = string.Join("; ", parts);
@@ -3628,7 +3628,7 @@ namespace TacticalAI
                 if (reactionHero != null || wachzoneHero != null ||
                     vergeltungHero != null || supporterTrustHero != null) return;
                 var b = dec.Basis ?? "";
-                // P36 (Thomas): objactor was missing here - and it LOCKS THE
+                // P36 (T.): objactor was missing here - and it LOCKS THE
                 // FEATURE OUT of exactly the mission it was built for. In
                 // EMPIRE3 the contested object IS the mission objective: a
                 // hero interacting with a protester fires the objactor rule
@@ -3821,7 +3821,7 @@ namespace TacticalAI
                     Health = h.health,
                     // M10b: event-derived objective credit (view-level, the
                     // feed names the hero - never a cell/position read).
-                    // Player-19 (Thomas 03.11): the strike credit joins the
+                    // Player-19 (T. 03.11): the strike credit joins the
                     // SAME engaged tier - the hero whose activation window
                     // enclosed damage on the figure the objective names
                     // ("Besiegt Ivan Talos.") is the live threat to the
@@ -3883,7 +3883,7 @@ namespace TacticalAI
             return outp;
         }
 
-        /// <summary>WOUNDED-FOCUS FIX (Thomas 03.11): the mission's VICTORY
+        /// <summary>WOUNDED-FOCUS FIX (T. 03.11): the mission's VICTORY
         /// COUNTER derived from its own public text (briefing/objective - the
         /// same class of fact DerivePosture reads from the feed). Cached per
         /// mission id; no decisive sentence -> null = the honest legacy
@@ -3978,11 +3978,11 @@ namespace TacticalAI
             _focusCandsDbg = cands;
         }
 
-        // M6s-B9 (Thomas 03.11): "threat=8 is nice to SEE - but WHICH sum is
+        // M6s-B9 (T. 03.11): "threat=8 is nice to SEE - but WHICH sum is
         // it?" The ORD focus line ranks every living hero; the plain log
         // channel accounts each of them so a human can re-check the exact
         // arithmetic and spot a wrong input.
-        // M15 (Player-26, Thomas 05.11): the line prints the REAL formula of
+        // M15 (Player-26, T. 05.11): the line prints the REAL formula of
         // the ACTIVE posture, never prose:
         //   eliminate/attrition: threat = Schadens-Austausch EV/Runde
         //   protect/stall:       threat = 24 x Schadens-Austausch EV/Runde
@@ -4025,13 +4025,13 @@ namespace TacticalAI
                             ? " | Beste pro Distanz " + BandLabel(parts.Value.BandBests) : "";
                         string en = parts.Value.Energy > Tac.Rational.Zero
                             ? " + Energie-Zuschlag " + parts.Value.Energy + "/Runde (Waffenpreis)" : "";
-                        // M21 (Thomas ruling 06.11.): the flat blast
+                        // M21 (T. ruling 06.11.): the flat blast
                         // increment prints as its own summand, so the
                         // accounting row stays hand-re-addable for Fenn.
                         string ex = parts.Value.Explosion > Tac.Rational.Zero
                             ? " + Explosion +" + parts.Value.Explosion + "/Runde (Blast-Pauschale, halber Kartenwert)" : "";
                         if (runner)
-                            // M16 (Thomas 05.11): the accounting prints the
+                            // M16 (T. 05.11): the accounting prints the
                             // EXACT percent law with all three normalized
                             // factors - the whole sum is re-computable.
                             calc = "Postur Halten: 55% x Schadens-Austausch " +
@@ -4079,7 +4079,7 @@ namespace TacticalAI
 
         // The item id with its printed investment (tier + price) from the
         // app's own campaign store - the same tier x cost the EquipmentIndex
-        // tie-break weighs (Thomas 03.11: identical dice, dearer gear must
+        // tie-break weighs (T. 03.11: identical dice, dearer gear must
         // be VISIBLE as the bigger threat). Unknown id -> bare token.
         static string ItemInvestStr(string iid)
         {
@@ -4420,7 +4420,7 @@ namespace TacticalAI
                     GroupId = f.GroupId,
                     Pattern = f.Pattern ?? "aggressive",
                     Posture = posture ?? "eliminate",
-                    // WOUNDED-FOCUS FIX (Thomas 03.11): the derived mission
+                    // WOUNDED-FOCUS FIX (T. 03.11): the derived mission
                     // counter is live - RiskPosture's woundAll press law
                     // ("Zaehler verlangt frischen Schaden") finally has its
                     // input. null = legacy default, pre-fix behaviour.
@@ -4450,18 +4450,18 @@ namespace TacticalAI
         {
             var parts = new List<string>();
             if (dec.Marked) parts.Add(TF(L.ordMarked));
-            // M17 (Thomas 05.11): the price-energy surcharge inside the
+            // M17 (T. 05.11): the price-energy surcharge inside the
             // damage operand gets its own visible clause - the player sees
             // WHY a bought weapon outscores printed dice alone.
             if (dec.ThreatEnergy.HasValue && !dec.ThreatEnergy.Value.IsZero)
                 parts.Add(TF(L.ordThreatEnergy, dec.ThreatEnergy.Value.ToString()));
-            // M21 (Thomas ruling 06.11.): the flat blast increment reads its
+            // M21 (T. ruling 06.11.): the flat blast increment reads its
             // own clause too - Fenn's printed explosion ability is public
             // card data, the EXPLAIN cell must show why he outscores his
             // own dice.
             if (dec.ThreatExplosion.HasValue && !dec.ThreatExplosion.Value.IsZero)
                 parts.Add(TF(L.ordThreatExplosion, dec.ThreatExplosion.Value.ToString()));
-            // M25 (Thomas ruling 06.11.): the flat extra-attack / recon-
+            // M25 (T. ruling 06.11.): the flat extra-attack / recon-
             // synergy increment reads its own clause - Gideon's Hammer and
             // Anvil / Master's Work and Loku's recon-token synergy are public
             // card prints, the EXPLAIN cell shows why they outscore dice.
@@ -4469,7 +4469,7 @@ namespace TacticalAI
                 parts.Add(TF(L.ordThreatBonus, dec.ThreatBonus.Value.ToString()));
             if (dec.Threat.HasValue)
             {
-                // M15 F2 (Thomas 05.11): the EXPLAIN cell shows the REAL
+                // M15 F2 (T. 05.11): the EXPLAIN cell shows the REAL
                 // arithmetic with the meaning of each operand - not prose
                 // about how the calculation works. Exact rational strings
                 // (24 x 13/6 + 15 = 67), so a human can re-add the sum.
@@ -4497,9 +4497,9 @@ namespace TacticalAI
             else if (dec.StrainDruckUnscharf.HasValue && dec.StrainDruckUnscharf.Value > 0
                      && dec.StrainPriorRunden.HasValue && dec.StrainPriorDecke.HasValue)
                 parts.Add(TF(L.ordStrainFuzzy, dec.StrainPriorRunden.Value, dec.StrainPriorDecke.Value));
-            // M13c (Thomas 30.10): the "alle Gruppen richten sich auf
-            // dasselbe Fokusziel; kein Zufall" tail removed by Thomas.
-            // Thomas 02.11 (request 1): the name/prefix wrapper is GONE here -
+            // M13c (T. 30.10): the "alle Gruppen richten sich auf
+            // dasselbe Fokusziel; kein Zufall" tail removed by T..
+            // T. 02.11 (request 1): the name/prefix wrapper is GONE here -
             // the caller prints the short target line, this returns the bare
             // reason for the EXPLAIN section.
             return string.Join("; ", parts);
@@ -4576,7 +4576,7 @@ namespace TacticalAI
             if (TacticalAISettings.ExplainLevel == "full")
             {
                 string line = null;
-                // Thomas 02.11 (request 3): the section header makes the
+                // T. 02.11 (request 3): the section header makes the
                 // explain block readable as a block; content lines keep
                 // their own labels (one section per popup row). If NOTHING
                 // below fires, the bare header is dropped (never a lone
@@ -4584,7 +4584,7 @@ namespace TacticalAI
                 var Lh = UIx;
                 if (Lh != null && !string.IsNullOrEmpty(Lh.ordExplainHead))
                     line = Lh.ordExplainHead;
-                // Thomas 02.11 (declutter): the persona line moved out of
+                // T. 02.11 (declutter): the persona line moved out of
                 // every activation's action area into this section - who you
                 // play against, rank, active bonuses (self-labelled line).
                 if (plan != null && !string.IsNullOrEmpty(plan.PersonaLine))
@@ -4608,7 +4608,7 @@ namespace TacticalAI
                 // wiring the engine actually reads - axis type, actor,
                 // polarity, block zone, resolved Schnittstelle. Raw log
                 // diagnostic (no ui.json key - the same class as the risk
-                // and patternRoll lines below; Thomas reads Player.log as
+                // and patternRoll lines below; T. reads Player.log as
                 // his explain UI). Null-Law: no parsed wiring, no row.
                 var axv = _lastFeedView;
                 if (axv != null && (!string.IsNullOrEmpty(axv.ImperialWinBy)
@@ -4677,7 +4677,7 @@ namespace TacticalAI
                 // window of the rolled pattern), the round and the card id,
                 // so a player can replay any activation. All data is public
                 // (asset + mission structure).
-                // M6p (Thomas 02.11): the doctrine NAME left this block - it
+                // M6p (T. 02.11): the doctrine NAME left this block - it
                 // renders permanently right after the focus-target line now
                 // (ActivationPlanData.DoctrineLine). The roll row keeps only
                 // the draw value: the name would be a double display, and the
@@ -4694,7 +4694,7 @@ namespace TacticalAI
                                   ": " + rolled + " planPosture=" + _doctrineEffective);
                     }
                 }
-                // Thomas 02.11 (request 1): the focus-target reasoning moved
+                // T. 02.11 (request 1): the focus-target reasoning moved
                 // out of the action area into this section (the line above
                 // the blocks now only names the target).
                 if (UIx != null && plan != null && plan.HasTarget
@@ -4782,7 +4782,7 @@ namespace TacticalAI
                         && !string.IsNullOrEmpty(UIx.ordExplainVergeltung))
                         sdLine = TF(UIx.ordExplainVergeltung,
                             GroupDisplay(groupId), HeroDisplay(verg));
-                    // M14f Naehesuch (Thomas 07.11 R2=b+R3): THIS activation
+                    // M14f Naehesuch (T. 07.11 R2=b+R3): THIS activation
                     // rode the proximity lift - its own trusted section sits
                     // one observed step from the reaction zone. Loch-Gesetz-
                     // clean: the zone rides its AUTHORED NAME, cleaned by the
@@ -4871,7 +4871,7 @@ namespace TacticalAI
             return h;
         }
 
-        // M11 (Thomas 31.10.): EnsureDecks/OrderDeckManager are GONE with the
+        // M11 (T. 31.10.): EnsureDecks/OrderDeckManager are GONE with the
         // order decks - the activation blocks are synthesized from the
         // figure's printed facts (see TryBuildActivationPlanInner).
 
@@ -4879,7 +4879,7 @@ namespace TacticalAI
         {
             if (_catalog != null) return;
             _catalog = new Dictionary<string, Tac.DeploymentCard>();
-            // M4 (Thomas 29.10): doctrines are SITUATION-driven. The mission
+            // M4 (T. 29.10): doctrines are SITUATION-driven. The mission
             // posture decides whether anyone may guard AT ALL; the printed
             // traits then sort the roster. Both inputs are public (mission
             // data + printed cards), never rebel positions.
@@ -4889,7 +4889,7 @@ namespace TacticalAI
             // villainCards list. Iterating only deploymentCards left the
             // whole villain roster out of the catalog, so every unique
             // villain missed the round deal and its activation popup fell
-            // back to the legacy instructions (Thomas bug 4+5, 29.10.:
+            // back to the legacy instructions (T. bug 4+5, 29.10.:
             // "Palpatine/Vader show the old actions" - all 20 were hit).
             IEnumerable<global::DeploymentCard> pools = DataStore.deploymentCards
                 ?? Enumerable.Empty<global::DeploymentCard>();
@@ -5115,7 +5115,7 @@ namespace TacticalAI
         ///           priority target the mission cares about);
         ///  "hunt"   - nothing to defend: the Imperials must run the rebels
         ///           down. (The old "in a hunt NOBODY gets Wachschutz" law was
-        ///           retired by Thomas on 03.11.: doctrine comes from the live
+        ///           retired by T. on 03.11.: doctrine comes from the live
         ///           dice law — hunt rolls the unmodified weight rows, defend
         ///           is the single modifier row. tactical_pattern_weights.json
         ///           is the only rules source, this comment never was.)
@@ -5166,7 +5166,7 @@ namespace TacticalAI
         /// M4 printed-trait x posture classification (fairness whitelist only:
         /// Id/Speed/AttackType/MiniSize/Keywords - all printed, all public).
         /// defend: immobile AND melee figures hold the objective zone (several
-        ///   guards per Thomas), Massive/large bases block the lanes to it,
+        ///   guards per T.), Massive/large bases block the lanes to it,
         ///   mobile shooters keep the counter-attack fire line (aggressive).
         /// hunt:   zero guards. Large bases cut escape lanes (blocker), fast
         ///   melee chases (hunter), everything else advances (aggressive).
@@ -5179,7 +5179,7 @@ namespace TacticalAI
             // probability. Same for the DG071 hunter rule (see below).
             if (c.IsTripod) return "guard";
 
-            // M13u (Thomas 01.11., variante c): the weighted per-round
+            // M13u (T. 01.11., variante c): the weighted per-round
             // doctrine dice replaces the posture CODE BRANCH. Every group
             // rolls its printed-flavour distribution (public asset
             // tactical_pattern_weights.json); the mission structure shifts
@@ -5194,7 +5194,7 @@ namespace TacticalAI
                 var dist0 = tbl.WeightsFor(c.Id, c.Name, c.RoleId);
                 if (dist0 != null)
                 {
-                    // Player-19 (Thomas 03.11, Punkt 3): PROTECT-OBJECTIVE
+                    // Player-19 (T. 03.11, Punkt 3): PROTECT-OBJECTIVE
                     // law. When the current objective FULLY names a deployed
                     // imperial figure ("Besiegt Ivan Talos." - the feed's
                     // display names, all public), that figure is the Empire's
@@ -5242,7 +5242,7 @@ namespace TacticalAI
         static string ClassifyPatternLegacy(Tac.DeploymentCard c, string posture)
         {
             if (c.Id == "DG071") return "hunter";
-            // M13t (Thomas 30.10., EMPIRE6 playtest): a Stativ/Tripod figure
+            // M13t (T. 30.10., EMPIRE6 playtest): a Stativ/Tripod figure
             // may never hold a MOVING role. Its printed rule forbids moving
             // and attacking in the same activation, so the whole value of the
             // figure is its fire lane. DG007/DG008 (E-Web-Schütze) were being
@@ -5276,7 +5276,7 @@ namespace TacticalAI
         /// off the ability lane. Same source strings as ToRecord's officer
         /// block (De+En print it; partial overlays fall back to the EN
         /// name - the 02.11 overwrite-law finding), same DG-id belt, same
-        /// Thomas-Ausnahme 04.11. (DG075/DG078 stay field commanders - they
+        /// T.-Ausnahme 04.11. (DG075/DG078 stay field commanders - they
         /// can reach THIS path as deployed villains, so the wall lives here
         /// too, not only in Core FromRecord).
         static bool PrintedOfficerSupporter(global::DeploymentCard cd)
@@ -5300,7 +5300,7 @@ namespace TacticalAI
             return token;
         }
 
-        /// Playtest Player-20 (Thomas 04.11): the PRINTED PLAIN command only
+        /// Playtest Player-20 (T. 04.11): the PRINTED PLAIN command only
         /// (Order/Befehl WITHOUT Executive Order/Vollstreckungsbefehl) — the
         /// +2-movement order that never earns the head of the activation
         /// order. Printed-ability law, DG-id belt mirrors
@@ -5363,7 +5363,7 @@ namespace TacticalAI
                 new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG041"),
                 new System.Collections.Generic.KeyValuePair<string, string>("Reach", "DG045"),
             };
-        // P42b (Thomas 15.11): the ACCURACY PATTERN lane. KwAcc and
+        // P42b (T. 15.11): the ACCURACY PATTERN lane. KwAcc and
         // SurgeAcc (Core/Dice.cs) read hit-probability bonuses from the
         // literal "+N Accuracy" in the keywords/surges lanes - and the
         // language overlays translate the WORD: "+2 Zielsicherheit",
@@ -5385,7 +5385,7 @@ namespace TacticalAI
         /// whitelist Core DeploymentCard.CardFieldWhitelist); no bonus data.</summary>
         static Dictionary<string, object> ToRecord(global::DeploymentCard cd)
         {
-            // M13t (Thomas 30.10., EMPIRE6 playtest): the printed
+            // M13t (T. 30.10., EMPIRE6 playtest): the printed
             // Stativ/Tripod rule must reach the doctrine layer. Source is
             // the card's own printed ability line (En asset says "Tripod",
             // De asset says "Stativ"; other language files are partial
@@ -5407,7 +5407,7 @@ namespace TacticalAI
                     // partial overlays fall back to the EN name).
                     if (a.name == "Assault" || a.name == "Sturm" ||
                         a.name == "Штурм" || a.name == "Assaut") assault = true;
-                    // Thomas 02.11 (Player-17): the printed command abilities.
+                    // T. 02.11 (Player-17): the printed command abilities.
                     // DETECTION LIVES ON THE ABILITY LANE, NOT cd.ignored -
                     // SetCardTranslations() overwrites cd.ignored with the
                     // LANGUAGE card's value and EVERY shipped language card
@@ -5440,7 +5440,7 @@ namespace TacticalAI
             if (cd.id == "DG007" || cd.id == "DG008" ||
                 cd.id == "DG046" || cd.id == "DG071") assault = true;
             if (assault && !kws.Contains("Assault")) kws.Add("Assault");
-            // Thomas 15.11 (PlayerFinale, EMPIRE1 in DE): the KEYWORD lane
+            // T. 15.11 (PlayerFinale, EMPIRE1 in DE): the KEYWORD lane
             // is translated wholesale - SetCardTranslations overwrites
             // cd.keywords with the language card's list, so a DE card
             // prints "Gewaltig" where the EN lane prints "Massive", and
@@ -5602,7 +5602,7 @@ namespace TacticalAI
                 // figures are NOT in DataStore.deploymentCards - the event
                 // handler keeps them on the override (ovrd.customCard), so
                 // the pool-iterating catalog could never see them and every
-                // one fell to the legacy draw (Thomas bug 4: "Ivan wurde mit
+                // one fell to the legacy draw (T. bug 4: "Ivan wurde mit
                 // den alten Texten angezeigt"). A MISSION-CUSTOM imperial
                 // card is adopted here, at its first appearance, straight
                 // from its printed data + role thumbnail: it enters this

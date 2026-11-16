@@ -1,4 +1,4 @@
-// M13u section (variant c, Thomas 01.11.): the per-group doctrine dice on
+// M13u section (variant c, T. 01.11.): the per-group doctrine dice on
 // the SHIPPED tactical_pattern_weights.json. Authored invariants only -
 // row sums, defend-modifier arithmetic (hand-computed expect blocks in the
 // fixture), full shipped-roster coverage (enemies.json + villains.json -

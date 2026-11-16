@@ -1,4 +1,4 @@
-// SectionsDpScore.cs - P33-H4 (Thomas 08.11, CONCEPT_drohungsbudget Sec.2
+// SectionsDpScore.cs - P33-H4 (T. 08.11, CONCEPT_drohungsbudget Sec.2
 // Stufe 3 + Sec.3, findings_Player-33 §3): the DP-Score vectors.
 //
 // The law under test (Core DeploymentAnchors.ChooseScored): the ranked DP
@@ -159,7 +159,7 @@ namespace TacticalAiHarness
                     Check(path + "|rows", "ok", sb.ToString());
                 }
 
-                // P34-C Vergleichszeilen-Vektoren (Thomas, card t_1787135b):
+                // P34-C Vergleichszeilen-Vektoren (T., card t_1787135b):
                 // winnerScore vs the STRONGEST alternative plus the stage
                 // that separated them - the same API the log line prints,
                 // pinned by relation (never recorded arithmetic).

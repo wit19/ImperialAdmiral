@@ -43,26 +43,27 @@ in [`ANDROID_build.md`](ANDROID_build.md).
 
 1. [The goal: fair, clever, never random](#the-goal)
 2. [The four design promises](#the-four-design-promises)
-3. [Where to find it — settings and mission badges](#where-to-find-it)
-4. [Activation — how the round runs](#activation)
-5. [The activation pop-up — how to read and execute an order](#the-activation-pop-up)
-6. [Instructions: the if–then trees](#instructions)
-7. [Officers and their commands](#officers)
-8. [The glossary — new words on the table](#the-glossary)
-9. [The doctrines — every role and what it does](#the-doctrines)
-10. [Difficulty — five levels, no hidden power](#difficulty)
-11. [Command Personas — six Imperial commanders](#command-personas)
-12. [Every difference from the legacy mode](#every-difference)
-13. [What does NOT change](#what-does-not-change)
-14. [What this release does NOT include](#not-included)
-15. [Tips, limits and honest admissions](#tips-and-limits)
-16. [Links to the original IC2 documentation](#links)
-17. [The reactive layer (November 2026)](#reactive-layer)
-18. [The section space (November 2026)](#section-space)
-19. [Procurement — buying is a decision (November 2026)](#procurement)
-20. [The mission axis — win conditions, objectives, polarity (November 2026)](#mission-axis)
-21. [Mission objective duty — the round serves the objective (November 2026)](#mission-duty)
-22. [Massive figures and interior spaces (November 2026)](#massive-interior)
+3. [How it feels on the board (November 2026)](#how-it-feels)
+4. [Where to find it — settings and mission badges](#where-to-find-it)
+5. [Activation — how the round runs](#activation)
+6. [The activation pop-up — how to read and execute an order](#the-activation-pop-up)
+7. [Instructions: the if–then trees](#instructions)
+8. [Officers and their commands](#officers)
+9. [The glossary — new words on the table](#the-glossary)
+10. [The doctrines — every role and what it does](#the-doctrines)
+11. [Difficulty — five levels, no hidden power](#difficulty)
+12. [Command Personas — six Imperial commanders](#command-personas)
+13. [Every difference from the legacy mode](#every-difference)
+14. [What does NOT change](#what-does-not-change)
+15. [What this release does NOT include](#not-included)
+16. [Tips, limits and honest admissions](#tips-and-limits)
+17. [Links to the original IC2 documentation](#links)
+18. [The reactive layer (November 2026)](#reactive-layer)
+19. [The section space (November 2026)](#section-space)
+20. [Procurement — buying is a decision (November 2026)](#procurement)
+21. [The mission axis — win conditions, objectives, polarity (November 2026)](#mission-axis)
+22. [Mission objective duty — the round serves the objective (November 2026)](#mission-duty)
+23. [Massive figures and interior spaces (November 2026)](#massive-interior)
 
 ---
 
@@ -119,6 +120,41 @@ Enforced in code, not just on paper (each pointer verified against the shipped t
    Reproduced by ~44,000 regression vectors that run on every change; the harness
    cross-checks mechanics against Python-exported draw streams via replay
    (`ScriptedRandom`) rather than a ported generator.
+
+---
+
+<a name="how-it-feels"></a>
+## How it feels on the board (November 2026)
+
+![How it feels on the board — Tactical AI defending the mission anchor](images/how_it_feels_on_the_board.jpg)
+
+*A ten-round EMPIRE1 finale on a custom map, played in Tactical AI (v1.0.2) and
+photographed at the start of round 3. Everything outside the board — the reserve, the
+dice and the boxes on the table — is deliberately out of focus.*
+
+What the photo shows, and what the mission log behind it says (round numbers are the
+log's own `ORD focus` / `REPLAN` lines):
+
+- **The army guards the mission, not the heroes.** The docking clamps and the AT-DP are
+  this mission's anchor, so the Imperial side keeps a screen of troopers between the
+  heroes and the anchor — a cordon, not a chase lane.
+- **Focus follows the objective.** Every round's focus pick carries
+  `basis=objactor, marked=0`: R1 Jyn → R2–4 MHD-19 → R5–9 Verena → R10 MHD-19. The
+  objective-actor channel drove the pick; the wound-mark channel stayed empty and never
+  had to be outranked.
+- **When the objective moved, the plan moved the same round.** The log records
+  same-round `REPLAN` events at R3, R7 and R8 (trigger `ObjectiveChange`) and twice at
+  R9 (trigger `MissionObject`) — focus and order rebuilt inside the round the mission
+  fact changed.
+- **Nothing was drawn.** No activation spinner, no instruction cards, no re-rolled
+  targeting — see [every difference from the legacy mode](#every-difference).
+
+The overlay (anchor circle, cordon chip, focus-chain band) is added on the photo; the
+chain and replan lines are verbatim from this run's Tactical AI debug stream
+(`PlayerFinale151126-3.log`), documented in
+[`findings_playerfinale_2026-11-15.md`](findings_playerfinale_2026-11-15.md).
+Reserve figures, dice and packaging next to the board are blurred — they are
+out-of-play materials and not part of the position.
 
 ---
 

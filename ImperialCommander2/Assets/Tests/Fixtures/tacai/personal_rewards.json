@@ -123,13 +123,11 @@
       "rewards": [
         "personal01",
         "personal09",
-        "personal11",
-        "personal16",
         "personal20",
         "personal21",
         "personal99"
       ],
-      "_gesetz": "nur_rekord-Karten und unbekannte ids aendern Bedrohungs-EV, bester Pool und Bonus BIT-IDENTISCH zum nackten Profil (Null-Law)."
+      "_gesetz": "nur_rekord-Karten und unbekannte ids aendern Bedrohungs-EV, bester Pool und Bonus BIT-IDENTISCH zum nackten Profil (Null-Law). personal21 bleibt Zeuge: sein +2-Health-Aufdruck traegt der J4X-7 (traeger-Feld), nicht der Held - Delta am HALTER ist null. personal11/16 wurden P44 entlassen: sie tragen gedrucktes Leben und bepreisen jetzt."
     }
   ],
   "delta": [
@@ -147,6 +145,80 @@
       "expect_delta": "1/4",
       "_gesetz": "Dieselbe Karte an EINEM ANDEREN Held: gleicher Delta-Beweis — Matching laeuft ueber die Reward-ID, Held-Code existiert nicht (Abweichler-Umwahl wirkt mechanisch)."
     }
+  ],
+  "health_law": [
+  {
+    "_gesetz": "H/(H+delta) mit H=12 (gedruckte gesunde Lebenskarte CT) und +3 vom Item: Abschuss-Preis steigt, Bedrohung sinkt auf exakt 4/5.",
+    "expect_factor": "4/5",
+    "hero": "CT-1701",
+    "items": [
+      "item315"
+    ],
+    "name": "ct_ruestung_item315",
+    "rewards": []
+  },
+  {
+    "_gesetz": "GEDRUCKTES MINUS: -2 Health (H=20) => 20/18 = 10/9. Das Gesetz wirkt in beide Richtungen, der Held wird billiger abzuschossen.",
+    "expect_factor": "10/9",
+    "hero": "Onar Koma",
+    "items": [
+      "item206"
+    ],
+    "name": "onar_blutdruck_item206",
+    "rewards": []
+  },
+  {
+    "_gesetz": "Reward-Kanal +2 Health an der Halterin (H=12): 12/14. Karte folgt dem Halter (P43-Matching), der Delta-Kanal ist identisch zum Item-Kanal.",
+    "expect_factor": "6/7",
+    "hero": "Shyla Varad",
+    "items": [],
+    "name": "shyla_life_debt_personal11",
+    "rewards": [
+      "personal11"
+    ]
+  },
+  {
+    "_gesetz": "Zweiter Reward-Halter: gleicher Bruch aus anderer Karte - kein Held-Code, beide Kanaele laufen ueber dieselbe Summe.",
+    "expect_factor": "6/7",
+    "hero": "MHD-19",
+    "items": [],
+    "name": "mhd_mando_personal16",
+    "rewards": [
+      "personal16"
+    ]
+  },
+  {
+    "_gesetz": "Item UND Reward jointly: 12/(12+2+2)=3/4. Ein Delta, eine Summe, multipliziert - keine Doppelzaehlung.",
+    "expect_factor": "3/4",
+    "hero": "Shyla Varad",
+    "items": [
+      "item106"
+    ],
+    "name": "combined_channels",
+    "rewards": [
+      "personal11"
+    ]
+  },
+  {
+    "_gesetz": "personal21 (+2 Health) am HALTER Jarrod: traeger='J4X-7' => Delta am HALTER ist 0, Faktor exakt 1, Bedrohung bit-identisch. Die Karte staerkt den Droiden, nicht den Mann.",
+    "expect_factor": "1",
+    "hero": "Jarrod Kelvin",
+    "items": [],
+    "name": "traeger_traegt_nicht_der_held",
+    "rewards": [
+      "personal21"
+    ]
+  },
+  {
+    "_gesetz": "Kein Karteintrag => kein gedruckter Lebensbasiswert => Gesetz bleibt inert (fail-closed statt erfundener Basis). Han waere mit +3 sonst teurer.",
+    "expect_factor": "1",
+    "hero": "Han Solo",
+    "items": [
+      "item217"
+    ],
+    "name": "cardless_inert",
+    "rewards": []
+  }
   ],
   "model": [
     {

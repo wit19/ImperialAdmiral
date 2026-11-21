@@ -421,7 +421,11 @@ namespace TacticalAI.Core
                         (c.Card != null && c.Card.SupporterEffektiv(c.Profile.PinIds)) ||
                         (table != null && table.RewardUnterstoetzerChip(c.Profile.PinIds)),
                         (c.Card != null && c.Card.HeilerEffektiv(c.Profile.PinIds)) ||
-                        (table != null && table.RewardHeilerChip(c.Profile.PinIds)))
+                        (table != null && table.RewardHeilerChip(c.Profile.PinIds)),
+                        // P44: printed-health deviations lower the chip's
+                        // damage term by the same kill-cost factor the
+                        // elimination threat carries (one law, one number).
+                        HeroThreatModelV2.HealthKillFactor(c.Card, table, c.Profile))
                     : null,
             }).ToList();
 

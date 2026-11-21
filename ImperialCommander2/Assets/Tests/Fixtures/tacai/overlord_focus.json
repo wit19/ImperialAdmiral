@@ -802,6 +802,7 @@
   },
   {
    "name": "m11b_equal_threat_investment_tie",
+   "p44_note": "P44 RE-RECORD (handverifiziert: Murne traegt item315 +3 Health, H=12 -> Faktor 12/15; 13/30*4/5=26/75 exakt, Fenn fuehrt weiter, Tie-Kette bleibt Fall-Kern. Vor P44 war die Zeile 13/30, Lebens-Abweichung war unbepreist.)",
    "posture": "eliminate",
    "counter": null,
    "defense": [
@@ -850,8 +851,8 @@
       "basis": "card",
       "hero": "Murne Rin",
       "marked": false,
-      "threat": "13/30",
-      "threat_econ": "13/30",
+      "threat": "26/75",
+      "threat_econ": "26/75",
       "wounded": false
      }
     ]
@@ -2845,6 +2846,122 @@
    }
   ],
   "name": "p43_supporter_chip_follows_card",
+  "posture": "eliminate"
+ },
+ {
+  "_comment": "P44 (T.-Ruling 21.11.): Shyla traegt Life Debt (+2 Health, H=12) -> ihr Chip-EV-Term ist 1*6/7, Tress nackter Term bleibt 1. Beide Vektoren [1,10,*] (Klasse+Runner gleich) - OHNE Gesetz echte Krawatte mit Shyla zuerst nach row 0; MIT Gesetz ordnet der Comparator echt: Tress zuerst (6/7 < 1, handgenagelt). Angezeigte threat = Chip-Wert mal Held-Letalitaets-Gewicht (gemessen; Handverifikation Shyla 12/7 = 6/7*2, Tress 13/6 = 1*13/6).",
+  "counter": "woundAll",
+  "expect": [
+   {
+    "basis": "chip",
+    "hero": "Tress Hacnua",
+    "marked": false,
+    "threat": "13/6",
+    "threat_econ": "13/6",
+    "wounded": false
+   },
+   {
+    "basis": "chip",
+    "hero": "Shyla Varad",
+    "marked": false,
+    "threat": "12/7",
+    "threat_econ": "12/7",
+    "wounded": false
+   }
+  ],
+  "heroes": [
+   {
+    "attack_dice": 2,
+    "health": 6,
+    "hero": "Shyla Varad",
+    "loadout": {
+     "items": [],
+     "rewards": [
+      "personal11"
+     ],
+     "skills": []
+    },
+    "marked_round": 0,
+    "marks": 0,
+    "profile": "Shyla Varad",
+    "row": 0,
+    "wounded": false
+   },
+   {
+    "attack_dice": 2,
+    "health": 6,
+    "hero": "Tress Hacnua",
+    "loadout": {
+     "items": [],
+     "rewards": [],
+     "skills": []
+    },
+    "marked_round": 0,
+    "marks": 0,
+    "profile": "Tress Hacnua",
+    "row": 1,
+    "wounded": false
+   }
+  ],
+  "name": "p44_health_later_chip",
+  "posture": "eliminate"
+ },
+ {
+  "_comment": "P44 umgekehrte Richtung: Onars item206 druckt -2 Health (H=20) -> Chip-EV-Term 20/18 = 10/9 ueber Bivs nackter 1, OBWOHL Onar auf row 1 steht - echter Flip gegen die Zeilenreihenfolge (Comparator handgenagelt: 10/9 > 1). Angezeigte threat = Chip-Wert mal Held-Gewicht (gemessen; Handverifikation Onar 10/27 = 10/9*1/3, Biv 7/6 = 1*7/6).",
+  "counter": "woundAll",
+  "expect": [
+   {
+    "basis": "chip",
+    "hero": "Onar Koma",
+    "marked": false,
+    "threat": "10/27",
+    "threat_econ": "10/27",
+    "wounded": false
+   },
+   {
+    "basis": "chip",
+    "hero": "Biv Bodhrik",
+    "marked": false,
+    "threat": "7/6",
+    "threat_econ": "7/6",
+    "wounded": false
+   }
+  ],
+  "heroes": [
+   {
+    "attack_dice": 2,
+    "health": 6,
+    "hero": "Biv Bodhrik",
+    "loadout": {
+     "items": [],
+     "rewards": [],
+     "skills": []
+    },
+    "marked_round": 0,
+    "marks": 0,
+    "profile": "Biv Bodhrik",
+    "row": 0,
+    "wounded": false
+   },
+   {
+    "attack_dice": 2,
+    "health": 6,
+    "hero": "Onar Koma",
+    "loadout": {
+     "items": [
+      "item206"
+     ],
+     "rewards": [],
+     "skills": []
+    },
+    "marked_round": 0,
+    "marks": 0,
+    "profile": "Onar Koma",
+    "row": 1,
+    "wounded": false
+   }
+  ],
+  "name": "p44_thinner_hero_chips_first",
   "posture": "eliminate"
  }
  ]

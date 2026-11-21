@@ -278,6 +278,7 @@ namespace TacticalAI.Core
         public int Genauigkeit;
         public int Schaden;
         public int Durchschlag;
+        public int Leben;                      // P44: printed static ±Health
 
         public bool HatAngriffswirkung
         {
@@ -342,6 +343,31 @@ namespace TacticalAI.Core
         {
             RewardEffect e;
             return id != null && _rewards.TryGetValue(id, out e) ? e : null;
+        }
+
+        /// <summary>P44 (T. ruling 21.11.): the printed-health DEVIATION a
+        /// loadout carries — static ±Health prints of equipped items plus
+        /// personal reward cards whose traeger is unset (personal21 rides
+        /// the J4X-7 droid, never the hero). Sum of printed numbers only,
+        /// no valuation. 0 means unmodified: the delta law is then exactly
+        /// the canon (P42 principle: deviations price, status never does).</summary>
+        public int HealthDelta(HeroThreatProfile profile)
+        {
+            if (profile == null) return 0;
+            int d = 0;
+            if (profile.LoadoutItems != null)
+                foreach (var id in profile.LoadoutItems)
+                {
+                    var it = Item(id);
+                    if (it != null) d += it.Leben;
+                }
+            if (profile.LoadoutRewards != null)
+                foreach (var id in profile.LoadoutRewards)
+                {
+                    var r = Reward(id);
+                    if (r != null && r.Traeger == null) d += r.Leben;
+                }
+            return d;
         }
 
         /// <summary>P43: angriffs_bruchteil reward cards the hero HOLDS
@@ -538,10 +564,14 @@ namespace TacticalAI.Core
                     Genauigkeit = Json.AsInt(Json.Get(r, "genauigkeit", 0)),
                     Schaden = Json.AsInt(Json.Get(r, "schaden", 0)),
                     Durchschlag = Json.AsInt(Json.Get(r, "durchschlag", 0)),
+                    Leben = Json.AsInt(Json.Get(r, "leben", 0)),
                 };
                 var w = Json.AsStr(Json.Get(r, "wuerfel", ""));
                 e.Wuerfel = HeroCard.Letters(w);
-                if (!string.IsNullOrEmpty(e.Id) && e.HatAngriffswirkung) t._items[e.Id] = e;
+                // P44: pure-health items (armors, the -2 print on item206)
+                // carry no attack effect but must still be known to the
+                // delta law — registration follows any printed effect.
+                if (!string.IsNullOrEmpty(e.Id) && (e.HatAngriffswirkung || e.Leben != 0)) t._items[e.Id] = e;
             }
             // P43: PERSONAL reward-card channel rows (curated in
             // wiki_data/tools/curate_hero_cards.py REWARD_EFFECTS). Closed
@@ -729,7 +759,22 @@ namespace TacticalAI.Core
         {
             if (card == null) return null;
             if (posture == "eliminate" || posture == "attrition")
-                return EliminateEv(card, table, profile, wounded, defenderDefense, engage);
+            {
+                // P44 (T. ruling 21.11., bestanden; P42-Vorbild: Delta,
+                // niemals Status): printed-health DEVIATIONS price the
+                // kill. +N/-N Health (items 106/107/119/205/206/217/218/
+                // 302/315, personal rewards 11/16) shifts the hits needed
+                // to down the hero, so the elimination price scales by
+                // H/(H+delta) with H the card's printed healthy health.
+                // delta 0 -> factor 1 -> every canon row bit-identical.
+                // Runner threats (protect/stall) and the printed damage
+                // parts stay unscaled; a reward whose traeger is set
+                // (personal21 rides the J4X-7, not the hero) never counts.
+                // Without a card row (fallback candidates) the printed
+                // base is unknown: the law is inert there.
+                return EliminateEv(card, table, profile, wounded, defenderDefense, engage)
+                     * HealthKillFactor(card, table, profile);
+            }
             if (posture == "protect" || posture == "stall")
             {
                 // M16 percent law (see DamageShare law): 55% damage, 35%
@@ -743,6 +788,24 @@ namespace TacticalAI.Core
                                     RunnerRange(card, table, profile, wounded));
             }
             return null;
+        }
+
+        /// <summary>P44 (T. ruling 21.11., bestanden): the exact printed
+        /// kill-cost factor H/(H+delta) — H the card's printed healthy
+        /// health, delta the loadout's printed ±Health deviation. Hits to
+        /// down a hero scale linearly with its printed capacity, so the
+        /// elimination threat AND the wound-chip value carry this factor.
+        /// Unmodified heroes (delta 0), card-less fallbacks (no printed
+        /// base) and unrepresentable bases (H+delta <= 0) give exactly 1.</summary>
+        public static Rational HealthKillFactor(HeroCard card, HeroCardTable table,
+                                                HeroThreatProfile profile)
+        {
+            if (card == null || table == null || profile == null) return Rational.One;
+            int d = table.HealthDelta(profile);
+            if (d == 0) return Rational.One;
+            int h = card.GesUnderhalt;
+            if (h <= 0 || h + d <= 0) return Rational.One;
+            return new Rational(h, h + d);
         }
 
         /// <summary>M16: the SAME threat as Threat(), plus its operands -

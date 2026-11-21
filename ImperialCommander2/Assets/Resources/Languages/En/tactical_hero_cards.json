@@ -1,5 +1,5 @@
 {
-  "schema": "tacai.hero_cards/6",
+  "schema": "tacai.hero_cards/7",
   "source": "Kuratierung: oeffentlich gedruckte Heldenkarten-Werte aller 21 Kampagnen-Helden (gesund + verwundete Rueckseite), Basiswaffen und Item-Wuerfel/Modifikatoren; ids und xp-Kosten aus den App-Tabellen (CardData/heroes.json, CampaignData/items.json, CampaignData/skills.json). Cleanroom-Policy: wiki_data/LICENSE_DATA.md Punkt 5 — Zahlen, Wuerfelbuchstaben, Keyword-Slugs; Volltext nur bei auf der Karte aufgedruckten Faehigkeiten (Brettspiel-Inhalt, Wiki als Transkriptions-Medium); Roh-Wiki-Dumps out-of-build.",
   "conventions": {
     "wuerfelBuchstaben": "B/R/G/Y = gedruckte Angruesfel (App-Konvention); verteidigung: K=schwarz, W=weiss",
@@ -1809,6 +1809,16 @@
       "genauigkeit": 1
     },
     {
+      "id": "item106",
+      "typ": "R",
+      "leben": 2
+    },
+    {
+      "id": "item107",
+      "typ": "S",
+      "leben": 1
+    },
+    {
       "id": "item108",
       "typ": "O",
       "wuerfel": "GY"
@@ -1849,6 +1859,11 @@
       "id": "item118",
       "typ": "P",
       "wuerfel": "BY"
+    },
+    {
+      "id": "item119",
+      "typ": "R",
+      "leben": 2
     },
     {
       "id": "item123",
@@ -1893,6 +1908,16 @@
       "wuerfel": "RG"
     },
     {
+      "id": "item205",
+      "typ": "R",
+      "leben": 2
+    },
+    {
+      "id": "item206",
+      "typ": "S",
+      "leben": -2
+    },
+    {
       "id": "item207",
       "typ": "P",
       "wuerfel": "GR"
@@ -1919,6 +1944,16 @@
       "typ": "O",
       "wuerfel": "GG",
       "genauigkeit": 2
+    },
+    {
+      "id": "item217",
+      "typ": "R",
+      "leben": 3
+    },
+    {
+      "id": "item218",
+      "typ": "S",
+      "leben": 1
     },
     {
       "id": "item220",
@@ -1949,6 +1984,11 @@
       "id": "item301",
       "typ": "O",
       "wuerfel": "BBY"
+    },
+    {
+      "id": "item302",
+      "typ": "R",
+      "leben": 1
     },
     {
       "id": "item303",
@@ -1991,6 +2031,11 @@
       "id": "item313",
       "typ": "P",
       "wuerfel": "RYY"
+    },
+    {
+      "id": "item315",
+      "typ": "R",
+      "leben": 3
     },
     {
       "id": "item316",

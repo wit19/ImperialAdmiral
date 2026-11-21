@@ -70,18 +70,28 @@ namespace TacticalAiHarness
             };
             HeroThreatProfile With(string hero, List<object> rewardIds)
             {
+                return With2(hero, null, rewardIds);
+            }
+            HeroThreatProfile With2(string hero, List<object> itemIds, List<object> rewardIds)
+            {
                 var entries = new List<object>
                 {
                     new Dictionary<string, object>
                     {
                         { "hero", hero },
-                        { "items", null },
+                        { "items", itemIds },
                         { "skills", null },
                         { "rewards", rewardIds },
                     },
                 };
                 return HeroProfiles.ApplyCampaignLoadouts(
                     baseProfiles, entries, refs)[hero];
+            }
+            Rational Threat(string hero, HeroThreatProfile prof, string posture)
+            {
+                var t = HeroThreatModelV2.Threat(HeroCards.For(hero), table, prof,
+                                                 false, posture, null);
+                return t ?? Rational.Zero;
             }
             HeroThreatModelV2.ThreatParts? Parts(string hero, List<object> rewardIds)
             {
@@ -127,6 +137,37 @@ namespace TacticalAiHarness
                 }
                 Check("reward.delta[" + nm + "]", want.ToString(),
                       (b.Value.Bonus - a.Value.Bonus).ToString());
+            }
+
+            // ---- 4c) P44 health-delta law (T. ruling 21.11., hand-pinned)
+            // factor = H/(H+delta) from printed facts only; the eliminate
+            // AND attrition threat scale by exactly that rational, the
+            // runner postures (protect/stall) must stay bit-identical, and
+            // a carrier reward / cardless hero must give factor 1.
+            foreach (var rawH in Json.AsList(v.ContainsKey("health_law") ? v["health_law"] : new List<object>()))
+            {
+                var hc = Json.AsDict(rawH);
+                var nm = Json.AsStr(hc["name"]);
+                var hero = Json.AsStr(hc["hero"]);
+                var items = hc.ContainsKey("items") ? Json.AsList(hc["items"]) : null;
+                var rewards = hc.ContainsKey("rewards") ? Json.AsList(hc["rewards"]) : null;
+                var want = Rational.Parse(Json.AsStr(hc["expect_factor"]));
+                var bareP2 = With2(hero, null, null);
+                var withP2 = With2(hero, items, rewards);
+                Check("reward.health[" + nm + "].factor", want.ToString(),
+                      HeroThreatModelV2.HealthKillFactor(
+                          HeroCards.For(hero), table, withP2).ToString());
+                foreach (var post in new[] { "eliminate", "attrition" })
+                {
+                    var tBare = Threat(hero, bareP2, post);
+                    var tWith = Threat(hero, withP2, post);
+                    Check("reward.health[" + nm + "]." + post,
+                          (tBare * want).ToString(), tWith.ToString());
+                }
+                var pBare = Threat(hero, bareP2, "protect");
+                var pWith = Threat(hero, withP2, "protect");
+                Check("reward.health[" + nm + "].protect_inert",
+                      pBare.ToString(), pWith.ToString());
             }
 
             // ---- 4b) model outputs (record discipline) ----

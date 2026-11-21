@@ -107,7 +107,8 @@ namespace TacticalAI.Core
         /// Compare liest absteigend). Der Ast Role=="healer" (zuletzt)
         /// bleibt Vektor-Wahrheit fuer die Sim-Profile: kein Held der
         /// lebenden Roster traegt diese Rolle, keine Gold-Zeile aendert sich.
-        public List<object> ChipKey(bool supporterPin = false, bool healerPin = false)
+        public List<object> ChipKey(bool supporterPin = false, bool healerPin = false,
+                                    Rational? healthFactor = null)
         {
             return new List<object>
             {
@@ -118,7 +119,13 @@ namespace TacticalAI.Core
                 // Heiler zuletzt (0).
                 healerPin ? 3 : Role == "healer" ? 0 : (Role == "support" || supporterPin) ? 2 : 1,
                 RunnerValue,
-                EvDamagePerRound,
+                // P44 (T. ruling 21.11.): printed-health deviations lower
+                // the damage term by the kill-cost factor H/(H+delta) —
+                // hits to wound scale linearly with the printed capacity.
+                // The chip CLASSES and the healthy-first law above are
+                // untouched; factor null = exactly 1 (all canon vectors
+                // and the AsDict golden stay bit-identical).
+                EvDamagePerRound * (healthFactor ?? Rational.One),
             };
         }
 

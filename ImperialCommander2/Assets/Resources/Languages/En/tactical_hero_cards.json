@@ -1,5 +1,5 @@
 {
-  "schema": "tacai.hero_cards/5",
+  "schema": "tacai.hero_cards/6",
   "source": "Kuratierung: oeffentlich gedruckte Heldenkarten-Werte aller 21 Kampagnen-Helden (gesund + verwundete Rueckseite), Basiswaffen und Item-Wuerfel/Modifikatoren; ids und xp-Kosten aus den App-Tabellen (CardData/heroes.json, CampaignData/items.json, CampaignData/skills.json). Cleanroom-Policy: wiki_data/LICENSE_DATA.md Punkt 5 — Zahlen, Wuerfelbuchstaben, Keyword-Slugs; Volltext nur bei auf der Karte aufgedruckten Faehigkeiten (Brettspiel-Inhalt, Wiki als Transkriptions-Medium); Roh-Wiki-Dumps out-of-build.",
   "conventions": {
     "wuerfelBuchstaben": "B/R/G/Y = gedruckte Angruesfel (App-Konvention); verteidigung: K=schwarz, W=weiss",
@@ -9,7 +9,8 @@
     "attribut": "Waffen mit Attribut-Pool ('Your attack pool is your X pool'): staerke/einsicht/tech — im verwundeten Zustand schrumpfen die Attributswuerfel (verwundete Kartenseite)",
     "items": "nur Items mit Angriffswirkung; genauigkeit/schaden/durchschlag = statische (nicht-Surge) Aufdrucke; Surge-Zeilen bleiben bewusst aussen vor (konservative Vereinfachung, wie Dice.cs)",
     "faehigkeiten": "Keyword-Slug + Zahlen (xp-Kosten aus App-Tabelle, strain-Kosten von der gedruckten Karte). Bei Fähigkeiten, die auf der Karte vollständig aufgedruckt sind, trägt der Slug zusätzlich den Volltext des gedruckten Fähigkeitstextes (Brettspiel-Inhalt aus dem lizenzierten Exemplar; Transkription, Wiki als Herkunfts-Medium — wiki_data/LICENSE_DATA.md Punkt 5); Konsum erst M11d",
-    "effekte": "M21/M22: manuell kuratierte Gedruckte-Skill-Effekt-Pins pro Held (supporter: always = geprintete Rolle (Davith, MHD-19), skills = Skill-ids, die den Supporter schalten (Diala: diala02/diala03, T.-Ruling 06.11.); explosion.wert = aufgedruckter Blast-Wert in H, upgrades = Skill-ids die den Wert ABSORBIEREN; tempo_pins = Skill-ids mit Tempo-Delta, gesund UND verwundet). Skill-ids sind sprachstabil (CampaignData/skills.json). Konsum: HeroThreatModelV2 (Blast-Zuwachs, Banden-Tempo). Quelle: wiki_data/tools/curate_hero_cards.py SKILL_EFFECTS (Sync-Pflicht). M25-ERWEITERT: angriffs_bonus = Skill-ids mit gedrucktem Extra-Angriff als exakter Bruchteil eines neutralen Angriffs-EV (wert; Gideon gideon07/gideon08 je 1/2, T.-Ruling 06.11.); genauigkeit_pins = Skill-ids mit statischer +Zielgenauigkeit (delta; loku08, vinto04, drokkata03); Helden-Reihen-Prints waffenGenauigkeit (Waffen-Zielgenauigkeit beide Zustände: CT +2, Loku +1, Saska +1), genauigkeitGesund (gesunde Heldenkarten-Seite: Loku +2), verstaerkungGesund (Lokus Spähmarken-Synergie 'Set Your Sights' + gedruckter Bonus: je ½ des neutralen Angriffs-EV — die Fähigkeit ist nur auf der gesunden Kartenseite printet, die B-Seite printet keine Fähigkeit; T.-Ruling 06.11. gegen Referenz verifiziert)."
+    "effekte": "M21/M22: manuell kuratierte Gedruckte-Skill-Effekt-Pins pro Held (supporter: always = geprintete Rolle (Davith, MHD-19), skills = Skill-ids, die den Supporter schalten (Diala: diala02/diala03, Thomas-Ruling 06.11.); explosion.wert = aufgedruckter Blast-Wert in H, upgrades = Skill-ids die den Wert ABSORBIEREN; tempo_pins = Skill-ids mit Tempo-Delta, gesund UND verwundet). Skill-ids sind sprachstabil (CampaignData/skills.json). Konsum: HeroThreatModelV2 (Blast-Zuwachs, Banden-Tempo). Quelle: wiki_data/tools/curate_hero_cards.py SKILL_EFFECTS (Sync-Pflicht). M25-ERWEITERT: angriffs_bonus = Skill-ids mit gedrucktem Extra-Angriff als exakter Bruchteil eines neutralen Angriffs-EV (wert; Gideon gideon07/gideon08 je 1/2, Thomas-Ruling 06.11.); genauigkeit_pins = Skill-ids mit statischer +Zielgenauigkeit (delta; loku08, vinto04, drokkata03); Helden-Reihen-Prints waffenGenauigkeit (Waffen-Zielgenauigkeit beide Zustände: CT +2, Loku +1, Saska +1), genauigkeitGesund (gesunde Heldenkarten-Seite: Loku +2), verstaerkungGesund (Lokus Spähmarken-Synergie 'Set Your Sights' + gedruckter Bonus: je ½ des neutralen Angriffs-EV — die Fähigkeit ist nur auf der gesunden Kartenseite printet, die B-Seite printet keine Fähigkeit; Thomas-Ruling 06.11. gegen Referenz verifiziert).",
+    "rewards": "P43: Kuratur aller PERSONAL-Revard-Karten (id = sprachstabiles CampaignData/rewards.json-id, held = Aufdruck aus dem App-Feld extra). Genau EIN Kanal pro Karte aus geschlossener Wortliste: waffen_pool (typ/wuerfel = gedruckter Angriffswuerfelpool, Behandlung wie Item-Waffe ohne Preissurcharge — Revard kostet nichts wie die Basiswaffe; angriffs_bruchteil = Surge-Zeilen der Waffe als Bruchteil eines neutralen Angriffs-EV auf dem Pool), angriffs_bruchteil (wert = Bruchteil eines neutralen Angriffs-EV ueber den Flat-Addend-Seam), unterstuetzer_chip (Supporter-Klasse im woundAll-Chipgesetz, analog M22 — nur Karten mit explizitem Fremd-Nutzen, T.-Ruling 21.11.), heiler_chip (nur unbedingte Wunden-Reparation; Ruhe-Heilung nie — T.-Ruling 21.11.; aktuell null Karten) und nur_rekord (keine Wirkung, Null-Law). Bruchteil-Treppe (T.-Ruling 21.11.): ohne Aktivierungskosten auf dem bedrohungsrelevanten Ausgang 1/2, strain-/surge-/erschoepf-/verbrauchspflichtig oder lage-/zieltyp-gebunden 1/4. leben/verteidigung/traeger = gedruckte Fakten fuer P44 (Deltagesetz), in P43 ohne Consumer. zitat = wortlicher Kartentext (Sync-Pflicht: curate_hero_cards.py prueft jedes Zitat gegen das Wiki-Spiegelbild, drift bricht den Lauf). Grund-Feld = Kuratur-Begruendung; Quelle: wiki_data/tools/curate_hero_cards.py REWARD_EFFECTS."
   },
   "heroes": [
     {
@@ -2015,6 +2016,242 @@
       "id": "item328",
       "typ": "O",
       "wuerfel": "BBR"
+    }
+  ],
+  "rewards": [
+    {
+      "id": "personal01",
+      "name": "Alliance Efficiency",
+      "held": "Ko-Tun Feralo",
+      "kanal": "nur_rekord",
+      "zitat": [
+        "Exhaust this card while attacking or defending to reroll 1 of your dice.",
+        "Exhaust this card when you perform a rest to recover 1 additional {{D}}.",
+        "Deplete this card after a player discards a Supply card to draw that card from the discard pile."
+      ],
+      "grund": "Wuerfel-Wiederwurf, Ruhe-Heilung (T.-Ruling: kein Heiler-Chip) und Supply-Rueckholung — kein Consumer im Planungsmodell."
+    },
+    {
+      "id": "personal02",
+      "name": "Battle Vision",
+      "held": "Loku Kanoloa",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "While a friendly figure is attacking a figure adjacent to a figure with a recon token, apply +1 {{D}} to the attack results."
+      ],
+      "grund": "Team-Schaden +1 durch Spaehmarke-Lage — Lage-Bedingt -> Stufe 1/4 (T.-Treppe 21.11.)."
+    },
+    {
+      "id": "personal03",
+      "name": "Bullseye!",
+      "held": "CT-1701",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "Exhaust this card while attacking with a {{P}} weapon. This attack gains Pierce 2.",
+        "Deplete this card while attacking with a {{P}} weapon to apply -1 {{X}} to the defense results."
+      ],
+      "grund": "Erschoepf-/Verbrauch-Aktivierung pro Attacke — Stufe 1/4."
+    },
+    {
+      "id": "personal04",
+      "name": "Cam Droid",
+      "held": "Murne Rin",
+      "kanal": "nur_rekord",
+      "zitat": [
+        "When you deploy your hero, place the Cam Droid companion in your space."
+      ],
+      "grund": "Kompanion-Platzierung — Begleitfigur ausserhalb des Helden-Bedrohungsmodells, kein Consumer."
+    },
+    {
+      "id": "personal05",
+      "name": "Desperado",
+      "held": "Vinto Hreeda",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "Exhaust this card while attacking. For each hostile figure within 3 spaces of you, apply +1 {{Z}} to the attack results.",
+        "Exhaust this card while defending. For each hostile figure within 3 spaces of you, apply +1 {{V}} to the defense results."
+      ],
+      "grund": "Erschoepfung + Lage (Nachbarschaft) -> 1/4; die Verteidigungs-Haelfe ist Rekord ohne Consumer (P44-Familie)."
+    },
+    {
+      "id": "personal06",
+      "name": "Fearless Leader",
+      "held": "Gideon Argus",
+      "kanal": "unterstuetzer_chip",
+      "zitat": [
+        "After you resolve a \"Command\" the chosen friendly figure recovers 1 {{S}}."
+      ],
+      "grund": "Expliziter Nutzen fuer andere Figuren (T.-Ruling 21.11.: Supporter-Klasse nur bei Karten mit Fremd-Nutzen)."
+    },
+    {
+      "id": "personal07",
+      "name": "Haymaker",
+      "held": "Onar Koma",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "1 {{S}}: Exhaust this card during your activation and choose an adjacent, small, hostile figure. Test {{F}}. For each success, to a maximum of 3, push that figure up to 1 space and that figure suffers 1 {{D}}."
+      ],
+      "grund": "Strain-Aktivierung mit Lage-Bindung (angrenzend, small) -> Stufe 1/4."
+    },
+    {
+      "id": "personal08",
+      "name": "Hunt them Down",
+      "held": "Biv Bodhrik",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "While attacking a {{E}} TROOPER, apply +1 {{Z}} to the attack results. The attack gains Pierce 1."
+      ],
+      "grund": "Zieltyp-gebunden (nur TROOPER) — Zielbindung ist Lage-Bedingt -> 1/4 (T.-Treppe)."
+    },
+    {
+      "id": "personal09",
+      "name": "Iron Hand",
+      "held": "Verena Talos",
+      "kanal": "nur_rekord",
+      "zitat": [
+        "At the end of your activation, recover 1 {{S}} for each adjacent hostile figure, to a maximum of 3."
+      ],
+      "grund": "Strain-Oekonomie — kein Consumer im Planungsmodell."
+    },
+    {
+      "id": "personal10",
+      "name": "Life Debt",
+      "held": "Gaarkhan",
+      "kanal": "unterstuetzer_chip",
+      "zitat": [
+        "Exhaust this card after an attack targeting another friendly figure within 3 spaces is resolved."
+      ],
+      "grund": "Schutzkarte fuer andere Figuren (T.-Ruling 21.11.: Focus-Weitergabe = Fremd-Nutzen) -> Supporter-Klasse."
+    },
+    {
+      "id": "personal11",
+      "name": "Mandalorian Heritage",
+      "held": "Shyla Varad",
+      "kanal": "nur_rekord",
+      "leben": 2,
+      "zitat": [
+        "Apply +2 Health to your hero."
+      ],
+      "grund": "+2 Leben = Feld 'leben' fuer P44 (Deltagesetz); die Lichtschwert-Modi (Surge +2D / 2D-Reparation / Reach) sind aktivierungs- bzw. Ruhe-gebunden und bleiben Rekord (ein Kanal pro Karte, T.-Ruling 21.11.)."
+    },
+    {
+      "id": "personal12",
+      "name": "Peacemaker",
+      "held": "Jyn Odan",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "1 {{S}}: Exhaust this card after a hostile figure resolves an attack targeting you. Interrupt to perform an attack targeting that figure."
+      ],
+      "grund": "Reaktiver Gratis-Angriff, strain-belegt -> Stufe 1/4."
+    },
+    {
+      "id": "personal13",
+      "name": "Radiant Holocron",
+      "held": "Davith Elso",
+      "kanal": "nur_rekord",
+      "zitat": [
+        "Exhaust this card during your activation or at the start of another activation to interrupt to ready 1 of your class cards."
+      ],
+      "grund": "Karten-Ready (Meta-Oekonomie) — T.-Ruling 21.11.: kein Supporter-Chip, kein Consumer."
+    },
+    {
+      "id": "personal14",
+      "name": "Shadow Suit",
+      "held": "Mak Eshka'rey",
+      "kanal": "nur_rekord",
+      "verteidigung": 1,
+      "zitat": [
+        "+1 {{V}}"
+      ],
+      "grund": "+1 Verteidigung = gedruckte Tatsache, Feld fuer P44 (Chip-Kosten-Familie); Sichtlinien-Faehigkeit ohne Consumer."
+    },
+    {
+      "id": "personal15",
+      "name": "Shu Yen's Lightsaber",
+      "held": "Diala Passil",
+      "kanal": "waffen_pool",
+      "typ": "P",
+      "wuerfel": "BR",
+      "angriffs_bruchteil": "1/4",
+      "zitat": [
+        "{{Z}}: Pierce 3",
+        "{{Z}}: +1 {{D}}, Cleave 2 {{D}}",
+        "When you use \"Foresight,\" the attacker suffers 1 {{D}} after the attack resolves."
+      ],
+      "grund": "Waffe -> Wuerfelpool BR (Surcharge 0 wie Basiswaffe: Revard-Karte kostet nichts); Surge-Zeilen als Bruchteil 1/4 auf dem Pool (Aktivierung uber Surge = Treppe-Unterstufe); Foresight-Vergeltung nur Rekord (T.-Ruling 21.11.)."
+    },
+    {
+      "id": "personal16",
+      "name": "Systems Upgrade",
+      "held": "MHD-19",
+      "kanal": "nur_rekord",
+      "leben": 2,
+      "zitat": [
+        "+2 Health"
+      ],
+      "grund": "+2 Leben = Feld fuer P44; MEDICAL-Suche ist Supply-Oekonomie ohne Consumer."
+    },
+    {
+      "id": "personal17",
+      "name": "Tech Goggles",
+      "held": "Saska Teft",
+      "kanal": "nur_rekord",
+      "zitat": [
+        "Exhaust this card when a friendly figure in your line of sight discards a device token to claim a device token."
+      ],
+      "grund": "Geräte-Token-Oekonomie — kein Consumer."
+    },
+    {
+      "id": "personal18",
+      "name": "Veteran Prowess",
+      "held": "Fenn Signis",
+      "kanal": "angriffs_bruchteil",
+      "wert": "1/4",
+      "zitat": [
+        "When you use \"Havod Shot,\" apply +1 {{D}} to your attack results.",
+        "Exhaust this card after resting. You recover 2 {{D}}."
+      ],
+      "grund": "Ausloeser ist die Faehigkeit 'Havod Shot' (Faehigkeits-Bindung = lagebedingt) -> 1/4; Ruhe-Reparation bleibt Rekord (T.-Ruling 21.11.)."
+    },
+    {
+      "id": "personal19",
+      "name": "Wholeness",
+      "held": "Tress Hacnua",
+      "kanal": "nur_rekord",
+      "verteidigung": 1,
+      "zitat": [
+        "Exhaust this card while defending to add +1 {{V}} to the defense results."
+      ],
+      "grund": "+1 Verteidigung (Erschoepfung) = Feld fuer P44 (Chip-Kosten); Force-Wuerfel ohne Consumer."
+    },
+    {
+      "id": "personal20",
+      "name": "Wookiee Roar",
+      "held": "Drokkatta",
+      "kanal": "nur_rekord",
+      "zitat": [
+        "Exhaust this card when a hostile figure is defeated during your activation to test {{F}}."
+      ],
+      "grund": "Sieg-Ausloeser mit Token/Strain/Focus-Ernten — kein Consumer im Planungsmodell."
+    },
+    {
+      "id": "personal21",
+      "name": "X-8 Upgrade",
+      "held": "Jarod Kelvin",
+      "kanal": "nur_rekord",
+      "leben": 2,
+      "traeger": "J4X-7",
+      "zitat": [
+        "Apply +2 Health to [[J4X-7]].",
+        "[[J4X-7]] loses \"Pierce 1\" and gains \"+1 {{D}}.\""
+      ],
+      "grund": "Leben- und Angriffsbonus gelten der Begleitfigur J4X-7 (traeger-Feld!), nicht dem Helden — Felder fuer P44, kein Consumer in P43."
     }
   ]
 }

@@ -1,0 +1,167 @@
+{
+  "_comment": "P43 PERSONAL reward-card channel law vectors (Thomas rulings 21.11.). Reader/null-law/fail-closed rows are hand-pinned (the law IS the expectation); the 'model' block (absolute ThreatParts of the weapon vector) follows the record discipline: tools/TacticalAiHarness --record writes personal_rewards_record.json, the reviewed rows are copied into 'expect'. The kanals here mirror wiki_data/tools/curate_hero_cards.py REWARD_EFFECTS (Sync-Pflicht, zitat-pflichtig).",
+  "reader": [
+    {
+      "id": "personal01",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal02",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal03",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal04",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal05",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal06",
+      "kanal": "unterstuetzer_chip"
+    },
+    {
+      "id": "personal07",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal08",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal09",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal10",
+      "kanal": "unterstuetzer_chip"
+    },
+    {
+      "id": "personal11",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal12",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal13",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal14",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal15",
+      "kanal": "waffen_pool"
+    },
+    {
+      "id": "personal16",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal17",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal18",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "personal19",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal20",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal21",
+      "kanal": "nur_rekord"
+    },
+    {
+      "id": "personal99",
+      "kanal": ""
+    },
+    {
+      "id": "item101",
+      "kanal": ""
+    }
+  ],
+  "junk": [
+    {
+      "id": "junk1",
+      "kanal": "rauswurf"
+    },
+    {
+      "id": "junk2",
+      "kanal": "waffen_pool"
+    },
+    {
+      "id": "junk3",
+      "kanal": "angriffs_bruchteil"
+    },
+    {
+      "id": "junk4",
+      "kanal": "angriffs_bruchteil",
+      "wert": "0"
+    },
+    {
+      "id": "junk5"
+    }
+  ],
+  "null_law": [
+    {
+      "name": "rekordkarten_und_unbekannt_ohne_wirkung",
+      "hero": "Gaarkhan",
+      "rewards": [
+        "personal01",
+        "personal09",
+        "personal11",
+        "personal16",
+        "personal20",
+        "personal21",
+        "personal99"
+      ],
+      "_gesetz": "nur_rekord-Karten und unbekannte ids aendern Bedrohungs-EV, bester Pool und Bonus BIT-IDENTISCH zum nackten Profil (Null-Law)."
+    }
+  ],
+  "delta": [
+    {
+      "name": "veteran_prowess_am_halter",
+      "hero": "Fenn Signis",
+      "reward": "personal18",
+      "expect_delta": "1/4",
+      "_gesetz": "angriffs_bruchteil = exakt 1/4 eines neutralen Angriffs-EV auf dem Flat-Addend-Seam (T.-Treppe 21.11.)."
+    },
+    {
+      "name": "karte_folgt_dem_halter",
+      "hero": "Ko-Tun Feralo",
+      "reward": "personal18",
+      "expect_delta": "1/4",
+      "_gesetz": "Dieselbe Karte an EINEM ANDEREN Held: gleicher Delta-Beweis — Matching laeuft ueber die Reward-ID, Held-Code existiert nicht (Abweichler-Umwahl wirkt mechanisch)."
+    }
+  ],
+  "model": [
+    {
+      "name": "p43_diala_lightsaber",
+      "hero": "Diala Passil",
+      "rewards": [
+        "personal15"
+      ],
+      "expect": {
+        "basis_damage_ev": "2",
+        "best_pool": "BlueRed",
+        "bonus": "0",
+        "damage_ev": "61/24",
+        "energy": "1/8"
+      }
+    }
+  ]
+}

@@ -22,14 +22,14 @@
     },
     {
       "hero": "Diala Passil",
-      "source": "P42: PERSONAL-Revard personal15 'Shu Yen's Lichtschwert' am HELDEN (Nur-Rekord-Kanal: VectorRow == Basis-Profil, knowledge bestaetigt)",
+      "source": "P43: PERSONAL-Revard personal15 am HELDEN — Kanal waffen_pool; VectorRow bleibt Basis-Profil (die Waffe wirkt in der Karten-Bedrohung, nicht im Profil-EV), gewichtet im Kanal-Gesetz, der absolute Waffen-Vektor pinnt in personal_rewards.json",
       "items": [],
       "skills": [],
       "rewards": ["personal15"]
     },
     {
       "hero": "Fenn Signis",
-      "source": "P42: personal18 'Veteran Prowess' am Heldennamen-Channel — Null-Law-Beweis ohne Effekte-Pin",
+      "source": "P43: personal18 am Kanal angriffs_bruchteil — VectorRow bleibt Basis-Profil (der Flat-Addend lebt in der Karten-Bedrohung, nicht im Profil-EV); das exakte Delta 1/4 pinnt in personal_rewards.json",
       "items": [],
       "skills": [],
       "rewards": ["personal18"]

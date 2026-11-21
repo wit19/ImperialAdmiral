@@ -411,11 +411,17 @@ namespace TacticalAI.Core
                 // the trait-derived profile column.
                 // M24: same shape for the printed HEALER kit - a hero who
                 // repairs wounds is chipped before the supporter class.
+                // P43 (T. ruling 21.11.): personal reward cards of the
+                // unterstuetzer_chip / heiler_chip channels join the SAME
+                // class decision, matched by reward id over PinIds - the
+                // card follows its holder, class only, never a threat
+                // number (chip law remains the sole consumer, M22/M24 law).
                 Chip = woundAll && c.Profile != null
-                    ? c.Profile.ChipKey(c.Card != null &&
-                        c.Card.SupporterEffektiv(c.Profile.PinIds),
-                        c.Card != null &&
-                        c.Card.HeilerEffektiv(c.Profile.PinIds))
+                    ? c.Profile.ChipKey(
+                        (c.Card != null && c.Card.SupporterEffektiv(c.Profile.PinIds)) ||
+                        (table != null && table.RewardUnterstoetzerChip(c.Profile.PinIds)),
+                        (c.Card != null && c.Card.HeilerEffektiv(c.Profile.PinIds)) ||
+                        (table != null && table.RewardHeilerChip(c.Profile.PinIds)))
                     : null,
             }).ToList();
 

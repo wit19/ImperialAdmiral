@@ -2788,6 +2788,64 @@
       "wounded": true
      }
    ]
+  },
+ {
+  "_comment": "P43 (T.-Ruling 21.11.): Fearless Leader (personal06, Kanal unterstuetzer_chip) an Han statt Gideon - Supporter-Klasse und Chip-Reihenfolge folgen der KARTE, nicht dem Aufdruck-Helden (Abweichler-Umwahl wirkt mechanisch, kein Held-Code). Bedrohungszahlen bleiben unangetastet (Chip-Gesetz ist einziger Consumer, M22-Gesetz). expect gemessen (--record), nie handgeschrieben.",
+  "counter": "woundAll",
+  "expect":  [
+  {
+   "basis": "chip",
+   "hero": "Han Solo",
+   "marked": false,
+   "threat": "7/2",
+   "threat_econ": "7/2",
+   "wounded": false
+  },
+  {
+   "basis": "chip",
+   "hero": "Gideon Argus",
+   "marked": false,
+   "threat": "1",
+   "threat_econ": "1",
+   "wounded": false
   }
+ ],
+  "heroes": [
+   {
+    "attack_dice": 2,
+    "health": 6,
+    "hero": "Gideon Argus",
+    "loadout": {
+     "items": [],
+     "rewards": [],
+     "skills": []
+    },
+    "marked_round": 0,
+    "marks": 0,
+    "profile": "Gideon Argus",
+    "row": 0,
+    "wounded": false
+   },
+   {
+    "attack_dice": 2,
+    "health": 6,
+    "hero": "Han Solo",
+    "loadout": {
+     "items": [],
+     "rewards": [
+      "personal06"
+     ],
+     "skills": []
+    },
+    "marked_round": 0,
+    "marks": 0,
+    "profile": "Han Solo",
+    "row": 1,
+    "wounded": false
+   }
+  ],
+  "name": "p43_supporter_chip_follows_card",
+  "posture": "eliminate"
+ }
  ]
 }

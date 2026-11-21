@@ -286,6 +286,35 @@ namespace TacticalAI.Core
         }
     }
 
+    /// <summary>P43 (Thomas ruling 21.11.): one curated PERSONAL reward-card
+    /// row (asset "rewards", schema tacai.hero_cards/6). EXACTLY ONE channel
+    /// per card from the closed vocabulary: waffen_pool (Waffe = printed
+    /// dice pool treated like an item weapon WITHOUT price surcharge - the
+    /// reward card costs nothing, same law as the base weapon's surcharge 0;
+    /// Bruchteil = printed surge lines as a fraction of one neutral attack
+    /// EV riding the pool's surcharge seam, M25 unit), angriffs_bruchteil
+    /// (Wert = fraction of one neutral attack EV on the flat-addend seam,
+    /// M25 precedent; the two-step ladder 1/2 permanent vs 1/4
+    /// strain/surge/exhaust/position-gated is RESOLVED PER CARD by the
+    /// curation, never at runtime), unterstuetzer_chip / heiler_chip (chip
+    /// law classes ONLY, M22/M24 law - never a threat number) and nur_rekord
+    /// (no consumer in the planning model - the null law holds, the row is
+    /// knowledge, not weight). Leben/Verteidigung/Traeger = printed facts
+    /// recorded for the P44 durability delta law (no consumer yet; Traeger
+    /// non-null = the bonus applies to a companion figure, never the hero).
+    /// Unknown kanal = the whole row stays INERT (fail-closed).</summary>
+    public sealed class RewardEffect
+    {
+        public string Id;                        // CampaignData/rewards.json id
+        public string Kanal = "";
+        public ItemEffect Waffe;                 // waffen_pool payload
+        public Rational Bruchteil = Rational.Zero;  // waffen_pool surge addend
+        public Rational Wert = Rational.Zero;    // angriffs_bruchteil value
+        public int Leben;                        // printed health bonus (P44)
+        public string Traeger;                   // companion carrier or null
+        public int Verteidigung;                 // printed defense bonus (P44)
+    }
+
     /// <summary>Loaded tactical_hero_cards/4 asset (M21: "effekte" skill
     /// pins on hero rows - absent means no effects, null law).</summary>
 
@@ -295,6 +324,8 @@ namespace TacticalAI.Core
             new Dictionary<string, HeroCard>(StringComparer.Ordinal);
         readonly Dictionary<string, ItemEffect> _items =
             new Dictionary<string, ItemEffect>(StringComparer.Ordinal);
+        readonly Dictionary<string, RewardEffect> _rewards =
+            new Dictionary<string, RewardEffect>(StringComparer.Ordinal);
 
         public int Count { get { return _byName.Count; } }
         public HeroCard For(string name)
@@ -306,6 +337,58 @@ namespace TacticalAI.Core
         {
             ItemEffect e;
             return id != null && _items.TryGetValue(id, out e) ? e : null;
+        }
+        public RewardEffect Reward(string id)
+        {
+            RewardEffect e;
+            return id != null && _rewards.TryGetValue(id, out e) ? e : null;
+        }
+
+        /// <summary>P43: angriffs_bruchteil reward cards the hero HOLDS
+        /// (ids = his PinIds - skills never match a personal id, the two
+        /// catalogues are id-disjoint). Sum of the curated fractions.</summary>
+        public Rational RewardAngriffsBonus(IList<string> ids)
+        {
+            var s = Rational.Zero;
+            if (ids == null) return s;
+            foreach (var id in ids)
+            {
+                RewardEffect r;
+                if (id != null && _rewards.TryGetValue(id, out r) &&
+                    r.Kanal == "angriffs_bruchteil") s += r.Wert;
+            }
+            return s;
+        }
+
+        /// <summary>P43: does the hero hold an unterstuetzer_chip reward card?
+        /// Chip law class ONLY (M22 law) - never a threat number.</summary>
+        public bool RewardUnterstoetzerChip(IList<string> ids)
+        {
+            if (ids == null) return false;
+            foreach (var id in ids)
+            {
+                RewardEffect r;
+                if (id != null && _rewards.TryGetValue(id, out r) &&
+                    r.Kanal == "unterstuetzer_chip") return true;
+            }
+            return false;
+        }
+
+        /// <summary>P43: does the hero hold a heiler_chip reward card? The
+        /// curation law (T. ruling 21.11.) pins ONLY unconditional printed
+        /// wound repair - rest heal is never a healer; current campaign:
+        /// zero cards carry this channel (the vocabulary exists for future
+        /// cards, the harness pins the law).</summary>
+        public bool RewardHeilerChip(IList<string> ids)
+        {
+            if (ids == null) return false;
+            foreach (var id in ids)
+            {
+                RewardEffect r;
+                if (id != null && _rewards.TryGetValue(id, out r) &&
+                    r.Kanal == "heiler_chip") return true;
+            }
+            return false;
         }
 
         public static HeroCardTable FromDoc(object root)
@@ -459,6 +542,49 @@ namespace TacticalAI.Core
                 var w = Json.AsStr(Json.Get(r, "wuerfel", ""));
                 e.Wuerfel = HeroCard.Letters(w);
                 if (!string.IsNullOrEmpty(e.Id) && e.HatAngriffswirkung) t._items[e.Id] = e;
+            }
+            // P43: PERSONAL reward-card channel rows (curated in
+            // wiki_data/tools/curate_hero_cards.py REWARD_EFFECTS). Closed
+            // kanal vocabulary: an unknown kanal keeps the WHOLE row inert
+            // (fail-closed - an unverified card never weights anything).
+            foreach (var raw in Json.AsList(Json.Get(doc, "rewards", new List<object>())))
+            {
+                var r = Json.AsDict(raw);
+                var e = new RewardEffect
+                {
+                    Id = Json.AsStr(Json.Get(r, "id", null)),
+                    Kanal = Json.AsStr(Json.Get(r, "kanal", "")),
+                    Leben = Json.AsInt(Json.Get(r, "leben", 0)),
+                    Traeger = Json.AsStr(Json.Get(r, "traeger", null)),
+                    Verteidigung = Json.AsInt(Json.Get(r, "verteidigung", 0)),
+                };
+                var wert = Json.AsStr(Json.Get(r, "wert", null));
+                if (!string.IsNullOrEmpty(wert)) e.Wert = Rational.Parse(wert);
+                var br = Json.AsStr(Json.Get(r, "angriffs_bruchteil", null));
+                if (!string.IsNullOrEmpty(br)) e.Bruchteil = Rational.Parse(br);
+                switch (e.Kanal)
+                {
+                    case "waffen_pool":
+                        var w = HeroCard.Letters(Json.AsStr(Json.Get(r, "wuerfel", "")));
+                        if (w.Count == 0) continue;    // weapon channel without printed pool: inert
+                        e.Waffe = new ItemEffect
+                        {
+                            Id = e.Id,
+                            Typ = Json.AsStr(Json.Get(r, "typ", "O")),
+                            Wuerfel = w,
+                        };
+                        break;
+                    case "angriffs_bruchteil":
+                        if (e.Wert <= Rational.Zero) continue;   // fraction card without fraction: inert
+                        break;
+                    case "unterstuetzer_chip":
+                    case "heiler_chip":
+                    case "nur_rekord":
+                        break;
+                    default:
+                        continue;                              // unknown kanal: inert
+                }
+                if (!string.IsNullOrEmpty(e.Id)) t._rewards[e.Id] = e;
             }
             return t;
         }
@@ -684,6 +810,14 @@ namespace TacticalAI.Core
             var skillsX = profile != null ? profile.PinIds : null;   // P42
             flatBonus = card.AngriffsBonusEffektiv(skillsX)
                         + (wounded ? Rational.Zero : card.VerstaerkungGesund);
+            // P43 (T. ruling 21.11.): personal reward cards with the
+            // angriffs_bruchteil channel ride the SAME flat-addend seam as
+            // M25's extra-attack cards - each card's value is its curated
+            // fraction of ONE neutral attack EV (two-step ladder, resolved
+            // per card at curation, never invented at runtime). Matching is
+            // by reward id over PinIds: the card follows WHOEVER holds it
+            // (Abweichler reassignment included), no per-hero code.
+            if (table != null) flatBonus += table.RewardAngriffsBonus(skillsX);
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
             int pierce = 0;
@@ -740,6 +874,29 @@ namespace TacticalAI.Core
                         poolIsMeleeItem.Add(!ranged);
                     }
                 }
+            }
+            // P43 (T. ruling 21.11.): WEAPON reward cards (personal15 - the
+            // printed printed-hero-named card at the holder) enter the
+            // candidate pools like item weapons, but WITHOUT price surcharge
+            // (a reward card costs nothing - same law as the base weapon's
+            // surcharge 0). Their printed surge lines ride this pool's
+            // surcharge seam as the curated fraction of one neutral attack
+            // EV (M25 unit). WHICH weapon the hero equips stays the argmax
+            // law's call (M27: "die Waffenrechnung bestimmt" - nothing is
+            // decreed); LoadoutRewards is sorted, pool order deterministic.
+            if (table != null && profile != null && profile.LoadoutRewards != null)
+            foreach (var rid in profile.LoadoutRewards)
+            {
+                var rw = table.Reward(rid);
+                if (rw == null || rw.Kanal != "waffen_pool" || rw.Waffe == null) continue;
+                var we = rw.Waffe;
+                pierce += we.Durchschlag;
+                if (we.Genauigkeit > 0) keywords.Add("+" + we.Genauigkeit + " Accuracy");
+                if (we.Schaden > 0) keywords.Add("+" + we.Schaden + " {H}");
+                bool weRanged = we.Typ == "O";
+                pools.Add(Tuple.Create(new List<string>(we.Wuerfel), weRanged, rw.Bruchteil));
+                poolGate.Add(0);
+                poolIsMeleeItem.Add(!weRanged);
             }
             // M25: the hero's OWN printed static accuracy (weapon line +
             // healthy-side ability + accuracy cards) rides the existing
@@ -941,15 +1098,29 @@ namespace TacticalAI.Core
             return MobilityTier((wounded ? card.TempoVerwundet : card.Tempo) + delta);
         }
 
+        /// <summary>P43: the waffen_pool payload of a reward id (null for
+        /// every other kanal / unknown id - the null law).</summary>
+        static ItemEffect RewardWeaponOf(HeroCardTable table, string id)
+        {
+            var r = table != null ? table.Reward(id) : null;
+            return r != null && r.Kanal == "waffen_pool" ? r.Waffe : null;
+        }
+
         static int RunnerRange(HeroCard card, HeroCardTable table,
                                HeroThreatProfile profile, bool wounded)
         {
             int range = card.Reichweite;
             var owned = profile != null && profile.LoadoutItems != null
                 ? profile.LoadoutItems : NoItems;
-            foreach (var id in owned)
+            // P43: a REWARD weapon extends the runner's reach exactly like
+            // an item weapon would (melee reward weapons are excluded by the
+            // same typ check - nothing decreed, same law).
+            var rwIds = profile != null ? profile.LoadoutRewards : null;
+            foreach (var id in owned.Concat(rwIds ?? NoItems).OrderBy(x => x, StringComparer.Ordinal))
             {
-                var e = table != null ? table.Item(id) : null;
+                var e = id != null && rwIds != null && rwIds.Contains(id)
+                        ? RewardWeaponOf(table, id)
+                        : (table != null ? table.Item(id) : null);
                 if (e == null) continue;
                 var chars = e.Wuerfel.Count > 0 ? e.Wuerfel
                           : e.Attribut != null ? card.AttributWuerfel(e.Attribut, wounded)

@@ -88,6 +88,11 @@ namespace TacticalAiHarness
                                 { "hero", Json.AsStr(h["hero"]) },
                                 { "items", Json.Get(lo, "items", null) },
                                 { "skills", Json.Get(lo, "skills", null) },
+                                // P43: the reward channel rides the SAME
+                                // merge as the live hub (ApplyCampaignLoadouts
+                                // reads "rewards" - PinIds see the card, the
+                                // chip law and the card engine consume it).
+                                { "rewards", Json.Get(lo, "rewards", null) },
                             });
                         }
                     }

@@ -55,11 +55,14 @@ namespace TacticalAI.Core
         // P42 (T. ruling 21.11): personal side-mission REWARD cards are now
         // table facts (assigned to the hero in the hub - Diala's lightsaber
         // belongs to Diala, printed on the card). They ride the loadout as a
-        // THIRD id channel: recorded, visible to the effekte pins, but with
-        // NO generic score - rewards.json carries no cost/tier, so any
-        // blanket EV would be invention (Null-Law). Real weight per card
-        // comes only from curated effekte pins keyed by the reward id,
-        // unknown ids stay inert exactly as M21/M22 law.
+        // THIRD id channel, visible to every pin matched over PinIds.
+        // P43 (T. rulings 21.11.): the channel is now SCORED - through the
+        // curated rewards table of tactical_hero_cards/6 (HeroCardTable.
+        // Reward*), EXACTLY one closed-vocabulary channel per card with its
+        // printed zitat as evidence. There is deliberately STILL no generic
+        // score: rewards.json carries no cost/tier, so a blanket EV would be
+        // invention - a card weighs only what its curated channel law says,
+        // unknown ids and nur_rekord rows stay inert (Null-Law).
         public List<string> LoadoutRewards = new List<string>();
 
         /// Effekte-pin view (P42): SKILL ids AND reward-card ids - the two

@@ -19,6 +19,20 @@
       "source": "Jyn Odan: eigene Skills (xpCost 4 = Flag-Besonderheit) + Ruestung",
       "items": ["item106"],
       "skills": ["jyn01", "jyn07"]
+    },
+    {
+      "hero": "Diala Passil",
+      "source": "P42: PERSONAL-Revard personal15 'Shu Yen's Lichtschwert' am HELDEN (Nur-Rekord-Kanal: VectorRow == Basis-Profil, knowledge bestaetigt)",
+      "items": [],
+      "skills": [],
+      "rewards": ["personal15"]
+    },
+    {
+      "hero": "Fenn Signis",
+      "source": "P42: personal18 'Veteran Prowess' am Heldennamen-Channel — Null-Law-Beweis ohne Effekte-Pin",
+      "items": [],
+      "skills": [],
+      "rewards": ["personal18"]
     }
   ]
 }

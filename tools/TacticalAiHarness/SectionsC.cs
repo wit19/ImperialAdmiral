@@ -192,6 +192,13 @@ namespace TacticalAiHarness
                 var key = target.Name;
                 Check("hero.loadouts[" + i + "].loaded", r["loaded"],
                       loaded[key].VectorRow(probe));
+                // P42: the reward channel is RECORDED verbatim (ownership is
+                // the fact; scoring stays curated-pin territory). Guarded
+                // read - rows without 'rewards' keep their old meaning.
+                if (r.ContainsKey("rewards") && r["rewards"] != null)
+                    Check("hero.loadouts[" + i + "].rewards_recorded",
+                          Json.AsList(r["rewards"]).ConvertAll(o => (object)(string)o),
+                          loaded[key].LoadoutRewards);
             }
         }
 

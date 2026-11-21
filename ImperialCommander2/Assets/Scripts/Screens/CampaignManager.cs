@@ -927,6 +927,11 @@ namespace Saga
 		{
 			addCampaignItemPopup.AddReward( ( item ) =>
 			{
+				// P42: a card already ASSIGNED to a hero is not team stock -
+				// it cannot re-enter the shared tray through the hub '+'.
+				if ( sagaCampaign.campaignHeroes.Any( h =>
+					h.campaignRewards != null && h.campaignRewards.Contains( item.id ) ) )
+					return;
 				if ( !sagaCampaign.campaignRewards.Contains( item.id ) )
 				{
 					sagaCampaign.campaignRewards.Add( item.id );
@@ -943,7 +948,39 @@ namespace Saga
 
 		public void RemoveHeroFromCampaign( CampaignHero hero )
 		{
+			// P42: a hero leaving the campaign carries NO personal reward
+			// cards away - they are unique physical cards of the campaign
+			// pool and return to the shared tray (no orphaned goods).
+			if ( hero?.campaignRewards != null )
+			{
+				foreach ( var rid in hero.campaignRewards )
+					if ( !sagaCampaign.campaignRewards.Contains( rid ) )
+						sagaCampaign.campaignRewards.Add( rid );
+				hero.campaignRewards.Clear();
+				RefreshRewardTray();
+			}
 			sagaCampaign.campaignHeroes.Remove( hero );
+		}
+
+		/// <summary>P42: rebuilds the shared rewards tray rows from the
+		/// pile (assign-to-hero MOVES a card out of the tray, the hero-row
+		/// X MOVES it back - both call this).</summary>
+		public void RefreshRewardTray()
+		{
+			if ( rewardContainer == null )
+				return;
+			foreach ( Transform child in rewardContainer )
+				Destroy( child.gameObject );
+			if ( sagaCampaign == null || SagaCampaign.campaignDataRewards == null )
+				return;
+			Dictionary<string, string> rewards = new Dictionary<string, string>();
+			foreach ( var campaignReward in sagaCampaign.campaignRewards )
+			{
+				if ( SagaCampaign.campaignDataRewards.Any( x => x.id == campaignReward ) )
+					rewards[ campaignReward ] = SagaCampaign.campaignDataRewards.First( x => x.id == campaignReward ).name;
+			}
+			foreach ( var reward in rewards.OrderBy( x => x.Value ) )
+				AddRewardToUI( sagaCampaign.GetRewardFromID( reward.Key ) );
 		}
 
 		public void OnAddForcedMissionClick()

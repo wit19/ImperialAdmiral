@@ -489,6 +489,74 @@
    },
    "skills": [],
    "skipped": false
+  },
+{
+   "base": null,
+   "hero": "Diala Passil",
+   "items": [],
+   "loaded": {
+    "ability_index": 0,
+    "chip_key": [
+     1,
+     10,
+     "1"
+    ],
+    "equipment_index": "0",
+    "evDamagePerRound": "1",
+    "flags": [
+     "basis-prior-neutral"
+    ],
+    "focus_key": [],
+    "ignoreLos": false,
+    "knowledge": "bestaetigt",
+    "loadout_items": [],
+    "loadout_skills": [],
+    "mobility": 2,
+    "name": "Diala Passil",
+    "rangeMax": 5,
+    "role": "melee",
+    "runner_value": 10,
+    "selfHealPossible": false
+   },
+   "skills": [],
+   "skipped": false,
+   "rewards": [
+    "personal15"
+   ]
+  },
+{
+   "base": null,
+   "hero": "Fenn Signis",
+   "items": [],
+   "loaded": {
+    "ability_index": 0,
+    "chip_key": [
+     2,
+     10,
+     "1"
+    ],
+    "equipment_index": "0",
+    "evDamagePerRound": "1",
+    "flags": [
+     "basis-prior-neutral"
+    ],
+    "focus_key": [],
+    "ignoreLos": false,
+    "knowledge": "bestaetigt",
+    "loadout_items": [],
+    "loadout_skills": [],
+    "mobility": 2,
+    "name": "Fenn Signis",
+    "rangeMax": 5,
+    "role": "support",
+    "runner_value": 10,
+    "selfHealPossible": false
+   },
+   "skills": [],
+   "skipped": false,
+   "rewards": [
+    "personal18"
+   ]
   }
  ],
  "profiles": {

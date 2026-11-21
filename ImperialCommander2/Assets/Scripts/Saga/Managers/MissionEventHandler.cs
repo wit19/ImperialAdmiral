@@ -955,12 +955,37 @@ namespace Saga
 				}
 				foreach ( var item in acr.campaignRewards )
 				{
+					// P42 (T. ruling 21.11): a PERSONAL reward ('Shu Yen's
+					// Lightsaber' -> Diala Passil) names its hero in the
+					// catalogue (RewardType.Personal + extra = hero name) -
+					// that is printed card text, not a players' guess. If
+					// the named hero stands in the campaign, the card goes
+					// straight onto the hero (and the tactical AI reads the
+					// loadout); otherwise it waits in the shared tray as
+					// before. Manual (re)assignment in the hub stays always
+					// possible via the hero's '+ Belohnung'.
+					var reward = DataStore.campaignDataRewards.Where( x => x.id == item ).FirstOr( null );
+					var owner = reward != null && reward.type == RewardType.Personal
+						&& !string.IsNullOrEmpty( reward.extra )
+						? RunningCampaign.sagaCampaign.campaignHeroes.FirstOrDefault( h =>
+							SagaCampaign.HeroDisplayName( h.heroID ).Equals( reward.extra.Trim(), StringComparison.OrdinalIgnoreCase ) )
+						: null;
+					if ( owner != null )
+					{
+						if ( !owner.campaignRewards.Contains( item ) )
+						{
+							owner.campaignRewards.Add( item );
+							sagaController.toastManager.ShowToast( $"{DataStore.uiLanguage.uiCampaign.rewardsUC}: {reward.name} ({reward.extra})" );
+							Debug.Log( $"SagaEventManager()::AddCampaignRewards:Assigned PERSONAL Reward {reward.name} -> hero {reward.extra}" );
+						}
+						continue;
+					}
 					if ( !RunningCampaign.sagaCampaign.campaignRewards.Contains( item ) )
 					{
 						RunningCampaign.sagaCampaign.campaignRewards.Add( item );
-						var reward = DataStore.campaignDataRewards.Where( x => x.id == item ).FirstOr( null );
-						sagaController.toastManager.ShowToast( $"{DataStore.uiLanguage.uiCampaign.rewardsUC}: {reward.name}" );
-						Debug.Log( $"SagaEventManager()::AddCampaignRewards:Added Reward: {reward} / {item}" );
+						var trayReward = DataStore.campaignDataRewards.Where( x => x.id == item ).FirstOr( null );
+						sagaController.toastManager.ShowToast( $"{DataStore.uiLanguage.uiCampaign.rewardsUC}: {trayReward.name}" );
+						Debug.Log( $"SagaEventManager()::AddCampaignRewards:Added Reward: {trayReward} / {item}" );
 					}
 				}
 				foreach ( var item in acr.earnedVillains )

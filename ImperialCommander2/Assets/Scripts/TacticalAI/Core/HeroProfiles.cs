@@ -52,6 +52,36 @@ namespace TacticalAI.Core
         public int AbilityIndex = 0;                   // Summe der xpCost
         public List<string> LoadoutItems = new List<string>();
         public List<string> LoadoutSkills = new List<string>();
+        // P42 (T. ruling 21.11): personal side-mission REWARD cards are now
+        // table facts (assigned to the hero in the hub - Diala's lightsaber
+        // belongs to Diala, printed on the card). They ride the loadout as a
+        // THIRD id channel: recorded, visible to the effekte pins, but with
+        // NO generic score - rewards.json carries no cost/tier, so any
+        // blanket EV would be invention (Null-Law). Real weight per card
+        // comes only from curated effekte pins keyed by the reward id,
+        // unknown ids stay inert exactly as M21/M22 law.
+        public List<string> LoadoutRewards = new List<string>();
+
+        /// Effekte-pin view (P42): SKILL ids AND reward-card ids - the two
+        /// catalogs are id-disjoint by construction (skills.json 'xxxNN'
+        /// rows vs rewards.json 'personalNN/numberNN/...' rows), so one
+        /// merged id stream matches every pin without ambiguity. Zero-cost
+        /// pass-through while no rewards are owned (bit-identical law).
+        public IList<string> PinIds
+        {
+            get
+            {
+                if (LoadoutRewards == null || LoadoutRewards.Count == 0)
+                    return LoadoutSkills;
+                if (LoadoutSkills == null || LoadoutSkills.Count == 0)
+                    return LoadoutRewards;
+                var m = new List<string>(LoadoutSkills);
+                foreach (var r in LoadoutRewards)
+                    if (!m.Contains(r)) m.Add(r);
+                m.Sort(System.StringComparer.Ordinal);
+                return m;
+            }
+        }
 
         /// §3.3.1a Laeuferwert protect/stall: mobility x rangeMax (exakt).
         public int RunnerValue => Mobility * RangeMax;
@@ -137,6 +167,7 @@ namespace TacticalAI.Core
                 EquipmentIndex = EquipmentIndex, AbilityIndex = AbilityIndex,
                 LoadoutItems = new List<string>(LoadoutItems),
                 LoadoutSkills = new List<string>(LoadoutSkills),
+                LoadoutRewards = new List<string>(LoadoutRewards),
                 WeaponEvBonus = new System.Collections.Generic.Dictionary<string, Rational>(WeaponEvBonus),
             };
             return edit(c);
@@ -366,16 +397,22 @@ namespace TacticalAI.Core
 
                 var prof = ApplyLoadout(target,
                     Json.Get(entry, "items", null),
-                    Json.Get(entry, "skills", null), refs, doc);
+                    Json.Get(entry, "skills", null), refs, doc,
+                    Json.Get(entry, "rewards", null));   // P42 channel
                 outp[key] = prof;
             }
             return outp;
         }
 
         /// Python apply_loadout verbatim (additive on the base profile).
+        /// P42 DEVIATION (documented, additive-only): the optional REWARD
+        /// channel is RECORDED (LoadoutRewards) but never scored and never
+        /// flips lastout-unvollstaendig — rewards.json carries no cost/tier,
+        /// so the Python reference (no channel) computes identical numbers.
         public static HeroThreatProfile ApplyLoadout(
             HeroThreatProfile base_, object itemIdsRaw, object skillIdsRaw,
-            Dictionary<string, object> refs, Dictionary<string, object> doc)
+            Dictionary<string, object> refs, Dictionary<string, object> doc,
+            object rewardIdsRaw = null)
         {
             var typeTable = Json.AsDict(doc["type_table"]);
             var weightsRaw = Json.AsDict(doc["type_weights"]);
@@ -443,6 +480,10 @@ namespace TacticalAI.Core
                 p.AbilityIndex = (int)xpSum;
                 p.LoadoutItems = SortedStrs(itemIdsRaw);
                 p.LoadoutSkills = SortedStrs(skillIdsRaw);
+                // P42: recorded third channel - ownership is a public table
+                // fact (whose side mission earned the card), scored ONLY by
+                // curated effekte pins (HeroCards matches over PinIds).
+                p.LoadoutRewards = SortedStrs(rewardIdsRaw);
                 foreach (var kv in weaponBonus) p.WeaponEvBonus[kv.Key] = kv.Value;
                 return p;
             });

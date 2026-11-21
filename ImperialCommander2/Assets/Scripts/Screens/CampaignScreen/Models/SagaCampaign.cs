@@ -270,6 +270,24 @@ namespace Saga
 		public CampaignSkill GetSkillFromID( string id ) => campaignDataSkills.FirstOrDefault( x => x.id == id );
 		public CampaignReward GetRewardFromID( string id ) => campaignDataRewards.FirstOrDefault( x => x.id == id );
 
+		/// <summary>P42: display name of a campaign hero id (canon cards +
+		/// imported heroes - same union the AddHero popup enumerates). The
+		/// personal-reward eligibility law (RewardType.Personal + extra)
+		/// and the '+ Belohnung' chooser match over this name; hero names
+		/// are NOT translated in any language pack (verified De/En rows),
+		/// so comparing against rewards.json 'extra' is language-safe.</summary>
+		public static string HeroDisplayName( string heroID )
+		{
+			if ( string.IsNullOrEmpty( heroID ) )
+				return string.Empty;
+			var card = DataStore.heroCards.FirstOrDefault( x => x.id == heroID )
+				?? DataStore.globalImportedCharacters
+					.Where( x => x.deploymentCard.characterType == CharacterType.Hero )
+					.Select( x => x.deploymentCard )
+					.FirstOrDefault( x => x.id == heroID );
+			return card != null ? card.name : string.Empty;
+		}
+
 		public string GetCampaignInfo()
 		{
 			if ( campaignType == CampaignType.Imported )//custom campaign package

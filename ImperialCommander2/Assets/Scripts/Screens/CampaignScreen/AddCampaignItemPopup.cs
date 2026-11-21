@@ -24,6 +24,9 @@ namespace Saga
 		Action<CampaignSkill> addSkillCallback;
 		Action<MissionCard> addMissionCallback;
 		Action<CampaignReward> addRewardCallback;
+		// P42: hero-context chooser (unified '+': items + personal rewards
+		// waiting for THIS hero) routes reward rows to the hero, not the tray.
+		Action<CampaignReward> addRewardForHeroCallback;
 
 		string selectedExpansion = "";
 		List<string> expansionCodes = new List<string>();
@@ -256,6 +259,9 @@ namespace Saga
 
 		public void AddReward( Action<CampaignReward> callback )
 		{
+			addRewardCallback = callback;
+			addRewardForHeroCallback = null;   // P42: one reward route per popup session
+
 			foreach ( Transform item in itemContainer )
 				Destroy( item.gameObject );
 
@@ -313,7 +319,10 @@ namespace Saga
 
 		public void OnAddReward( CampaignReward card )
 		{
-			addRewardCallback?.Invoke( card );
+			if ( addRewardCallback != null )
+				addRewardCallback( card );
+			else // P42: hero chooser row
+				addRewardForHeroCallback?.Invoke( card );
 			OnClose();
 		}
 
@@ -398,6 +407,57 @@ namespace Saga
 					go.GetComponent<ItemSkillSelectorPrefab>().Init( card, item.fileName );
 				}
 			}
+		}
+
+		/// <summary>
+		/// P42 (T. ruling 21.11): the HERO's unified '+' — every unassigned
+		/// item from the shared pile (the trusted shop-item flow) PLUS the
+		/// PERSONAL reward cards that wait in the shared tray for THIS hero
+		/// (RewardType.Personal whose printed extra names the hero — Diala's
+		/// 'Shu Yen's Lichtschwert' shows on Diala's '+' only). Rows MOVE the
+		/// card to the hero (tray row disappears); the hero-row X moves it
+		/// back. Nothing is copied, nothing is guessed.
+		/// </summary>
+		public void AddItemOrRewardForHero( Action<CampaignItem> itemCallback,
+			Action<CampaignReward> rewardCallback, string heroID )
+		{
+			addItemCallback = itemCallback;
+			addRewardCallback = null;              // P42: hero rows never
+			addRewardForHeroCallback = rewardCallback;   // reach the hub tray
+
+			foreach ( Transform item in itemContainer )
+				Destroy( item.gameObject );
+			tierFilterContainer.SetActive( false );
+			rewardFilterContainer.SetActive( false );
+
+			var sc = FindObjectOfType<CampaignManager>().sagaCampaign;
+
+			foreach ( var item in SagaCampaign.campaignDataItems
+				.Where( x => sc.campaignItems.Contains( x.id ) ).OrderBy( x => x.name ) )
+			{
+				var go = Instantiate( itemSkillSelectorPrefab, itemContainer );
+				go.GetComponent<ItemSkillSelectorPrefab>().Init( item, false );
+			}
+
+			var heroName = SagaCampaign.HeroDisplayName( heroID );
+			var ownedByAnyone = sc.campaignHeroes
+				.Where( h => h.campaignRewards != null )
+				.SelectMany( h => h.campaignRewards ).Distinct().ToList();
+			foreach ( var rw in SagaCampaign.campaignDataRewards
+				.Where( x =>
+					x.type == RewardType.Personal
+					&& !string.IsNullOrEmpty( x.extra )
+					&& sc.campaignRewards.Contains( x.id )          // tray stock
+					&& !ownedByAnyone.Contains( x.id )              // belt: nobody owns it
+					&& x.extra.Trim().Equals( heroName.Trim(), StringComparison.OrdinalIgnoreCase ) )
+				.OrderBy( x => x.name ) )
+			{
+				var go = Instantiate( itemSkillSelectorPrefab, itemContainer );
+				go.GetComponent<ItemSkillSelectorPrefab>().Init( rw );
+			}
+
+			Show();
+			scrollRect.verticalNormalizedPosition = 3000;
 		}
 
 		/// <summary>

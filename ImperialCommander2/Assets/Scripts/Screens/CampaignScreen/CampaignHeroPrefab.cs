@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -39,7 +40,38 @@ namespace Saga
 
 		public void AddItem()
 		{
-			GlowEngine.FindUnityObject<AddCampaignItemPopup>().AddItem( OnItemAdded, true );
+			// P42: unified hero '+' — unassigned items AND the personal
+			// reward cards this hero is printed to own (see popup).
+			GlowEngine.FindUnityObject<AddCampaignItemPopup>().AddItemOrRewardForHero(
+				OnItemAdded, OnRewardAdded, campaignHero.heroID );
+		}
+
+		void OnRewardAdded( CampaignReward reward )
+		{
+			if ( reward == null || string.IsNullOrEmpty( reward.id ) || campaignHero == null )
+				return;
+			var cm = FindObjectOfType<CampaignManager>();
+			// MOVE, never copy: the card leaves the shared tray and belongs
+			// to this hero from now on (unique physical card law).
+			if ( !campaignHero.campaignRewards.Contains( reward.id ) )
+				campaignHero.campaignRewards.Add( reward.id );
+			cm.sagaCampaign.campaignRewards.Remove( reward.id );
+			cm.sagaCampaign.SaveCampaignState();
+			cm.RefreshRewardTray();
+			AddHeroToUI( campaignHero );
+		}
+
+		void OnRewardReturnedToTray( string rewardId )
+		{
+			if ( campaignHero == null )
+				return;
+			var cm = FindObjectOfType<CampaignManager>();
+			campaignHero.campaignRewards.Remove( rewardId );
+			if ( !cm.sagaCampaign.campaignRewards.Contains( rewardId ) )
+				cm.sagaCampaign.campaignRewards.Add( rewardId );
+			cm.sagaCampaign.SaveCampaignState();
+			cm.RefreshRewardTray();
+			AddHeroToUI( campaignHero );
 		}
 
 		void OnHeroAdded( DeploymentCard card )
@@ -91,7 +123,24 @@ namespace Saga
 
 		private void Update()
 		{
-			addItemButton.interactable = sagaCampaign?.campaignItems.Count > 0;
+			// P42: '+' is also the reward door — keep it live when THIS hero
+			// has a personal card waiting in the tray (even with an empty
+			// item pile).
+			addItemButton.interactable = sagaCampaign != null
+				&& ( sagaCampaign.campaignItems.Count > 0 || HasTrayRewardForHero() );
+		}
+
+		bool HasTrayRewardForHero()
+		{
+			if ( campaignHero == null || sagaCampaign == null
+				|| SagaCampaign.campaignDataRewards == null )
+				return false;
+			var heroName = SagaCampaign.HeroDisplayName( campaignHero.heroID );
+			return SagaCampaign.campaignDataRewards.Any( x =>
+				x.type == RewardType.Personal
+				&& !string.IsNullOrEmpty( x.extra )
+				&& sagaCampaign.campaignRewards.Contains( x.id )
+				&& x.extra.Trim().Equals( heroName.Trim(), StringComparison.OrdinalIgnoreCase ) );
 		}
 
 		//resets/adds the hero along with all items/skills
@@ -143,6 +192,23 @@ namespace Saga
 						Destroy( go );
 					} );
 				}
+			}
+			//P42: personal reward cards owned by this hero (X returns the
+			//card to the shared tray - it stays campaign stock, see law above)
+			foreach ( var rewardId in campaignHero.campaignRewards.OrderBy( x => x ) )
+			{
+				var go = Instantiate( listItem, contentContainer );
+				var ownedReward = SagaCampaign.campaignDataRewards.FirstOrDefault( x => x.id == rewardId );
+				if ( ownedReward != null )
+				{
+					var rid = rewardId;
+					go.GetComponent<CampaignListItemPrefab>().InitGeneralItem( ownedReward.name, ( n ) =>
+					{
+						OnRewardReturnedToTray( rid );
+					} );
+				}
+				else
+					Destroy( go );   // unknown id: honest silence, no phantom row
 			}
 		}
 	}

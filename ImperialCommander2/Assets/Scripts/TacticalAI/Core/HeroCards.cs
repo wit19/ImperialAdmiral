@@ -671,7 +671,7 @@ namespace TacticalAI.Core
                                     out Rational flatBonus)
         {
             explosion = ExplosionShare * card.ExplosionsWertEffektiv(
-                profile != null ? profile.LoadoutSkills : null);
+                profile != null ? profile.PinIds : null);   // P42: skill+reward pins
             // M25 (T. ruling 06.11.): the printed EXTRA-ATTACK cards and
             // Loku's printed recon-token synergy ('Set Your Sights' + recon
             // bonus) ride the SAME flat
@@ -681,7 +681,7 @@ namespace TacticalAI.Core
             // wiki_heros_raw models the wounded side for 16 heroes and Loku
             // has NO 'b ability' print, so the whole ability ends when
             // wounded (verified 06.11. against the reference).
-            var skillsX = profile != null ? profile.LoadoutSkills : null;
+            var skillsX = profile != null ? profile.PinIds : null;   // P42
             flatBonus = card.AngriffsBonusEffektiv(skillsX)
                         + (wounded ? Rational.Zero : card.VerstaerkungGesund);
             var owned = profile != null && profile.LoadoutItems != null
@@ -937,7 +937,7 @@ namespace TacticalAI.Core
             // M21 (T. ruling 06.11.): printed skill pins raise the band
             // tempo in the HEALTHY AND the wounded state (fenn01 "Taktisches
             // Vorrücken": speed +1 also at 3 -> band 2 while wounded).
-            int delta = card.TempoDelta(profile != null ? profile.LoadoutSkills : null);
+            int delta = card.TempoDelta(profile != null ? profile.PinIds : null);   // P42
             return MobilityTier((wounded ? card.TempoVerwundet : card.Tempo) + delta);
         }
 

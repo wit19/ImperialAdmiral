@@ -413,9 +413,9 @@ namespace TacticalAI.Core
                 // repairs wounds is chipped before the supporter class.
                 Chip = woundAll && c.Profile != null
                     ? c.Profile.ChipKey(c.Card != null &&
-                        c.Card.SupporterEffektiv(c.Profile.LoadoutSkills),
+                        c.Card.SupporterEffektiv(c.Profile.PinIds),
                         c.Card != null &&
-                        c.Card.HeilerEffektiv(c.Profile.LoadoutSkills))
+                        c.Card.HeilerEffektiv(c.Profile.PinIds))
                     : null,
             }).ToList();
 

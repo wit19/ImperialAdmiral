@@ -41,6 +41,9 @@ namespace TacticalAI
         const string HERO_ENTRY_PATH = "Data/taktische_hero_entries";
         const string CAMPAIGN_ITEMS_PATH = "Languages/En/CampaignData/items";
         const string CAMPAIGN_SKILLS_PATH = "Languages/En/CampaignData/skills";
+        // P42: personal side-mission reward cards (id/name/type/extra only —
+        // no cost/tier, so they ride the loadout as a recorded pin channel).
+        const string CAMPAIGN_REWARDS_PATH = "Languages/En/CampaignData/rewards";
 
         static object _heroLethalityRoot;
         static object _heroProfilesRoot;
@@ -61,6 +64,8 @@ namespace TacticalAI
         static bool _heroEntryFailed;
         static object _campaignItemsRoot;
         static object _campaignSkillsRoot;
+        static object _campaignRewardsRoot;
+        static bool _campaignRewardsFailed;
         static bool _lethalityFailed, _heroProfilesFailed,
                     _heroCardsFailed, _personasFailed,
                     _imperialDecksFailed, _imperialCardEffectsFailed,
@@ -303,6 +308,20 @@ namespace TacticalAI
             }
         }
 
+        /// <summary>P42: app's OWN reward catalogue (personal side-mission
+        /// cards). Read-only reference for the loadout reward channel;
+        /// failure is tolerated (channel stays recorded, refs simply lack
+        /// the table — the engine never scores it anyway).</summary>
+        public static object CampaignRewardsRoot
+        {
+            get
+            {
+                if (_campaignRewardsRoot == null && !_campaignRewardsFailed)
+                    _campaignRewardsRoot = LoadCampaignJson(CAMPAIGN_REWARDS_PATH, ref _campaignRewardsFailed);
+                return _campaignRewardsRoot;
+            }
+        }
+
         /// <summary>M3.1 store seam: builds {figure-or-hero id: profile}
         /// from the curated table + the campaign loadouts of ONE mission
         /// roster. Pure read of app-managed public data (no state, no
@@ -328,12 +347,22 @@ namespace TacticalAI
                 { "skills", hero == null ? new System.Collections.Generic.List<object>()
                     : new System.Collections.Generic.List<object>(
                         hero.campaignSkills.ConvertAll(s => (object)s.id)) },
+                // P42 (T. ruling 21.11): personal reward cards ASSIGNED to
+                // this hero (hub: '+ Belohnung' / auto-assignment at mission
+                // end) - ownership is the public fact the AI could not see
+                // while the cards sat unassigned in the team tray.
+                { "rewards", hero == null || hero.campaignRewards == null
+                    ? new System.Collections.Generic.List<object>()
+                    : new System.Collections.Generic.List<object>(
+                        hero.campaignRewards.ConvertAll(r => (object)r)) },
             };
             var refs = new System.Collections.Generic.Dictionary<string, object>
             {
                 { "items", items },
                 { "skills", skills },
             };
+            var rewardsRoot = CampaignRewardsRoot;
+            if (rewardsRoot != null) refs["rewards"] = rewardsRoot;
             var merged = Tac.HeroProfiles.ApplyCampaignLoadouts(
                 baseProfiles,
                 new System.Collections.Generic.List<object> { loadout }, refs);

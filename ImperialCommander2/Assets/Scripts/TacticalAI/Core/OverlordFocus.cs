@@ -152,7 +152,8 @@ namespace TacticalAI.Core
         public int EngagedRound;
         // P33-H4b (CONCEPT_missionsachse 2.1): the mission's own win wiring
         // names this hero the ATTACK AXIS (VictoryConditions projected:
-        // ImperialWinBy=allyDefeated, this is the axis actor, rebel-authored
+        // ImperialWinBy=allyDefeated | heroWithdraws (P45), this is the axis
+        // actor, rebel-authored
         // objective). "Fokus-Priorität wie Designation" - an EXPLICIT
         // mission-file fact, not text luck: the Compare slot rides directly
         // behind the human's aim mark and above the local reaction trio

@@ -1606,6 +1606,28 @@ namespace TacticalAI
                         }
                 }
 
+                // (c) P45 HERO-WITHDRAW channel (Player-40, CORE25
+                // "Temptation"): the event LISTENING on the mission's own
+                // side hero's withdrawal (useHeroWithdraws with heroWithdraws
+                // slot-equal to mp.specificHero - both public fields of the
+                // SAME file, never guessed) AND carrying a mission-end action
+                // = the Empire wins by that hero's retreat, the shipped
+                // side-mission rule (mission hero defeated twice -> must
+                // withdraw). The CORE25 proof: "End of Mission - Rebels lose"
+                // wires useHeroWithdraws/H1 with H1 == specificHero and a
+                // MissionManagement endMission action; the WIN event carries
+                // no such wiring, so it cannot flip the polarity. The
+                // shipped sweep (P45 script): exactly this one mission wires
+                // the channel - zero false-knowledge exposure elsewhere.
+                if (imperialWinBy == "" && !string.IsNullOrEmpty(mp.specificHero))
+                    foreach (var e in all)
+                    {
+                        if (e == null || !e.useHeroWithdraws) continue;
+                        if (!string.Equals(e.heroWithdraws, mp.specificHero,
+                                           StringComparison.Ordinal)) continue;
+                        if (HasEndAction(e)) { imperialWinBy = "heroWithdraws"; break; }
+                    }
+
                 // ---- block axis: an ESCAPE-vocabulary entity whose button
                 // ends the mission => its own section is the rebel win zone.
                 var zones = new List<string>();
@@ -1644,13 +1666,22 @@ namespace TacticalAI
                 string escort = "";
                 if (!string.IsNullOrEmpty(mp.specificHero)) escort = ResolveCardName(mp.specificHero);
 
+                // P45 identity law: on the withdraw channel the WATCHED HERO
+                // is the axis. The ally slot may still carry dead boilerplate
+                // (CORE25: every one of its 20 events ships allyDefeated=
+                // "A001" while useAllyDefeated is never true) - it must not
+                // masquerade as the axis the Empire hunts.
+                string actorId = axis, actorNm = axisName;
+                if (imperialWinBy == "heroWithdraws")
+                { actorId = mp.specificHero; actorNm = escort; }
+
                 var scalars = new Dictionary<string, object>
                 {
                     { "imperialWinBy", imperialWinBy },
                     { "rebelWinBy", rebelWinBy },
-                    { "actor", axis },
+                    { "actor", actorId },
                 };
-                if (!string.IsNullOrEmpty(axisName)) scalars["actorName"] = axisName;
+                if (!string.IsNullOrEmpty(actorNm)) scalars["actorName"] = actorNm;
                 if (!string.IsNullOrEmpty(escort)) scalars["escortHero"] = escort;
 
                 if (zones.Count == 0) outp.Add(new Dictionary<string, object>(scalars));

@@ -3108,7 +3108,8 @@ namespace TacticalAI
                     foreach (var z in LiveEscapeZones(view.EscapeSections))
                         if (!outp.Contains(z)) outp.Add(z);
                 }
-                else if (view.ImperialWinBy == "allyDefeated"
+                else if ((view.ImperialWinBy == "allyDefeated"
+                          || view.ImperialWinBy == "heroWithdraws")   // P45
                          && !string.IsNullOrEmpty(view.AxisActorName)
                          && LastSectionSpace != null)
                 {
@@ -3765,8 +3766,14 @@ namespace TacticalAI
             // H4b vector byte-identical (Null-Law). The per-activation
             // pattern mask (hunter/aggressive only) rides in the activation
             // path; the round-level designation already carries the key.
+            // P45: the hero-withdraw channel (the mission's OWN hero must
+            // retreat - CORE25 "Temptation", Player-40 wall) is the SAME
+            // hunt wiring with a different watched figure: the axis gates
+            // accept BOTH channels, the Unity producer decides which one a
+            // mission file actually parses (Null-Law otherwise).
             bool axisHunt = view != null && !view.ObjectiveForEmpire
-                            && view.ImperialWinBy == "allyDefeated"
+                            && (view.ImperialWinBy == "allyDefeated"
+                                || view.ImperialWinBy == "heroWithdraws")
                             && (!string.IsNullOrEmpty(view.AxisActor)
                                 || !string.IsNullOrEmpty(view.AxisActorName));
             int row = 0;

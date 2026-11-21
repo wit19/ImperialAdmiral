@@ -2094,3 +2094,47 @@ lockstep). Docs-Hop 21.11. zusätzlich: `tools/gen_whats_new.py` hält den
 generierten „Was ist neu"-Block im Spieler-Wiki (Marker `WHATSNEW:BEGIN/
 END`, rein insertiv, idempotent; `--check` ist der Gate-Modus — QA läuft
 ihn, Drift im Digest wird rot, niemals stumm veraltet).
+
+## The hero-withdraw channel (November 21, P45, Player-40 wall)
+
+The playtest of side mission CORE25 "Temptation" (log Player-40,
+build v1.0.3-dev.2) showed the hunt behaving against its own win
+condition: the mission is won by the Imperium when Diala Passil must
+withdraw (mission hero defeated twice), yet round 1 focused Fenn Signis.
+The producer log names the cause itself: `WorldEvents::victorynone
+candidates=20 parsed=0 [Null-Law]` - the victory grammar of P34 knew two
+forms (direct `useAllyDefeated` end event, and the HOTH12 one-hop variable
+chain), and CORE25 wires its Empire win through a THIRD one: the event
+"End of Mission - Rebels lose" listens with `useHeroWithdraws` on
+`heroWithdraws = H1`, where H1 is the mission's own `specificHero` - both
+public fields of the SAME mission file - and carries a MissionManagement
+endMission action. All 20 CORE25 events additionally ship a DEAD
+`allyDefeated="A001"` boilerplate (useAllyDefeated never set anywhere), so
+the ally channel honestly stayed empty: the Null-Law behaved exactly as
+designed (no parse, no claim, pure threat law decides). The threat law in
+round 1 then put Fenn ahead of Diala on the printed M11h strain prior
+(19/10 + Verbandsstufe 4 = 59/10 against Diala's 2 despite her bare 2 >
+1.9) - law-conform, but blind to the axis.
+
+**The law (P45-a, T. ruling 21.11.).** The victory grammar gains form (c)
+HERO-WITHDRAW: an event with `useHeroWithdraws`, `heroWithdraws ==
+mp.specificHero` (slot-equal, public data of one file, never guessed) and
+`HasEndAction` sets `imperialWinBy = "heroWithdraws"` with the watched hero
+as axis: `actor = mp.specificHero`, `actorName = ResolveCardName(...)` -
+the boilerplate ally slot must NOT masquerade as the hunted figure. The
+channel enters every axis consumer unchanged (DerivePosture hunt polarity:
+rebel-authored eliminate / imperial-authored protect; bridge axisHunt gate;
+axis-zone anchor) - the comparator axis slot (1a) already rides behind the
+human mark and re-ranks Diala above Fenn before any threat math. The WIN
+event of CORE25 carries no withdraw wiring, so the polarity cannot flip
+(A3 proof). Everything else stays Null-Law.
+
+**Proofs.** `tools/p45_hero_withdraw_verify.py` mirrors the producer law
+over the shipped files: CORE25 parses exactly the LOSE event, the ally
+channel parses 0 there (the wall as empirical record), and the sweep over
+all 138 shipped mission files matches EXACTLY one mission (CORE25) with
+ZERO foreign-hero end-wirings - no false-knowledge exposure anywhere else.
+`axis.json` gains two feed vectors (hunt polarity + protect twin, objective
+sentence neutral in both - wiring, never text luck). Fail-closed twin: no
+`specificHero`, no `useHeroWithdraws`, no end action or slot mismatch ->
+no row, today's law verbatim.

@@ -62,7 +62,7 @@ namespace TacticalAI.Core
         // (Null-Law). Scalars are last-event-wins (a later event refining the
         // wiring legitimately rewrites the claim); EscapeSections is an
         // additive sorted set (every parsed evac zone, ordinal).
-        public string ImperialWinBy = "";     // "" | "allyDefeated"
+        public string ImperialWinBy = "";     // "" | "allyDefeated" | "heroWithdraws" (P45)
         public string RebelWinBy = "";        // "" | "allyReaches"
         public string AxisActor = "";         // ally id (A001-style card id)
         public string AxisActorName = "";     // its public display name
@@ -1084,9 +1084,13 @@ namespace TacticalAI.Core
             //     a block target). Empirics: no shipped Empire mission wires
             //     ally defeat to a mission end (scan 06.11: 0/16) - the flip
             //     is the honest polarity law, vector-pinned in axis.json.
+            // P45: "heroWithdraws" (the mission's OWN hero must retreat -
+            // CORE25 form) reads as the SAME hunt polarity: the watched hero
+            // falling is the Empire's authored win, so rebel-authored ->
+            // eliminate, imperial-authored -> protect. Vector-pinned.
             // No parsed wiring ("" / "") -> the exact pre-H4b chain below,
             // bit-identical for every existing vector (Null-Law).
-            if (imperialWinBy == "allyDefeated")
+            if (imperialWinBy == "allyDefeated" || imperialWinBy == "heroWithdraws")
                 return objectiveForEmpire ? "protect" : "eliminate";
             if (rebelWinBy == "allyReaches")
                 return objectiveForEmpire ? "protect" : "stall";

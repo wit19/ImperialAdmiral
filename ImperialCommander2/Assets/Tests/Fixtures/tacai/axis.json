@@ -1,5 +1,5 @@
 {
-  "_doc": "P33-H4b mission-axis vectors (CONCEPT_missionsachse, findings_Player-33). feed_cases: the VictoryConditions feed law - the Hoth12-form vector (jagd+bLOCK, hunt outranks the race despite the roundLimit rest), polarity flip, additive zones under restatement, and the Null-Law twin without any win wiring. block_cases: the observed-graph Schnittstelle between axis anchor and win zone (Loch-Gesetz: unknown distance = does not exist). risk_cases: the RiskPosture block fallback clause - blocker/guard duty holds the interface, chase patterns and the no-fact side keep the Konten-Punkt clause bit-identical. focus_cases: the axis slot behind the human mark, mark beats axis, Basis-Fallback pricing of the card-less NPC ally (rational strings observed on the harness and pinned after review - never hand-recomputed) and its masked twin. replan_cases: the midround detector - current round only, after the plan seq.",
+  "_doc": "P33-H4b mission-axis vectors (CONCEPT_missionsachse, findings_Player-33) + P45 hero-withdraw channel (Player-40 wall, CORE25 'Temptation' - imperialWinBy=heroWithdraws reads as the SAME hunt polarity, watched hero = axis; both cases pinned). feed_cases: the VictoryConditions feed law - the Hoth12-form vector (jagd+bLOCK, hunt outranks the race despite the roundLimit rest), polarity flip, additive zones under restatement, and the Null-Law twin without any win wiring. block_cases: the observed-graph Schnittstelle between axis anchor and win zone (Loch-Gesetz: unknown distance = does not exist). risk_cases: the RiskPosture block fallback clause - blocker/guard duty holds the interface, chase patterns and the no-fact side keep the Konten-Punkt clause bit-identical. focus_cases: the axis slot behind the human mark, mark beats axis, Basis-Fallback pricing of the card-less NPC ally (rational strings observed on the harness and pinned after review - never hand-recomputed) and its masked twin. replan_cases: the midround detector - current round only, after the plan seq.",
 
   "feed_cases": [
     {
@@ -116,6 +116,44 @@
         "escort": "",
         "escape": ["sec-eins", "sec-zwei"],
         "canon_has": ["escape=sec-eins", "escape=sec-zwei"],
+        "canon_not": []
+      }
+    },
+    {
+      "name": "core25_rueckzug_kanal_jagd",
+      "_why": "P45 (Player-40 wall, CORE25 'Temptation'): the HERO-WITHDRAW channel - the mission's OWN hero must retreat for the Empire to win - parses as hunt knowledge. Posture eliminate by the wiring (the objective sentence names no target); the watched hero IS the axis (actor = specificHero slot 'H1', card name in actorName); escort and axis are the same person - the escort slot never competes, the polarity law is the axis.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Open the Door to the Holocron Chamber.", "priorityTarget": "", "roundLimit": -1, "mission": "Core25" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "heroWithdraws", "rebelWinBy": "", "actor": "H1", "actorName": "Diala Passil", "escortHero": "Diala Passil" } }
+      ],
+      "expect": {
+        "posture": "eliminate",
+        "imperialWinBy": "heroWithdraws",
+        "rebelWinBy": "",
+        "axis": "H1",
+        "axisName": "Diala Passil",
+        "escort": "Diala Passil",
+        "escape": [],
+        "canon_has": ["victory=heroWithdraws||H1|Diala Passil|Diala Passil"],
+        "canon_not": []
+      }
+    },
+    {
+      "name": "core25_rueckzug_polaritaet_protect",
+      "_why": "P45 polarity twin: an IMPERIAL-authored objective makes the watched hero OUR escort figure - the withdraw channel flips to protect exactly like allyDefeated. The objective sentence itself is neutral (no protect keyword) - the flip is the wiring, never text luck.",
+      "events": [
+        { "kind": "MissionStart", "round": 1, "payload": { "objective": "Open the Door to the Holocron Chamber.", "priorityTarget": "", "roundLimit": -1, "objectiveForEmpire": 1, "mission": "M45" } },
+        { "kind": "VictoryConditions", "round": 1, "payload": { "imperialWinBy": "heroWithdraws", "rebelWinBy": "", "actor": "H1", "actorName": "Diala Passil", "escortHero": "Diala Passil" } }
+      ],
+      "expect": {
+        "posture": "protect",
+        "imperialWinBy": "heroWithdraws",
+        "rebelWinBy": "",
+        "axis": "H1",
+        "axisName": "Diala Passil",
+        "escort": "Diala Passil",
+        "escape": [],
+        "canon_has": [],
         "canon_not": []
       }
     }

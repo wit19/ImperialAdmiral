@@ -19,6 +19,11 @@ namespace Saga
 		Vector2 ap;
 		QuestionPrompt questionPrompt;
 		Action callback;
+		/// <summary>P41: optional runtime-choice hook (bonus-activation
+		/// assignment). Authored mission prompts never set it - their flow
+		/// runs trigger/event GUIDs exactly as before.</summary>
+		[HideInInspector]
+		public System.Action<int> onChoice;
 		bool acceptInput = true;
 		bool acceptInput2 = true;
 
@@ -93,6 +98,12 @@ namespace Saga
 			acceptInput2 = false;
 
 			DataStore.sagaSessionData.missionLogger.LogEvent( MissionLogType.PlayerSelection, questionPrompt.buttonList[index].buttonText );
+
+			// P41: runtime choosers (bonus-activation assignment) hang their
+			// handling on this hook - the authored mission flow leaves it
+			// null and stays bit-identical (the trigger/event GUIDs below are
+			// its only channel).
+			onChoice?.Invoke( index );
 
 			Debug.Log( $"CHOICE: {questionPrompt.buttonList[index].buttonText}, Trigger: [{questionPrompt.buttonList[index].triggerGUID}], Event: [{questionPrompt.buttonList[index].eventGUID}]" );
 			FindObjectOfType<TriggerManager>().FireTrigger( questionPrompt.buttonList[index].triggerGUID );

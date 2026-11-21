@@ -679,6 +679,15 @@ namespace TacticalAI
                 // the shipping game and leaked labels into GroupId/hash.
                 var name = Tac.MissionLogText.ExtractRawName(it.message);
                 if (string.IsNullOrEmpty(name)) continue;
+                // P41 (T. ruling 21.11): a GroupActivation line naming the
+                // 3-hero BONUS TOKEN is not a hero and not a group - the
+                // marker is owned by a hero only through the new assignment
+                // (whose flips write the HERO's name). Restored pre-P41
+                // sessions still carry such old lines in their log: honest
+                // silence (Null-Law - a phantom name gets no event).
+                if (it.missionLogType == Saga.MissionLogType.GroupActivation
+                    && IsDummyName(name))
+                    continue;
                 switch (it.missionLogType)
                 {
                     case Saga.MissionLogType.GroupDefeated:
@@ -1748,6 +1757,12 @@ namespace TacticalAI
         {
             foreach (var cd in DataStore.deployedHeroes)
             {
+                // P41: the 3-hero bonus TOKEN is a marker, not a hero - the
+                // group channel has always skipped dummies (Spawn law); the
+                // hero channel now does the same (its chip, if a pre-P41
+                // flag state ever leaks through a restore, must never emit
+                // a HeroActivated for a name no figure answers to).
+                if (cd == null || cd.isDummy) continue;
                 // M14e (T. 07.11, CONCEPT_standort_ledger_v2): the hero
                 // ENTRY - one HeroDeployed per blue entry field the ledger
                 // carries (multi-field mission => one event per field: the
@@ -2017,6 +2032,20 @@ namespace TacticalAI
             {
                 foreach (var cd in DataStore.deployedHeroes)
                     if (cd != null && cd.name == name) return true;
+            }
+            catch { }
+            return false;
+        }
+
+        // P41: is the name the 3-hero BONUS TOKEN's? (same public-state law
+        // as IsHeroName - deployed cards only, nothing hidden read.)
+        bool IsDummyName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            try
+            {
+                foreach (var cd in DataStore.deployedHeroes)
+                    if (cd != null && cd.isDummy && cd.name == name) return true;
             }
             catch { }
             return false;

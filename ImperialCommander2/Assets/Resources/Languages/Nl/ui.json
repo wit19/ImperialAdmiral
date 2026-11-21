@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Standaard ({0})",
     "personaNone": "GEEN persona",
+    "bonusChipPrompt": "Welke held krijgt de bonusactivering?",
+    "bonusChipAssigned": "Bonusactivering toegewezen aan {0}",
     "personaRank": "rang {0}",
     "personaBonusDoctrine": "inzetfocus",
     "personaBonusGuard": "{0}% reserve",

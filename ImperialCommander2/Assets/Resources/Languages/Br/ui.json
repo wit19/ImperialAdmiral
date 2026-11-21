@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Padrao ({0})",
     "personaNone": "SEM persona",
+    "bonusChipPrompt": "Qual herói recebe a ativação bônus?",
+    "bonusChipAssigned": "Ativação bônus atribuída a {0}",
     "personaRank": "posto {0}",
     "personaBonusDoctrine": "foco operaciona",
     "personaBonusGuard": "{0}% reserva",

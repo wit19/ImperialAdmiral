@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Predefinito ({0})",
     "personaNone": "NESSUNA persona",
+    "bonusChipPrompt": "Quale eroe riceve l'attivazione bonus?",
+    "bonusChipAssigned": "Attivazione bonus assegnata a {0}",
     "personaRank": "grado {0}",
     "personaBonusDoctrine": "fuoco operativo",
     "personaBonusGuard": "{0}% riserva",

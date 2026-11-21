@@ -136,6 +136,18 @@ namespace Saga
 		{
 			if ( !activationToggle1.gameObject.activeInHierarchy )
 				return;
+
+			// P41 (T. ruling 21.11): the bonus token is a MARKER, not a hero.
+			// Its flip is only a turn-close once the players have chosen WHO
+			// owns this extra activation; unassigned, the flip asks instead of
+			// logging "Dummy Hero" (a phantom hero never existed at the table
+			// and never enters the mission log or the tactical feed).
+			if ( cardDescriptor.isDummy )
+			{
+				BonusChipFlip();
+				return;
+			}
+
 			cardDescriptor.heroState.hasActivated[0] = activationToggle1.isOn;
 
 			// Player-19 M6s-B7: the checkbox flip is the table's OWN "his
@@ -160,11 +172,121 @@ namespace Saga
 				DataStore.sagaSessionData.missionLogger.LogEvent( MissionLogType.GroupActivation, cardDescriptor.name );
 		}
 
+		// ------------------------------------------------------------------
+		// P41 (T. ruling 21.11): BONUS ACTIVATION TOKEN (3-hero missions).
+		// Three heroes plus the printed rule "four activation markers, at
+		// most two on one hero" - the app ships the fourth marker as this
+		// bonus token card. WHO carries the extra activation is the Rebel
+		// players' decision and can change; the token remembers it
+		// (HeroState.bonusHolderId/Name, JSON-persisted with the card).
+		// The flip is the same M6s-B7 turn-close carrier law as a hero's
+		// own chip - so it must name the CHOSEN HERO, never "Dummy Hero":
+		// a name no figure answers to would hand the tactical feed a
+		// phantom hero and strike credit to nobody (Null-Law).
+		// ------------------------------------------------------------------
+		void BonusChipFlip()
+		{
+			var hs = cardDescriptor.heroState;
+			if ( hs == null )
+				return;
+
+			if ( !string.IsNullOrEmpty( hs.bonusHolderId ) )
+			{
+				// assigned: the flip closes the chosen hero's extra turn
+				hs.hasActivated[0] = activationToggle1.isOn;
+				if ( activationToggle1.isOn && DataStore.sagaSessionData != null )
+					DataStore.sagaSessionData.missionLogger.LogEvent( MissionLogType.GroupActivation, hs.bonusHolderName );
+				return;
+			}
+
+			if ( !activationToggle1.isOn )
+				return;   // programmatic reset (round end) - nothing to ask
+
+			// unassigned: revert FIRST, then ask - the checkbox only ever
+			// flips ON once a real hero owns this marker.
+			activationToggle1.isOn = false;
+			AskBonusHolder( completeFlip: true );
+		}
+
+		/// <summary>Opens the chooser popup (same runtime PromptBox lane the
+		/// entity "ProcessQuestionPrompt" uses - MapEntityManager precedent).
+		/// completeFlip = the player's chip click was the intent; the flip is
+		/// completed once a hero is chosen. Cancel leaves the token idle and
+		/// the assignment untouched (no guess).</summary>
+		void AskBonusHolder( bool completeFlip )
+		{
+			var sess = DataStore.sagaSessionData;
+			if ( sess == null || sess.MissionHeroes == null || sess.MissionHeroes.Count == 0 )
+				return;
+			var evm = FindObjectOfType<SagaEventManager>();
+			if ( evm == null )
+				return;
+
+			var prompt = new QuestionPrompt();
+			prompt.theText = BonusChipPromptText();
+			prompt.includeCancel = true;
+			foreach ( var h in sess.MissionHeroes )
+			{
+				if ( h == null || string.IsNullOrEmpty( h.name ) )
+					continue;
+				prompt.buttonList.Add( new ButtonAction() { buttonText = h.name } );
+			}
+			if ( prompt.buttonList.Count == 0 )
+				return;
+
+			var pb = evm.ShowPromptBox( prompt, null );
+			if ( pb == null )
+				return;   // no text to show - stays idle, honest no-op
+			var heroes = sess.MissionHeroes;
+			pb.onChoice = i =>
+			{
+				if ( i < 0 || i >= heroes.Count )
+					return;
+				var pick = heroes[i];
+				if ( pick == null || string.IsNullOrEmpty( pick.id ) )
+					return;
+				cardDescriptor.heroState.bonusHolderId = pick.id;
+				cardDescriptor.heroState.bonusHolderName = pick.name;
+				var qm = GlowEngine.FindUnityObject<QuickMessage>();
+				if ( qm != null )
+					qm.Show( BonusAssignedText( pick.name ) );
+				if ( completeFlip && !activationToggle1.isOn )
+					activationToggle1.isOn = true;   // re-enters OnActivation1 -> assigned path logs the hero
+			};
+		}
+
+		static string BonusChipPromptText()
+		{
+			var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
+			return tl != null && !string.IsNullOrEmpty( tl.bonusChipPrompt )
+				? tl.bonusChipPrompt
+				: "Which hero receives the bonus activation?";
+		}
+
+		static string BonusAssignedText( string heroName )
+		{
+			var tl = DataStore.uiLanguage != null ? DataStore.uiLanguage.uiTacticalAI : null;
+			if ( tl != null && !string.IsNullOrEmpty( tl.bonusChipAssigned ) )
+			{
+				try { return string.Format( tl.bonusChipAssigned, heroName ); }
+				catch { return tl.bonusChipAssigned; }
+			}
+			return "Bonus activation: " + heroName;
+		}
+
 		//popup menu for wound/defeat
 		public void OnClickSelf()
 		{
-			if ( cardDescriptor.isDummy
-				|| cardDescriptor.heroState.isDefeated
+			// P41: the bonus token has no health to confirm - a click on it
+			// (re)assigns which hero carries the extra activation.
+			if ( cardDescriptor.isDummy )
+			{
+				if ( !isConfirming && !FindObjectOfType<SagaEventManager>().IsUIHidden )
+					AskBonusHolder( completeFlip: false );
+				return;
+			}
+
+			if ( cardDescriptor.heroState.isDefeated
 				|| FindObjectOfType<SagaEventManager>().IsUIHidden )
 				return;
 

@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Alapertelmezett ({0})",
     "personaNone": "NINCS persona",
+    "bonusChipPrompt": "Melyik hős kapja a bónuszaktiválást?",
+    "bonusChipAssigned": "Bónuszaktiválás: {0}",
     "personaRank": "{0}. rang",
     "personaBonusDoctrine": "muveleti folt",
     "personaBonusGuard": "{0}% keszleg",

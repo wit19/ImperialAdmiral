@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "po defaultu ({0})",
     "personaNone": "NET persony",
+    "bonusChipPrompt": "Какой герой получает бонусную активацию?",
+    "bonusChipAssigned": "Бонусная активация назначена: {0}",
     "personaRank": "rangel {0}",
     "personaBonusDoctrine": "aktsent operatsiy",
     "personaBonusGuard": "rezerv {0}%",

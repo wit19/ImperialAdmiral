@@ -815,9 +815,12 @@ namespace Saga
 		}
 
 		/// <summary>
-		/// MUST BE PUBLIC, this is a special case because it can be called directly WITHOUT an event to fire it, it does NOT call NextEventAction(), does parse text for glyphs
+		/// MUST BE PUBLIC, this is a special case because it can be called directly WITHOUT an event to fire it, it does NOT call NextEventAction(), does parse text for glyphs.
+		/// P41: returns the live PromptBox (null when there is no text to show)
+		/// so runtime choosers can wire their onChoice hook; authored callers
+		/// ignore the return value and behave bit-identically.
 		/// </summary>
-		public void ShowPromptBox( QuestionPrompt prompt, Action callback = null )
+		public PromptBox ShowPromptBox( QuestionPrompt prompt, Action callback = null )
 		{
 			Debug.Log( "SagaEventManager()::PROCESSING QuestionPrompt" );
 
@@ -825,13 +828,14 @@ namespace Saga
 			{
 				Debug.Log( "ShowPromptBox()::NO TEXT" );
 				callback?.Invoke();
-				return;
+				return null;
 			}
 			var go = Instantiate( promptBoxPrefab, transform );
 			var tb = go.transform.Find( "TextBox" ).GetComponent<PromptBox>();
 			tb.Show( prompt, callback );
 
 			DataStore.sagaSessionData.missionLogger.LogEvent( MissionLogType.PromptBox, prompt.theText );
+			return tb;
 		}
 
 		//CAMPAIGN MANAGEMENT

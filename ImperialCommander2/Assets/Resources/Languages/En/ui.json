@@ -424,6 +424,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Follow default ({0})",
     "personaNone": "NO persona",
+    "bonusChipPrompt": "Which hero receives the bonus activation?",
+    "bonusChipAssigned": "Bonus activation assigned to {0}",
     "personaRank": "rank {0}",
     "personaBonusDoctrine": "focus shift",
     "personaBonusGuard": "{0}% reserve",

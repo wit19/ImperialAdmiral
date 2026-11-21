@@ -169,6 +169,11 @@ public class UITacticalAI
 	// branches in the same commit (Sprachgesetz 5b) - the kinds behind them
 	// occur 0x in the shipped v2.1 asset.
 	public string personaFollowDefault, personaNone, personaRank;
+	// P41 (T. ruling 21.11): the bonus-activation chooser (3-hero missions)
+	// - question line for the prompt popup, toast line (\"{0}\" = the chosen
+	// hero's public name) after a selection. Shipped with their ui.json
+	// lines in the same commit (Sprachgesetz 5b).
+	public string bonusChipPrompt, bonusChipAssigned;
 	public string personaBonusDoctrine, personaBonusGuard;
 	public string personaRankUpQM, personaRankDownQM;
 	public string personaButton, personaPopupHeader, setPersona;

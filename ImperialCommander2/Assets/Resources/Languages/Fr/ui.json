@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Par defaut ({0})",
     "personaNone": "AUCUNE persona",
+    "bonusChipPrompt": "Quel héros reçoit l'activation bonus ?",
+    "bonusChipAssigned": "Activation bonus attribuée à {0}",
     "personaRank": "rang {0}",
     "personaBonusDoctrine": "accent tactique",
     "personaBonusGuard": "{0}% reserve",

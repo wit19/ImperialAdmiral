@@ -424,6 +424,8 @@
     "setInfo": "INFO-TEXT",
     "personaFollowDefault": "Standard folgen ({0})",
     "personaNone": "KEINE Persona",
+    "bonusChipPrompt": "Welcher Held erhält die Bonus-Aktivierung?",
+    "bonusChipAssigned": "Bonus-Aktivierung: {0}",
     "personaRank": "Rang {0}",
     "personaBonusDoctrine": "Einsatzschwerpunkt",
     "personaBonusGuard": "Reserve {0}%",

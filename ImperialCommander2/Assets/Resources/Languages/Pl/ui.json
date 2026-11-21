@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Domyślnie ({0})",
     "personaNone": "BRAK persony",
+    "bonusChipPrompt": "Który bohater otrzymuje bonusową aktywację?",
+    "bonusChipAssigned": "Bonusowa aktywacja przypisana do: {0}",
     "personaRank": "ranga {0}",
     "personaBonusDoctrine": "punkt ciężkości",
     "personaBonusGuard": "{0}% rezerwy",

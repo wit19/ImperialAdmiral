@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Folg standard ({0})",
     "personaNone": "INGEN persona",
+    "bonusChipPrompt": "Hvilken helt får bonusaktiveringen?",
+    "bonusChipAssigned": "Bonusaktivering tildelt {0}",
     "personaRank": "rang {0}",
     "personaBonusDoctrine": "innsatsfokus",
     "personaBonusGuard": "{0}% reserve",

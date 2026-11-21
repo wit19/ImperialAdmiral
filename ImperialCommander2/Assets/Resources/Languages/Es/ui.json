@@ -425,6 +425,8 @@
     "setInfo": "INFO TEXT",
     "personaFollowDefault": "Predeterminado ({0})",
     "personaNone": "SIN persona",
+    "bonusChipPrompt": "¿Qué héroe recibe la activación adicional?",
+    "bonusChipAssigned": "Activación adicional asignada a {0}",
     "personaRank": "rango {0}",
     "personaBonusDoctrine": "enfoque de operaciones",
     "personaBonusGuard": "{0}% reserva",

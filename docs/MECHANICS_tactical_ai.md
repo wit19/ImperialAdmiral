@@ -2090,4 +2090,7 @@ new sections, revert -> ALL PASS (the checks are alive). Item
 registration now follows ANY printed effect (pure-health armors were
 silently unregistered before — seam audit in `findings_p44_final_qa.md`).
 taboo_lint GREEN. Version v1.0.3-dev.2 (DataStore + BuildStamp, P35
-lockstep).
+lockstep). Docs-Hop 21.11. zusätzlich: `tools/gen_whats_new.py` hält den
+generierten „Was ist neu"-Block im Spieler-Wiki (Marker `WHATSNEW:BEGIN/
+END`, rein insertiv, idempotent; `--check` ist der Gate-Modus — QA läuft
+ihn, Drift im Digest wird rot, niemals stumm veraltet).

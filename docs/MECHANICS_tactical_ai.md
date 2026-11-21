@@ -186,8 +186,10 @@ activation from the same keys). The shipped comparator (`Compare`, keys in order
    ranks above everything else.
 0a. **Axis key (P33-H4b, slot 1a in `OverlordFocus.cs`, vectors `axis.json`)**: when
    the mission's own win wiring says the Empire wins by this rebel figure's death
-   (`imperialWinBy=allyDefeated`, axis actor from `fixedAlly`/`specificAlly` incl. the
-   name hop), that hero leads directly behind the aim mark — a public mission-file
+   or forced retreat (`imperialWinBy=allyDefeated` - ally slot from
+   `fixedAlly`/`specificAlly` incl. the name hop, or `heroWithdraws` (P45) - the
+   mission's OWN hero: actor=`specificHero`, name via the hero card; the dead
+   ally boilerplate must not masquerade as the axis), that hero leads directly behind the aim mark — a public mission-file
    fact outranks every local round fact and the whole threat economy ("Fokus-Priorität
    wie Designation, explizit statt Text-Glück"). Two masks keep it honest: the flag
    rides ONLY the chase patterns per activation (the stand duties run the BLOCK law;

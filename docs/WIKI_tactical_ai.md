@@ -510,7 +510,8 @@ pop-up; see also the Guard zone above.)
 every activation pop-up (its reason is shown with EXPLAIN = FULL). Target choice
 follows public criteria in a fixed, published order: the human's aim mark first;
 then the **axis key** — when the mission's own win wiring names a rebel figure the
-Imperium must defeat, he leads right behind the mark, explicit and independent of
+Imperium must defeat (or, since November 21, must force to retreat — see
+[the mission axis](#mission-axis)), he leads right behind the mark, explicit and independent of
 what the objective text happens to word (the *mission axis*, November 2026; the log
 names this basis `achse` — see [the mission axis](#mission-axis));
 then the reaction keys (who shot the activating figure this round, the guard-zone
@@ -1119,8 +1120,9 @@ the rebels. That gap is now a law (P33-H4b/H4c; Core: `WorldEventVector.cs`,
 `OverlordFocus.cs`, `SectionConsumers.cs`; adapter: `WorldEventsUnity.cs`).
 
 **Win conditions are public data.** Your mission file already states, in the
-app's own fields, which named figure's death wins the mission for which side,
-which button at which escape field ends it, and which escort figure belongs
+app's own fields, which named figure's death — or, since November 21, whose
+forced retreat — wins the mission for which side, which button at which
+escape field ends it, and which escort figure belongs
 to the objective. The AI reads exactly those fields — reads, never guesses —
 and missions whose wiring is not parseable behave exactly as before (the
 Null-Law again). The round-stance line (`feedPosture=`, see
@@ -1131,7 +1133,12 @@ escort-or-escape mission no longer misreports itself as a clock-stall mission.
 this named rebel figure dies*, that figure leads the focus ranking directly
 behind the human player's aim mark — explicit mission knowledge, no longer a
 lucky coincidence of the objective text naming him (the log's focus basis
-`achse`). And a mission NPC with no card of his own (the joining allies some
+`achse`). The wiring has three parseable forms, and the reader knows all of
+them: the named ally's defeat ending the mission, a one-hop trigger chain that
+ends it after that death — and, since November 21, the **retreat** form, where
+the watched figure is the mission's OWN hero and his forced withdrawal ends it
+(the third way: [When the mission says SHE has to fall
+back](#when-the-mission-says-she-has-to-fall-back-november-21)). And a mission NPC with no card of his own (the joining allies some
 scenarios hand the rebels) is now **priced from his real printed values** —
 damage, health, tempo — instead of standing outside the threat economy with a
 blank number, which is how Player-33's Draylen turned out unpriceable.

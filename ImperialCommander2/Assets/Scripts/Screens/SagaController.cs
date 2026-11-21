@@ -148,8 +148,12 @@ namespace Saga
 			Debug.Log( $"STARTING TUTORIAL {DataStore.sagaSessionData.setupOptions.tutorialIndex}" );
 
 			missionTitleText.text = DataStore.mission.missionProperties.missionName;
-			missionTitleText.DOFade( 1, 1 );
-			missionTitleText.DOFade( 0, 2 ).SetDelay( 3 );
+			// P40 (Player-39 DOTween safe-mode note): SetLink ties the fades
+			// to the title's own GameObject - when a mission teardown kills
+			// the canvas, the delayed DOFade(0,2) dies WITH it instead of
+			// DOTween safe mode logging a missing-target error on replay.
+			missionTitleText.DOFade( 1, 1 ).SetLink( missionTitleText.gameObject );
+			missionTitleText.DOFade( 0, 2 ).SetDelay( 3 ).SetLink( missionTitleText.gameObject );
 
 			DataStore.sagaSessionData.InitGameVars();
 			ResetUI( () =>
@@ -188,8 +192,9 @@ namespace Saga
 						missionTitleText.text = card.name;
 					else//custom mission
 						missionTitleText.text = DataStore.sagaSessionData.setupOptions.projectItem.Title;
-					missionTitleText.DOFade( 1, 1 );
-					missionTitleText.DOFade( 0, 2 ).SetDelay( 3 );
+					// P40: SetLink - title fades die with the canvas (see StartTutorial).
+					missionTitleText.DOFade( 1, 1 ).SetLink( missionTitleText.gameObject );
+					missionTitleText.DOFade( 0, 2 ).SetDelay( 3 ).SetLink( missionTitleText.gameObject );
 
 					StartNewGame();
 				} );
@@ -647,8 +652,9 @@ namespace Saga
 			else//custom mission
 				missionTitleText.text = DataStore.sagaSessionData.setupOptions.projectItem.Title;
 
-			missionTitleText.DOFade( 1, 1 );
-			missionTitleText.DOFade( 0, 2 ).SetDelay( 3 );
+			// P40: SetLink - title fades die with the canvas (see StartTutorial).
+			missionTitleText.DOFade( 1, 1 ).SetLink( missionTitleText.gameObject );
+			missionTitleText.DOFade( 0, 2 ).SetDelay( 3 ).SetLink( missionTitleText.gameObject );
 
 			//init event manager
 			eventManager.Init( DataStore.mission );

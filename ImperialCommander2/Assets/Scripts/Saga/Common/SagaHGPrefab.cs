@@ -63,7 +63,11 @@ namespace Saga
 
 			Transform tf = transform.GetChild( 0 );
 			tf.localScale = Vector3.zero;
-			tf.DOScale( 1, 1f ).SetEase( Ease.OutBounce );
+			// P40 (Player-39 DOTween safe-mode note): the card rails rebuild
+			// on every refresh - a pop-in tween still running when the widget
+			// dies would be captured as a missing-target error. SetLink kills
+			// it WITH the widget; the pop itself is unchanged.
+			tf.DOScale( 1, 1f ).SetEase( Ease.OutBounce ).SetLink( tf.gameObject );
 		}
 
 		/// <summary>

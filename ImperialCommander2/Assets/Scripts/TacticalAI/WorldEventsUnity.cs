@@ -101,6 +101,17 @@ namespace TacticalAI
         // M6s-B7: heroes whose end-of-turn checkbox flip is already in the
         // mission log (name#round) - the HUD flag poll must not double-count.
         readonly HashSet<string> _heroLoggedActivated = new HashSet<string>();
+        // P40 (Player-39 playtest: 2 heroes => 2 activation tiles per hero,
+        // SagaHGPrefab.SetActivation gives ≤2-hero sessions BOTH toggles):
+        // a hero can close TWO turns in one round, and each flip is its own
+        // causal fact. The old per-round tag (name#round) swallowed the 2nd
+        // tile's flip - the feed's HeroActivated count (HeroView.Activations,
+        // TacticalAIBridge.cs:3857) read 1 where the table had 2. This map
+        // counts the activation lines a hero already wrote THIS round, so
+        // occurrence 1 keeps the bare name#round tag (the checkbox-path
+        // suppression read in PollHeroes stays exact) and every later flip
+        // gets its own name#round#occ tag.
+        readonly Dictionary<string, int> _heroActOcc = new Dictionary<string, int>();
         // M14e (CONCEPT_standort_ledger_v2): heroes whose ledger ENTRY has
         // already been emitted as HeroDeployed (once per hero per mission).
         readonly HashSet<string> _heroEntryEmitted = new HashSet<string>();
@@ -190,6 +201,37 @@ namespace TacticalAI
         }
 
         const float PollInterval = 0.25f;    // seconds; UI-speed state, no game coupling
+
+        // P40 (Player-39 playtest, 21.11): per-poller quarantine + named
+        // diagnostics. The old shape wrapped the WHOLE Poll() in one catch:
+        // one poller that throws starves every LATER poller of the tick (the
+        // facts silently never append while the throw repeats), and ex.Message
+        // alone ("Value cannot be null. Parameter name: source" - Player-39's
+        // four lines between STARTING NEW GAME and ParseMission) never named
+        // the culprit. Safe() isolates each poller so a throw costs ONLY its
+        // own channel, and logs tag + exception type + the top stack frame
+        // (rate-limited one line per distinct site) so the next playtest log
+        // pins the exact line. The law stands: the feed never breaks the game.
+        readonly HashSet<string> _pollErrWarned = new HashSet<string>(StringComparer.Ordinal);
+        void Safe(string tag, Action f)
+        {
+            try { f(); }
+            catch (Exception e)
+            {
+                var st = e.StackTrace;
+                var frame = "";
+                if (!string.IsNullOrEmpty(st))
+                {
+                    var lines = st.Split('\n');
+                    frame = lines.Length > 0 ? lines[0].Trim() : "";
+                }
+                var key = tag + "|" + e.GetType().Name + "|" + e.Message + "|" + frame;
+                if (_pollErrWarned.Add(key))
+                    Debug.LogWarning("WorldEvents::poll error in " + tag
+                        + " (isolated): " + e.GetType().Name + ": " + e.Message
+                        + (frame.Length > 0 ? " @" + frame : ""));
+            }
+        }
 
         void Awake()
         {
@@ -413,7 +455,7 @@ namespace TacticalAI
             if (sd == null || sd.gameVars == null) return;
             string key = SessionKey();
             if (key == null) return;
-            if (key != _sessionKey) SessionStart(key);
+            if (key != _sessionKey) Safe("SessionStart", () => SessionStart(key));
 
             var gv = sd.gameVars;
             int round = Math.Max(1, gv.round);
@@ -424,76 +466,90 @@ namespace TacticalAI
             if (logger != null && logger.logItems != null && logger.logItems.Count < _drainedLog)
             {
                 _drainedLog = 0;
-                Resync();
+                _heroActOcc.Clear();   // P40: the replay re-derives the
+                                       // activation occurrence counts from
+                                       // row 0 - stale counters would tag
+                                       // the replayed flips differently and
+                                       // break the cross-resync dedup.
+                Safe("Resync", Resync);
             }
 
             // round boundary: the finished round becomes public fact
-            if (round != _round)
+            Safe("RoundEdge", () =>
             {
-                if (_round > 0) Append("RoundEnd", _round, null);
-                _round = round;
-            }
+                if (round != _round)
+                {
+                    if (_round > 0) Append("RoundEnd", _round, null);
+                    _round = round;
+                }
+            });
 
             // M8/F5 clock watch: ModifyRndLimit events (MarkRuntimeDirty)
             // surface here as the public event RoundLimitChanged - the feed
             // gate re-derives posture; a start snapshot alone went stale.
-            if (_runtimeDirty || _lastRoundLimit == -2)
+            Safe("RoundLimit", () =>
             {
-                _runtimeDirty = false;
-                long lim = EffectiveRoundLimit(gv, TryMissionProperties());
-                if (_lastRoundLimit != -2 && lim != _lastRoundLimit)
-                    Append("RoundLimitChanged", round, P("roundLimit", lim));
-                _lastRoundLimit = lim;
-            }
+                if (_runtimeDirty || _lastRoundLimit == -2)
+                {
+                    _runtimeDirty = false;
+                    long lim = EffectiveRoundLimit(gv, TryMissionProperties());
+                    if (_lastRoundLimit != -2 && lim != _lastRoundLimit)
+                        Append("RoundLimitChanged", round, P("roundLimit", lim));
+                    _lastRoundLimit = lim;
+                }
+            });
 
             // P33-H4b: the mission-file win wiring (VictoryConditions) is
             // (re)claimed whenever the derivation moves. Cheap and stateless
             // per poll; the payload-canon dedup keeps the stream append-only.
-            PollVictory(round);
+            Safe("PollVictory", () => PollVictory(round));
 
             // P33-H4c (CONCEPT_missionsachse §2.4): the attackable mission
             // objects (own "can attack (Health: N" text) ride the same law -
             // per-GUID canon dedup, restatements only when a row MOVED.
-            PollObjects(round);
+            Safe("PollObjects", () => PollObjects(round));
 
             // M6s-B7 causal order (Player-19 law): damage first, then the
             // table's words about it. The wheel dials are polled BEFORE the
             // logger drain and the objective HUD, so a shot observed in the
             // same batch as the shooter's end-of-turn checkbox line keeps the
             // causal sequence shot -> close (strike credit depends on it).
-            PollGroups(round);
+            Safe("PollGroups", () => PollGroups(round));
 
             // R-A: digital door flips (snapshot diff, one event per observed
             // change). Independent of the shot->close causal ordering above.
-            PollDoors(round);
+            Safe("PollDoors", () => PollDoors(round));
 
             // S-A: section visibility + interactable entity flags (same
             // snapshot-dedup law as the doors; audit-trail facts, no causal
             // ordering obligation against the shot->close pair).
-            PollSections(round);
-            PollEntities(round);
+            Safe("PollSections", () => PollSections(round));
+            Safe("PollEntities", () => PollEntities(round));
 
             // threat + objective (public HUD state)
-            long threat = gv.currentThreat;
-            if (threat != _threat)
+            Safe("ThreatObjective", () =>
             {
-                if (_threat != 0 || Feed.Count > 0)
-                    Append("ThreatSpend", round, P("balance", threat));
-                _threat = threat;
-            }
-            var obj = gv.currentObjective;
-            if (!string.Equals(obj ?? "", _objective ?? ""))
-            {
-                Append("ObjectiveChange", round, P("objective", obj ?? ""));
-                _objective = obj ?? "";
-            }
+                long threat = gv.currentThreat;
+                if (threat != _threat)
+                {
+                    if (_threat != 0 || Feed.Count > 0)
+                        Append("ThreatSpend", round, P("balance", threat));
+                    _threat = threat;
+                }
+                var obj = gv.currentObjective;
+                if (!string.Equals(obj ?? "", _objective ?? ""))
+                {
+                    Append("ObjectiveChange", round, P("objective", obj ?? ""));
+                    _objective = obj ?? "";
+                }
+            });
 
             // mission logger: what the App wrote for the player's own log
-            DrainLogger(round);
+            Safe("DrainLogger", () => DrainLogger(round));
 
             // hero markers (checkbox fallback for sessions without the
             // M6s-B7 activation lines)
-            PollHeroes(round);
+            Safe("PollHeroes", () => PollHeroes(round));
         }
 
         void SessionStart(string key)
@@ -515,6 +571,8 @@ namespace TacticalAI
             _heroDefeated.Clear();
             _heroActivated.Clear();
             _heroLoggedActivated.Clear();
+            _heroActOcc.Clear();       // P40: same law - new session, new
+                                       // activation occurrence counters.
             _heroEntryEmitted.Clear();
             _doors.Clear();
             // S-A: section/entity snapshots reset per session; their FIRST
@@ -644,8 +702,25 @@ namespace TacticalAI
                         // ordered data (M10b law finally fed correctly).
                         // Imperial popups keep their ActivationStart meaning.
                         if (!IsHeroName(name)) Append("ActivationStart", r, P("group", IdForName(name)));
-                        else if (_heroLoggedActivated.Add(name + "#" + r))
-                            Append("HeroActivated", r, P("hero", name));
+                        else
+                        {
+                            // P40 (Player-39): occurrence-counted tag. With
+                            // ≤2 heroes a hero owns TWO activation tiles and
+                            // closes two turns per round - EVERY flip is the
+                            // public fact it is (the HeroActivated count the
+                            // App's own view reads must equal the tiles the
+                            // table flipped). First flip of a hero-round keeps
+                            // the bare name#round tag; later flips append the
+                            // occurrence. A resync re-drain replays the same
+                            // lines onto a cleared counter => identical tags,
+                            // the cross-resync dedup memory holds.
+                            var k = name + "#" + r;
+                            int occ;
+                            _heroActOcc.TryGetValue(k, out occ);
+                            _heroActOcc[k] = occ + 1;
+                            if (_heroLoggedActivated.Add(occ == 0 ? k : k + "#" + occ))
+                                Append("HeroActivated", r, P("hero", name));
+                        }
                         break;
                     case Saga.MissionLogType.PlayerSelection:
                         // S-A (concept 5.4): the prompt-button choice the

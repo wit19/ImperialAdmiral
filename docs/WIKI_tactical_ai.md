@@ -1349,3 +1349,26 @@ the printed facts are now restored from the English card data. Honest
 remainder: a hand-authored custom mission card that prints a law keyword
 in German can still outsmart the normalization — there is no shipped
 token to learn its translation from, and we do not guess one.
+
+---
+
+## Your reward cards count now (November 21)
+
+Two quiet upgrades from the workshop, both playing by the mode's old
+rules — printed facts in, invented numbers never. First: PERSONAL reward
+cards you assign at the hub now REACH the Imperial planner. Each card
+gets exactly one honest channel taken from its printed text — a weapon
+joins the weapon pools, a printed attack fraction raises the hero's
+damage price, a support card moves him up the wound-chip queue — and
+eleven cards stay pure record because their print promises no table
+threat. The card follows WHOEVER holds it: give Fenn's Bullseye! to
+Ko-Tun and the planner prices Ko-Tun, not Fenn. Second: bonus HEALTH now
+changes how the Empire hunts. A hero carrying extra printed health (an
+armor, a Life Debt) takes longer to bring down, so he is priced lower as
+a kill and chiped later; a hero with a printed MINUS (the -2 Health
+device) becomes the cheaper kill and gets chipped first — order flips
+included, measured and pinned in the test fixtures. What the AI still
+does NOT read: printed +1 Defense cards. Defense value depends on WHO
+attacks, and the planner does not know that when it picks priorities —
+so instead of inventing a number, those cards stay decoration for its
+eyes, honestly recorded and openly admitted.

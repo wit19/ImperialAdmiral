@@ -343,7 +343,13 @@ per round from **one single rule engine for every mission**:
    channel. Player-facing terminology (T. 21.11.): the internal focus target is called
    **„Primärziel“** in the German UI („Fokus-Ziel“ retired across all 11 language files;
    `focusZone`/„Fokuszone“ — the hunter's area brand — is UNAFFECTED and keeps its name),
-   English surface: "Primary target". Full localized text inventory per doctrine:
+   English surface: "Primary target". Soft-wish brackets (T. 24.11.): under the zone
+   patterns guard/hunter/blocker the bridge prints the name parenthesised on the target
+   line (`Primärziel: (Fenn)`) — the doctrine's zone outweighs the target wish there;
+   aggressive/support/ambush print the bare strict wish. Brackets are BRIDGE presentation
+   only (`plan.TargetWhy`): `plan.TargetName` stays the bare identity for UI highlighting,
+   the EXPLAIN reason line stays bare, and no Core/fixture text changes. Full localized
+   text inventory per doctrine:
    `docs/EXPORT_doktrin_texte_2026-11-21.md` (regenerable: `tools/export_doktrin_texte.py`).
 5. On top of the roll the two persona layers still apply unchanged: the captain's guard
    band pins the back half of the advancing squad in defend deployments (S4/S5), and

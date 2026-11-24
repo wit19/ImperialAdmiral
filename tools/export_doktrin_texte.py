@@ -84,7 +84,7 @@ for _, dk, _, _dn in DOCS:
     A('  *EN:* ' + en[dk])
     USED.add(dk)
 A('')
-A('**Zeile 2 — Primärziel** (umbenannt von „Fokus-Ziel“):')
+A('**Zeile 2 — Primärziel** (umbenannt von „Fokus-Ziel“). Klammer-Gesetz seit 24.11.: bei den drei Gebiets-Doktrinen (Wachschutz, Jäger, Blockierer) steht der Name in Klammern — „Primärziel: (Fenn)“ — als Signal, dass die Zielvorgabe dort weich ist; die Klammer umschließt nur den Namen, Tatsachen-Zusätze stehen dahinter. Bei Stürmer, Unterstützung, Hinterhalt bleibt der blanke Name (strikter Wunsch). Die EXPLAIN-Begründungszeile nennt den Namen immer blank:')
 A('')
 block('focusPrefix')
 A('Zusatz-Zusätze an der Zielzeile (erscheinen je nach Tatsachenlage hintereiander):')

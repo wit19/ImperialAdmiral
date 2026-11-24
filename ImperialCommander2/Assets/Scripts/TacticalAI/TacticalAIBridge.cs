@@ -1305,7 +1305,21 @@ namespace TacticalAI
                     // which ExplainFor renders in the EXPLAIN section.
                     // R-D: when the reaktion key decided the pick, the focus line
                     // carries the visible retaliation clause (null = no key).
-                    plan.TargetWhy = TF(UIx.focusPrefix) + targetName + (reactionTail ?? "");
+                    // T. 24.11 (playtest ruling): the THREE zone doctrines
+                    // (guard/hunter/blocker) present the name in parentheses —
+                    // a soft-ordering signal: for those doctrines the zone and
+                    // the doctrine decide the attack more strongly than this
+                    // target wish (see the doctrine-first law). Every other
+                    // pattern prints the bare name (strict wish). Brackets
+                    // wrap ONLY the name - a fact tail (reaktion clause etc.)
+                    // always rides behind the closing bracket.
+                    var softPat = _patternByCard != null &&
+                                  _patternByCard.TryGetValue(cd.id, out var sp) ? sp : null;
+                    bool softTarget = softPat == "guard" || softPat == "hunter" ||
+                                      softPat == "blocker";
+                    plan.TargetWhy = TF(UIx.focusPrefix) +
+                        (softTarget ? "(" + targetName + ")" : targetName) +
+                        (reactionTail ?? "");
                     plan.FocusReason = why;
                 }
             }

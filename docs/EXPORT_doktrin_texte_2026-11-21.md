@@ -18,8 +18,8 @@ Die sechs Doktrin-Namen mit ihrer eingebauten Erklärung:
   *EN:* Advance (close into combat)
 - **Wachschutz (Zone halten, Wege versperren, nie herauslocken)**
   *EN:* Guard (hold the zone, deny the paths, never be lured out)
-- **Blockierer (Engstelle halten)**
-  *EN:* Blocker (hold the chokepoint)
+- **Blockierer (den Weg zum Missionsziel versperren)**
+  *EN:* Blocker (deny the path to the mission objective)
 - **Jäger (Fokuszone abkämmen — die Fokuszone ist der Bereich, auf den das aktuelle Missionsziel der Rebellen zeigt: dort patrouillieren, Wege nehmen und Helden angreifen, die am Ziel arbeiten)**
   *EN:* Hunter (sweep the focus zone — the focus zone is the area the rebels' current mission objective points at: patrol it, take the paths there, attack heroes working the objective)
 - **Support (Distanz halten, aus der Deckung)**
@@ -159,7 +159,7 @@ Doktrin-Zeile (Name+Erklärung): **Wachschutz (Zone halten, Wege versperren, nie
 **DE**  
 > <i><color=#9FC6FF>Wachzone: der Bereich der Mission, in dem Rebellen ihre Ziele erfüllen müssen (Terminals, Türen, Objekte) – dort stehen eure Wachen.</color></i><br>
 > <b>? Angriffspunkt verfügbar?</b><br>
-> <color=#FFD76A>    Held in Wachzone in Reichweite + freie Sichtlinie? → Angriff.</color><br>
+> <color=#FFD76A>    Ein Held in eurer Wachzone oder an einem ihrer Missionsziele in Reichweite + freie Sichtlinie? → Angriff.</color><br>
 > <color=#FFD76A>    Sonst prüfen, ob das Primärziel angreifbar ist? → Primärziel angreifen.</color><br>
 > <color=#FFD76A>    Kein Angriff möglich? → dieser Punkt wird Bewegung (wähle eine Möglichkeit, keine Rangfolge): bis zu {0} Felder, die Bewegung endet in der Wachzone (auch von außerhalb hinein): auf den nächsten Helden zu, den Weg eines anderen Helden zum Ziel/Fluchtpunkt durch Engstelle oder Tür verstellen – oder Stellung halten.</color><br>
 > <b>? Angriffspunkt(e) verbraucht?</b><br>
@@ -168,7 +168,7 @@ Doktrin-Zeile (Name+Erklärung): **Wachschutz (Zone halten, Wege versperren, nie
 **EN**  
 > <i><color=#9FC6FF>Guard zone: the area of the mission where the rebels must complete their objectives (terminals, doors, objects) – that is where your guards stand.</color></i><br>
 > <b>? Attack point available?</b><br>
-> <color=#FFD76A>    Hero in guard zone within range + clear line of sight? → attack.</color><br>
+> <color=#FFD76A>    A hero in your guard zone or at one of its mission objectives within range + clear line of sight? → attack.</color><br>
 > <color=#FFD76A>    Otherwise check the primary target: attackable? → attack the primary target.</color><br>
 > <color=#FFD76A>    No attack possible? → this point becomes movement (choose one option, no priority): up to {0} spaces, the move ends inside the guard zone (entering it from outside is allowed): advance toward the nearest hero, block another hero's path to the objective/escape point at a chokepoint or door – or hold your position.</color><br>
 > <b>? Attack point(s) spent?</b><br>
@@ -269,12 +269,13 @@ Doktrin-Zeile (Name+Erklärung): **Wachschutz (Zone halten, Wege versperren, nie
 
 ### Blocker — Muster `blocker`
 
-Doktrin-Zeile (Name+Erklärung): **Blockierer (Engstelle halten)**
+Doktrin-Zeile (Name+Erklärung): **Blockierer (den Weg zum Missionsziel versperren)**
 
 #### Normale kaiserliche Figur  
 `apTreeBlocker`
 
 **DE**  
+> <i><color=#9FC6FF>Blockierauftrag: den Weg zum Missionsziel versperren – der Angriff ist Gelegenheit am Weg, nicht der Auftrag.</color></i><br>
 > <b>? Angriffspunkt verfügbar?</b><br>
 > <color=#FFD76A>    Primärziel in Reichweite und freier Sichtlinie? → Primärziel angreifen.</color><br>
 > <color=#FFD76A>    Sichtlinie durch eine andere Heldenfigur blockiert? → diese blockierende Figur angreifen.</color><br>
@@ -283,6 +284,7 @@ Doktrin-Zeile (Name+Erklärung): **Blockierer (Engstelle halten)**
 > <color=#FFD76A>    Dann ist dieser Punkt Bewegung: das Blockierfeld zwischen Missionsziel und Primärziel halten – oder bis zu {0} Felder auf eines zubewegen.</color>
 
 **EN**  
+> <i><color=#9FC6FF>Blocking duty: deny the path to the mission objective – an attack is an opportunity on the way, not the order.</color></i><br>
 > <b>? Attack point available?</b><br>
 > <color=#FFD76A>    Primary target within range + clear line of sight? → attack the primary target.</color><br>
 > <color=#FFD76A>    Line of sight blocked by another hero figure? → attack that blocking figure.</color><br>
@@ -385,7 +387,7 @@ Doktrin-Zeile (Name+Erklärung): **Jäger (Fokuszone abkämmen — die Fokuszone
 **DE**  
 > <i><color=#9FC6FF>Fokuszone: der Bereich, auf den das aktuelle Missionsziel der Rebellen zeigt – dort jagt der Jäger.</color></i><br>
 > <b>? Angriffspunkt verfügbar?</b><br>
-> <color=#FFD76A>    Held IN der Fokuszone oder auf dem Weg dorthin in Reichweite und freier Sichtlinie? → ihn angreifen (mehrere Kandidaten? → der mit dem höheren Bedrohungswert; EXPLAIN zeigt ihn).</color><br>
+> <color=#FFD76A>    Ein Held IN der Fokuszone oder auf dem Weg zum Missionsziel in Reichweite und freier Sichtlinie? → ihn angreifen (mehrere Kandidaten? → der mit dem höheren Bedrohungswert; EXPLAIN zeigt ihn).</color><br>
 > <color=#FFD76A>    Kein Zone-Held erreichbar, aber Primärziel in Reichweite + freier Sichtlinie? → Primärziel angreifen.</color><br>
 > <color=#FFD76A>    Kein Angriff möglich? → dieser Punkt wird Bewegung: bis zu {0} Felder in die Fokuszone bzw. auf den Zone-Helden zu.</color><br>
 > <b>? Angriffspunkt(e) verbraucht?</b><br>
@@ -394,7 +396,7 @@ Doktrin-Zeile (Name+Erklärung): **Jäger (Fokuszone abkämmen — die Fokuszone
 **EN**  
 > <i><color=#9FC6FF>Focus zone: the area the rebels' current mission objective points at – that is where the hunter hunts.</color></i><br>
 > <b>? Attack point available?</b><br>
-> <color=#FFD76A>    Hero INSIDE the focus zone OR moving into it in range and clear line of sight? → attack him (several candidates? → the one with the higher threat value; EXPLAIN shows it).</color><br>
+> <color=#FFD76A>    A hero INSIDE the focus zone OR on the way to the mission objective in range and clear line of sight? → attack him (several candidates? → the one with the higher threat value; EXPLAIN shows it).</color><br>
 > <color=#FFD76A>    No zone hero reachable, but primary target in range + clear line of sight? → attack the primary target.</color><br>
 > <color=#FFD76A>    No attack possible? → this point becomes movement: move up to {0} spaces toward the focus zone resp. the zone hero.</color><br>
 > <b>? Attack point(s) spent?</b><br>

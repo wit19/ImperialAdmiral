@@ -308,8 +308,9 @@ public static class OfficerTextGate
            name + " names the emergency conditions as table text (O-C)");
         string[] banned = de
             ? new[] { "\u2192 selbst angreifen", "\u2192 es angreifen", "\u2192 ihn angreifen",
-                      "Fokusziel angreifen" }
-            : new[] { "\u2192 attack it", "\u2192 attack yourself", "attack the focus target" };
+                      "Prim\u00e4rziel angreifen", "Fokusziel angreifen" }
+            : new[] { "\u2192 attack it", "\u2192 attack yourself",
+                      "attack the primary target", "attack the focus target" };
         foreach (var b in banned)
             Ok(v.IndexOf(b) < 0, name + " keep tree carries no self-attack: " + b);
         var core = de

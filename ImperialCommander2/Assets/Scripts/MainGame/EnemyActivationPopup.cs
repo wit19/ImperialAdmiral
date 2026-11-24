@@ -152,7 +152,8 @@ public class EnemyActivationPopup : MonoBehaviour
 			//GetModifiedRepositioning rewrite. Mission event instruction overrides
 			//still apply (they are scenario rules, not hidden enemy knowledge).
 			Debug.Log( $"ShowSaga()::TACTICAL activation {tacPlan.CardId} ({tacPlan.Blocks.Length} blocks)" );
-			// T. 29.10: reading order = FOCUS TARGET first, then the
+			// T. 29.10: reading order of the action area - doctrine first,
+			// then the primary-target line (order ruled 21.11.), then the
 			// action blocks, then (only when the ERKLÄRUNG setting is on) the
 			// explanation last. '\n' splits every decision-tree branch onto
 			// its own popup row (ParseInstructions keeps a fixed row height).
@@ -160,14 +161,15 @@ public class EnemyActivationPopup : MonoBehaviour
 			// T. 02.11 (popup declutter): the persona line left the top
 			// of the card - you KNOW who you play against; ExplainFor now
 			// carries it as an EXPLAIN section (tacPlan.PersonaLine).
-			if ( tacPlan.HasTarget && !string.IsNullOrEmpty( tacPlan.TargetWhy ) )
-				tacInstructions.Add( tacPlan.TargetWhy );
-			// M6p (T. 02.11): the doctrine row left the EXPLAIN block and
-			// rides here permanently - directly after the focus-target line,
-			// independent of the EXPLAIN level (same visibility law as the
-			// focus target itself).
+			// T. 21.11 (playtest ruling): the DOCTRINE leads the action
+			// area - it is the most important fact of the figure's turn
+			// (zone and duty decide what this figure does at all); the
+			// primary-target line rides directly behind it. Same
+			// visibility law for both rows (EXPLAIN level irrelevant).
 			if ( !string.IsNullOrEmpty( tacPlan.DoctrineLine ) )
 				tacInstructions.Add( tacPlan.DoctrineLine );
+			if ( tacPlan.HasTarget && !string.IsNullOrEmpty( tacPlan.TargetWhy ) )
+				tacInstructions.Add( tacPlan.TargetWhy );
 			tacInstructions.AddRange( tacPlan.Blocks ?? new string[0] );
 			if ( !string.IsNullOrEmpty( tacPlan.ExplainLine ) )
 				tacInstructions.Add( tacPlan.ExplainLine );
@@ -342,7 +344,7 @@ public class EnemyActivationPopup : MonoBehaviour
 			item = ReplaceGlyphs( item );
 
 			// M13s (T.): bold the leading LABEL of each instruction line
-			// for readability - "Fokus-Ziel:", "Doktrin:", "Grundregel:",
+			// for readability - "Doktrin:", "Primärziel:", "Grundregel:",
 			// "Aktion 1"/"Aktion 2" ... Purely a render effect: the stored
 			// instruction strings and all game logic stay tag-free. A label
 			// is the first <=14 characters when directly followed by ':' or

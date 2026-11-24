@@ -46,7 +46,7 @@ namespace TacticalAI
         public string TargetName;       // deterministic focus target
         public string TargetWhy;
         // T. 02.11 (popup declutter, request 1): the focus-target WHY
-        // lives here now - the popup line stays short ("Fokus-Ziel: Name")
+        // lives here now - the popup line stays short ("Primärziel: Name")
         // and the reason renders inside the gated EXPLAIN section only.
         public string FocusReason;
         public string ExplainLine;      // printed why-string (ExplainLevel)
@@ -3588,7 +3588,7 @@ namespace TacticalAI
             parts.Add(TF(L.focusFirepower));
             // M13c (T. 30.10): the "kein Zufall / no chance" tail removed.
             // T. 02.11 (request 1): bare reason only - the caller builds
-            // the short "Fokus-Ziel: {name}" line and the EXPLAIN section.
+            // the short "Primärziel: {name}" line and the EXPLAIN section.
             heroName = pick.name;
             why = string.Join("; ", parts);
             return true;

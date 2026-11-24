@@ -333,10 +333,18 @@ per round from **one single rule engine for every mission**:
    the mission clock's final third switches the row off (hunt phase), announced once.
 4. **Per-round draw**: seed = mission session key ^ Fnv1a64(card id + round), so the
    doctrine is stable within a round, differs per mission, replays identically. The rolled
-   doctrine NAME stands permanently on the doctrine line directly under the focus line of
-   every activation popup (independent of EXPLAIN, since M6p); EXPLAIN=FULL adds only the
+   doctrine NAME stands permanently on the doctrine line of
+   every activation popup — since T.'s playtest of 21.11. **ABOVE** the primary-target
+   line (was: under it): the doctrine is the single most decision-relevant fact of an
+   imperial activation (zone doctrines like Guard/Hunter/Block decide the attack more
+   strongly than the target choice — the AI never sees the board, the player should read
+   the lever first), independent of EXPLAIN (M6p). EXPLAIN=FULL adds only the
    draw value as "Muster-Wurf: N/100", plus the full effective distribution on the Debug
-   channel.
+   channel. Player-facing terminology (T. 21.11.): the internal focus target is called
+   **„Primärziel“** in the German UI („Fokus-Ziel“ retired across all 11 language files;
+   `focusZone`/„Fokuszone“ — the hunter's area brand — is UNAFFECTED and keeps its name),
+   English surface: "Primary target". Full localized text inventory per doctrine:
+   `docs/EXPORT_doktrin_texte_2026-11-21.md` (regenerable: `tools/export_doktrin_texte.py`).
 5. On top of the roll the two persona layers still apply unchanged: the captain's guard
    band pins the back half of the advancing squad in defend deployments (S4/S5), and
    persona pattern multipliers bias flips.

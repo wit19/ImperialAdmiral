@@ -277,7 +277,7 @@ Doktrin-Zeile (Name+Erklärung): **Blockierer (den Weg zum Missionsziel versperr
 **DE**  
 > <i><color=#9FC6FF>Blockierauftrag: den Weg zum Missionsziel versperren – der Angriff ist Gelegenheit am Weg, nicht der Auftrag.</color></i><br>
 > <b>? Angriffspunkt verfügbar?</b><br>
-> <color=#FFD76A>    Primärziel in Reichweite und freier Sichtlinie? → Primärziel angreifen.</color><br>
+> <color=#FFD76A>    Ein Held oder Primärziel in Reichweite und freier Sichtlinie? → diesen angreifen.</color><br>
 > <color=#FFD76A>    Sichtlinie durch eine andere Heldenfigur blockiert? → diese blockierende Figur angreifen.</color><br>
 > <color=#FFD76A>    Kein Angriff möglich? → dieser Punkt wird Bewegung: bis zu {0} Felder auf ein Blockierfeld zwischen Missionsziel und Primärziel (kein Primärziel? → auf den nächsten Helden zu).</color><br>
 > <b>? Angriffspunkt(e) verbraucht?</b><br>
@@ -286,7 +286,7 @@ Doktrin-Zeile (Name+Erklärung): **Blockierer (den Weg zum Missionsziel versperr
 **EN**  
 > <i><color=#9FC6FF>Blocking duty: deny the path to the mission objective – an attack is an opportunity on the way, not the order.</color></i><br>
 > <b>? Attack point available?</b><br>
-> <color=#FFD76A>    Primary target within range + clear line of sight? → attack the primary target.</color><br>
+> <color=#FFD76A>    A hero or the primary target in range + clear line of sight? → attack it.</color><br>
 > <color=#FFD76A>    Line of sight blocked by another hero figure? → attack that blocking figure.</color><br>
 > <color=#FFD76A>    No attack possible? → this point becomes movement: up to {0} spaces onto a blocking space between the mission objective and the primary target (no primary target? → toward the nearest hero).</color><br>
 > <b>? Attack point(s) spent?</b><br>

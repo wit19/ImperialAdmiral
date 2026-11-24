@@ -346,7 +346,11 @@ per round from **one single rule engine for every mission**:
    English surface: "Primary target". Soft-wish brackets (T. 24.11.): under the zone
    patterns guard/hunter/blocker the bridge prints the name parenthesised on the target
    line (`Primärziel: (Fenn)`) — the doctrine's zone outweighs the target wish there;
-   aggressive/support/ambush print the bare strict wish. Brackets are BRIDGE presentation
+   aggressive/support/ambush print the bare strict wish. Blocker attack branch (T.
+   24.11., second ruling): the printed tree offers the board choice "ein Held oder
+   Primärziel ... → diesen angreifen" — a human Imperial may take any hero in range or
+   the primary target; the planner itself still computes the attack against the focus
+   target (ActionBuilder target=focus) and EXPLAIN discloses that. Brackets are BRIDGE presentation
    only (`plan.TargetWhy`): `plan.TargetName` stays the bare identity for UI highlighting,
    the EXPLAIN reason line stays bare, and no Core/fixture text changes. Full localized
    text inventory per doctrine:

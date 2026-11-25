@@ -635,9 +635,12 @@ namespace Saga
 		}
 
 		/// <summary>Two seconds of honest peace on the badge, then the name
-		/// chip pops over its top edge: popup-dark, glyph-mapped, bold. The
-		/// chip never intercepts pointer events (raycastTarget off), so it
-		/// can neither block the button nor extend its own hover by accident.</summary>
+		/// chip pops UNDER the button: popup-dark, glyph-mapped, bold. The
+		/// bar is the top strip of the screen, so an upward chip left the
+		/// frame (T. playtest 25.11. right after dev.4) - downward is the
+		/// only direction with room. The chip never intercepts pointer
+		/// events (raycastTarget off), so it can neither block the button
+		/// nor extend its own hover by accident.</summary>
 		IEnumerator ShowPersonaTipCo( RectTransform btn )
 		{
 			yield return new WaitForSecondsRealtime( 2f );
@@ -646,10 +649,10 @@ namespace Saga
 			personaTip = new GameObject( "tacaiPersonaTip", typeof( RectTransform ) );
 			personaTip.transform.SetParent( btn, false );
 			var tr = personaTip.GetComponent<RectTransform>();
-			tr.anchorMin = new Vector2( 0.5f, 1f );
-			tr.anchorMax = new Vector2( 0.5f, 1f );
-			tr.pivot = new Vector2( 0.5f, 0f );
-			tr.anchoredPosition = new Vector2( 0f, 5f );
+			tr.anchorMin = new Vector2( 0.5f, 0f );
+			tr.anchorMax = new Vector2( 0.5f, 0f );
+			tr.pivot = new Vector2( 0.5f, 1f );
+			tr.anchoredPosition = new Vector2( 0f, -5f );
 			var bg = personaTip.AddComponent<Image>();
 			bg.color = new Color( 0.02f, 0.10f, 0.09f, 0.97f );
 			bg.raycastTarget = false;

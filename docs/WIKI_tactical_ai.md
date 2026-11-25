@@ -1532,10 +1532,12 @@ a glance even before you hover anything.
 
 Badges beat text for recognition, but a badge nobody can name is a costume
 party. Two additions, same day. On the campaign-overview persona button,
-hovering the badge for two full seconds pops a small dark chip above it with
-the persona's name — the localized one, the same the click popup prints in
-its header. Move away and it's gone; click cycles as always and the chip
-steps back. Two seconds is deliberate: fast flicks across the bar stay quiet,
+hovering the badge for two full seconds pops a small dark chip UNDER the
+button with the persona's name — the localized one, the same the click popup
+prints in its header. Under, not above: the bar is the screen's top strip and
+the first build pointed the chip off-frame (same-day playtest fix). Move away
+and it's gone; click cycles as always and the chip steps back. Two seconds is
+deliberate: fast flicks across the bar stay quiet,
 a real "who is this?" pause answers itself. (No tooltip object existed on
 this screen, so the chip is the persona system's own — the shipped main-game
 Tooltip stays untouched.) And the persona chapter of this wiki now carries

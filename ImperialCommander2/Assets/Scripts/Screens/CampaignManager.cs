@@ -424,6 +424,8 @@ namespace Saga
 
 		Coroutine personaButtonCo;
 		TMPro.TextMeshProUGUI personaButtonLabel;   // live persona line
+		Image personaButtonIcon;                    // persona badge (T. OK 25.11.)
+		readonly Dictionary<string, Sprite> personaIconCache = new Dictionary<string, Sprite>();
 
 		GameObject FindPersonaBarAnchor()
 		{
@@ -511,6 +513,20 @@ namespace Saga
 			label.raycastTarget = false;
 			label.text = PersonaButtonLabel();
 			personaButtonLabel = label;
+			// T. playtest 25.11. + OK same day: 10pt dark-on-teal names are
+			// hard to read - the persona BADGE replaces the text. The label
+			// stays alive as fallback whenever a sprite cannot be found.
+			var iconGO = new GameObject( "icon", typeof( RectTransform ) );
+			iconGO.transform.SetParent( clone.transform, false );
+			personaButtonIcon = iconGO.AddComponent<Image>();
+			personaButtonIcon.preserveAspect = true;
+			personaButtonIcon.raycastTarget = false;
+			var irt = iconGO.GetComponent<RectTransform>();
+			irt.anchorMin = Vector2.zero;
+			irt.anchorMax = Vector2.one;
+			irt.offsetMin = Vector2.one * 3f;
+			irt.offsetMax = Vector2.one * -3f;
+			ApplyPersonaButtonVisual();
 			// sit it left of the "?": a bar layout group re-flows it, a
 			// manually placed bar needs the measured offset - so wait for
 			// the anchor's REAL rect (M13o: no more zero-rect placement)
@@ -548,7 +564,7 @@ namespace Saga
 			}
 			catch { }
 			var next = TacticalAI.PersonaState.Cycle( sagaCampaign );
-			if ( personaButtonLabel != null ) personaButtonLabel.text = PersonaButtonLabel();
+			ApplyPersonaButtonVisual();
 			// an open popup is live: rebuild it on the new choice
 			if ( personaPopup != null ) ShowPersonaPopup();
 			Debug.Log( "PersonaButton::cycle -> " + next );
@@ -570,6 +586,42 @@ namespace Saga
 				return TacticalAI.PersonaState.DisplayName( id );
 			}
 			catch { return "PERSONA"; }
+		}
+
+		/// <summary>Badge-first button look (T. OK 25.11.): the persona's
+		/// comic badge from Resources/PersonaIcons shows on the button, the
+		/// name label steps back to fallback duty whenever the sprite is
+		/// missing (modded builds, half-installed packs). The name itself
+		/// never disappears from the game: the click popup carries it.</summary>
+		void ApplyPersonaButtonVisual()
+		{
+			string id = null;
+			Sprite spr = null;
+			try
+			{
+				id = TacticalAI.PersonaState.EffectiveId( sagaCampaign );
+				if ( string.IsNullOrEmpty( id ) || id == TacticalAI.PersonaState.ExplicitNone )
+					id = "none";
+				if ( !personaIconCache.TryGetValue( id, out spr ) )
+				{
+					spr = Resources.Load<Sprite>( "PersonaIcons/" + id );
+					personaIconCache[ id ] = spr;
+				}
+			}
+			catch { }
+			if ( spr != null && personaButtonIcon != null )
+			{
+				personaButtonIcon.sprite = spr;
+				personaButtonIcon.enabled = true;
+				if ( personaButtonLabel != null ) personaButtonLabel.gameObject.SetActive( false );
+				return;
+			}
+			if ( personaButtonIcon != null ) personaButtonIcon.enabled = false;
+			if ( personaButtonLabel != null )
+			{
+				personaButtonLabel.gameObject.SetActive( true );
+				personaButtonLabel.text = PersonaButtonLabel();
+			}
 		}
 
 		/// <summary>All persona info (choice, rank per mission at ITS own

@@ -426,6 +426,8 @@ namespace Saga
 		TMPro.TextMeshProUGUI personaButtonLabel;   // live persona line
 		Image personaButtonIcon;                    // persona badge (T. OK 25.11.)
 		readonly Dictionary<string, Sprite> personaIconCache = new Dictionary<string, Sprite>();
+		GameObject personaTip;                      // hover name chip (T. 25.11.)
+		Coroutine personaTipCo;
 
 		GameObject FindPersonaBarAnchor()
 		{
@@ -526,6 +528,13 @@ namespace Saga
 			irt.anchorMax = Vector2.one;
 			irt.offsetMin = Vector2.one * 3f;
 			irt.offsetMax = Vector2.one * -3f;
+			// hover: two full seconds on the badge and the name chip appears
+			// (T. 25.11.: only we know who wears which badge - the chip is
+			// the player's legend). Own handler because the scene Tooltip
+			// object lives in the Main scene only, never on Campaign.
+			var poker = clone.AddComponent<PersonaBadgeTipPoker>();
+			poker.Enter = () => { HidePersonaTip(); personaTipCo = StartCoroutine( ShowPersonaTipCo( clone.transform as RectTransform ) ); };
+			poker.Exit = HidePersonaTip;
 			ApplyPersonaButtonVisual();
 			// sit it left of the "?": a bar layout group re-flows it, a
 			// manually placed bar needs the measured offset - so wait for
@@ -564,6 +573,7 @@ namespace Saga
 			}
 			catch { }
 			var next = TacticalAI.PersonaState.Cycle( sagaCampaign );
+			HidePersonaTip();
 			ApplyPersonaButtonVisual();
 			// an open popup is live: rebuild it on the new choice
 			if ( personaPopup != null ) ShowPersonaPopup();
@@ -622,6 +632,49 @@ namespace Saga
 				personaButtonLabel.gameObject.SetActive( true );
 				personaButtonLabel.text = PersonaButtonLabel();
 			}
+		}
+
+		/// <summary>Two seconds of honest peace on the badge, then the name
+		/// chip pops over its top edge: popup-dark, glyph-mapped, bold. The
+		/// chip never intercepts pointer events (raycastTarget off), so it
+		/// can neither block the button nor extend its own hover by accident.</summary>
+		IEnumerator ShowPersonaTipCo( RectTransform btn )
+		{
+			yield return new WaitForSecondsRealtime( 2f );
+			if ( btn == null || sagaCampaign == null || personaTip != null ) yield break;
+			var name_ = PersonaButtonLabel();
+			personaTip = new GameObject( "tacaiPersonaTip", typeof( RectTransform ) );
+			personaTip.transform.SetParent( btn, false );
+			var tr = personaTip.GetComponent<RectTransform>();
+			tr.anchorMin = new Vector2( 0.5f, 1f );
+			tr.anchorMax = new Vector2( 0.5f, 1f );
+			tr.pivot = new Vector2( 0.5f, 0f );
+			tr.anchoredPosition = new Vector2( 0f, 5f );
+			var bg = personaTip.AddComponent<Image>();
+			bg.color = new Color( 0.02f, 0.10f, 0.09f, 0.97f );
+			bg.raycastTarget = false;
+			var tmpGO = new GameObject( "t", typeof( RectTransform ) ).AddComponent<TMPro.TextMeshProUGUI>();
+			tmpGO.transform.SetParent( personaTip.transform, false );
+			var trt = tmpGO.GetComponent<RectTransform>();
+			trt.anchorMin = Vector2.zero;
+			trt.anchorMax = Vector2.one;
+			trt.offsetMin = new Vector2( 10f, 4f );
+			trt.offsetMax = new Vector2( -10f, -4f );
+			tmpGO.font = TMPro.TMP_Settings.defaultFontAsset;
+			tmpGO.fontSize = 12f;
+			tmpGO.fontStyle = TMPro.FontStyles.Bold;
+			tmpGO.alignment = TMPro.TextAlignmentOptions.Center;
+			tmpGO.color = Color.white;
+			tmpGO.raycastTarget = false;
+			tmpGO.text = Utils.ReplaceGlyphs( name_ );
+			var pref = tmpGO.GetPreferredValues( name_ );
+			tr.sizeDelta = new Vector2( Mathf.Max( 90f, pref.x + 24f ), 26f );
+		}
+
+		void HidePersonaTip()
+		{
+			if ( personaTipCo != null ) { StopCoroutine( personaTipCo ); personaTipCo = null; }
+			if ( personaTip != null ) { Destroy( personaTip ); personaTip = null; }
 		}
 
 		/// <summary>All persona info (choice, rank per mission at ITS own
@@ -1238,5 +1291,17 @@ namespace Saga
 			sagaCampaign.credits = newValue;
 			creditsWheel.ResetWheeler( sagaCampaign.credits );
 		}
+	}
+
+	/// <summary>Thin enter/exit post for the persona badge chip. The shipped
+	/// TooltipHandler cannot serve here: its Tooltip object is a Main-scene
+	/// resident and does not exist on the Campaign screen. Timing and looks
+	/// stay on the manager side; this only forwards the two events.</summary>
+	public class PersonaBadgeTipPoker : MonoBehaviour, UnityEngine.EventSystems.IPointerEnterHandler, UnityEngine.EventSystems.IPointerExitHandler
+	{
+		public System.Action Enter;
+		public System.Action Exit;
+		public void OnPointerEnter( UnityEngine.EventSystems.PointerEventData e ) { if ( Enter != null ) Enter(); }
+		public void OnPointerExit( UnityEngine.EventSystems.PointerEventData e ) { if ( Exit != null ) Exit(); }
 	}
 }

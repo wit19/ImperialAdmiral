@@ -338,8 +338,10 @@ namespace TacticalAI.Core
         ///               planner never owns a Random of its own
         /// ringZones   : zone ids carrying a hero-ring belief (belief.py output)
         /// contestZone : zone id the doctrine currently contests (public/belief)
-        /// counter     : active VictoryCounter (finisher law: woundAll wants
-        ///               fresh damage last -> finisher stays last regardless)
+        /// counter     : active VictoryCounter (colors the finisher-last why;
+        ///               P51 - no counter exempts the P50 attack window:
+        ///               woundAll books wounds as they land, so its biggest
+        ///               damage source strikes as early as it can)
         public static OrderPlan PlanRound(int roundNo, List<GroupFacts> groups,
                                           Dictionary<string, DeploymentCard> cards,
                                           string posture, SkillProfile skill, IRandom rng,
@@ -719,9 +721,12 @@ namespace TacticalAI.Core
         /// its (ring-lifted) efficiency rank and strikes the moment it
         /// activates; a candidate that CANNOT reach a hero still goes last on
         /// purpose - the heroes must cross the open ground to reach it.
-        /// Honest fail-closed: no ring feed (null/empty), an unknown own zone
-        /// or the woundAll counter law (freshest damage in the last slot)
-        /// keep today's tail pull, bit-identical.
+        /// Honest fail-closed: no ring feed (null/empty) or an unknown own
+        /// zone keeps today's tail pull, bit-identical. P51 (T. 25.11.): the
+        /// window also overrides the woundAll counter - the counter books a
+        /// wound the moment damage lands, so parking the biggest damage
+        /// source to the tail works AGAINST 'wound all heroes'; the counter
+        /// only keeps coloring the why-text of the pull.
         static void ApplySlotFinisher(List<GroupFactsWithEv> order,
                                       Dictionary<string, List<string>> tags,
                                       Dictionary<string, List<string>> why,
@@ -750,9 +755,11 @@ namespace TacticalAI.Core
             // P50: the candidate's OWN zone carries a hero ring belief ->
             // targets are within reach NOW -> the tail slot is a punishment,
             // not a plan. Same channel the x5/4 matrix lift already prices.
+            // P51: NO counter exemption - woundAll counts wounds as they
+            // land, so an attackable damage dealer strikes early there too.
             bool attackWindow = ringSet != null && ringSet.Count > 0 &&
                                 fin.Facts.Zone != null && ringSet.Contains(fin.Facts.Zone);
-            if (attackWindow && counter != "woundAll")
+            if (attackWindow)
             {
                 tags[fin.Facts.GroupId].Add("attack_window");
                 why[fin.Facts.GroupId].Add(

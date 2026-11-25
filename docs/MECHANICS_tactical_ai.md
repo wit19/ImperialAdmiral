@@ -872,8 +872,9 @@ the P50 attack-window law, T. Nov 25: activations interleave with the heroes,
 so if the ring feed believes a hero ring around the CANDIDATE's own zone it
 is attackable now and keeps its ring-lifted efficiency rank instead, tag
 `attack_window`; no feed / empty feed / unknown own zone keep the tail pull
-bit-identical, and the woundAll VictoryCounter law outranks the window —
-fresh damage stays last regardless. Vectors: `attack_window.json`).
+bit-identical. NO VictoryCounter exempts the window (P51, T. Nov 25 — woundAll
+books wounds the moment damage lands, so its biggest damage source strikes as
+early as it can; the counter only colors the pull's why-text). Vectors: `attack_window.json`).
 The tempo law weights heavies/swarms (OrderPlan.cs:262,
 286). Every deviation is logged per slot: `OrderSlot.Why` is a
 public-safe German reason string carried in the order record

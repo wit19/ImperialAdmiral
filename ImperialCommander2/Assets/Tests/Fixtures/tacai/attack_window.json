@@ -1,5 +1,5 @@
 {
-  "_comment": "P50 attack-window golden vectors (T. ruling 25.11.: hero and Imperial activations INTERLEAVE, so a damage group with a hero ring believed in its OWN zone is attackable NOW and must not cool in the tail slot while the heroes shoot it untouched; a candidate that cannot reach anyone still goes last - the heroes must cross open ground to reach it). Hand-pinned LAWS (the law IS the expectation, SectionsAttackWindow.cs - never --record): ring on the candidate's zone -> it stays at its ring-lifted rank with tag attack_window; ring elsewhere, no feed, empty feed or unknown own zone -> the canon tail pull stands, bit-identical to finisher_last law; the woundAll counter law (freshest damage in the last slot) outranks the window. Roster is fixed in code: FIN (DG021 Tusken Raider, Red+Green) prints the higher damage EV x vitality and IS the finisher candidate (premise check in the runner); WEAK (DG009 Royal Guard, Red+Yellow) sits in ZX; the candidate's zone is ZR unless fin_zone_unknown.",
+  "_comment": "P50 attack-window golden vectors (T. ruling 25.11.: hero and Imperial activations INTERLEAVE, so a damage group with a hero ring believed in its OWN zone is attackable NOW and must not cool in the tail slot while the heroes shoot it untouched; a candidate that cannot reach anyone still goes last - the heroes must cross open ground to reach it). Hand-pinned LAWS (the law IS the expectation, SectionsAttackWindow.cs - never --record): ring on the candidate's zone -> it stays at its ring-lifted rank with tag attack_window; ring elsewhere, no feed, empty feed or unknown own zone -> the canon tail pull stands, bit-identical to finisher_last law; P51 (T. 25.11. ruling 2): NO counter exempts the window - woundAll books a wound the moment damage lands, so its biggest damage source must strike as early as it can (the counter only colors the why of the pull). Roster is fixed in code: FIN (DG021 Tusken Raider, Red+Green) prints the higher damage EV x vitality and IS the finisher candidate (premise check in the runner); WEAK (DG009 Royal Guard, Red+Yellow) sits in ZX; the candidate's zone is ZR unless fin_zone_unknown.",
   "cases": [
     {
       "name": "aw_window",
@@ -24,14 +24,14 @@
       }
     },
     {
-      "name": "aw_woundall_outranks",
+      "name": "aw_woundall_window_still_fires",
       "ring": ["ZR"],
       "counter": "woundAll",
       "expect": {
-        "order": "WEAK,FIN",
-        "fin_finisher_last": true,
-        "fin_attack_window": false,
-        "fin_why_contains": "Finisher zuletzt: sieht die Vorsaeden und stoest zu (Zaehler will frischen Schaden)"
+        "order": "FIN,WEAK",
+        "fin_finisher_last": false,
+        "fin_attack_window": true,
+        "fin_why_contains": "Angriffsfenster offen: der Finisher bleibt vorn und schlaegt frueher zu"
       }
     },
     {

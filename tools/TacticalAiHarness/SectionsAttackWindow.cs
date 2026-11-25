@@ -4,10 +4,12 @@
 // not cool in the tail slot while the heroes shoot at it untouched - it keeps
 // its ring-lifted rank and strikes when it activates. Everything else keeps
 // today's law bit-identical: ring elsewhere, no feed, empty feed, unknown own
-// zone -> canon tail pull; the woundAll counter law (freshest damage in the
-// last slot) outranks the window. Hand-pinned laws (the law IS the
+// zone -> canon tail pull. Hand-pinned laws (the law IS the
 // expectation, same discipline as SectionsReactionOrder's bottom block -
 // never --record; the relations are computed against the real PlanRound).
+// P51 (T. ruling 2 of 25.11.): the window is NOT exempted by any counter -
+// woundAll counts wounds as they land, so even under that counter an
+// attackable damage dealer keeps its front rank.
 using System;
 using System.Collections.Generic;
 using System.Linq;

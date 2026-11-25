@@ -24,6 +24,10 @@
 //     blocker_before_attached_attack  blocker before attackers it covers
 //     deploy_before_intercept         fresh arrival before its interceptors
 //     finisher_last                   highest damage potential activates last
+//                                     - EXCEPT the P50 attack-window law: a
+//                                       candidate with a hero ring believed
+//                                       in its OWN zone stays at its lifted
+//                                       rank and strikes when it activates
 //
 // Skill binding (concept 6, NO new RNG pot): the planner consumes the skill
 // rng handed in by the caller (make_skill_rng stream) and reuses the T2b
@@ -383,6 +387,12 @@ namespace TacticalAI.Core
                 why[w.Facts.GroupId] = new List<string>();
             }
 
+            // P50: the ring feed drives the finisher attack-window law too,
+            // OUTSIDE the matrix branch - build it once, up front. Empty or
+            // null = no knowledge = today's laws, bit-identical canon.
+            var ringSet = new HashSet<string>();
+            if (ringZones != null) foreach (var z in ringZones) ringSet.Add(z == null ? null : z.ToString());
+
             // -- base order ----------------------------------------------------
             var order = new List<GroupFactsWithEv>(weighted);
             if (level == "S1" || prof == null)
@@ -394,8 +404,7 @@ namespace TacticalAI.Core
             }
             else
             {
-                var ringSet = new HashSet<string>();
-                if (ringZones != null) foreach (var z in ringZones) ringSet.Add(z == null ? null : z.ToString());
+                // (ringSet built once above - shared with the finisher law)
                 // M14f gate: the Naehesuch map is a tier-3 decision tool -
                 // the ladder upstream fills it only for S3+, but a caller
                 // that hands one in early still sees today's canon plan.
@@ -438,7 +447,7 @@ namespace TacticalAI.Core
                 ApplySlotDeploy(order, tags, why, roundNo);
             }
             if (prof != null && (level == "S4" || level == "S5"))
-                ApplySlotFinisher(order, tags, why, counter);
+                ApplySlotFinisher(order, tags, why, counter, ringSet);
 
             // Player-24 after-slot follow law (T. 04.11 Go): the finisher
             // step can PULL the receiver out from under an after-decision
@@ -703,10 +712,21 @@ namespace TacticalAI.Core
         /// the next group) is respected: finisher must be an ATTACK group;
         /// woundAll counters want fresh damage anyway, so the last slot stays
         /// correct.
+        /// P50 attack-window law (T. 25.11.): hero and Imperial activations
+        /// INTERLEAVE, so a damage group pulled to the tail while a hero ring
+        /// is believed around its own zone just stands in the heroes' fire
+        /// for the whole round without returning it. Such a candidate keeps
+        /// its (ring-lifted) efficiency rank and strikes the moment it
+        /// activates; a candidate that CANNOT reach a hero still goes last on
+        /// purpose - the heroes must cross the open ground to reach it.
+        /// Honest fail-closed: no ring feed (null/empty), an unknown own zone
+        /// or the woundAll counter law (freshest damage in the last slot)
+        /// keep today's tail pull, bit-identical.
         static void ApplySlotFinisher(List<GroupFactsWithEv> order,
                                       Dictionary<string, List<string>> tags,
                                       Dictionary<string, List<string>> why,
-                                      string counter = null)
+                                      string counter = null,
+                                      HashSet<string> ringSet = null)
         {
             if (order.Count < 2)
                 return;
@@ -727,6 +747,18 @@ namespace TacticalAI.Core
             }
             if (fin == null)
                 return;
+            // P50: the candidate's OWN zone carries a hero ring belief ->
+            // targets are within reach NOW -> the tail slot is a punishment,
+            // not a plan. Same channel the x5/4 matrix lift already prices.
+            bool attackWindow = ringSet != null && ringSet.Count > 0 &&
+                                fin.Facts.Zone != null && ringSet.Contains(fin.Facts.Zone);
+            if (attackWindow && counter != "woundAll")
+            {
+                tags[fin.Facts.GroupId].Add("attack_window");
+                why[fin.Facts.GroupId].Add(
+                    "Angriffsfenster offen: der Finisher bleibt vorn und schlaegt frueher zu");
+                return;
+            }
             order.Remove(fin);
             order.Add(fin);
             tags[fin.Facts.GroupId].Add("finisher_last");

@@ -124,6 +124,7 @@ namespace TacticalAiHarness
             Run("rings.json", SecRings);
             Run("doctrine.json", SecDoctrine);
             Run("order_plan.json", SecOrderPlan);
+            Run("attack_window.json", SecAttackWindow);
             Run("action_plan.json", SecActionPlan);
             Run("hero_profiles.json", SecHeroProfiles);
             Run("hero_w.json", SecHeroW);

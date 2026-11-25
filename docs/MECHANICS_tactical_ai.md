@@ -867,9 +867,14 @@ On top of the efficiency order, named synergy chains move pairs
 `CommandTiming` names which side the elite supporter earns: Bewegung vor
 dem Empfänger, Angriff direkt nach ihm),
 `blocker_before_attached_attack`, `deploy_before_intercept`,
-`finisher_last` (highest damage potential activates last; with the
-woundAll VictoryCounter law, fresh damage stays last regardless,
-OrderPlan.cs:306). The tempo law weights heavies/swarms (OrderPlan.cs:262,
+`finisher_last` (highest damage potential activates last — CONDITIONAL since
+the P50 attack-window law, T. Nov 25: activations interleave with the heroes,
+so if the ring feed believes a hero ring around the CANDIDATE's own zone it
+is attackable now and keeps its ring-lifted efficiency rank instead, tag
+`attack_window`; no feed / empty feed / unknown own zone keep the tail pull
+bit-identical, and the woundAll VictoryCounter law outranks the window —
+fresh damage stays last regardless. Vectors: `attack_window.json`).
+The tempo law weights heavies/swarms (OrderPlan.cs:262,
 286). Every deviation is logged per slot: `OrderSlot.Why` is a
 public-safe German reason string carried in the order record
 (OrderPlan.cs:108, 127).

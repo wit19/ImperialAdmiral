@@ -1628,6 +1628,54 @@ namespace TacticalAI
                         if (HasEndAction(e)) { imperialWinBy = "heroWithdraws"; break; }
                     }
 
+                // (d) P52 DEFEAT-BUTTON channel (Player-41 wall, CORE7
+                // "Imperial Hospitality" and the escort family, T. 26.11
+                // playtest): the lose law ships ONLY as public authoring
+                // wiring of a map entity - an entity BUTTON whose LABEL
+                // carries kill vocabulary (word-prefix law, the same
+                // KillVocab as (b)), whose TARGET event's own name/eventText
+                // declares the rebels the loser (OutcomeSideOfText - the
+                // polarity guard that refuses the sibling "escapes" button),
+                // and whose target reaches a MissionManagement endMission
+                // action directly or through ONE ModifyVariable hop (the
+                // CORE7 "End Mission" variable the terminal events listen
+                // on). = the Empire hunts the mission's own ally axis.
+                // The ally channels cannot carry this family honestly: no
+                // event sets useAllyDefeated, and ResolveAllyName(A001)
+                // reads a FOREIGN card name ("Luke Skywalker") that no
+                // mission text ever names - the Luke trap; form (b) is
+                // structurally impossible here. The shipped sweep
+                // (tools/p52_defeat_button_verify.py, mirrored 1:1):
+                // exactly CORE7 + CORE15 + OTHER14 claim, nothing else -
+                // zero false-knowledge exposure elsewhere.
+                string buttonVictim = "";
+                if (imperialWinBy == "" && m.mapEntities != null)
+                {
+                    foreach (var en in m.mapEntities)
+                    {
+                        if (en == null || en.entityProperties == null
+                            || en.entityProperties.buttonActions == null) continue;
+                        foreach (var b in en.entityProperties.buttonActions)
+                        {
+                            if (b == null || b.eventGUID == Guid.Empty) continue;
+                            var label = (CanonButton(b) ?? "").Trim();
+                            var killWord = KillWordOf(label);
+                            if (killWord == null) continue;    // kill claim lives in the LABEL
+                            var target = FindEvent(all, b.eventGUID);
+                            if (target == null) continue;
+                            if (OutcomeSideOfText((target.name ?? "") + ". " +
+                                                  CanonEventText(target)) != "rebels")
+                                continue;                       // polarity guard (P3 law)
+                            if (!HasEndAction(target) && !EndReachableOneHop(all, target))
+                                continue;                       // no end wiring, no law
+                            imperialWinBy = "allyDefeated";
+                            buttonVictim = VictimOfLabel(label, killWord);
+                            break;
+                        }
+                        if (imperialWinBy != "") break;         // first claimer, file order
+                    }
+                }
+
                 // ---- block axis: an ESCAPE-vocabulary entity whose button
                 // ends the mission => its own section is the rebel win zone.
                 var zones = new List<string>();
@@ -1674,6 +1722,13 @@ namespace TacticalAI
                 string actorId = axis, actorNm = axisName;
                 if (imperialWinBy == "heroWithdraws")
                 { actorId = mp.specificHero; actorNm = escort; }
+                // P52 name law: on the defeat-button channel the victim's
+                // public name is the LABEL MINUS its kill word ("Captive"),
+                // authored in the same file as the lose rule - NEVER the
+                // ally-card guess (the Luke trap: A001's card names a
+                // foreign hero that no CORE7 text mentions).
+                if (imperialWinBy == "allyDefeated" && buttonVictim.Length > 0)
+                    actorNm = buttonVictim;
 
                 var scalars = new Dictionary<string, object>
                 {
@@ -1712,6 +1767,72 @@ namespace TacticalAI
             foreach (var e in all)
                 if (e != null && e.GUID == guid) return e;
             return null;
+        }
+
+        /// P52 (d): the first label word carrying kill vocabulary (the same
+        /// word-prefix law + KillVocab as channel (b), checked lower-cased,
+        /// returned as authored so the label subtraction is exact). null =
+        /// the label makes no kill claim.
+        static string KillWordOf(string label)
+        {
+            var words = (label ?? "").Split(
+                new[] { ' ', '\t', '\n', '\r', '-', ',', ';', ':', '.', '!', '?', '"', '\'' },
+                StringSplitOptions.RemoveEmptyEntries);
+            foreach (var w in words)
+            {
+                var lw = w.ToLowerInvariant();
+                foreach (var k in KillVocab)
+                    if (lw.StartsWith(k, StringComparison.Ordinal)) return w;
+            }
+            return null;
+        }
+
+        /// P52 (d) name law: label minus its kill word = the victim's public
+        /// authored name ("Captive defeated" -> "Captive"). Whitespace
+        /// subtraction only (an authored name keeps its inner shape); a rest
+        /// shorter than 3 chars names nobody -> "" (Null-Law).
+        static string VictimOfLabel(string label, string killWord)
+        {
+            var keep = new List<string>();
+            foreach (var w in (label ?? "").Split(
+                         new[] { ' ', '\t', '\n', '\r', '\f', '\v' },
+                         StringSplitOptions.RemoveEmptyEntries))
+                if (!string.Equals(w, killWord, StringComparison.Ordinal)) keep.Add(w);
+            var rest = string.Join(" ", keep.ToArray()).Trim();
+            return rest.Length >= 3 ? rest : "";
+        }
+
+        /// P52 (d) wiring leg: the button's target event SETS a variable
+        /// (ModifyVariable to >=1) that a mission-END event LISTENS on at
+        /// value >=1 - the CORE7 "End Mission" hop. Existence only: the
+        /// outcome SENTENCE is read from the target itself (the label
+        /// grammar's own event), this leg proves the button ends the mission.
+        static bool EndReachableOneHop(List<Saga.MissionEvent> all, Saga.MissionEvent setter)
+        {
+            if (setter == null || setter.eventActions == null) return false;
+            var setters = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var a in setter.eventActions)
+            {
+                var mv = a as Saga.ModifyVariable;
+                if (mv == null || mv.triggerList == null) continue;
+                foreach (var t in mv.triggerList)
+                {
+                    if (t == null || t.triggerGUID == Guid.Empty) continue;
+                    if (t.setValue < 1 && t.modifyValue < 1) continue;
+                    setters.Add(t.triggerGUID.ToString());
+                }
+            }
+            if (setters.Count == 0) return false;
+            foreach (var e in all)
+            {
+                if (e == null || !HasEndAction(e) || e.additionalTriggers == null) continue;
+                foreach (var tb in e.additionalTriggers)
+                {
+                    if (tb == null || tb.triggerGUID == Guid.Empty || tb.triggerValue < 1) continue;
+                    if (setters.Contains(tb.triggerGUID.ToString())) return true;
+                }
+            }
+            return false;
         }
 
         /// The event's OWN name/eventText names the axis figure (full-name

@@ -1013,6 +1013,243 @@
     "wachzone": [],
     "threec": []
    }
+  },
+  {
+   "name": "ss_flip_interact_anchor",
+   "_comment": "P52-flip (T. 26.11): LIVE shape - the runtime never emits HeroActivationStart, so the windowless EntityInteract buffers (PendingFact) and rides the NEXT HeroActivated flip of the round (M6s-B7 causal seam). Law checked here: the flip re-anchors the hero as an OBSERVATION (rule=flip-fakt, outranks the deploy entry claim, P33-H2), the synthetic window crosses s-cell->s-bridge (edge + speed, crossing law), the interact is a recorded fact. split=3 proves the buffer survives Clone (incremental law).",
+   "split": 3,
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the captive to the exit.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB4",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroDeployed",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA",
+      "dp": "ent-blue-1",
+      "section": "s-cell"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-console",
+      "name": "Nav Console",
+      "section": "s-bridge",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-bridge\nedge s-bridge s-cell kind=confirmed\nsec s-cell\nspeed LEIA round=2 crossings=1 touched=2\nhero LEIA section=s-bridge round=2 rule=flip-fakt\ninteract LEIA t-console section=s-bridge round=2\n",
+    "canon": "mission=vector|ss_flip_interact_anchor\nround=2\nposture=protect\nobjective=Escort the captive to the exit.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=4\nH|LEIA|LEIA|0|0|1|2|0|0\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_flip_expiry",
+   "_comment": "P52-flip Null-Law twin: a buffered fact that meets a ROUND ADVANCE before its flip is history, not causation - it dies unattributed. The anchor stays at the deploy fact (round=1 rule=deploy-fakt), the interact never becomes a fact, no speed line exists.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the captive to the exit.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB4",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroDeployed",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA",
+      "dp": "ent-blue-1",
+      "section": "s-cell"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-console",
+      "name": "Nav Console",
+      "section": "s-bridge",
+      "active": true
+     }
+    },
+    {
+     "kind": "SectionActivated",
+     "round": 3,
+     "payload": {
+      "section": "s-hall",
+      "name": "Hall C"
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 3,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=3 speedSectionsPerWindow=1\nsec s-bridge\nsec s-cell\nsec s-hall name=Hall C\nhero LEIA section=s-cell round=1 rule=deploy-fakt\n",
+    "canon": "mission=vector|ss_flip_expiry\nround=3\nposture=protect\nobjective=Escort the captive to the exit.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nH|LEIA|LEIA|0|0|1|3|0|0\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_flip_window_vorrang",
+   "_comment": "P52-flip WINDOW VORRANG (vector parity, the law that keeps every pre-P52 vector canon untouched): the EARLY windowless fact buffers, then a window opens and its own LATE fact anchors the hero. At the flip the buffer rides as a recorded interact FACT (the 3c/Wachzone rails must see it) but NEVER overwrites the newer window anchor (chronology: window facts are newer than the buffer they meet) and never touches the window's chain math.",
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the captive to the exit.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB4",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroDeployed",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA",
+      "dp": "ent-blue-1",
+      "section": "s-cell"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-early",
+      "name": "Early Panel",
+      "section": "s-b",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivationStart",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-late",
+      "name": "Late Console",
+      "section": "s-c",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-b\nsec s-c\nedge s-c s-cell kind=confirmed\nsec s-cell\nspeed LEIA round=2 crossings=1 touched=2\nhero LEIA section=s-c round=2\ninteract LEIA t-late section=s-c round=2\ninteract LEIA t-early section=s-b round=2\n",
+    "canon": "mission=vector|ss_flip_window_vorrang\nround=2\nposture=protect\nobjective=Escort the captive to the exit.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=6\nH|LEIA|LEIA|0|0|1|2|0|0\nseen=LEIA zone=sec:s-c kind=fact seq=5 round=2\n",
+    "wachzone": [],
+    "threec": []
+   }
+  },
+  {
+   "name": "ss_flip_door_and_interact",
+   "_comment": "P52-flip door leg: the windowless door flip AND the windowless interaction both buffer to the same flip. The synthetic window replays them in arrival order from the standing deploy anchor: s-a -> s-b crossing (edge + speed - an interact fact rode, so the speed law emits) and the door that moved while the hero stood on s-a edges s-a to every section anchored after it (door-edge law, state rides NoteDoorState from arrival: state=closed). Transit hypothesis needs Refine+DoorOwners (live wiring, not this fixture shape) - it stays silent here, honestly.",
+   "doorEdges": [
+    [
+     "s-a",
+     "s-b",
+     "d-9"
+    ]
+   ],
+   "events": [
+    {
+     "kind": "MissionStart",
+     "round": 1,
+     "payload": {
+      "objective": "Escort the captive to the exit.",
+      "priorityTarget": "REBEL",
+      "roundLimit": 6,
+      "mission": "SB4",
+      "missionType": "Story"
+     }
+    },
+    {
+     "kind": "HeroDeployed",
+     "round": 1,
+     "payload": {
+      "hero": "LEIA",
+      "dp": "ent-blue-1",
+      "section": "s-a"
+     }
+    },
+    {
+     "kind": "DoorClosed",
+     "round": 2,
+     "payload": {
+      "door": "d-9",
+      "name": "Sealed Gate"
+     }
+    },
+    {
+     "kind": "EntityInteract",
+     "round": 2,
+     "payload": {
+      "entity": "t-console",
+      "name": "Nav Console",
+      "section": "s-b",
+      "active": true
+     }
+    },
+    {
+     "kind": "HeroActivated",
+     "round": 2,
+     "payload": {
+      "hero": "LEIA"
+     }
+    }
+   ],
+   "expect": {
+    "dump": "round=2 speedSectionsPerWindow=1\nsec s-a\nedge s-a s-b kind=confirmed doors=d-9 state=closed\nsec s-b\nspeed LEIA round=2 crossings=1 touched=2\nhero LEIA section=s-b round=2 rule=flip-fakt\ninteract LEIA t-console section=s-b round=2\n",
+    "canon": "mission=vector|ss_flip_door_and_interact\nround=2\nposture=protect\nobjective=Escort the captive to the exit.\nobjective_actor=\nthreat=0\nthreatseen=0\nseq=5\nH|LEIA|LEIA|0|0|1|2|0|0\n",
+    "wachzone": [],
+    "threec": []
+   }
   }
  ]
 }

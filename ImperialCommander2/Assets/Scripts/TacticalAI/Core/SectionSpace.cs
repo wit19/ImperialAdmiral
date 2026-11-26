@@ -13,7 +13,16 @@
 //  * ATTRIBUTION (M10b law, same as the vector ledger): an EntityInteract
 //    belongs to the hero whose activation window is open; windows are
 //    strictly sequential in the App log (HeroActivationStart replaces the
-//    open window), so the window hero decides - no open window, no fact.
+//    open window), so the window hero decides. P52-flip (T. 26.11)
+//    completes the law for LIVE play, where the runtime never emits a
+//    window-open event: a fact WITHOUT an open window buffers and rides the
+//    next HeroActivated flip of the round - "the hero whose turn closed
+//    after the event did it" (M6s-B7 causal seam, same one the strike
+//    channel and the objactor credit ride). The flip is the only causal
+//    seam the app publishes; a buffered fact that meets a round advance
+//    before its flip dies unattributed (Null-Law twin). Window facts keep
+//    VORRANG over buffered facts on the anchor (chronology: a window fact
+//    is always newer than the buffer it meets at the flip).
 //  * CROSSING LAW (concept 9 law "Held bewegt sich, also existiert ein
 //    Pfad", section granularity): distinct sections anchored back-to-back
 //    inside ONE hero window mean the hero crossed - the edge is CONFIRMED
@@ -169,8 +178,31 @@ namespace TacticalAI.Core
             public int Round;
             public readonly List<string> Sections = new List<string>();
             public readonly List<PendingDoor> Doors = new List<PendingDoor>();
+            // P52-flip (T. 26.11): did an EntityInteract already anchor THIS
+            // window? A window fact is newer than any buffered fact - the
+            // flip flush must never overwrite it (last-writer chronology).
+            public bool FactWritten;
         }
         private struct PendingDoor { public string Door; public string Section; }
+
+        // P52-flip (T. 26.11): a windowless observation. The runtime never
+        // emits HeroActivationStart (T. 04.11, explicit), so in live play an
+        // EntityInteract or a door flip arrives with NO open window and used
+        // to fall into the void - the hero anchors froze at "deploy-fakt"
+        // round 1 forever. Same law as the vector ledger's strike channel
+        // (M6s-B7, Player-25-B: "the hero whose turn CLOSES NEXT did it"):
+        // the buffer rides to the next HeroActivated flip of the round, the
+        // only causal seam the app publishes. RoundEnd expiry is the
+        // Null-Law twin: an event older than the round advance is history,
+        // not causation - it never attributes to a later round's flip.
+        private sealed class PendingFact
+        {
+            public bool IsDoor;
+            public string Key;      // interact: section | door: door id
+            public string Entity;   // interact only
+            public int Round;
+        }
+        private readonly List<PendingFact> _pendingFacts = new List<PendingFact>();
         private readonly Dictionary<string, HeroWindow> _windows =
             new Dictionary<string, HeroWindow>(StringComparer.Ordinal);
 
@@ -284,7 +316,13 @@ namespace TacticalAI.Core
 
         private void Step(WorldEvent e, Dictionary<string, string[]> deploySeeds)
         {
-            if (e.Round > Round) Round = e.Round;
+            if (e.Round > Round)
+            {
+                Round = e.Round;
+                // P52-flip round-expiry law: buffered facts that never met a
+                // flip inside their round die unattributed (Null-Law).
+                _pendingFacts.RemoveAll(p => p.Round < Round);
+            }
             switch (e.Kind)
             {
                 case "MissionStart":
@@ -385,42 +423,15 @@ namespace TacticalAI.Core
                 case "HeroActivated":
                 {
                     var hero = S(e, "hero");
-                    HeroWindow w;
-                    if (hero.Length > 0 && _windows.TryGetValue(hero, out w))
-                    {
-                        int crossings = 0;
-                        for (int i = 1; i < w.Sections.Count; i++)
-                        {
-                            if (string.Equals(w.Sections[i - 1], w.Sections[i], StringComparison.Ordinal)) continue;
-                            crossings++;
-                            Graph.ConfirmEdge(w.Sections[i - 1], w.Sections[i]); // crossing law
-                        }
-                        // Doors that moved inside this window: a door edge
-                        // between the section the hero stood ON when the door
-                        // flipped and every section anchored AFTER it. No
-                        // standing section -> no edge (data-exists).
-                        foreach (var d in w.Doors)
-                        {
-                            if (d.Section.Length == 0) continue;
-                            bool seenDoor = false;
-                            foreach (var sec in w.Sections)
-                            {
-                                if (!seenDoor)
-                                {
-                                    if (string.Equals(sec, d.Section, StringComparison.Ordinal)) seenDoor = true;
-                                    continue;
-                                }
-                                if (!string.Equals(sec, d.Section, StringComparison.Ordinal))
-                                    Graph.AddDoorEdge(d.Section, sec, d.Door);
-                            }
-                        }
-                        var distinct = new HashSet<string>(w.Sections, StringComparer.Ordinal);
-                        _speedObs.Add(new SpeedObservation
-                        {
-                            Hero = hero, Round = w.Round, Crossings = crossings, SectionsTouched = distinct.Count
-                        });
-                        _windows.Remove(hero);
-                    }
+                    HeroWindow w = null;
+                    var hasWin = hero.Length > 0 && _windows.TryGetValue(hero, out w);
+                    // P52-flip: the window path keeps VORRANG (vector
+                    // parity); the buffer rides the SAME flip regardless, so
+                    // pre-window facts stay recorded facts - see FlushPending.
+                    if (hero.Length > 0 && _pendingFacts.Count > 0)
+                        FlushPending(hero, e.Round, hasWin ? w : null);
+                    if (hasWin)
+                        CloseHeroWindow(hero, w, true);
                     break;
                 }
 
@@ -441,6 +452,10 @@ namespace TacticalAI.Core
                         // one at a time, so at most one is tracked open for
                         // this hero; a HeroActivationStart without a closing
                         // HeroActivated simply gets replaced (drain-race law).
+                        // P52-flip: NO open window -> the fact buffers to the
+                        // next HeroActivated of the round (live play never
+                        // opens windows - HeroActivationStart is never
+                        // emitted), it does NOT fall into the void.
                         foreach (var kv in _windows)
                         {
                             var hero = kv.Key;
@@ -450,6 +465,7 @@ namespace TacticalAI.Core
                             // the rule label follows the last writer.
                             _heroInSectionRule[hero] = "fenster-fakt";
                             var win = kv.Value;
+                            win.FactWritten = true;
                             if (win.Sections.Count == 0
                                 || !string.Equals(win.Sections[win.Sections.Count - 1], sec, StringComparison.Ordinal))
                                 win.Sections.Add(sec);
@@ -459,6 +475,11 @@ namespace TacticalAI.Core
                             });
                             break; // sequential windows: at most one
                         }
+                        if (_windows.Count == 0)
+                            _pendingFacts.Add(new PendingFact
+                            {
+                                IsDoor = false, Key = sec, Entity = entity, Round = e.Round
+                            });
                     }
                     break;
                 }
@@ -499,6 +520,15 @@ namespace TacticalAI.Core
                                 });
                             }
                     }
+                    // P52-flip: the flip with NO open window buffers (the
+                    // NoteDoorState above already committed the state fact -
+                    // what rides is the WINDOW-causal part: edges, transit,
+                    // standing point), never lost.
+                    if (_windows.Count == 0)
+                        _pendingFacts.Add(new PendingFact
+                        {
+                            IsDoor = true, Key = door, Entity = "", Round = e.Round
+                        });
                     break;
                 }
 
@@ -595,6 +625,117 @@ namespace TacticalAI.Core
                     break;
                 }
             }
+        }
+
+        // ---- window machinery (shared by the window path and the P52 flip
+        // flush) --------------------------------------------------------------
+        /// Close a hero window: the crossing law (consecutive distinct
+        /// sections confirm a graph edge), the door-edge law (a door that
+        /// moved while the hero stood on d.Section edges it to every section
+        /// anchored AFTER it), and - for REAL windows only - one speed-track
+        /// observation. emitSpeed=false is the door-only flush: edges are
+        /// observations, speed without an interaction observation is not.
+        private void CloseHeroWindow(string hero, HeroWindow w, bool emitSpeed)
+        {
+            int crossings = 0;
+            for (int i = 1; i < w.Sections.Count; i++)
+            {
+                if (string.Equals(w.Sections[i - 1], w.Sections[i], StringComparison.Ordinal)) continue;
+                crossings++;
+                Graph.ConfirmEdge(w.Sections[i - 1], w.Sections[i]); // crossing law
+            }
+            foreach (var d in w.Doors)
+            {
+                if (d.Section.Length == 0) continue;
+                bool seenDoor = false;
+                foreach (var sec in w.Sections)
+                {
+                    if (!seenDoor)
+                    {
+                        if (string.Equals(sec, d.Section, StringComparison.Ordinal)) seenDoor = true;
+                        continue;
+                    }
+                    if (!string.Equals(sec, d.Section, StringComparison.Ordinal))
+                        Graph.AddDoorEdge(d.Section, sec, d.Door);
+                }
+            }
+            if (emitSpeed)
+            {
+                var distinct = new HashSet<string>(w.Sections, StringComparer.Ordinal);
+                _speedObs.Add(new SpeedObservation
+                {
+                    Hero = hero, Round = w.Round, Crossings = crossings, SectionsTouched = distinct.Count
+                });
+            }
+            _windows.Remove(hero);
+        }
+
+        /// P52-flip (T. 26.11): the buffered windowless facts meet the hero
+        /// whose activation flip just closed - "the hero whose turn closed
+        /// after the event did it" (M6s-B7 causal law, the same seam the
+        /// strike channel and the objactor credit already ride). The flush
+        /// replays them as a synthetic window: each interaction re-anchors
+        /// the hero (rule=flip-fakt - an OBSERVATION, it outranks entry
+        /// claims like fenster-fakt does, P33-H2 law), door flips in the
+        /// buffer feed the door-edge and transit-hypothesis laws from the
+        /// standing section at their arrival point.
+        /// WINDOW VORRANG (vector parity): while an open window exists, its
+        /// facts are the NEWER ones - the flush never overwrites an anchor a
+        /// window fact wrote, and window math (edges, speed, transit) stays
+        /// the window's own; the buffered interactions are still recorded as
+        /// facts (the hero did touch that object - the 3c/Wachzone rails
+        /// must see it).
+        private void FlushPending(string hero, int roundNow, HeroWindow window)
+        {
+            var due = new List<PendingFact>(_pendingFacts);
+            _pendingFacts.Clear();
+            var w = new HeroWindow { Round = roundNow };
+            string last;
+            if (_heroInSection.TryGetValue(hero, out last) && last.Length > 0)
+                w.Sections.Add(last);
+            bool interacted = false;
+            foreach (var p in due)
+            {
+                if (p.Round != roundNow) continue;   // expired (defensive)
+                if (!p.IsDoor)
+                {
+                    Graph.AddSection(p.Key);
+                    if (window == null || !window.FactWritten)
+                    {
+                        _heroInSection[hero] = p.Key;
+                        _heroInSectionRound[hero] = roundNow;
+                        _heroInSectionRule[hero] = "flip-fakt";
+                    }
+                    if (w.Sections.Count == 0
+                        || !string.Equals(w.Sections[w.Sections.Count - 1], p.Key, StringComparison.Ordinal))
+                        w.Sections.Add(p.Key);
+                    _interactions.Add(new InteractionFactum
+                    {
+                        Hero = hero, Entity = p.Entity, Section = p.Key, Round = p.Round
+                    });
+                    interacted = true;
+                }
+                else
+                {
+                    var standing = w.Sections.Count > 0 ? w.Sections[w.Sections.Count - 1] : "";
+                    w.Doors.Add(new PendingDoor { Door = p.Key, Section = standing });
+                    if (window == null && _opts.Refine && _opts.DoorOwners != null)
+                    {
+                        string owner;
+                        if (_opts.DoorOwners.TryGetValue(p.Key, out owner) && owner.Length > 0)
+                        {
+                            Graph.AddSection(owner);
+                            _transits.Add(new TransitRecord
+                            {
+                                Hero = hero, Door = p.Key, Section = owner, Round = p.Round
+                            });
+                        }
+                    }
+                }
+            }
+            if (window != null) return;   // VORRANG: the window owns chain + anchor
+            if (w.Sections.Count == 0) return;
+            CloseHeroWindow(hero, w, interacted);
         }
 
         // ---- probes (facts only; S-D decides, this module never orders) ----
@@ -890,9 +1031,13 @@ namespace TacticalAI.Core
                 // P33-H2: the rule suffix rides ONLY the deploy-fakt case -
                 // every pre-P33 dump (window-anchored heroes) stays
                 // byte-identical, same emission law as the S-C transit lines.
+                // P52-flip: flip-fakt joins the emission (it is a flip-round
+                // observation the EXPLAIN reader must see); fenster-fakt
+                // stays suffix-free exactly as before - canon bytes untouched.
                 string hr;
-                if (_heroInSectionRule.TryGetValue(h, out hr) && hr == "deploy-fakt")
-                    sb.Append(" rule=deploy-fakt");
+                if (_heroInSectionRule.TryGetValue(h, out hr)
+                    && (hr == "deploy-fakt" || hr == "flip-fakt"))
+                    sb.Append(" rule=").Append(hr);
                 sb.Append('\n');
             }
             foreach (var f in _interactions)
@@ -942,11 +1087,14 @@ namespace TacticalAI.Core
             s._opts = _opts.Copy();
             foreach (var kv in _windows)
             {
-                var w = new HeroWindow { Round = kv.Value.Round };
+                var w = new HeroWindow { Round = kv.Value.Round, FactWritten = kv.Value.FactWritten };
                 w.Sections.AddRange(kv.Value.Sections);
                 w.Doors.AddRange(kv.Value.Doors);
                 s._windows[kv.Key] = w;
             }
+            // P52-flip: the buffered windowless facts ride the clone too -
+            // an incremental re-projection must still meet its flip.
+            s._pendingFacts.AddRange(_pendingFacts);
             return s;
         }
     }

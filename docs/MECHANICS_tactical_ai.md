@@ -161,6 +161,19 @@ START misattributes that hero's whole turn to the previous closer. This is a
 table discipline the docs state in player words in
 [`WIKI_tactical_ai.md`](WIKI_tactical_ai.md) ("golden rule of the table").
 
+**P52 flip attribution (26.11., `SectionSpace.cs`).** The contract got a
+completion, not an exception: in live play the runtime NEVER emits the
+window-open event (`HeroActivationStart`), so live observations cannot wait
+for a window. A section observation or door flip that arrives with no open
+window buffers and rides the next chip flip of the SAME round - the M6s-B7
+closer causality, the same seam the M10b retro channel rides. Two edges pin
+the honesty: a round advance before the flip kills buffered facts
+unattributed (Null-Law twin - history is not causation), and a real window
+keeps VORRANG on the anchor (a window fact is always newer than the buffer
+it meets at the flip). Pinned by the `ss_flip_*` cases in
+`section_space.json`; player words in WIKI ("An observation without a window
+still finds its hero").
+
 ```mermaid
 flowchart LR
   A[app emits event\nwhile playing] --> B[WorldEventFeed.Append\npublic-keys only, fail-loud]

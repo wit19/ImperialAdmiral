@@ -2257,3 +2257,35 @@ has any remaining,"). Deliberately kept: "Help Support The App" (upstream
 voice, not ours to restyle), curly quotes (legitimate EN typography, the
 shipped upstream font renders them), `{d}` in noRandomMatchesUC (dead — the
 only consumer is commented out, De carries the same token).
+
+**De-side mirror read (27.11., dev.9).** The same fresh-eyes protocol ran over
+the German side — where the legacy layer is the TRANSLATION (upstream EN is the
+original there), so the review direction flips. Deterministic sweep over the
+whole 11-locale tree (tag balance, per-file EN-vs-De glyph-token multiset
+census, line parity, transliteration scan) plus a full read of De/ui.json and
+De/help.json. Findings fixed: "Naechster" in the fork's own Primärziel EXPLAIN
+line; six lowercase ASCII transliterations inside fork tactical keys
+(laeuft/verlaesst/Polaritaet/schuetzt/Schaltflaeche/waehlt); fourteen ALL-CAPS
+legacy labels unified to real umlauts (ZURUECK sat beside ZURÜCK — the mixed
+convention reads like an encoding bug); ordPolarSchuetzt still showed the raw
+CORE TOKEN "schuetzt" as display while En/Fr already said "protects" (display
+layer only — the protocol token `Polaritaet`/`"schuetzt"` stays, code compares
+it and fixtures carry it as `pol` keys); the De SETTINGS HELP PANEL was seven
+items behind En (22 vs 15 — upstream features never translated; added in house
+terms: Tastenbelegung, Schurken, Death Trooper); help.json grammar calque
+"Die kleine Zahl ... sind die Kosten" -> "gibt die Kosten ... an" (x2), the
+Medipacks minority spelling against the 573x print term Medpac (x2), the stale
+brand "Imperial-Commander-Team" (same file already says Imperial Admiral x2),
+two glued-space defects; two lost {-} bullet markers in De events; four tag
+imbalances (unclosed color/italic leaking out of the tutorial boxes) restored
+in BOTH languages (upstream defect that the De mirror had faithfully copied);
+bonuseffects DG008 VETERAN De "{B}" -> "{H}" (the per-file token census pinpoints
+it: En original says {H}, ten other locales agree, only De deviates). Code
+fallback literals and the UiCompletenessGate DeReference pins (KARTE ZURUECK /
+TASTE DRUECKEN) synced in the same commit — the gate went RED on exactly those
+two pins first, which is the proof the pins work. Pending rulings (flagged,
+untouched): the En VETERAN self-inconsistency (6x {B} + 1x {H} across DGs —
+unresolvable without the printed source), "Rasten" vs the printed action name
+"Ausruhen", "seed-stabil"/"seeded roll" dev jargon in player popups,
+"Condition-Bedingung", persona-signature " - " vs house " – " dash. Fr is also
+two settings items behind — reported, not touched (not this review's locale).

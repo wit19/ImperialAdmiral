@@ -105,7 +105,7 @@
 			"content": [
 				"Alle imperialen TRUPPLER führen sofort die folgenden Anweisungen aus:",
 				"{-}Bewegung 2, um so viele freundliche Figuren wie möglich zu berühren, die {H} erlitten haben.",
-				"Jede befreundete Figur innerhalb von 2 Feldern regeneriert 2 {H}."
+				"{-}Jede befreundete Figur innerhalb von 2 Feldern regeneriert 2 {H}."
 			],
 			"eventRule": ""
 		},
@@ -190,7 +190,7 @@
 			"eventFlavor": "",
 			"content": [
 				"Jeder imperiale JÄGER führt sofort die folgenden Anweisungen aus:",
-				"Bewegung 3, um in Position 2 zu gelangen und Fokussiert zu werden.",
+				"{-}Bewegung 3, um in Position 2 zu gelangen und Fokussiert zu werden.",
 			],
 			"eventRule": ""
 		},

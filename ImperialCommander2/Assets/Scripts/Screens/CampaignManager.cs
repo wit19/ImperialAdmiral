@@ -877,7 +877,7 @@ namespace Saga
 			if ( def == null )
 				sb.Append( "\n<color=#C9D6D3><i>" ).Append( PersonaChrome(
 					tl != null ? tl.personaCycleNote : null,
-					"Klick auf die PERSONA-Schaltflaeche waehlt die Persona (KEINE = sachneutral)." ) )
+					"Klick auf die PERSONA-Schaltfläche wählt die Persona (KEINE = sachneutral)." ) )
 				  .Append( "</i></color>" );
 			return sb.ToString();
 		}

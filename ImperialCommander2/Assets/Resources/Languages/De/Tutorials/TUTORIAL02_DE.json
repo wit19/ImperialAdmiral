@@ -1033,7 +1033,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Vaders Anblick erfüllt euch mit Angst und lässt euch für einen Moment erstarren.\n\n<color=\"yellow\">Die Aktivierung des aktuellen Helden endet sofort. Klickt / tippt auf das rote Symbol unten links, um <color=\"red\">Darth Vader</color> zu aktivieren.",
+          "tbText": "Vaders Anblick erfüllt euch mit Angst und lässt euch für einen Moment erstarren.\n\n<color=\"yellow\">Die Aktivierung des aktuellen Helden endet sofort. Klickt / tippt auf das rote Symbol unten links, um <color=\"red\">Darth Vader</color> zu aktivieren.</color>",
           "GUID": "0de6c2c5-99fa-421e-aa39-ec49b851d8e8",
           "eventActionType": 16,
           "eaName": "Text Box"

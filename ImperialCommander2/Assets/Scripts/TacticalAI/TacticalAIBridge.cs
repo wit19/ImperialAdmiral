@@ -1899,7 +1899,7 @@ namespace TacticalAI
             Tac.FeedWorldView.MissionObjectFact fact)
         {
             string whyRaw = "Missionsobjekt laut Missionstext angreifbar (Health: "
-                            + fact.Health + "), Polaritaet " + fact.Polaritaet
+                            + fact.Health + "), Polarität " + fact.Polaritaet
                             + " abgeleitet " + fact.Basis + " [public mission-file text]";
             if (L == null || string.IsNullOrEmpty(L.ordExplainObjekt)) return whyRaw;
             string polar = PolarName(fact.Polaritaet) ?? fact.Polaritaet;

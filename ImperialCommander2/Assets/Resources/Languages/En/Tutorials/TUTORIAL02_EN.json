@@ -1033,7 +1033,7 @@
           "eaName": "Text Box"
         },
         {
-          "tbText": "Vader's sight fills you with fear, freezing you to your spots for a moment.\r\n\r\n<color=\"yellow\">The current hero's activation ends immediately. Click / tap the red icon at the bottom left to activate <color=\"red\">Darth Vader</color>.",
+          "tbText": "Vader's sight fills you with fear, freezing you to your spots for a moment.\r\n\r\n<color=\"yellow\">The current hero's activation ends immediately. Click / tap the red icon at the bottom left to activate <color=\"red\">Darth Vader</color>.</color>",
           "GUID": "0de6c2c5-99fa-421e-aa39-ec49b851d8e8",
           "eventActionType": 16,
           "eaName": "Text Box"

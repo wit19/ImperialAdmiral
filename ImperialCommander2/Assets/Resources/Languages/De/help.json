@@ -24,7 +24,7 @@
       },
       {
         "id": "deploymentCost",
-        "helpText": "Aufstellungskosten: Dies sind die Aufstellungskosten der Gruppe. Die kleine Zahl (falls vorhanden) sind die Kosten für eine einzelne Figur."
+        "helpText": "Aufstellungskosten: Dies sind die Aufstellungskosten der Gruppe. Die kleine Zahl (falls vorhanden) gibt die Kosten für eine einzelne Figur an."
       },
       {
         "id": "mods",
@@ -114,7 +114,7 @@
       },
       {
         "id": "medpacs",
-        "helpText": "Eine Übersicht über deine Medipacks. Du kannst ein Fenster öffnen, um den Überblick über deine Medipacks zu erhalten und die Regeländerungen zu lesen."
+        "helpText": "Eine Übersicht über deine Medpacs. Du kannst ein Fenster öffnen, um den Überblick über deine Medpacs zu erhalten und die Regeländerungen zu lesen."
       },
       {
         "id": "missionDashboard",
@@ -191,7 +191,7 @@
       },
       {
         "id": "mode",
-        "helpText": "Wechselt zwischen offiziellen (vom Imperial-Commander-Team erstellten und in der App enthalten) und selbst erstellten Einsätzen."
+        "helpText": "Wechselt zwischen offiziellen (vom Imperial-Admiral-Team erstellten und in der App enthalten) und selbst erstellten Einsätzen."
       },
       {
         "id": "start",
@@ -305,7 +305,7 @@
       },
       {
         "id": "mode",
-        "helpText": "Klicke / tippe auf \"Kampagne\" oder \"Einsatz wählen\", um deinen Spielmodus auszuwählen.\n\nDer Modus<color=yellow>\"Kampagne\"</color> verwendet einen Kampagnenmanager, der dich durch eine vollständige Kampagne mit der Erweiterung deiner Wahl führt (oder eine vollständig individuell gestaltete Kampagne). Er stellt die richtige Einsatzliste zusammen und erlaubt die Anpassung der Einsätze, wo es erlaubt ist, einschließlich des Hinzufügens und Entfernens von erzwungenen Einsätzen. Der Kampagnenmodus fungiert als \"virtuelles Kampagnenlogbuch\", in dem du EP, Credits und Belohnungen, deine Helden, ihre Fähigkeiten und Gegenstände, allgemeine Gegenstände, die du gekauft hast, erhaltene Schurken und Verbündete festhalten kannst. All diese Dinge kannst du nach Belieben zur Kampagne hinzufügen oder entfernen. Die Kampagne wird automatisch gespeichert.\n\n<color=yellow>Einsatz wählen</color> ist für einmalige Einsätze gedacht, oder für Gruppen, die Kampagnen mit dem gedruckten Kampagnenbuch spielen wollen."
+        "helpText": "Klicke / tippe auf \"Kampagne\" oder \"Einsatz wählen\", um deinen Spielmodus auszuwählen.\n\nDer Modus <color=yellow>\"Kampagne\"</color> verwendet einen Kampagnenmanager, der dich durch eine vollständige Kampagne mit der Erweiterung deiner Wahl führt (oder eine vollständig individuell gestaltete Kampagne). Er stellt die richtige Einsatzliste zusammen und erlaubt die Anpassung der Einsätze, wo es erlaubt ist, einschließlich des Hinzufügens und Entfernens von erzwungenen Einsätzen. Der Kampagnenmodus fungiert als \"virtuelles Kampagnenlogbuch\", in dem du EP, Credits und Belohnungen, deine Helden, ihre Fähigkeiten und Gegenstände, allgemeine Gegenstände, die du gekauft hast, erhaltene Schurken und Verbündete festhalten kannst. All diese Dinge kannst du nach Belieben zur Kampagne hinzufügen oder entfernen. Die Kampagne wird automatisch gespeichert.\n\n<color=yellow>Einsatz wählen</color> ist für einmalige Einsätze gedacht, oder für Gruppen, die Kampagnen mit dem gedruckten Kampagnenbuch spielen wollen."
       },
       {
         "id": "menu",
@@ -339,6 +339,14 @@
       {
         "id": "interface",
         "helpText": "Einstellungen für die Benutzeroberfläche."
+      },
+      {
+        "id": "colors",
+        "helpText": "Standardeinstellungen für die Farben der Gegnergruppen."
+      },
+      {
+        "id": "mapper",
+        "helpText": "Einstellungen für eigene Tastenbelegungen."
       },
       {
         "id": "music",
@@ -387,6 +395,26 @@
       {
         "id": "skipWarp",
         "helpText": "Überspringe die Hyperspace-Intro-Animation, wenn du einen Einsatz beginnst oder fortsetzt."
+      },
+      {
+        "id": "colorRegular",
+        "helpText": "Standardfarben für normale Gruppen. (Die linke Farbe wird am häufigsten verwendet.)"
+      },
+      {
+        "id": "colorSingleElite",
+        "helpText": "Standardfarbe für Elite-Gruppen."
+      },
+      {
+        "id": "colorDualElite",
+        "helpText": "Standardfarben für Elite-Gruppen. (Die rechte Farbe wird nur für Elite-Death-Troopers verwendet.)"
+      },
+      {
+        "id": "colorVillain",
+        "helpText": "Standardfarbe für Schurken."
+      },
+      {
+        "id": "mapPanel",
+        "helpText": "Eigene Tastenbelegungen zuweisen."
       }
     ]
   },
@@ -395,7 +423,7 @@
     "helpItems": [
       {
         "id": "deploymentCost",
-        "helpText": "Aufstellungskosten: Dies sind die Aufstellungskosten der Gruppe. Die kleine Zahl (falls vorhanden) sind die Kosten für eine einzelne Figur."
+        "helpText": "Aufstellungskosten: Dies sind die Aufstellungskosten der Gruppe. Die kleine Zahl (falls vorhanden) gibt die Kosten für eine einzelne Figur an."
       },
       {
         "id": "mods",
@@ -470,7 +498,7 @@
     "helpItems": [
       {
         "id": "figurePackInfo",
-        "helpText": "Klicke / tippe auf ein Figurenpack, um es auszuwählen / abzuwählen. Ausgewählte Figurenpacks sind grün schattiert.<b>Bitte beachte:</b> Hier sind nur Figurenpacks aufgelistet, die nicht-einzigartige Gegner hinzufügen. Schurken und Verbündete können einfach bei der Einrichtung des Einsatzes ausgewählt werden."
+        "helpText": "Klicke / tippe auf ein Figurenpack, um es auszuwählen / abzuwählen. Ausgewählte Figurenpacks sind grün schattiert. <b>Bitte beachte:</b> Hier sind nur Figurenpacks aufgelistet, die nicht-einzigartige Gegner hinzufügen. Schurken und Verbündete können einfach bei der Einrichtung des Einsatzes ausgewählt werden."
       }
     ]
   },

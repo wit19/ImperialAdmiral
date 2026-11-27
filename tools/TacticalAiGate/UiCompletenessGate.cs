@@ -37,18 +37,18 @@ public static class UiCompletenessGate
             "mapNavCWLabel", "mapNavCCWLabel" } },
     };
 
-    // German Fachsprache reference lines (ticket wording: Vor/Zurueck,
+    // German Fachsprache reference lines (ticket wording: Vor/Zurück,
     // im Uhrzeigersinn; key-mapper context for reset/pressKeyMessage).
     static readonly Dictionary<string, string> DeReference = new Dictionary<string, string>
     {
         { "uiSetup.appMissionFormat", "APP-MISSIONSFORMAT:" },
         { "uiSettings.mapperHeader", "TASTENBELEGUNG" },
         { "uiSettings.mapNavForwardLabel", "KARTE VOR" },
-        { "uiSettings.mapNavBackLabel", "KARTE ZURUECK" },
+        { "uiSettings.mapNavBackLabel", "KARTE ZURÜCK" },
         { "uiSettings.mapNavCWLabel", "KAMERA IM UHRZEIGERSINN DREHEN" },
         { "uiSettings.mapNavCCWLabel", "KAMERA GEGEN DEN UHRZEIGERSINN DREHEN" },
         { "uiSettings.reset", "STANDARDBELEGUNG" },
-        { "uiSettings.pressKeyMessage", "TASTE DRUECKEN..." },
+        { "uiSettings.pressKeyMessage", "TASTE DRÜCKEN..." },
     };
 
     public static int Run()

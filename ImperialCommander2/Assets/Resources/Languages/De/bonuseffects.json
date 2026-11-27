@@ -90,7 +90,7 @@
 	{
 		"bonusID": "DG008",
 		"effects": [
-			"VETERAN: Erhalte +1 {B} und +2 Zielsicherheit.",
+			"VETERAN: Erhalte +1 {H} und +2 Zielsicherheit.",
 			"SCHUSS INS BLAUE: Wenn diese Figur ihren ersten Angriff deklariert, füge 1 blauen Würfel zum Angriffspool hinzu.",
 			"VORRÜCKEN: Falls diese Figur zu Beginn dieser Aktivierung keine Sichtlinie zu einem Rebellen hat, bewege dich 1 in Richtung des nächsten Rebellen.",
 		]

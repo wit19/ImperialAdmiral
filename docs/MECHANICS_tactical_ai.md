@@ -2177,3 +2177,62 @@ ZERO foreign-hero end-wirings - no false-knowledge exposure anywhere else.
 sentence neutral in both - wiring, never text luck). Fail-closed twin: no
 `specificHero`, no `useHeroWithdraws`, no end action or slot mismatch ->
 no row, today's law verbatim.
+
+---
+
+## P53 (27.11.) — EN language-copy surgery + language-parity gates (support ticket)
+
+A customer on v1.0.3 reported the EN "activation boxes" as hard to read.
+Diagnosis (NOT AI slop — the telegraphic question+infinitive design is
+intentional and De-mirrored): one genuine content bug plus a body of
+translationese shipped into all ten non-De locales (the M6c fleet law copies
+En byte-exact into nine, so an En defect multiplies x10).
+
+**The content bug.** `apTreeOfficerEliteHunter` was born truncated (fd9b18e):
+De 8 rows, En 5 — the header question, the Executive Order choice line and
+the Movement branch were never translated. The EN player saw a decision tree
+starting mid-answer at "Attack →". OfficerTextGate had the exact laws to
+catch it but only iterates its key list — and the Hunter pattern joined the
+family after the gate was written and was never listed there.
+UiCompletenessGate could not see it either: the key was PRESENT, only rows
+inside its value were missing.
+
+**The second-pass lesson.** Structure checks cannot see content lost INSIDE
+a line — the Aggressive fallback movement lost its direction (De "in Richtung
+des Primärziels" shipped as bare "move up to {0} spaces") at equal line
+counts. The audit that works: render every uiTacticalAI key as aligned
+De|EN line pairs and read all of them (175 keys). Findings fixed in all 10
+EN-shipping locales, De untouched:
+- EliteHunter tree restored to 8 rows (choice/Movement rows reused verbatim
+  from the sibling trees, so the O-C byte-identity law holds by construction);
+- "attack yourself" -> "attack it yourself" (reflexive misread, 8 sites);
+- "resp." (Germanism) -> "or" (apTreeHunter, ordExplainFokuszone);
+- "seeded draw" -> "seeded roll" (card-draw ambiguity in a card game; De
+  says Wuerfel) + NeutralPreyGate en-anchor + regenerated prey_core.json;
+- leash clause "...than it is right now" -> "...than you are right now"
+  (36 sites; "it" had no antecedent) + OfficerTextGate keep-law EN core pin;
+- "may reap your shot back" -> "may expect one shot back" (sibling vocab);
+- tripod "exclude each other" -> "are mutually exclusive";
+- Ambush officer trees rebuilt to the regular sibling's natural wording
+  ("Ambush shot at the first hero you can shoot ... ? -> attack him");
+- ordThreatCalcRunner: De "÷ 8/3" had shipped as "/ 8-3" — reads "minus";
+- ordFocusDetail "Focus score" -> "Primary target score" (the P46 phrase
+  sweep missed this key — a sweep leaves stragglers, only a full read finds
+  them); "priced weapon" -> "costlier weapon".
+Deliberate NON-changes: "risk posture" and "tier" stay — the EN player WIKI
+defines both consistently; the UI follows its own docs.
+
+**New fail-closed laws.** (1) UiCompletenessGate check 4: per locale, every
+multi-line uiTacticalAI value must match De's row count, every value De's
+{N} placeholder multiset — a dropped translation row is now an incomplete
+build, proven RED on the shipped defect before the fix. (2) OfficerTextGate
+key lists cover the Hunter family (RegularKeys/EliteKeys law: a new popup
+tree family is only shipped once listed in the same commit). (3) Keep-tree
+banned list carries old AND new self-attack spellings (vacuum trap law).
+
+**Proofs.** gate ALL PASS rc=0 (checks 6549 -> 7528: Hunter trees x 11
+locales + parity laws x 11); TacticalAiHarness ALL PASS checks=47310
+fails=0; taboo GREEN; gen_whats_new UP TO DATE (no WIKI chapter touched);
+build.sh APP rc=0 TESTS rc=0; De/ui.json byte-identical to v1.0.3 for the
+tactical section (De was never the broken copy); the 9 copy locales stay
+byte-exact vs En on every previously-identical key (asserted before write).

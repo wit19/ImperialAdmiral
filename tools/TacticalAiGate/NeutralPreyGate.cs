@@ -498,7 +498,10 @@ public static class NeutralPreyGate
         var langNames = new[] { "Br", "De", "En", "Es", "Fr", "Hu", "It", "Nl", "No", "Pl", "Ru" };
         var preyKeys = new[] { "apPreyQuotaLine", "apPreyThreatLine", "apPreyThreatRel" };
         var deAnchors = new[] { "Objektjagd:", "Würfel", "Einheiten", "Bedrohung in Sektion", "derselben Sektion" };
-        var enAnchors = new[] { "Prey hunt:", "seeded draw", "units chase", "Threat in section", "same section" };
+        // EN copy law fix: "draw" reads as a card draw in a card game - the
+        // seeded round event is a DICE event, so the shipped line says
+        // "seeded roll" now (De "Würfel" always said so). Anchor follows.
+        var enAnchors = new[] { "Prey hunt:", "seeded roll", "units chase", "Threat in section", "same section" };
         sb.Append("  \"lang\": {\n");
         sb.Append("    \"langs\": [").Append(string.Join(", ", langNames.Select(J)).ToArray()).Append("],\n");
         sb.Append("    \"keys\": [").Append(string.Join(", ", preyKeys.Select(J)).ToArray()).Append("],\n");

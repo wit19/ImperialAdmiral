@@ -57,16 +57,23 @@ public static class OfficerTextGate
     const string WzDe = "<i><color=#9FC6FF>Wachzone: der Bereich der Mission";
     const string WzEn = "<i><color=#9FC6FF>Guard zone: the area of the mission";
 
+    // The Hunter pattern (fd9b18e) joined the family AFTER this gate was
+    // written - and was never listed here. That is exactly how the shipped
+    // EN apTreeOfficerEliteHunter lost its header/choice/Movement lines
+    // (DE born with 8 rows, EN born with 5, fleet law copied 5 into nine):
+    // the gate that WOULD have caught it only ever checked five patterns.
+    // The law list must cover EVERY shipped officer tree - new patterns are
+    // only shipped once listed here.
     static readonly string[] RegularKeys =
     {
         "apTreeOfficerAggressive", "apTreeOfficerGuard", "apTreeOfficerBlocker",
-        "apTreeOfficerSupport", "apTreeOfficerAmbush",
+        "apTreeOfficerSupport", "apTreeOfficerAmbush", "apTreeOfficerHunter",
     };
     static readonly string[] EliteKeys =
     {
         "apTreeOfficerEliteAggressive", "apTreeOfficerEliteGuard",
         "apTreeOfficerEliteBlocker", "apTreeOfficerEliteSupport",
-        "apTreeOfficerEliteAmbush",
+        "apTreeOfficerEliteAmbush", "apTreeOfficerEliteHunter",
     };
 
     public static int Run()
@@ -306,16 +313,23 @@ public static class OfficerTextGate
            v.Contains(de ? "ein Held steht direkt an ihm" : "a hero stands directly beside him") &&
            v.Contains(de ? "letzte lebende imperiale Gruppe" : "last surviving Imperial group"),
            name + " names the emergency conditions as table text (O-C)");
+        // Vacuum trap (P46 law: banned list follows the living vocabulary -
+        // old AND new spelling banned): "attack yourself" read as reflexive
+        // in EN, so the EN copy now says "attack it yourself" in the regular
+        // trees - a keep tree must carry NEITHER spelling.
         string[] banned = de
             ? new[] { "\u2192 selbst angreifen", "\u2192 es angreifen", "\u2192 ihn angreifen",
                       "Prim\u00e4rziel angreifen", "Fokusziel angreifen" }
-            : new[] { "\u2192 attack it", "\u2192 attack yourself",
+            : new[] { "\u2192 attack it", "\u2192 attack yourself", "\u2192 attack it yourself",
                       "attack the primary target", "attack the focus target" };
         foreach (var b in banned)
             Ok(v.IndexOf(b) < 0, name + " keep tree carries no self-attack: " + b);
+        // The leash clause in the exact engine-law words. EN reads "than you
+        // are right now" (was "than it is right now" - a calque of De "als er
+        // gerade entfernt ist" whose EN "it" had no antecedent). De untouched.
         var core = de
             ? "nie weiter vom n\u00e4chsten imperialen Verb\u00fcndeten weg als er gerade entfernt ist"
-            : "farther from your nearest Imperial ally than it is right now";
+            : "farther from your nearest Imperial ally than you are right now";
         int n = 0, i = 0;
         while ((i = v.IndexOf(core, i)) >= 0) { n++; i += core.Length; }
         Ok(n == 3, name + " group leash on the keep branch AND both movement tails (" + n + "/3)");

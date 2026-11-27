@@ -2236,3 +2236,24 @@ fails=0; taboo GREEN; gen_whats_new UP TO DATE (no WIKI chapter touched);
 build.sh APP rc=0 TESTS rc=0; De/ui.json byte-identical to v1.0.3 for the
 tactical section (De was never the broken copy); the 9 copy locales stay
 byte-exact vs En on every previously-identical key (asserted before write).
+
+**Follow-up read-through (27.11., dev.8).** A second, fresh-eyes read over
+EVERY shipped EN surface — all nine ui.json sections, help.json end to end —
+plus a render-contract audit of the whole En file (TMP tag balance, the
+`{...}` brace whitelist around `{-}`/`{O}`/glyph/dice tokens, longest-line vs
+De for the 1100 px row budget, charset delta). Printed-card corpora stay
+untouched (1:1 transcription law); persona `flavor` is Core data, never
+rendered (names/mottos travel as personaCapt* ui keys, which were read).
+Five findings fixed: "then healthy come first" -> "then the healthy come
+first" (missing article; fleet x 10) and "(choose one option, no priority)"
+-> "(free choice)" — translationese of De "keine Rangfolge" — in both Guard
+trees (fleet x 10). help.json is genuinely translated per locale, so the
+fleet law does NOT apply there and only En changed: "overview over" ->
+"overview of", "Click / tap have the app" -> "Click / tap to have the app",
+"Select your preferred language the app will use" -> "Select which language
+the app will use", and two `{B}` dice tokens restored in the DeploymentCard
+surge text (De keeps all four; without them the line reads "if the figure
+has any remaining,"). Deliberately kept: "Help Support The App" (upstream
+voice, not ours to restyle), curly quotes (legitimate EN typography, the
+shipped upstream font renders them), `{d}` in noRandomMatchesUC (dead — the
+only consumer is commented out, De carries the same token).

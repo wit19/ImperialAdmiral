@@ -114,7 +114,7 @@
       },
       {
         "id": "medpacs",
-        "helpText": "An overview over your medpacs. You can open a window to keep track of your medpacs and read the rules changes."
+        "helpText": "An overview of your medpacs. You can open a window to keep track of your medpacs and read the rules changes."
       },
       {
         "id": "missionDashboard",
@@ -293,7 +293,7 @@
       },
       {
         "id": "language",
-        "helpText": "Select your preferred language the app will use."
+        "helpText": "Select which language the app will use."
       },
       {
         "id": "expansions",
@@ -435,7 +435,7 @@
       },
       {
         "id": "surges",
-        "helpText": "Surge Abilities: If any {B} are rolled during an Imperial figure's attack, the figure spends surges following this list. The figure skips a surge ability if one of the following is true:\n\n{-}It has already used that ability during this attack.\n{-}The ability costs more than it has remaining.\n{-}The ability would have no effect (e.g., increasing accuracy when the attack already has enough accuracy or attempting to inflict a condition when the attack currently deals no damage).\n\n Then, if the figure has any remaining, it repeats this process, starting from the top of the list again. If the figure cannot resolve any surge abilities, the remaining {B} have no effect.\n\nSurge abilities added through bonus effects (at the top of the instruction window) are always priority 1."
+        "helpText": "Surge Abilities: If any {B} are rolled during an Imperial figure's attack, the figure spends surges following this list. The figure skips a surge ability if one of the following is true:\n\n{-}It has already used that ability during this attack.\n{-}The ability costs more {B} than it has remaining.\n{-}The ability would have no effect (e.g., increasing accuracy when the attack already has enough accuracy or attempting to inflict a condition when the attack currently deals no damage).\n\n Then, if the figure has any {B} remaining, it repeats this process, starting from the top of the list again. If the figure cannot resolve any surge abilities, the remaining {B} have no effect.\n\nSurge abilities added through bonus effects (at the top of the instruction window) are always priority 1."
       },
       {
         "id": "abilities",
@@ -544,7 +544,7 @@
       },
       {
         "id": "optionalDeployment",
-        "helpText": "Click / tap have the app immediately perform an optional deployment."
+        "helpText": "Click / tap to have the app immediately perform an optional deployment."
       },
       {
         "id": "currentThreat",
